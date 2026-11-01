@@ -215,8 +215,10 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .ms-logo{text-align:center}
 .ms-logo .logo{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,7vw,96px);letter-spacing:.35em;margin-right:-.35em;background:linear-gradient(180deg,#fffaf0,#e8c983 60%,#9a8cff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 30px rgba(232,201,131,.35))}
 .ms-logo .en{font-family:var(--f-latin);font-style:italic;font-size:clamp(13px,1.5vw,19px);letter-spacing:.3em;color:var(--silver);margin-top:4px}
-.ms-train{position:relative;width:min(100%,calc((100vh - 230px) * 16 / 7));aspect-ratio:16/7;max-width:100%}
+.ms-train{position:relative;width:min(100%,calc((100vh - 230px) * 864 / 496));aspect-ratio:864/496;max-width:100%}
 .ms-train>svg{position:absolute;inset:0;width:100%;height:100%}
+.ms-train>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;
+ -webkit-mask-image:radial-gradient(ellipse 60% 62% at 50% 50%,#000 60%,transparent 100%);mask-image:radial-gradient(ellipse 60% 62% at 50% 50%,#000 60%,transparent 100%)}
 .ms-branch{pointer-events:none}
 .ms-branch .br{fill:none;stroke:#e8c983;stroke-width:5;stroke-linecap:round;stroke-dasharray:440;stroke-dashoffset:440;filter:drop-shadow(0 0 6px rgba(232,201,131,.8))}
 .ms-branch .tw{fill:none;stroke:#e8c983;stroke-width:2.5;stroke-linecap:round;stroke-dasharray:90;stroke-dashoffset:90}
@@ -233,6 +235,7 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .ms-opt.off{background:rgba(60,58,90,.88);color:#a9add0;border-color:rgba(220,230,255,.3);box-shadow:none}
 .ms-opt.off .s{color:#8d90b5}
 @media (max-width:600px){.ms-opt{padding:7px 12px;letter-spacing:.12em;font-size:12px}.ms-opt .s{display:none}}
+@media (max-height:500px){.ms-logo .logo{font-size:clamp(26px,9vh,56px)}.ms-train{width:min(100%,calc((100vh - 130px) * 864 / 496))}.ms-opt{padding:6px 12px;letter-spacing:.12em;font-size:12px}.ms-opt .s{display:none}}
 .cine .sub{text-wrap:balance}
 @keyframes bloom{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .ms-note{min-height:1.6em;font-size:13px;letter-spacing:.14em;color:var(--mute);text-align:center;max-width:42ch;line-height:1.8}
@@ -2269,17 +2272,26 @@ Object.assign(SFX,{amb:null,ambKey:null,_nb:null,
 });
 
 /* ---------- 主畫面：整列列車 + 火車頭「上班」 ---------- */
+/* 主畫面火車：使用提供的影片（已去除浮水印、首尾交疊成無縫循環）；舊的 SVG 列車 ART.trainExterior 保留未刪 */
+const MAIN_TRAIN={video:'assets/train-main.mp4',poster:'assets/train-main.jpg'};
+/* 從火車頭「上班」長出的金色枝條，分別伸向兩個選項（座標系 1600×918，對應影片比例） */
+ART.branchV=function(){
+ const leaf=(x,y,r,d)=>`<ellipse class="leaf" cx="${x}" cy="${y}" rx="11" ry="5" fill="#e8f5c8" transform="rotate(${r} ${x} ${y})" style="animation-delay:${d}s"/>`;
+ return `<path class="br" pathLength="440" d="M400 578 C 384 480 340 390 288 292"/><path class="br" pathLength="440" d="M400 578 C 480 450 720 330 976 292"/>
+ <path class="tw" pathLength="90" d="M378 474 C 360 446 338 434 312 436"/><path class="tw" pathLength="90" d="M540 428 C 560 400 584 390 612 390"/>
+ ${leaf(390,520,-70,.35)}${leaf(348,410,-40,.5)}${leaf(312,436,-15,.62)}${leaf(452,500,40,.35)}${leaf(612,390,20,.55)}${leaf(760,330,25,.66)}
+ <circle class="leaf" cx="288" cy="292" r="10" fill="#fff6d8" style="animation-delay:.75s"/><circle class="leaf" cx="976" cy="292" r="10" fill="#fff6d8" style="animation-delay:.75s"/>`; };
 function showMain(){
  RUNNING=false; SFX.stopDrone(); SFX.ambient(null); closeAll(); const old=$('#mainscreen'); if(old) old.remove();
  const hasAny=!!state.introDone||slotsGet().length>0;
  const el=document.createElement('div'); el.className='mainscreen'; el.id='mainscreen';
  el.innerHTML=`<div class="ms-logo"><div class="logo">日月更迭</div><div class="en">Between the Sun &amp; the Moon</div></div>
  <div class="ms-train" id="mst">
-  <svg viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${ART.defs}${ART.trainExterior()}</svg>
-  <svg class="ms-branch" viewBox="0 0 1600 700" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${ART.branch()}</svg>
-  <button class="hs exit cta" id="ms-work" style="left:38.9%;top:69%"><span class="mk"></span><span class="lb">上班</span></button>
-  <button class="ms-opt" id="ms-new" style="left:20.6%;top:29.3%" tabindex="-1">初次值勤<span class="s">開始新的旅程</span></button>
-  <button class="ms-opt ${hasAny?'':'off'}" id="ms-cont" style="left:60%;top:29.3%" tabindex="-1">接續旅程<span class="s">${hasAny?'喚回封存的記憶':'尚無可接續的旅程'}</span></button>
+  <video src="${MAIN_TRAIN.video}" poster="${MAIN_TRAIN.poster}" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+  <svg class="ms-branch" viewBox="0 0 1600 918" preserveAspectRatio="none" aria-hidden="true">${ART.branchV()}</svg>
+  <button class="hs exit cta" id="ms-work" style="left:25%;top:63%"><span class="mk"></span><span class="lb">上班</span></button>
+  <button class="ms-opt" id="ms-new" style="left:18%;top:28%" tabindex="-1">初次值勤<span class="s">開始新的旅程</span></button>
+  <button class="ms-opt ${hasAny?'':'off'}" id="ms-cont" style="left:61%;top:28%" tabindex="-1">接續旅程<span class="s">${hasAny?'喚回封存的記憶':'尚無可接續的旅程'}</span></button>
  </div>
  <div class="ms-note" id="ms-note">輕觸火車頭的「上班」開始值勤</div>`;
  document.body.appendChild(el);
