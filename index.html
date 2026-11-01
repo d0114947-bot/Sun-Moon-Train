@@ -1039,6 +1039,27 @@ const PASSENGERS = {
    {lines:['（牠的鱗甲在車廂的燈光下泛起一層虹彩，一閃，又和苔綠融在一起。）','雨林的人叫我「苔原幻影」。他們說，看見我的時候，通常已經太晚了。','……我不會在這裡打獵。這裡不是我的領地。我分得清楚。'],choices:[{t:'謝謝你這麼說。',r:'不用謝。我只是不喜歡在別人的地盤上弄髒爪子。（牠的觸鬚輕輕抖了一下，像是在笑。）'}]}
   ],
   farewell:['空氣變濕了。我聞得到樹液和泥土的味道。','天快要黑了。那是我醒來的時間。','我要回葉子上去了。如果哪天你在雨林裡覺得有一片綠色在看你，不用找。那是我在跟你打招呼。']
+ },
+ /* 霜脊冰原獸：去背後的動態立繪。資料來自設定稿。 */
+ frost:{name:'霜脊冰原獸',type:'other',species:'Frost-Ridge Ice-Beast',zone:'crystal',spot:{x:50,y:88},spriteH:22,ar:'570/300',color:'radial-gradient(circle,#f4fbff,#7fb4d8)',
+  image:'assets/frost.webp',still:'assets/frost-still.webp',studies:['assets/frost-s1.webp','assets/frost-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'高海拔冰原・極圈冰川裂谷・極寒山脈',
+  intro:'在駛向月界的寒氣裡登車的霜脊冰原獸。乳白色的厚重絨毛間，脊背與尾巴上的冰晶硬甲泛著微藍的光暈；一雙冰川般湛藍的眼睛，安靜地打量著車廂。',
+  bio:'在極北之境的「萬古冰原」深處，霜脊冰原獸被當地原住民視為冰川之神的守望者。當暴風雪呼嘯而過、天地一片蒼茫之時，獵人往往只能看見一雙在風雪中幽藍髮光的雙眼，以及背脊上如冰刺般掠過的寒芒。牠們輕巧而寂靜地穿梭在數米深的厚雪之上，彷彿與周遭的冰山雪景融為一體，是這片白色禁區中無可動搖的頂級掠食者。',
+  field:{alias:'冰原的白色追獵者、凝光雪獅、永凍之魂',cls:'極地巨型獸類／元素獸屬',
+   danger:'高',dangerNote:'具備強大的物理破壞力與極度致命的嚴寒氣場',
+   rarity:'稀有',rarityNote:'僅在極深處的無人冰原偶爾可見，極難被馴服或捕捉',
+   looks:'體格龐大而結實，身形介於大型貓科動物與巨熊之間，覆蓋著一層厚重的乳白色稠密絨毛。其脊椎骨兩側、尾巴以及前肢局部，生長著半透明的冰晶狀硬甲與倒刺，這些冰晶在寒光下會折射出微藍的光暈。牠的頭部具有貓科動物般的輪廓，耳尖帶有銳利的黑色簇毛，雙眼呈現出如深谷冰川般的明亮湛藍色，面部與四肢的細密絨毛間也隱約鑲嵌著天然的晶體結構。',
+   habitat:'常年被風雪覆蓋的高海拔冰原、極圈冰川裂谷，以及人跡罕至的極寒山脈。牠們多數時間棲息於避風的冰洞或岩縫中。',
+   habits:[['活動時間','日夜皆宜，但在漫長而昏暗的極夜與暴風雪天氣中表現得最為活躍。'],['飲食','肉食性，主要捕獵冰原上的耐寒大型草食獸或冰角鹿。'],['社會結構','多數時間過著獨居生活，僅在嚴冬的繁殖季節短暫聚集。'],['性格與攻擊性','性格沉穩、警惕且極具領地意識。雖然不會無故主動攻擊過路旅人，但若被侵擾或感受到威脅，會展現出極具壓迫性的強大戰意。']],
+   abilities:[['冰晶折射與偽裝','能夠將周遭的寒氣凝聚在體表的冰晶上，在暴風雪中形成完美的視覺折射，達到近似隱形的偽裝效果。'],['極寒爪擊','利爪與足底覆蓋著極低溫的寒霜，每一次踏地或揮擊都能瞬間凍結接觸面的水分或獵物的表皮。']]},
+  stay:2,
+  talks:[
+   {lines:['（靈泉邊的空氣忽然冷了下來，水面結出一圈薄薄的霜。一頭乳白色的巨獸站在那裡，背脊上的冰晶泛著微藍的光。）','……你走路的聲音，我在車廂另一頭就聽見了。','不必緊張。我只是在確認，這裡誰是先來的。'],choices:[{t:'我是這列車的值勤精靈。',r:'值勤。……那這裡是你的領地。我會記住界線在哪裡。'},{t:'這裡沒有誰的領地。',r:'冰原上，每一片雪都有主人。沒有主人的地方……我需要一點時間習慣。'}]},
+   {lines:['（牠低頭聞了聞靈泉的水，水面立刻凝起細小的冰花，又慢慢化開。）','這裡太暖了。不過，不討厭。','在萬古冰原，連呼吸都會結冰。所以我們很少開口。'],choices:[{t:'那你現在願意說話，我很高興。',r:'……嗯。這裡的空氣不會把話凍住。'},{t:'會不會太熱？',r:'我的爪子底下有霜。站久了，地板會涼一點。……抱歉，這是習慣。'}]},
+   {lines:['獵人說，在暴風雪裡只看得見我們的眼睛。','那是因為我們不想被看見。在白色裡，消失是最安全的事。','可是在這輛車上，我好像不必躲。'],choices:[{t:'在這裡，你可以被看見。',r:'（牠背上的冰晶輕輕亮了一下，像是寒夜裡一盞很小的燈。）……那我就站在這裡。'}]}
+  ],
+  farewell:['風裡有雪的味道了。很遠，但是我認得。','冰原在叫我回去。那裡很冷，很安靜。','如果有一天你在風雪裡看見一雙藍色的眼睛，不用怕。那是我在替你看路。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -1075,6 +1096,7 @@ const EVENTS = {
  board_aelis:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=3,run:n=>boarding('aelis','列車停靠的時候，森林邊緣正好沉進暮色。一雙琥珀色的大眼睛從樹影裡亮起，一隻戴著葉形吊墜的小生物，輕巧地跳上了車門。',n)},
  board_pyro:{trigger:'voyage',at:.55,need:()=>!state.discoveredLifeforms.includes('pyro')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=3,run:n=>boarding('pyro','列車擦過一片被染成赤紅的天空，車身微微一震。棲息車廂的溫度驟然升高，晶石平台前，多了一道漆黑而沉重的身影。',n)},
  board_vandora:{trigger:'voyage',at:.78,need:()=>!state.discoveredLifeforms.includes('vandora')&&!!state.voyage&&state.voyage.to==='dawnForest'&&state.journeyCount>=4,run:n=>boarding('vandora','列車駛進晨曦森林外圍的夜色時，車窗上凝了一層薄薄的水氣。棲息車廂的自然棲台上，一片苔葉輕輕動了一下——那不是葉子。',n)},
+ board_frost:{trigger:'voyage',at:.35,need:()=>!state.discoveredLifeforms.includes('frost')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=5,run:n=>boarding('frost','列車穿過一段冰冷的航道，車窗上爬滿了細白的霜花。棲息車廂的靈泉邊，水面結起一圈薄冰——一雙冰川般湛藍的眼睛，正安靜地看著你。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:()=>boarding('sola','星河的潮汐拍上車窗。一團會發光的生命順著潮水，輕輕滑進了車廂。')},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  meet_lumi_sola:{trigger:'carriage',car:'habitat',need:()=>aboard('lumi')&&aboard('sola'),title:'露米與索拉',run:()=>dialogueScript([
@@ -1553,6 +1575,7 @@ function talk(id,next){
  });
 }
 function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
+ if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
  if(id==='pyro') return state.currentPhase==='voyage'?'……車在搖。很穩。我不討厭。':'外面不夠熱。我待在這裡就好。';
  if(id==='aelis') return state.currentPhase==='voyage'?'列車的聲音很規律。我在數它的心跳。':'外面的風在唱歌。我在聽它唱什麼。';
@@ -1872,6 +1895,7 @@ const MEMORIES=[
  {id:'aelis',title:'暮色中的耳語者',who:'aelis',have:()=>state.discoveredLifeforms.includes('aelis'),text:PASSENGERS.aelis.intro},
  {id:'pyro',title:'赤紅天空下的巨影',who:'pyro',have:()=>state.discoveredLifeforms.includes('pyro'),text:PASSENGERS.pyro.intro},
  {id:'vandora',title:'苔葉間的金色眼睛',who:'vandora',have:()=>state.discoveredLifeforms.includes('vandora'),text:PASSENGERS.vandora.intro},
+ {id:'frost',title:'霜花與湛藍的眼睛',who:'frost',have:()=>state.discoveredLifeforms.includes('frost'),text:PASSENGERS.frost.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -1924,6 +1948,7 @@ const CODEX_LIFE=[
  {id:'aelis',passenger:'aelis'},
  {id:'pyro',passenger:'pyro'},
  {id:'vandora',passenger:'vandora'},
+ {id:'frost',passenger:'frost'},
  {id:'reserve-5',type:'domain'}
 ];
 function codexEntry(e){
@@ -2073,7 +2098,7 @@ const HSDEF=[
  {id:'nat-back',scene:'nature',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},act:'go:observation'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
- ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,sx:PASSENGERS[id].sprite?`;--sh:${PASSENGERS[id].spriteH||34}%;--ar:${PASSENGERS[id].ar||'590/420'}`:'',
+ ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,sx:PASSENGERS[id].sprite?`;--sh:${PASSENGERS[id].spriteH||34}%;--ar:${PASSENGERS[id].ar||'590/420'}`:'',
   at:NPC_AT(id),layer:4,track:false,show:()=>aboard(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:90,y:50},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
