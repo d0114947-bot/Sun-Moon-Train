@@ -206,6 +206,7 @@ button{font:inherit;color:inherit}
 .train .car.tail{width:clamp(10px,1.6vw,18px)}
 .snd{width:30px;height:30px;border-radius:50%;border:1px solid rgba(220,230,255,.3);background:rgba(8,10,26,.6);cursor:pointer;font-size:14px;color:var(--silver);flex:none}
 .snd.off{opacity:.45;text-decoration:line-through}
+.ms-snd{position:absolute;z-index:6;top:calc(env(safe-area-inset-top,0px) + 14px);right:max(16px,env(safe-area-inset-right,0px))}
 .vbar{display:inline-block;width:90px;height:4px;border-radius:2px;background:rgba(220,230,255,.18);vertical-align:middle;margin-right:8px;overflow:hidden}
 .vbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#fff0c8);transition:width .25s linear}
 canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radial-gradient(ellipse at 35% 35%,rgba(110,80,190,.45),transparent 60%),radial-gradient(ellipse at 70% 55%,rgba(40,120,150,.35),transparent 55%),#090b22}
@@ -1203,7 +1204,7 @@ function act(k,v){
   case 'event': { const ev=EVENTS[v]; if(ev&&!done(v)){ complete(v); ev.run(); renderHUD(); } return; }
   case 'reunion': return reunion(v);
   case 'zone': return zoneInfo(v);
-  case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); } renderHUD(); return toast(PREFS.sound===false?'音效已關閉':'音效已開啟');
+  case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); BGM.stop(500); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); BGM.start(); } renderHUD(); return toast(PREFS.sound===false?'音樂與音效已關閉':'音樂與音效已開啟');
   default: return (INTERACT[k+':'+v]||(()=>{}))();
  }
 }
@@ -1540,7 +1541,7 @@ function normalizeState(){
 /* 讀檔：直接恢復狀態，不重播開場、不重跑初次值勤 */
 function loadGame(st,name){
  closeAll(); const ms=$('#mainscreen'); if(ms) ms.remove();
- SFX.init(); SFX.stopDrone(); CAB.reset(); state=Object.assign(freshState(),clone(st)); normalizeState(); save();
+ SFX.init(); SFX.stopDrone(); TRAINSFX.stop(); BGM.start(); CAB.reset(); state=Object.assign(freshState(),clone(st)); normalizeState(); save();
  PANO.active=null; layout.centered=false; RUNNING=true; render();
  if(state.currentPhase==='voyage') SFX.startDrone(); else if(state.currentPhase==='docked') arrivalChecks();
  toast('已喚回：'+name);
@@ -2253,6 +2254,56 @@ function panoFail(car){ const host=$('#pano'); if(!host||PANO.active!==car) retu
  f.querySelector('[data-pf=back]').onclick=()=>moveTo(back);
 }
 
+/* ---------- 背景音樂：進入遊戲後自動播放，10 首隨機循環（每輪全部播完才重新洗牌，不會連續重複同一首） ---------- */
+const BGM={list:['assets/bgm-01.mp3','assets/bgm-02.mp3','assets/bgm-03.mp3','assets/bgm-04.mp3','assets/bgm-05.mp3','assets/bgm-06.mp3','assets/bgm-07.mp3','assets/bgm-08.mp3','assets/bgm-09.mp3','assets/bgm-10.mp3'].filter(Boolean),
+ el:null,queue:[],last:null,on:false,vol:.42,fails:0,_fade:0,
+ ensure(){ if(this.el) return this.el; const a=this.el=new Audio(); a.preload='auto'; a.volume=0;
+  a.addEventListener('ended',()=>{ if(this.on) this.next(); });
+  a.addEventListener('playing',()=>{ this.fails=0; });
+  a.addEventListener('error',()=>{ if(!this.on) return; if(++this.fails>=this.list.length){ this.on=false; return; } setTimeout(()=>{ if(this.on) this.next(); },400); });
+  return a; },
+ shuffle(){ const q=this.list.slice(); for(let i=q.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [q[i],q[j]]=[q[j],q[i]]; }
+  if(q.length>1&&q[0]===this.last){ const k=1+Math.floor(Math.random()*(q.length-1)); [q[0],q[k]]=[q[k],q[0]]; } return q; },
+ next(){ const a=this.ensure(); if(!this.queue.length) this.queue=this.shuffle(); const f=this.queue.shift(); this.last=f; a.src=f; this.play(); },
+ play(){ const a=this.el; if(!a) return; const p=a.play(); if(p&&p.catch) p.catch(()=>{}); this.fadeTo(this.vol,1800); },
+ fadeTo(v,ms,done){ const a=this.el; if(!a) return; clearInterval(this._fade); const v0=a.volume, t0=performance.now();
+  this._fade=setInterval(()=>{ const k=Math.min(1,(performance.now()-t0)/ms); try{ a.volume=Math.max(0,Math.min(1,v0+(v-v0)*k)); }catch(e){} if(k>=1){ clearInterval(this._fade); if(done) done(); } },50); },
+ start(){ if(!this.list.length||!SFX.on()) return; this.on=true; const a=this.ensure(); if(!a.src) this.next(); else if(a.paused) this.play(); else this.fadeTo(this.vol,1200); },
+ stop(ms=1200){ this.on=false; const a=this.el; if(!a||a.paused) return; this.fadeTo(0,ms,()=>{ if(!this.on) a.pause(); }); },
+ nowPlaying(){ return this.on&&this.last; }
+};
+/* 分頁切到背景時暫停，回來時繼續；手機若擋下自動播放，下一次點擊畫面時補播 */
+document.addEventListener('visibilitychange',()=>{ const a=BGM.el; if(!a||!BGM.on) return; if(document.hidden) a.pause(); else BGM.play(); });
+document.addEventListener('pointerdown',()=>{ if(BGM.on&&BGM.el&&BGM.el.paused&&!document.hidden) BGM.play(); },true);
+
+/* ---------- 主畫面：火車音效（合成：行駛低鳴、蒸汽噴氣、鐵軌節奏，開頭一聲汽笛） ---------- */
+const TRAINSFX={out:null,srcs:[],timer:0,next:0,beat:0,
+ start(){ if(this.out||!SFX.on()) return; const c=SFX.init(); if(!c) return; const t=c.currentTime;
+  const out=this.out=c.createGain(); out.gain.setValueAtTime(0,t); out.gain.linearRampToValueAtTime(1,t+1.6); out.connect(c.destination);
+  const loop=(type,f,q,vol)=>{ const s=c.createBufferSource(); s.buffer=SFX.noiseBuf(); s.loop=true; const fl=c.createBiquadFilter(); fl.type=type; fl.frequency.value=f; fl.Q.value=q;
+   const g=c.createGain(); g.gain.value=vol; s.connect(fl); fl.connect(g); g.connect(out); s.start(t); this.srcs.push(s); return g; };
+  const rumble=loop('lowpass',140,.7,.16);            // 車輪與車身的低沉行駛聲
+  loop('bandpass',900,.4,.012);                         // 車外的風聲
+  const lfo=c.createOscillator(), lg=c.createGain(); lfo.frequency.value=.35; lg.gain.value=.04; lfo.connect(lg); lg.connect(rumble.gain); lfo.start(t); this.srcs.push(lfo);
+  this.whistle(t+.6); this.next=t+.3; this.beat=0;
+  this.timer=setInterval(()=>this.tick(),120); this.tick(); },
+ burst(at,dur,type,f0,f1,q,vol){ const c=SFX.ctx; if(!c||!this.out) return; const s=c.createBufferSource(); s.buffer=SFX.noiseBuf(); const fl=c.createBiquadFilter(); fl.type=type; fl.Q.value=q;
+  fl.frequency.setValueAtTime(f0,at); fl.frequency.exponentialRampToValueAtTime(f1,at+dur); const g=c.createGain(); g.gain.setValueAtTime(0,at); g.gain.linearRampToValueAtTime(vol,at+dur*.18); g.gain.exponentialRampToValueAtTime(.0001,at+dur);
+  s.connect(fl); fl.connect(g); g.connect(this.out); s.start(at,Math.random()*1.5); s.stop(at+dur+.05); },
+ thump(at,vol){ const c=SFX.ctx; if(!c||!this.out) return; const o=c.createOscillator(), g=c.createGain(); o.type='triangle'; o.frequency.setValueAtTime(110,at); o.frequency.exponentialRampToValueAtTime(55,at+.09);
+  g.gain.setValueAtTime(vol,at); g.gain.exponentialRampToValueAtTime(.0001,at+.12); o.connect(g); g.connect(this.out); o.start(at); o.stop(at+.15); },
+ tick(){ const c=SFX.ctx; if(!c||!this.out) return; const ahead=c.currentTime+.5;
+  while(this.next<ahead){ const at=this.next, b=this.beat%8;
+   this.burst(at,.26,'bandpass',1500,520,1.1,b%4===0?.11:.07);          // 蒸汽噴氣「嚓」：每拍一次，每四拍一重音
+   if(b===0||b===4){ this.burst(at+.05,.025,'highpass',3200,2600,.7,.05); this.thump(at+.05,.06); this.burst(at+.19,.025,'highpass',3000,2500,.7,.045); this.thump(at+.19,.05); }  // 鐵軌接縫「喀噠」
+   this.beat++; this.next+=.42; } },
+ whistle(at){ const c=SFX.ctx; if(!c||!this.out) return; const g=c.createGain(); g.gain.setValueAtTime(0,at); g.gain.linearRampToValueAtTime(.035,at+.25); g.gain.setValueAtTime(.035,at+1.1); g.gain.exponentialRampToValueAtTime(.0001,at+1.9); g.connect(this.out);
+  const vib=c.createOscillator(), vg=c.createGain(); vib.frequency.value=5.5; vg.gain.value=4; vib.connect(vg);
+  [523.3,659.3,784].forEach(f=>{ const o=c.createOscillator(); o.type='sine'; o.frequency.value=f; vg.connect(o.frequency); o.connect(g); o.start(at); o.stop(at+2); }); vib.start(at); vib.stop(at+2); },
+ stop(){ const c=SFX.ctx; clearInterval(this.timer); this.timer=0; if(!c||!this.out) return; const t=c.currentTime, out=this.out, srcs=this.srcs; this.out=null; this.srcs=[];
+  out.gain.cancelScheduledValues(t); out.gain.setValueAtTime(out.gain.value,t); out.gain.linearRampToValueAtTime(0,t+.7); srcs.forEach(s=>{ try{ s.stop(t+.8); }catch(e){} }); setTimeout(()=>{ try{ out.disconnect(); }catch(e){} },1000); }
+};
+
 /* 車廂環境音（合成，極低音量；可由 ♪ 關閉） */
 const AMBIENT={
  nature:{noise:['bandpass',1500,.7,.009,.07],tones:[[196,.003]]},
@@ -2303,7 +2354,7 @@ ART.branchV=function(lx=288,rx=976,ly=292){
  ${leaf(390,520,-70,.35)}${leaf(348,410,-40,.5)}${leaf(312,436,-15,.62)}${leaf(452,500,40,.35)}${leaf(612,390,20,.55)}${leaf(760,330,25,.66)}
  <circle class="leaf" cx="${lx}" cy="${ly}" r="10" fill="#fff6d8" style="animation-delay:.75s"/><circle class="leaf" cx="${rx}" cy="${ly}" r="10" fill="#fff6d8" style="animation-delay:.75s"/>`; };
 function showMain(){
- RUNNING=false; SFX.stopDrone(); SFX.ambient(null); closeAll(); const old=$('#mainscreen'); if(old) old.remove();
+ RUNNING=false; SFX.stopDrone(); SFX.ambient(null); BGM.stop(); closeAll(); const old=$('#mainscreen'); if(old) old.remove();
  const hasAny=!!state.introDone||slotsGet().length>0;
  const el=document.createElement('div'); el.className='mainscreen'; el.id='mainscreen';
  el.innerHTML=`<div class="ms-logo"><div class="logo">日月更迭</div><div class="en">Between the Sun &amp; the Moon</div></div>
@@ -2315,8 +2366,14 @@ function showMain(){
   <button class="ms-opt ${hasAny?'':'off'}" id="ms-cont" tabindex="-1">接續旅程<span class="s">${hasAny?'喚回封存的記憶':'尚無可接續的旅程'}</span></button>
  </div>
  <div class="ms-shade"></div>
+ <button class="snd ms-snd ${PREFS.sound===false?'off':''}" id="ms-snd" aria-label="音樂與音效">♪</button>
  <div class="ms-note" id="ms-note">輕觸火車頭的「上班」開始值勤</div>`;
  document.body.appendChild(el); msLayout(); msPlay(el);
+ /* 火車音效：瀏覽器規定要先有一次點擊才能出聲，所以在主畫面第一次點擊時開始；已解鎖（例如從遊戲回到主畫面）就直接播放 */
+ if(SFX.ctx&&SFX.ctx.state==='running') TRAINSFX.start();
+ const wake=()=>{ if($('#mainscreen')===el) TRAINSFX.start(); }; el.addEventListener('pointerdown',wake,{once:true}); el.addEventListener('keydown',wake,{once:true});
+ el.querySelector('#ms-snd').onclick=e=>{ e.stopPropagation(); PREFS.sound=PREFS.sound===false; savePrefs(); e.currentTarget.classList.toggle('off',PREFS.sound===false);
+  if(PREFS.sound===false) TRAINSFX.stop(); else TRAINSFX.start(); };
  const mst=el.querySelector('#mst'), note=el.querySelector('#ms-note');
  el.querySelector('#ms-work').onclick=()=>{ const o=!mst.classList.contains('open'); mst.classList.toggle('open',o);
   el.querySelectorAll('.ms-opt').forEach(b=>b.tabIndex=o?0:-1); note.textContent=o?'選擇今天的值勤方式':'輕觸火車頭的「上班」開始值勤'; if(o) SFX.tone(1318,0,.7,'sine',.03); };
@@ -2326,7 +2383,7 @@ function showMain(){
   else startNew(); };
  el.querySelector('#ms-cont').onclick=()=>{ if(!hasAny){ note.textContent='目前尚無可接續的旅程。請先選擇「初次值勤」。'; return; } savePanel('title'); };
 }
-function startNew(){ const ms=$('#mainscreen'); if(ms) ms.remove(); SFX.init(); CAB.reset(); state=freshState(); save(); PANO.active=null; RUNNING=true; render(); intro(); }
+function startNew(){ const ms=$('#mainscreen'); if(ms) ms.remove(); SFX.init(); TRAINSFX.stop(); BGM.start(); CAB.reset(); state=freshState(); save(); PANO.active=null; RUNNING=true; render(); intro(); }
 
 /* ---------- 開場（原有開場文字，未改動） ---------- */
 function intro(){
