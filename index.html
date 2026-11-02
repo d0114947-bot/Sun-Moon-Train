@@ -1071,6 +1071,28 @@ const PASSENGERS = {
    {lines:['獵人說，在暴風雪裡只看得見我們的眼睛。','那是因為我們不想被看見。在白色裡，消失是最安全的事。','可是在這輛車上，我好像不必躲。'],choices:[{t:'在這裡，你可以被看見。',r:'（牠背上的冰晶輕輕亮了一下，像是寒夜裡一盞很小的燈。）……那我就站在這裡。'}]}
   ],
   farewell:['風裡有雪的味道了。很遠，但是我認得。','冰原在叫我回去。那裡很冷，很安靜。','如果有一天你在風雪裡看見一雙藍色的眼睛，不用怕。那是我在替你看路。']
+ },
+ /* 霧羽海葵龍：單張立繪（透明背景），以影像變形做成觸鬚擺動與核心光點呼吸的循環動畫。資料來自設定稿。 */
+ sirenora:{name:'霧羽海葵龍',type:'mind',species:'Sirenora',zone:'veil',spot:{x:71,y:21},spriteH:19,ar:'883/328',color:'radial-gradient(circle,#fff6fb,#b9a6d6)',
+  image:'assets/sirenora.webp',still:'assets/sirenora-still.webp',studies:['assets/sirenora-s1.webp','assets/sirenora-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'濃霧籠罩的無風峽灣・發光苔蘚的地下暗河・迷霧與潮汐的高山海岬',
+  intro:'列車穿過濃霧時，悄悄飄進車廂的霧羽海葵龍。如海葵與發光水母交織的扇狀薄翼透著淡紫與乳白的暈光，中心一點柔和的光，像一盞在霧裡指路的燈。',
+  bio:'在無盡迷霧籠罩的海岸線與高山交界處，老一輩的航海者總會告誡年輕人：如果在濃霧中看見一抹溫柔的粉白光暈，切記不要追逐，只需靜靜駐足。那是「霧羽海葵龍」在收集世人遺忘的夢境。牠們由那些未能歸家之人的思念所化，如同一盞孤燈，在潮汐與霧氣間無聲擺盪。當牠們舒展那如海葵般透明的羽翼時，整個峽灣的風都會安靜下來，彷彿連時間也在那柔和的光芒中暫停了腳步。',
+  field:{alias:'幻海的悼亡者、深淵浮影、晨曦微光獸',
+   cls:'意念生命（由群體意念形成的存在 —— 來自失落航海者對故鄉與歸宿的強烈思念、以及對無垠迷霧的敬畏所凝聚而成的意識體）。',
+   danger:'低',dangerNote:'幾乎不具傷害性，甚至能安撫人心',
+   rarity:'稀有',rarityNote:'僅在特定的濃霧季節與人跡罕至的潮汐峽灣中方得一見',
+   looks:'<b>身體構造：</b>擁有流暢而修長的流線型軀體，覆蓋著如珍珠般溫潤的半透明鱗片，尾端延伸出如海草般優雅的靈動尾鰭。背部與頭部交界處綻放著一對巨大、如深海海葵與發光水母交織而成的扇狀薄翼，邊緣透著夢幻的淡紫與乳白色暈光。<br><b>顏色：</b>主體為銀白與珍珠灰，點綴著幽藍與淡粉的生物螢光脈絡；頭頂與觸鬚則帶著半透明的珍珠光澤，能在黑暗中散發指引方向的微光。<br><b>辨識特徵：</b>頭部沒有傳統的獸類雙耳，取而代之的是如珊瑚枝椏般向外延伸的感知觸鬚，能直接捕捉周遭生物的情緒波動與氣壓變化。',
+   habitat:'終年被濃霧籠罩的無風峽灣、漂浮著發光苔蘚的地下暗河，或是交織著迷霧與潮汐的高山海岬。牠們不需要實質的物質庇護所，通常隨著微弱的氣流與潮汐磁場緩慢飄浮。',
+   habits:[['活動時間','多數時間處於半夢半醒的漂浮狀態，但在晨昏交替或迷霧最濃郁的時刻最為活躍。'],['飲食','不需進食實體食物。牠們以空氣中流動的純粹情緒、夢境殘留的記憶碎片，以及微弱的乙太能量維生。'],['社會性','多數為獨居，但在氣候劇變或特定節令時，會成群在迷霧中交錯起舞，形成如夢似幻的「光之迴游」。'],['性格與攻擊性','性格溫和、羞怯而敏感。天生不具備實體攻擊性，當感受到威脅時，會釋放安撫心神的微光與低頻共鳴，使闖入者陷入平靜的睏意中，隨後悄然遁入霧氣。']],
+   abilities:[['迷霧幻象（Mist Mimicry）','能夠將自身的生物螢光與周遭的霧氣融合，製造出海市蜃樓般的視覺干擾，使獵食者或不速之客在迷霧中迷失方向。'],['共鳴安撫（Aura Soothing）','透過背部如海葵般的巨大扇翼拍動，散發出能夠平息焦慮、撫平精神創傷的微弱電磁波與柔和光暈。']]},
+  stay:2,
+  talks:[
+   {lines:['（車廂上方飄著一團柔和的粉白光暈。你一抬頭，那光就往後縮了一點，觸鬚輕輕顫著。）','……不要追。','我只是……被這輛車的燈吸引過來的。它亮得很像港口。'],choices:[{t:'（停在原地，靜靜看著）',r:'……謝謝。你站著不動的樣子，和老航海者教的一樣。'},{t:'你是從霧裡來的嗎？',r:'我就是霧的一部分。很多人在霧裡想家，想著想著，就有了我。'}]},
+   {lines:['（牠慢慢舒展扇狀的薄翼。光暈一亮一暗，車廂裡的空氣好像安靜了下來。）','你身上有一點點想念的味道。很淡，但是我聞得到。','別擔心。我不會拿走它。我只收集被遺忘的夢。'],choices:[{t:'被遺忘的夢，會去哪裡？',r:'會留在我的光裡。等到有一天，有人在霧中停下腳步，我就把它還給那片海。'},{t:'我在想念什麼呢？',r:'……這個，要你自己想起來才算數。我只能告訴你，那是溫暖的東西。'}]},
+   {lines:['那些沒能回家的人，最後都只剩下一句話：「我想回去。」','我是由很多很多這句話組成的。','可是在這輛會自己前進的列車上……我第一次覺得，自己好像也在回家的路上。'],choices:[{t:'那就在這裡多待一會兒吧。',r:'（牠中心的光柔柔地亮了一下，整節車廂的風都停了，像時間也一起歇了一口氣。）'}]}
+  ],
+  farewell:['霧變濃了。我聽見峽灣在叫我。','那裡有很多還沒被收好的夢，在潮汐裡擺盪。','謝謝你讓我停在這盞燈下。如果你在霧裡看見一抹粉白的光，不要追……只要停下來就好。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -1108,6 +1130,7 @@ const EVENTS = {
  board_pyro:{trigger:'voyage',at:.55,need:()=>!state.discoveredLifeforms.includes('pyro')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=3,run:n=>boarding('pyro','列車擦過一片被染成赤紅的天空，車身微微一震。棲息車廂的溫度驟然升高，晶石平台前，多了一道漆黑而沉重的身影。',n)},
  board_vandora:{trigger:'voyage',at:.78,need:()=>!state.discoveredLifeforms.includes('vandora')&&!!state.voyage&&state.voyage.to==='dawnForest'&&state.journeyCount>=4,run:n=>boarding('vandora','列車駛進晨曦森林外圍的夜色時，車窗上凝了一層薄薄的水氣。棲息車廂的自然棲台上，一片苔葉輕輕動了一下——那不是葉子。',n)},
  board_frost:{trigger:'voyage',at:.35,need:()=>!state.discoveredLifeforms.includes('frost')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=5,run:n=>boarding('frost','列車穿過一段冰冷的航道，車窗上爬滿了細白的霜花。棲息車廂的靈泉邊，水面結起一圈薄冰——一雙冰川般湛藍的眼睛，正安靜地看著你。',n)},
+ board_sirenora:{trigger:'voyage',at:.6,need:()=>!state.discoveredLifeforms.includes('sirenora')&&!!state.voyage&&state.voyage.to==='dawnForest'&&state.journeyCount>=6,run:n=>boarding('sirenora','列車駛進一片濃得化不開的霧。車窗外什麼都看不見，只有一抹溫柔的粉白光暈，隨著霧氣輕輕擺盪，穿過車壁，飄進了棲息車廂。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:()=>boarding('sola','星河的潮汐拍上車窗。一團會發光的生命順著潮水，輕輕滑進了車廂。')},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  meet_lumi_sola:{trigger:'carriage',car:'habitat',need:()=>aboard('lumi')&&aboard('sola'),title:'露米與索拉',run:()=>dialogueScript([
@@ -1586,6 +1609,7 @@ function talk(id,next){
  });
 }
 function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
+ if(id==='sirenora') return state.currentPhase==='voyage'?'……外面有霧的聲音。我在聽。':'這盞燈很溫暖。我再停一下就好。';
  if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
  if(id==='pyro') return state.currentPhase==='voyage'?'……車在搖。很穩。我不討厭。':'外面不夠熱。我待在這裡就好。';
@@ -1907,6 +1931,7 @@ const MEMORIES=[
  {id:'pyro',title:'赤紅天空下的巨影',who:'pyro',have:()=>state.discoveredLifeforms.includes('pyro'),text:PASSENGERS.pyro.intro},
  {id:'vandora',title:'苔葉間的金色眼睛',who:'vandora',have:()=>state.discoveredLifeforms.includes('vandora'),text:PASSENGERS.vandora.intro},
  {id:'frost',title:'霜花與湛藍的眼睛',who:'frost',have:()=>state.discoveredLifeforms.includes('frost'),text:PASSENGERS.frost.intro},
+ {id:'sirenora',title:'霧中的粉白光暈',who:'sirenora',have:()=>state.discoveredLifeforms.includes('sirenora'),text:PASSENGERS.sirenora.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -1960,6 +1985,7 @@ const CODEX_LIFE=[
  {id:'pyro',passenger:'pyro'},
  {id:'vandora',passenger:'vandora'},
  {id:'frost',passenger:'frost'},
+ {id:'sirenora',passenger:'sirenora'},
  {id:'reserve-5',type:'domain'}
 ];
 function codexEntry(e){
