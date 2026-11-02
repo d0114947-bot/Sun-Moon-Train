@@ -435,6 +435,9 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .jlog section{border-left:1px solid rgba(232,201,131,.4);padding-left:18px;position:relative}
 .jlog section::before{content:"";position:absolute;left:-5px;top:7px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
 .jlog h3{margin:0 0 4px;font-size:15px}
+.jlog h3 small{font-size:12px;color:var(--mute);font-weight:400;letter-spacing:.08em}
+.jlog li i{display:inline-block;font-style:normal;font-size:11px;letter-spacing:.1em;padding:0 7px;margin-right:8px;border-radius:999px;border:1px solid rgba(232,201,131,.5);color:var(--gold);vertical-align:1px}
+.jlog li.lk-life i{color:#b9d7ff;border-color:rgba(185,215,255,.5)}.jlog li.lk-find i{color:#c9f2c4;border-color:rgba(201,242,196,.5)}.jlog li.lk-duty{color:var(--mute)}
 .jlog h3 span{font-family:var(--f-latin);color:var(--gold);margin-right:10px;font-size:17px}
 .jlog ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;color:#d6d9f2;line-height:1.75;font-size:14px}
 .ov.mems .panel{background:linear-gradient(160deg,rgba(28,26,62,.96),rgba(10,10,28,.97))}
@@ -795,8 +798,19 @@ ART.car.cab=function(state){
  <g transform="translate(800 740)"><g class="spin"><circle r="96" fill="none" stroke="#c8a85e" stroke-width="2" stroke-dasharray="3 11"/></g><polygon points="0,-70 40,0 0,70 -40,0" fill="#dff4ff"/><polygon points="0,-70 40,0 0,0" fill="#fff"/><circle r="120" fill="url(#gCyan)" opacity=".7"/><ellipse rx="110" ry="24" fill="none" stroke="#c8a85e" stroke-width="3"/></g>
  <g transform="translate(1130 735)"><circle r="58" fill="#1a1c3a" stroke="#c8a85e" stroke-width="5"/><path d="M0 -40 L 35 20 L -35 20 Z M0 40 L 35 -20 L -35 -20 Z" fill="none" stroke="${lamp==='lit'?'#ffe9a8':'#5b5a78'}" stroke-width="4"/>
   <circle r="12" fill="${lamp==='lit'?'#fff6d8':lamp==='closing'?'#b8954e':'#3a3a55'}"/>${lamp==='lit'?'<circle r="120" fill="url(#gGold)"/>':''}</g>
+ ${cabPrepArt(state)}
  <g transform="translate(470 735)"><circle r="64" fill="none" stroke="#c8a85e" stroke-width="4"/><ellipse rx="64" ry="20" fill="none" stroke="#c8a85e" stroke-width="2" transform="rotate(-20)"/><path d="M0 -50 L 10 0 L 0 50 L -10 0 Z" fill="#fff6d8"/><circle r="110" fill="url(#gViolet)" opacity=".5"/></g>`; };
 
+/* 駕駛室兩側：淨界晶環（左）、裝備台與星途符牒（右） */
+function cabPrepArt(state){ const d=state.duty, eq=state.spirit.equipment;
+ return `<g transform="translate(250 640)"><ellipse cx="0" cy="140" rx="80" ry="18" fill="#d9d2ef"/><ellipse cx="0" cy="140" rx="80" ry="18" fill="none" stroke="#c8a85e" stroke-width="3"/>
+  ${[0,1,2].map(i=>`<ellipse cx="0" cy="${-6+i*46}" rx="${64-i*5}" ry="14" fill="none" stroke="${d.scan?'#9fe8c0':'#e7cf8c'}" stroke-width="4" opacity=".9"/>`).join('')}
+  <path d="M0 -26 V 136" stroke="#fff" stroke-width="2" opacity=".5" stroke-dasharray="4 8"/><circle cy="56" r="110" fill="${d.scan?'url(#gGreen)':'url(#gGold)'}" opacity=".45"/></g>
+ <g transform="translate(1400 760)"><rect x="-110" y="0" width="220" height="140" fill="url(#gStone)"/><rect x="-118" y="-8" width="236" height="12" fill="#c8a85e"/>
+  ${eq.tablet?'':`<g transform="translate(-66 -50)"><polygon points="0,-28 24,-14 24,14 0,28 -24,14 -24,-14" fill="#dff4ff" opacity=".85" stroke="#fff" stroke-width="2"/><circle r="44" fill="url(#gCyan)"/></g>`}
+  ${eq.compass?'':`<g transform="translate(0 -56)"><circle r="24" fill="none" stroke="#c8a85e" stroke-width="4"/><path d="M0 -18 L 6 0 L 0 18 L -6 0 Z" fill="#fff6d8"/><circle r="44" fill="url(#gGold)"/></g>`}
+  ${eq.talisman?'':`<g transform="translate(66 -50)"><path d="M0 -24 A 24 24 0 1 0 0 24 A 17 17 0 1 1 0 -24 Z" fill="#e2d6ff"/><circle cx="7" cy="0" r="6" fill="#fff6d8"/><circle r="44" fill="url(#gViolet)"/></g>`}</g>
+ ${eq.tablet?`<g transform="translate(1400 540)"><polygon points="0,-44 38,-22 38,22 0,44 -38,22 -38,-22" fill="#dff4ff" opacity=".9" stroke="#fff" stroke-width="2"/><path d="M-22 -8 H22 M-22 4 H14 M-22 16 H18" stroke="#5a6bb0" stroke-width="3"/><circle r="80" fill="url(#gCyan)" opacity=".7"/></g>`:''}`; }
 ART.car.prep=function(state){
  const d=state.duty, eq=state.spirit.equipment, ready=prepDone()||state.currentPhase==='voyage';
  return corridor({door:ready?'#fff3c4':'#cfd8ff'})+`
@@ -894,7 +908,7 @@ const LOC_ORDER = ['dawnForest','starIslands','reverseRealm','boundlessCorridor'
 /* 車廂順序固定（車頭 → 車尾）。image 欄位填入路徑即改用正式圖片。 */
 const CARRIAGES = {
  cab:{name:'火車頭駕駛室',short:'駕駛室',image:null},
- prep:{name:'整備前廊',short:'整備',image:null},
+ prep:{name:'整備前廊',short:'整備',image:null},  /* 舊存檔相容用；值勤準備已全部移到駕駛室 */
  observation:{name:'星月觀測車廂',short:'觀測',image:null},
  nature:{name:'自然調節車廂',short:'自然',image:null},
  habitat:{name:'棲息車廂',short:'棲息',image:null},
@@ -902,7 +916,7 @@ const CARRIAGES = {
   pano:{image:'assets/memory-pano.jpg',w:2576,h:1274}},
  observatory:{name:'火車尾展望台',short:'展望台',image:null}
 };
-const TRAIN = ['cab','prep','observation','nature','habitat','memory','observatory'];  /* 車頭 → 車尾 */
+const TRAIN = ['cab','observation','nature','habitat','memory','observatory'];  /* 車頭 → 車尾（整備前廊已併入駕駛室，不再是獨立車廂） */
 
 const LIFE_TYPES = {other:'異界生命',domain:'界域生命',mind:'意念生命',lost:'失所生命'};
 const ZONES = {spring:{name:'靈泉水域',x:58,y:83},rings:{name:'懸浮棲息環',x:50,y:22,mx:60,my:32},moss:{name:'自然棲台',x:20.6,y:70},crystal:{name:'晶石能量平台',x:78,y:62},veil:{name:'靜謐結界',x:65.6,y:46},rest:{name:'特殊生命休憩區',x:34,y:90}};
@@ -1111,7 +1125,7 @@ const COLLECTIBLES = {
  crystal_echo:{name:'浮島晶體碎片',kind:'item',icon:'#dfe6ff',desc:'星河浮島的晶體碎片。貼近耳邊，能聽見很遠的潮汐聲。'}
 };
 const CLUES = {
- clue_wake:{title:'沉睡的紀錄',text:'記憶晶石中殘存一段斷裂的訊息：「……若有一日列車再次醒來，願醒來的那一位……」其後的內容無法讀取。'},
+ clue_wake:{title:'沉睡的紀錄',text:'典藏車廂的存檔晶石中殘存一段斷裂的訊息：「……若有一日列車再次醒來，願醒來的那一位……」其後的內容無法讀取。'},
  clue_ring:{title:'相同的圓環',text:'晨曦森林的古樹上刻著與列車門框相同的圓環。兩者的刻痕深度與角度完全一致，像是出自同一雙手。'},
  clue_voyage:{title:'航行中亮起的符號',text:'首次穿越界壁時，車廂連接處浮現一列無法辨識的符號，持續七次心跳的時間後熄滅。'},
  clue_lumi_tale:{title:'古樹的故事',text:'露米轉述：很久以前，一列發光的車停在森林邊，車上的人在古樹上畫了圓圈，離開時「看起來不難過」。'},
@@ -1154,7 +1168,7 @@ function save(){ try{ state.savedAt=Date.now(); localStorage.setItem(SAVE_KEY,JS
 const aboard = id => !!(state.passengers[id]&&state.passengers[id].aboard);
 const done = id => state.completedEvents.includes(id);
 function complete(id){ if(!done(id)) state.completedEvents.push(id); state.pendingEvents=state.pendingEvents.filter(e=>e!==id); save(); }
-function logJ(t){ state.log.push({j:state.journeyCount,t}); save(); }
+function logJ(t){ state.log.push({j:state.journeyCount+(state.currentPhase==='voyage'?1:0),t}); save(); }  /* 航行途中的事記到正在進行的那一趟 */
 function addItem(id,quiet){ if(!state.collectibles.includes(id)){ state.collectibles.push(id); save(); if(!quiet) toast('收藏：'+COLLECTIBLES[id].name); return true;} return false; }
 function addClue(id){ if(!state.clues.includes(id)){ state.clues.push(id); save(); setTimeout(()=>toast('守護者線索 +1'),300); } }
 const STAGE_NAMES=['陌生','認識','熟悉','留下重要回憶'];
@@ -1263,9 +1277,9 @@ const INTERACT = {
  /* 典藏車廂 */
  'mem:log'(){ panel(`<div class="eyebrow">旅程之書</div><h2>旅程紀錄</h2><ul class="log">${state.log.slice().reverse().map(l=>`<li><span class="j">No.${l.j}</span><span>${l.t}</span></li>`).join('')}</ul>`); },
  'mem:items'(){ itemsPanel(); },
- 'mem:clues'(){ panel(`<div class="eyebrow">古代資料保存裝置</div><h2>守護者線索</h2><p style="color:var(--mute)">${state.clues.length} / ${CLUE_ORDER.length} 片段已讀取</p>${CLUE_ORDER.map(id=>state.clues.includes(id)?`<div class="clue"><b>${CLUES[id].title}</b><br>${CLUES[id].text}</div>`:`<div class="clue unk">— 尚未讀取的片段 —</div>`).join('')}`); },
+ 'mem:clues'(){ panel(`<div class="eyebrow">記憶典藏車廂</div><h2>線索解讀台・守護者之謎</h2><p>散落在各個界域的古代片段。拼起來，就是這列車與守護者的過去。</p><p style="color:var(--mute)">${state.clues.length} / ${CLUE_ORDER.length} 片段已解讀</p>${CLUE_ORDER.map(id=>state.clues.includes(id)?`<div class="clue"><b>${CLUES[id].title}</b><br>${CLUES[id].text}</div>`:`<div class="clue unk">— 尚未解讀的片段 —</div>`).join('')}`); },
  'mem:save'(){ savePanel('game'); },
- /* 火車頭：整備前廊與駕駛室 */
+ /* 火車頭駕駛室：值勤準備與出發確認 */
  'prep:scan'(){ scanPanel(); },
  'prep:equip'(){ equipPanel(); },
  'prep:brief'(){ briefPanel(); },
@@ -1289,7 +1303,7 @@ const INTERACT = {
 };
 
 /* ================================================================
-   值勤系統：整備前廊（量測・裝備・星途符牒）→ 駕駛室（號誌・車門聯鎖）→ 向領頭報備 → 自動出發
+   值勤系統：全部在駕駛室完成（量測・裝備・星途符牒・號誌・車門聯鎖）→ 向領頭報備 → 自動出發
    ================================================================ */
 const NPCS = { dragon:{name:'曦淵・領頭', art:()=>ART.portrait.dragon()} };
 const ROUTE = ['dawnForest','starIslands'];   /* 既定航程：依序循環停靠已開放的站點 */
@@ -1317,7 +1331,7 @@ function prepGate(){ const d=state.duty;
 /* 3-1 身體污染值量測 */
 function scanResult(r){ return `<div class="rune-res"><span class="rune-dot"></span><div><b>界染度 ${r.value} / 100</b><br>判定：${r.level}・可以值勤</div></div><p style="color:var(--mute);font-size:13px">低於 20 為純淨；20–50 為微染，需要淨化；高於 50 不得值勤。</p>`; }
 function scanPanel(){ const c=state.spirit.contamination, did=state.duty.scan;
- const ov=panel(`<div class="eyebrow">整備前廊・淨界晶環</div><h2>身體污染值量測</h2>
+ const ov=panel(`<div class="eyebrow">駕駛室・淨界晶環</div><h2>身體污染值量測</h2>
  <div class="scan"><svg viewBox="0 0 300 360" class="scan-svg ${did?'ok':''}" aria-hidden="true">
   <ellipse cx="150" cy="335" rx="80" ry="12" fill="#9a8cff" opacity=".35"/>
   <ellipse cx="108" cy="170" rx="40" ry="72" transform="rotate(-25 108 170)" fill="#e7e2ff" opacity=".35"/><ellipse cx="192" cy="170" rx="40" ry="72" transform="rotate(25 192 170)" fill="#e7e2ff" opacity=".35"/>
@@ -1337,7 +1351,7 @@ function equipPanel(){ const e=state.spirit.equipment, dest=nextStop();
  const icon={tablet:`<polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="#dff4ff" stroke="#fff" stroke-width="2"/><path d="M32 44 H68 M32 54 H60 M32 64 H64" stroke="#5a6bb0" stroke-width="3"/>`,
   compass:`<circle cx="50" cy="50" r="32" fill="none" stroke="#e8c983" stroke-width="5"/><path d="M50 22 L 58 50 L 50 78 L 42 50 Z" fill="#fff6d8"/>`,
   talisman:`<path d="M50 18 A 32 32 0 1 0 50 82 A 22 22 0 1 1 50 18 Z" fill="#e2d6ff"/><circle cx="60" cy="50" r="8" fill="#fff6d8"/>`};
- const ov=panel(`<div class="eyebrow">整備前廊・裝備台</div><h2>領取航程裝備</h2><p>三件裝備懸浮在台座上方，輕觸即可領取。</p>
+ const ov=panel(`<div class="eyebrow">駕駛室・裝備台</div><h2>領取航程裝備</h2><p>三件裝備懸浮在台座上方，輕觸即可領取。</p>
   <div class="grid">${Object.entries(EQUIP).map(([k,q])=>`<button class="card ${e[k]?'got':''}" data-eq="${k}"><div class="art"><svg viewBox="0 0 100 100">${icon[k]}</svg></div><div class="t">${q.name}</div><div class="s">${e[k]?'已領取':'輕觸領取'}</div></button>`).join('')}</div><div id="eqd"></div>`);
  const show=k=>{ const extra = k==='compass'?`目前航向：${LOCATIONS[dest].name}（${LOCATIONS[dest].realm}）。航道上沒有偵測到異常。`:k==='talisman'?`本次航程的防護：${talismanEffect(dest)}。`:`已記錄車次 ${trainNo()}，預定停靠 ${LOCATIONS[dest].name}。`;
   ov.querySelector('#eqd').innerHTML=`<p><b>${EQUIP[k].name}</b>　${EQUIP[k].desc}</p><p style="color:var(--gold)">${extra}</p>`; };
@@ -1477,7 +1491,7 @@ const STREAK={raf:0,parts:[],
   this.raf=requestAnimationFrame(()=>this.tick()); } };
 
 /* ================================================================
-   記憶晶石：存檔／讀檔（多欄位、縮圖、重新命名、覆蓋、二次確認刪除）
+   存檔晶石：存檔／讀檔（多欄位、縮圖、重新命名、覆蓋、二次確認刪除）
    ================================================================ */
 const SLOT_KEY='riyue-slots-v1', AUTO_THUMB_KEY='riyue-autothumb', SLOT_MAX=12;
 function slotsGet(){ try{ const a=JSON.parse(localStorage.getItem(SLOT_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
@@ -1519,7 +1533,7 @@ function savePanel(mode){   /* mode: 'game' 可封存與喚回；'title' 只能�
   c.querySelector('#cf-y').onclick=yes; c.querySelector('#cf-n').onclick=()=>{ c.innerHTML=''; }; };
  const draw=()=>{
   const a=autoItem(), list=(a?[a]:[]).concat(slotsGet().sort((x,y)=>y.updated-x.updated)), s=sel&&list.find(x=>x.id===sel);
-  let h=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">記憶晶石</div><h2>${mode==='title'?'接續旅程':'封存與喚回旅程'}</h2>${msg?`<p class="pmsg">${msg}</p>`:''}`;
+  let h=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">存檔晶石</div><h2>${mode==='title'?'接續旅程':'存檔與讀檔'}</h2>${msg?`<p class="pmsg">${msg}</p>`:''}`;
   if(!s){
    h+=`<p>${mode==='title'?'選擇一段旅程記憶，確認後從那一刻接續。':'把此刻的旅程封存成一段記憶，或喚回過去封存的記憶。'}</p><div class="slots">`;
    if(mode==='game') h+=`<button class="slot new" id="sl-new"><div class="th"><span>＋</span></div><div class="nm">封存目前的旅程</div><div class="mt">建立新的記憶（${slotsGet().length} / ${SLOT_MAX}）</div></button>`;
@@ -1557,6 +1571,7 @@ function savePanel(mode){   /* mode: 'game' 可封存與喚回；'title' 只能�
 function normalizeState(){
  if(!LOCATIONS[state.currentLocation]) state.currentLocation='dawnForest';
  if(!CARRIAGES[state.currentCarriage]) state.currentCarriage='observation';
+ if(state.currentCarriage==='prep') state.currentCarriage='cab';
  if(state.currentPhase==='voyage'&&!state.voyage) state.currentPhase='docked';
  const f=freshState(); state.spirit=Object.assign(f.spirit,state.spirit||{}); state.spirit.equipment=Object.assign({tablet:false,compass:false,talisman:false},state.spirit.equipment||{});
  state.duty=Object.assign(dutyFresh(),state.duty||{}); if(!state.seen) state.seen={};
@@ -1904,17 +1919,27 @@ function navPanel(){ const voy=state.currentPhase==='voyage', from=voy?state.voy
   return `<div class="dest ${cur||nx?'cur':''}" style="cursor:default"><div class="art" style="${un?'':'filter:grayscale(1) brightness(.35)'}">${locSvg(id)}</div><div class="meta"><div class="t">${un?L.name:'訊號微弱'}</div><div class="s">${L.realm}・${un?L.domain:'未知領域'}${cur?'　目前停靠':''}${nx?'　下一站':''}</div></div></div>`; }).join('')}</div>`); }
 
 /* ---------- 記憶典藏車廂 ---------- */
-function journeyPanel(){ const g={}; state.log.forEach(l=>{ (g[l.j]=g[l.j]||[]).push(l.t); });
- panel(`<div class="eyebrow">旅程紀錄・旅程之書</div><h2>歷次旅程</h2><p style="color:var(--mute)">共 ${state.journeyCount} 趟旅程・${state.log.length} 則紀錄</p>
- <div class="jlog">${Object.keys(g).map(Number).sort((a,b)=>b-a).map(j=>`<section><h3><span>No.${j}</span>${j===0?'甦醒':`第 ${j} 趟旅程`}</h3><ul>${g[j].map(t=>`<li>${t}</li>`).join('')}</ul></section>`).join('')}</div>`); }
+/* 航行日誌：依旅程分組；出發前的值勤步驟合併成一行，歸到它準備的那一趟旅程；每則紀錄標上類別 */
+const LOG_KIND=[['duty','值勤',/^(值勤量測|領取了|核對值勤資訊|確認前方星光號誌|確認車門聯鎖|向領頭曦淵報備)/],['route','航程',/^列車自/],
+ ['life','乘客',/登上了列車|下車|再次相遇|相遇|留下了/],['grow','培育',/培植箱/],['find','發現',/發現|取得|找到|記錄到/]];
+function logKind(t){ const k=LOG_KIND.find(([,,re])=>re.test(t)); return k?k[0]:'other'; }
+function journeyPanel(){ const g={};
+ state.log.forEach(l=>{ const k=logKind(l.t), j=k==='duty'?l.j+1:l.j; const b=g[j]=g[j]||{duty:[],items:[]}; if(k==='duty') b.duty.push(l.t); else b.items.push({k,t:l.t}); });
+ const tag={route:'航程',life:'乘客',find:'發現',grow:'培育',other:'紀事'};
+ const head=j=>{ if(j===0) return '甦醒'; const r=(g[j].items.find(x=>x.k==='route')||{}).t, m=r&&r.match(/^列車自(.+?)出發，抵達(.+?)。/);
+  return m?`第 ${j} 趟旅程　<small>${m[1]} → ${m[2]}</small>`:j>state.journeyCount?`第 ${j} 趟旅程　<small>出發準備中</small>`:`第 ${j} 趟旅程`; };
+ const dutyLine=a=>{ const sc=a.map(t=>t.match(/界染度 (\d+)/)).find(Boolean); const ok=a.some(t=>/^向領頭曦淵報備/.test(t));
+  return `<li class="lk-duty"><i>值勤</i>${ok?'完成出發前值勤':'出發前值勤進行中'}（${a.length} 項）${sc?`・界染度 ${sc[1]}`:''}</li>`; };
+ panel(`<div class="eyebrow">記憶典藏車廂</div><h2>航行日誌・每趟旅程的經過</h2><p>列車自動記下每一趟旅程：從哪裡出發、到了哪裡、誰上下車、找到了什麼。</p><p style="color:var(--mute)">共 ${state.journeyCount} 趟旅程・${state.log.length} 則紀錄</p>
+ <div class="jlog">${Object.keys(g).map(Number).sort((a,b)=>b-a).map(j=>`<section><h3><span>No.${j}</span>${head(j)}</h3><ul>${g[j].duty.length?dutyLine(g[j].duty):''}${g[j].items.filter(x=>x.k!=='route').map(x=>`<li class="lk-${x.k}"><i>${tag[x.k]}</i>${x.t}</li>`).join('')}${(g[j].items.find(x=>x.k==='route')?`<li class="lk-route"><i>航程</i>${g[j].items.find(x=>x.k==='route').t}</li>`:'')}</ul></section>`).join('')}</div>`); }
 const gemIcon=c=>`<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="40" fill="${c}" opacity=".22"/><polygon points="50,14 70,50 50,86 30,50" fill="${c}"/><polygon points="50,14 70,50 50,50" fill="#fff" opacity=".6"/><polygon points="30,50 50,86 50,50" fill="#000" opacity=".12"/></svg>`;
 function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item');
- const ov=panel(`<div class="eyebrow">記憶典藏車廂</div><h2>收藏典藏架</h2><p style="color:var(--mute)">已收藏 ${itemsHave().length} / ${items.length}</p>
+ const ov=panel(`<div class="eyebrow">記憶典藏車廂</div><h2>收藏櫃・旅途收集品</h2><p>旅途中取得的物品，以及乘客留下的禮物。</p><p style="color:var(--mute)">已收藏 ${itemsHave().length} / ${items.length}</p>
  <div class="grid">${items.map(id=>{ const c=COLLECTIBLES[id]; return state.collectibles.includes(id)?`<button class="card" data-it="${id}"><div class="art">${gemIcon(c.icon)}</div><div class="t">${c.name}</div><div class="s">${ORIGIN_NOTE[id]||''}</div></button>`:`<div class="card locked"><div class="art">${gemIcon('#888')}</div><div class="t">未收藏</div></div>`; }).join('')}</div><div id="sc"></div>`);
  const show=id=>{ const c=COLLECTIBLES[id]; ov.querySelectorAll('[data-it]').forEach(b=>b.classList.toggle('got',b.dataset.it===id));
   ov.querySelector('#sc').innerHTML=`<div class="showcase"><div class="gem3d">${gemIcon(c.icon)}</div><div><h3>${c.name}</h3><dl class="kv"><dt>取得處</dt><dd>${ORIGIN_NOTE[id]||'—'}</dd></dl><p>${c.desc}</p></div></div>`; };
  ov.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>show(b.dataset.it)); const first=items.find(id=>state.collectibles.includes(id)); if(first) show(first); }
-/* 記憶水晶：由既有劇情進度推導出的記憶，不新增設定 */
+/* 回憶水晶（重要時刻）：由既有劇情進度推導出的記憶，不新增設定 */
 const MEMORIES=[
  {id:'wake',title:'甦醒',scene:'origin',have:()=>!!state.introDone,text:'列車在沉睡之地醒來。四周是白色的石、金色的弧，與一扇巨大的窗。從那天起，由你來巡視它。'},
  {id:'dragon',title:'向領頭報備',who:'dragon',have:()=>!!state.storyFlags.metDragon,text:'「從今天起，你就是這列車的值勤精靈。每次出發前，來向我報備。」'},
@@ -1938,11 +1963,11 @@ const memsHave=()=>MEMORIES.filter(m=>m.have());
 function memArt(m){ if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
  return `<span class="portrait-wash">${portraitOf(charOf(m.who))}${m.who2?portraitOf(charOf(m.who2)):''}</span>`; }
 function memoryPanel(){ const ov=panel('','mems'), pn=ov.querySelector('.panel');
- const grid=()=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">記憶典藏車廂</div><h2>記憶水晶</h2><p>旅途中重要的片刻，會在水晶裡凝結成光。已凝結 ${memsHave().length} / ${MEMORIES.length}。</p>
+ const grid=()=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">記憶典藏車廂</div><h2>回憶水晶・重要時刻</h2><p>相遇、告別與旅途中的轉折，會在水晶裡凝結成一幕畫面。已凝結 ${memsHave().length} / ${MEMORIES.length}。</p>
   <div class="shards">${MEMORIES.map(m=>m.have()?`<button class="shard" data-m="${m.id}"><span class="cr">${memArt(m)}</span><span class="t">${m.title}</span></button>`:`<div class="shard lock"><span class="cr"></span><span class="t">尚未凝結的記憶</span></div>`).join('')}</div>`;
   pn.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>view(b.dataset.m)); };
  const view=id=>{ const m=MEMORIES.find(x=>x.id===id); SFX.chime();
-  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">記憶水晶</div><h2>${m.title}</h2><div class="memview"><div class="cr">${memArt(m)}</div><blockquote>${m.text}</blockquote></div><button class="plink mb" id="mb">‹ 返回所有記憶</button>`;
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">回憶水晶</div><h2>${m.title}</h2><div class="memview"><div class="cr">${memArt(m)}</div><blockquote>${m.text}</blockquote></div><button class="plink mb" id="mb">‹ 返回所有記憶</button>`;
   pn.querySelector('#mb').onclick=grid; };
  grid(); }
 
@@ -2104,14 +2129,11 @@ const HSDEF=[
  {id:'cab-compass',scene:'cab',name:'星軌羅盤座',at:{x:29,y:80},layer:2,act:'cab:runes'},
  {id:'cab-dragon',scene:'cab',name:'領頭・曦淵',at:{x:52,y:17},layer:4,act:'cab:dragon',track:false,
   imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)},
- {id:'cab-back',scene:'cab',name:'返回整備前廊',shape:'back',at:{x:7,y:94},act:'go:prep'},
- /* 整備前廊 */
- {id:'prep-scan',scene:'prep',name:'淨界晶環・身體量測',at:{x:29.4,y:44},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&!state.duty.scan,done:()=>!!state.duty.scan},
- {id:'prep-equip',scene:'prep',name:'裝備台',at:{x:72,y:57},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
- {id:'prep-brief',scene:'prep',name:'星途符牒',at:{x:84,y:37},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
- {id:'prep-door',scene:'prep',name:()=>prepDone()||state.currentPhase==='voyage'?'進入火車頭駕駛室':'火車頭駕駛室',shape:'door',at:{x:50,y:50},act:'go:cab',
-  lock:()=>state.currentPhase==='docked'&&!prepDone()?'完成身體量測、裝備領取與資訊核對後，符文鎖才會打開。':null,onLocked:()=>prepGate()},
- {id:'prep-back',scene:'prep',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},act:'go:observation'},
+ /* 值勤準備（原整備前廊）：全部在駕駛室完成 */
+ {id:'cab-scan',scene:'cab',name:'淨界晶環・身體量測',at:{x:15.6,y:76},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&!state.duty.scan,done:()=>!!state.duty.scan},
+ {id:'cab-equip',scene:'cab',name:'裝備台',at:{x:87.5,y:80},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
+ {id:'cab-brief',scene:'cab',name:'星途符牒',at:{x:87.5,y:60},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
+ {id:'cab-back',scene:'cab',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},act:'go:observation'},
  /* 星月觀測車廂 */
  {id:'obs-window',scene:'observation',name:'全景觀測窗',at:{x:50,y:30},layer:2,act:'obs:window'},
  {id:'obs-chart',scene:'observation',name:'古代星圖',at:{x:7.2,y:31},layer:3,act:()=>starMap(),ver:()=>state.visitedLocations.length},
@@ -2121,7 +2143,7 @@ const HSDEF=[
  {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:93.1,y:25.5},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
   imp:()=>anomFound().length>0&&seenOf('obs-anomrec')!==String(anomFound().length)},
  {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:72,y:20},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
- {id:'obs-front',scene:'observation',name:'前方：火車頭整備前廊',shape:'door',at:{x:50,y:75},act:'go:prep'},
+ {id:'obs-front',scene:'observation',name:'前方：火車頭駕駛室',shape:'door',at:{x:50,y:75},act:'go:cab'},
  {id:'obs-back',scene:'observation',name:'後方：自然調節車廂',shape:'back',at:{x:7,y:94},act:'go:nature'},
  /* 自然調節車廂 */
  {id:'nat-vault',scene:'nature',name:'稀有種子典藏櫃',at:{x:10,y:48},layer:3,act:'nat:vault',ver:()=>seedsHave().length},
@@ -2142,14 +2164,14 @@ const HSDEF=[
  {id:'hab-door',scene:'habitat',name:'前往記憶典藏車廂',shape:'door',at:{x:50,y:53},act:'go:memory'},
  {id:'hab-back',scene:'habitat',name:'返回自然調節車廂',shape:'back',at:{x:7,y:94},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
- {id:'mem-book',scene:'memory',name:'浮空典藏書',at:MP(2140,268),layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
+ {id:'mem-book',scene:'memory',name:'浮空典藏書・世界與生命圖鑑',at:MP(2140,268),layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
   imp:()=>seenOf('mem-book')===undefined&&state.discoveredLifeforms.length>0},
- {id:'mem-crystal',scene:'memory',name:'記憶水晶',at:MP(503,800),layer:3,act:()=>memoryPanel(),ver:()=>memsHave().length},
- {id:'mem-log',scene:'memory',name:'旅程紀錄・旅程之書',at:MP(1617,482),layer:3,act:'mem:log',ver:()=>state.journeyCount},
- {id:'mem-items',scene:'memory',name:'收藏典藏架',at:MP(2222,835),layer:3,act:'mem:items',ver:()=>itemsHave().length},
- {id:'mem-clues',scene:'memory',name:'古代資料保存裝置',at:MP(1712,720),layer:3,act:'mem:clues',ver:()=>state.clues.length},
- {id:'mem-armillary',scene:'memory',name:'星圖儀',at:MP(268,610),layer:1,hint:'星圖儀緩緩轉動。它的光點和浮空典藏書裡的界域地誌一一對應。'},
- {id:'mem-save',scene:'memory',name:'記憶晶石・存檔／讀檔',shape:'save',at:MP(393,300),layer:3,act:'mem:save',track:false},
+ {id:'mem-crystal',scene:'memory',name:'回憶水晶・重要時刻',at:MP(503,800),layer:3,act:()=>memoryPanel(),ver:()=>memsHave().length},
+ {id:'mem-log',scene:'memory',name:'航行日誌・每趟旅程的經過',at:MP(1617,482),layer:3,act:'mem:log',ver:()=>state.journeyCount},
+ {id:'mem-items',scene:'memory',name:'收藏櫃・旅途收集品',at:MP(2222,835),layer:3,act:'mem:items',ver:()=>itemsHave().length},
+ {id:'mem-clues',scene:'memory',name:'線索解讀台・守護者之謎',at:MP(1712,720),layer:3,act:'mem:clues',ver:()=>state.clues.length},
+ {id:'mem-armillary',scene:'memory',name:'星圖儀・界域地誌',at:MP(268,610),layer:3,act:()=>openBook('atlas'),ver:()=>state.visitedLocations.length},
+ {id:'mem-save',scene:'memory',name:'存檔晶石・存檔／讀檔',shape:'save',at:MP(393,300),layer:3,act:'mem:save',track:false},
  {id:'mem-door',scene:'memory',name:'前往棲息車廂',shape:'door',at:MP(1272,700),act:'go:habitat'},
  {id:'mem-rear',scene:'memory',name:'後方連接門：火車尾展望台',shape:'door',at:MP(8,700),act:'go:observatory'},
  /* 火車尾展望台 */
@@ -2263,7 +2285,6 @@ function transition(change,after,door){
 function moveTo(car){
  if(TRANS.busy) return;
  const nb=neighbors(state.currentCarriage); if(car!==nb.fwd&&car!==nb.back) return; // 只能前往相鄰車廂
- if(car==='cab'&&state.currentPhase==='docked'&&!prepDone()) return prepGate();
  const from=state.currentCarriage;
  transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; },()=>checkCarriageEvents(),true);
 }
@@ -2416,8 +2437,8 @@ function intro(){
  cine(['很久很久，什麼都沒有動。','然後，一點光落在你身上。','你睜開眼睛。四周是白色的石、金色的弧，與一扇巨大的窗。','這是一列由古代守護者建造的列車。它沉睡了很久，而現在，它和你一起醒來了。','你不知道它為什麼停在這裡，也不知道建造它的人去了哪裡。','你只知道一件事：從今天起，由你來巡視它。'],()=>{
   state.introDone=true; addClue('clue_wake');
   /* 開場結束 → 進入小精靈的值勤準備 */
-  state.currentCarriage='prep'; render();
-  cine(['<span class="big">值勤準備</span><span class="sub">整備前廊・身體量測・裝備領取・資訊核對</span>'],()=>{ toast('點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true);
+  state.currentCarriage='cab'; render();
+  cine(['<span class="big">值勤準備</span><span class="sub">駕駛室・身體量測・裝備領取・資訊核對</span>'],()=>{ toast('點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true);
  });
 }
 function boot(){ normalizeState(); render(); showMain(); }
