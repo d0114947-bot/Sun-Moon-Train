@@ -84,6 +84,8 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 @keyframes taintp{50%{opacity:.6}}
 .rune-res.lv-mild .rune-dot{background:#ffd27a;box-shadow:0 0 12px #ffd27a}.rune-res.lv-heavy .rune-dot{background:#ff8a8a;box-shadow:0 0 12px #ff8a8a}
 .pur-done{color:#d9c8ff;font-size:13px}
+/* 乘客互動：沒說話的那位稍微淡出 */
+.dlg .who.dim{opacity:.4;filter:saturate(.5) brightness(.85);transition:opacity .3s}
 /* 照顧需求 */
 .ov.care .panel{max-width:720px}
 .ztabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.ztabs button{padding:5px 11px;border-radius:999px;border:1px solid rgba(232,201,131,.35);background:none;color:var(--silver);font:inherit;font-size:12px;cursor:pointer;position:relative}
@@ -1206,6 +1208,43 @@ const EVENTS = {
  meet_lumi_sola:{trigger:'carriage',car:'habitat',need:()=>aboard('lumi')&&aboard('sola'),title:'露米與索拉',run:()=>dialogueScript([
    ['lumi','你是會飛的水嗎？'],['sola','我是會講笑話的水。差很多喔。'],['lumi','那講一個。'],['sola','為什麼森林從來不迷路？……因為它們都有「根」據。'],['lumi','（角上的光一起閃了一下）'],['sola','她笑了！我第一次在這輛車上讓人笑出來！'],['self','兩道光在棲息車廂裡輕輕繞著彼此轉了一圈。']
   ],()=>{logJ('露米與索拉在棲息車廂相遇。索拉的笑話終於有人笑了。');})},
+ /* ---------- 乘客之間的互動：兩位乘客同時在車上（有些還要特定條件）時，進入棲息車廂就會出現 ---------- */
+ int_lumi_felinia:{trigger:'carriage',car:'habitat',need:()=>aboard('lumi')&&aboard('felinia'),title:'露米與羽貓獸',run:()=>interScene('lumi','felinia',[
+   ['lumi','你從很高的地方下來的嗎？你的羽毛上有雲的味道。'],['felinia','……嗯。山很高，雲會繞著樹。'],['lumi','山上也有早晨嗎？'],['felinia','有。第一道光照到崖壁的時候，整座山都會變成金色。'],
+   ['lumi','（角上的光點一個一個亮起來。）那我要記住這個早晨。我還沒看過，但是我先記住。'],['felinia','（羽貓獸的耳翼輕輕抖了一下，從圓環上滑下來，停在幼鹿旁邊。）'],['self','一隻沒看過山，一隻很久沒看過森林。牠們安靜地靠在一起，看著車窗外的光。']
+  ],'露米和羽貓獸聊起了山上的早晨。','露米與羽貓獸','沒看過山的幼鹿，和很久沒看過森林的羽貓獸，靠在一起看窗外的光。')},
+ int_sola_levi:{trigger:'carriage',car:'habitat',need:()=>aboard('sola')&&aboard('leviathaurora'),title:'索拉與淵光巨',run:()=>interScene('sola','leviathaurora',[
+   ['sola','哇，好大的光！你也是從海裡來的嗎？我是從星河來的，那也算一種海吧！'],['leviathaurora','……（牠身上的光點沿著脊椎亮了一下。）'],['sola','你剛剛是不是在說話？用光說話？好厲害！那我講一個笑話，你用光笑給我看。'],
+   ['sola','為什麼深海的魚都不怕黑？……因為牠們都很「深」思熟慮！'],['leviathaurora','（光點停了一拍，然後從頭到尾，一路亮到了尾鰭。）'],['sola','牠笑了！整條都亮了！這是我聽過最大的笑聲！'],['self','靈泉的水面映著一大一小兩團光，一閃一閃，像在說只有它們聽得懂的話。']
+  ],'索拉對淵光巨講了冷笑話，淵光巨用光笑了。','光的笑聲','索拉講了一個冷笑話。淵光巨從頭到尾鰭，一路亮了起來——那是用光發出的笑聲。')},
+ int_cinder_pyro:{trigger:'carriage',car:'habitat',need:()=>aboard('cinder')&&aboard('pyro')&&zoneOf('cinder')===zoneOf('pyro'),title:'燼風帆獸與燼角巨獸',run:()=>interScene('cinder','pyro',[
+   ['pyro','……你也有帆，也有尾巴，看起來像龍。可是你身上沒有火。'],['cinder','嗯。有人叫我們「偽龍」。'],['pyro','偽龍。（熔岩光在裂隙裡閃了一下。）他們也叫我暴君。名字都是別人取的。'],
+   ['cinder','太陽給我力氣，大地給你力氣。我們都不是真的會噴火的龍。'],['pyro','……哼。至少你知道自己的力氣從哪裡來。'],['self','兩道影子並排待在晶石平台上，一道琥珀色，一道熔岩色。晶石的光因此變得很溫暖。']
+  ],'燼風帆獸和燼角巨獸在同一座晶石平台上，聊起了別人取的名字。','偽龍與暴君','「名字都是別人取的。」兩道影子並排待在晶石平台上，一道琥珀色，一道熔岩色。')},
+ int_pyro_frost:{trigger:'carriage',car:'habitat',need:()=>aboard('pyro')&&aboard('frost'),title:'燼角巨獸與霜脊冰原獸',run:()=>interScene('pyro','frost',[
+   ['frost','……你經過的地方，地板在冒煙。'],['pyro','你經過的地方，地板在結霜。'],['frost','我的地盤，要冷。'],['pyro','我的地盤，要熱。'],
+   ['self','（兩頭巨獸隔著靈泉對望。泉水的一邊結起薄冰，另一邊冒出白色的蒸氣。）'],['frost','……不過，你沒有越過泉水。'],['pyro','你也沒有。（牠哼出一口帶火星的熱氣。）這輛車的地盤，不是我們的。我分得清楚。'],
+   ['frost','嗯。那就各自待著。'],['self','靈泉中間，冰和蒸氣交會的地方，起了一層薄薄的霧。誰也沒有再往前一步。']
+  ],'燼角巨獸和霜脊冰原獸隔著靈泉，劃清了各自的地盤。','冰與火的界線','一邊結冰，一邊冒煙。兩頭巨獸誰也沒有越過靈泉——這輛車的地盤，不屬於牠們任何一個。')},
+ int_felinia_aelis:{trigger:'carriage',car:'habitat',need:()=>aboard('felinia')&&aboard('aelis'),title:'羽貓獸與艾莉絲',run:()=>interScene('aelis','felinia',[
+   ['aelis','（艾莉絲盯著羽貓獸的臉看了很久。）……你的臉，跟我好像。'],['felinia','你的耳朵，比我大很多。'],['aelis','大耳朵聽得見沙子底下的心跳。你的耳翼呢？'],['felinia','聽得見風要轉向的聲音。在山上，那比心跳更重要。'],
+   ['aelis','那我們一個聽地下，一個聽天上。'],['felinia','（牠的耳翼和艾莉絲的大耳朵，同時轉向了車窗。）……你也聽到了嗎？'],['aelis','嗯。前面的風，在唱歌。'],['self','一雙耳翼，一對大耳朵，同時對著窗外。牠們聽見的，是你聽不見的東西。']
+  ],'羽貓獸和艾莉絲比較了彼此的耳朵，一起聽見了窗外的風。','兩種耳朵','一個聽地下的心跳，一個聽天上的風。牠們同時轉向窗外，聽見了你聽不見的聲音。')},
+ int_vandora_aelis:{trigger:'carriage',car:'habitat',need:()=>aboard('vandora')&&aboard('aelis')&&state.currentPhase==='voyage',title:'夜行者的捉迷藏',run:()=>interScene('vandora','aelis',[
+   ['self','（航行中，車廂的燈調暗了一些。自然棲台的苔葉間，一塊綠色消失了。）'],['aelis','……我知道你在那裡。'],['vandora','你看不見我。'],['aelis','看不見。可是我聽得見你的觸鬚在動。左邊，第三片葉子底下。'],
+   ['vandora','（苔葉一晃，金黃色的眼睛亮了起來。）……很少有東西能先找到我。'],['aelis','換你。（艾莉絲一躍，躲進了圓環的陰影裡。）'],['vandora','（觸鬚在空氣中輕輕擺了兩下。）濕度變了。妳在圓環後面，喘氣的那一邊。'],['aelis','……不公平。'],
+   ['self','航行的夜裡，兩個夜行者玩了一整段的捉迷藏。誰也沒有贏，誰也不想停。']
+  ],'航行的夜裡，翡翠晶甲夜行獸和艾莉絲玩起了捉迷藏。','夜裡的捉迷藏','一個用耳朵找，一個用觸鬚找。航行的夜裡，兩個夜行者誰也沒有贏，誰也不想停。')},
+ int_sirenora_pyro:{trigger:'carriage',car:'habitat',need:()=>aboard('sirenora')&&aboard('pyro'),title:'霧羽海葵龍與燼角巨獸',run:()=>interScene('sirenora','pyro',[
+   ['pyro','……別靠近。我身上很燙，會把你的霧燒乾。'],['sirenora','不會的。……我只是聽見，你心裡一直有一個聲音，在說「退後」。'],['pyro','那是在說給別人聽的。'],['sirenora','也是說給你自己聽的吧。說了很久，很累了。'],
+   ['self','（霧羽海葵龍慢慢舒展扇翼。柔和的光暈與低頻的共鳴，一圈一圈地漫過晶石平台。）'],['pyro','……（裂隙裡的熔岩光，第一次暗得這麼慢、這麼穩。）'],['pyro','……這是什麼。'],['sirenora','是安靜。你可以先不用守著了，這裡有人在看著。'],
+   ['self','燼角巨獸閉上了赤紅的眼睛。那是牠登車以來，第一次真正地睡著。']
+  ],'霧羽海葵龍的共鳴安撫，讓燼角巨獸第一次真正地睡著。','第一次的安睡','「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。',()=>{ const s=state.passengers.pyro; if(s&&s.stage<3){ s.stage=Math.max(s.stage,2); } })},
+ int_sirenora_levi:{trigger:'carriage',car:'habitat',need:()=>aboard('sirenora')&&aboard('leviathaurora'),title:'霧與深海',run:()=>interScene('sirenora','leviathaurora',[
+   ['sirenora','你身上有很深、很深的水的味道。'],['leviathaurora','你身上有霧的味道。……深海沒有霧。'],['sirenora','那深海有什麼？'],['leviathaurora','有光。很少，很遠。看見一次，就會記得很久。'],
+   ['sirenora','我收集的那些夢裡，常常有人夢見海面下的藍光。他們說，那是平靜的時刻。'],['leviathaurora','……（光點一顆一顆亮起，又一顆一顆熄滅，像是在數著什麼。）那是我浮上來換氣的時候。'],
+   ['sirenora','原來那些夢裡的光，是你。'],['self','霧從上方垂下來，藍光從水底浮上去。在棲息車廂的中間，兩種光輕輕碰在了一起。']
+  ],'霧羽海葵龍發現，人們夢裡海面下的藍光，正是淵光巨。','夢裡的藍光','「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。')},
  farewell:{} /* 由程式在抵達時檢查 */
 };
 
@@ -1224,7 +1263,7 @@ function save(){ try{ state.savedAt=Date.now(); localStorage.setItem(SAVE_KEY,JS
 const aboard = id => !!(state.passengers[id]&&state.passengers[id].aboard);
 const done = id => state.completedEvents.includes(id);
 function complete(id){ if(!done(id)) state.completedEvents.push(id); state.pendingEvents=state.pendingEvents.filter(e=>e!==id); save(); }
-function logJ(t){ state.log.push({j:state.journeyCount+(state.currentPhase==='voyage'?1:0),t}); save(); }  /* 航行途中的事記到正在進行的那一趟 */
+function logJ(t,k){ const e={j:state.journeyCount+(state.currentPhase==='voyage'?1:0),t}; if(k) e.k=k; state.log.push(e); save(); }  /* 航行途中的事記到正在進行的那一趟 */
 function addItem(id,quiet){ if(!state.collectibles.includes(id)){ state.collectibles.push(id); save(); if(!quiet) toast('收藏：'+COLLECTIBLES[id].name); return true;} return false; }
 function addClue(id){ if(!state.clues.includes(id)){ state.clues.push(id); save(); setTimeout(()=>toast('守護者線索 +1'),300); } }
 const STAGE_NAMES=['陌生','認識','熟悉','留下重要回憶'];
@@ -1999,11 +2038,18 @@ function askMove(id,z,after){ const p=PASSENGERS[id], m=mismatch(id,z), full=!ca
 function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('🌡️ 到棲息車廂才能調整棲息環境');
  const ids=Object.keys(PASSENGERS).filter(aboard), bad=ids.find(id=>!careOk(id)); zoneInfo(bad?zoneOf(bad):'spring'); }
 
+/* 乘客之間的互動：播放兩位乘客的對話，結束後寫進航行日誌、兩位乘客的紀錄，並凝結成回憶水晶 */
+function interScene(a,b,script,log,title,memText,extra){
+ dialogueScript(script,()=>{ logJ(log,'life'); [a,b].forEach(id=>{ const s=state.passengers[id], o=PASSENGERS[id===a?b:a]; if(s) s.records.push({j:state.journeyCount,t:`和${o.name}在棲息車廂相處了一段時間。`}); });
+  if(extra) extra(); save(); setTimeout(()=>toast(`✦ 回憶水晶凝結了新的片刻：${title}`),400); }); }
+
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
 function dialogueScript(script,onEnd){ let i=0; const el=document.createElement('div'); el.className='dlg'; $('#layer').appendChild(el);
+ const cast=[...new Set(script.map(x=>x[0]).filter(w=>w!=='self'&&w!=='dragon'))], side=w=>w==='dragon'?'50%':cast.length>1?(cast.indexOf(w)===0?'30%':'70%'):w==='lumi'?'32%':'68%';
  const show=()=>{ const [who,t]=script[i], p=charOf(who);
-  el.innerHTML=`${p?`<div class="who" style="left:${who==='dragon'?'50%':who==='lumi'?'32%':'68%'}">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx">${t}</div><div class="nx">▼</div></div>`; };
+  const duo=cast.length>1&&who!=='dragon';   /* 兩位乘客的互動：兩位都在畫面上，說話的那位亮起 */
+  el.innerHTML=`${duo?cast.slice(0,2).map(w=>`<div class="who ${w===who?'':'dim'}" style="left:${side(w)}">${portraitOf(charOf(w))}</div>`).join(''):p?`<div class="who" style="left:${side(who)}">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx">${t}</div><div class="nx">▼</div></div>`; };
  el.addEventListener('click',()=>{ i++; if(i>=script.length){ el.remove(); onEnd&&onEnd(); render(); } else show(); }); show(); }
 
 /* 過場演出 */
@@ -2264,7 +2310,7 @@ const LOG_KIND=[['duty','值勤',/^(值勤量測|領取了|核對值勤資訊|�
  ['purify','淨化',/界染度下降/],['care','照顧',/棲息結界/],['life','乘客',/登上了列車|下車|再次相遇|相遇|留下了/],['grow','培育',/培植箱/],['find','發現',/發現|取得|找到|記錄到/]];
 function logKind(t){ const k=LOG_KIND.find(([,,re])=>re.test(t)); return k?k[0]:'other'; }
 function journeyPanel(){ const g={};
- state.log.forEach(l=>{ const k=logKind(l.t), j=k==='duty'?l.j+1:l.j; const b=g[j]=g[j]||{duty:[],items:[]}; if(k==='duty') b.duty.push(l.t); else b.items.push({k,t:l.t}); });
+ state.log.forEach(l=>{ const k=l.k||logKind(l.t), j=k==='duty'?l.j+1:l.j; const b=g[j]=g[j]||{duty:[],items:[]}; if(k==='duty') b.duty.push(l.t); else b.items.push({k,t:l.t}); });
  const tag={route:'航程',life:'乘客',find:'發現',grow:'培育',purify:'淨化',care:'照顧',other:'紀事'};
  const head=j=>{ if(j===0) return '甦醒'; const r=(g[j].items.find(x=>x.k==='route')||{}).t, m=r&&r.match(/^列車自(.+?)出發，抵達(.+?)。/);
   return m?`第 ${j} 趟旅程　<small>${m[1]} → ${m[2]}</small>`:j>state.journeyCount?`第 ${j} 趟旅程　<small>出發準備中</small>`:`第 ${j} 趟旅程`; };
@@ -2287,6 +2333,14 @@ const MEMORIES=[
  {id:'lumi',title:'晨光中的幼鹿',who:'lumi',have:()=>state.discoveredLifeforms.includes('lumi'),text:PASSENGERS.lumi.intro},
  {id:'ring',title:'相同的圓環',scene:'dawnForest',have:()=>state.clues.includes('clue_ring'),text:CLUES.clue_ring.text},
  {id:'sola',title:'漂流的星汐水母',who:'sola',have:()=>state.discoveredLifeforms.includes('sola'),text:PASSENGERS.sola.intro},
+ {id:'int_lumi_felinia',title:'露米與羽貓獸',who:'lumi',who2:'felinia',have:()=>done('int_lumi_felinia'),text:'沒看過山的幼鹿，和很久沒看過森林的羽貓獸，靠在一起看窗外的光。'},
+ {id:'int_sola_levi',title:'光的笑聲',who:'sola',who2:'leviathaurora',have:()=>done('int_sola_levi'),text:'索拉講了一個冷笑話。淵光巨從頭到尾鰭，一路亮了起來——那是用光發出的笑聲。'},
+ {id:'int_cinder_pyro',title:'偽龍與暴君',who:'cinder',who2:'pyro',have:()=>done('int_cinder_pyro'),text:'「名字都是別人取的。」兩道影子並排待在晶石平台上，一道琥珀色，一道熔岩色。'},
+ {id:'int_pyro_frost',title:'冰與火的界線',who:'pyro',who2:'frost',have:()=>done('int_pyro_frost'),text:'一邊結冰，一邊冒煙。兩頭巨獸誰也沒有越過靈泉——這輛車的地盤，不屬於牠們任何一個。'},
+ {id:'int_felinia_aelis',title:'兩種耳朵',who:'aelis',who2:'felinia',have:()=>done('int_felinia_aelis'),text:'一個聽地下的心跳，一個聽天上的風。牠們同時轉向窗外，聽見了你聽不見的聲音。'},
+ {id:'int_vandora_aelis',title:'夜裡的捉迷藏',who:'vandora',who2:'aelis',have:()=>done('int_vandora_aelis'),text:'一個用耳朵找，一個用觸鬚找。航行的夜裡，兩個夜行者誰也沒有贏，誰也不想停。'},
+ {id:'int_sirenora_pyro',title:'第一次的安睡',who:'sirenora',who2:'pyro',have:()=>done('int_sirenora_pyro'),text:'「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。'},
+ {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
  {id:'meet',title:'露米與索拉',who:'lumi',who2:'sola',have:()=>done('meet_lumi_sola'),text:'兩道光在棲息車廂裡輕輕繞著彼此轉了一圈。索拉的笑話，終於有人笑了。'},
  {id:'bye_lumi',title:'告別・露米',who:'lumi',have:()=>!!(state.passengers.lumi&&state.passengers.lumi.left),text:PASSENGERS.lumi.farewell[2]},
  {id:'felinia',title:'乘風而來的羽貓獸',who:'felinia',have:()=>state.discoveredLifeforms.includes('felinia'),text:PASSENGERS.felinia.intro},
