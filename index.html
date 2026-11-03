@@ -1785,7 +1785,7 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
 function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id];
  const fl=NOTES[id]&&fullDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
  dialogue(id,fl,null,()=>{
-  s.aboard=false; s.left=true; if(s.stage<3){ s.stage=3; }
+  s.aboard=false; s.left=true; s.place=undefined; if(s.stage<3){ s.stage=3; }
   s.records.push({j:state.journeyCount,t:`在${LOCATIONS[state.currentLocation].name}下車，留下重要回憶。`});
   logJ(`${p.name}在${LOCATIONS[state.currentLocation].name}下車。紀錄仍保存在典藏車廂。`); save();
   cine([`${p.name}的光沿著車門滑出去，`,'在月台邊停了一下，然後消失在遠處。'],next);
@@ -1936,7 +1936,7 @@ function readyToLeave(id){ const p=PASSENGERS[id], s=state.passengers[id]; if(!s
  return true; }
 function sketchArt(id,k){ const p=PASSENGERS[id]; return p.studies?`<img src="${p.studies[k]}" alt="">`:portraitOf(p); }
 function sketchPicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('✍️ 到棲息車廂才能觀察乘客');
- const ids=Object.keys(PASSENGERS).filter(aboard);
+ const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id));
  if(!ids.length) return toast('棲息車廂目前沒有乘客');
  const ov=panel(`<div class="eyebrow">棲息車廂</div><h2>✍️ 觀察速寫</h2><p>選一位乘客，靜靜觀察牠，在牠做出動作的瞬間落筆。每位乘客可以畫兩張速寫，會收進世界與生命圖鑑。</p>
   <div class="grid">${ids.map(id=>`<button class="card" data-sk="${id}"><div class="art">${portraitOf(PASSENGERS[id])}</div><div class="t">${PASSENGERS[id].name}</div><div class="s">速寫 ${sketchesOf(id).length} / 2</div></button>`).join('')}</div>`);
@@ -1991,7 +1991,7 @@ const zoneOf=id=>(state.passengers[id]&&state.passengers[id].zone)||PASSENGERS[i
 const careWant=id=>CARE[id]?Object.keys(CARE_DIM).filter(k=>CARE[id][k]!==undefined):[];
 const suits=(id,z)=>!CARE[id]||careWant(id).every(k=>zoneEnv(z)[k]===CARE[id][k]);
 const careOk=id=>suits(id,zoneOf(id));
-const zoneHere=z=>Object.keys(PASSENGERS).filter(id=>aboard(id)&&zoneOf(id)===z);
+const zoneHere=z=>Object.keys(PASSENGERS).filter(id=>aboard(id)&&!(state.passengers[id]&&state.passengers[id].place==='deck')&&zoneOf(id)===z);
 const guestIn=z=>zoneHere(z).filter(id=>PASSENGERS[id].zone!==z);
 const canHost=(id,z)=>PASSENGERS[id].zone===z||guestIn(z).filter(x=>x!==id).length<1;
 function mismatch(id,z){ const e=zoneEnv(z), k=careWant(id).find(k=>e[k]!==CARE[id][k]); return k?{k,dir:e[k]<CARE[id][k]?0:1}:null; }
@@ -2042,6 +2042,44 @@ function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase=
 function interScene(a,b,script,log,title,memText,extra){
  dialogueScript(script,()=>{ logJ(log,'life'); [a,b].forEach(id=>{ const s=state.passengers[id], o=PASSENGERS[id===a?b:a]; if(s) s.records.push({j:state.journeyCount,t:`和${o.name}在棲息車廂相處了一段時間。`}); });
   if(extra) extra(); save(); setTimeout(()=>toast(`✦ 回憶水晶凝結了新的片刻：${title}`),400); }); }
+
+/* ================================================================
+   火車尾展望台：可以邀請乘客來看星星（乘客走車頂步道過來，不會進入記憶典藏車廂）
+   - 要先和乘客「熟悉」（關係第二階段）牠才願意來；展望台最多同時站四位
+   - 點展望台上的乘客可以一起看風景，或請牠回棲息車廂
+   ================================================================ */
+const DECK_SLOT=[{x:24,y:63,h:26},{x:76,y:63,h:26},{x:37,y:83,h:21},{x:63,y:83,h:21}];
+const DECK_LINE={
+ lumi:['星星一直往後跑。……它們是不是也要回家？','從這裡看，森林好小。我要記住它現在的樣子。'],
+ sola:['那條光帶是星河嗎？我的島，說不定就在那裡面。','在這裡吹風，好像站在浮島的邊邊上。'],
+ felinia:['這裡的風從後面吹來，很適合滑翔。……我只是說說而已。','站在高的地方看遠方，跟在山上一樣。'],
+ leviathaurora:['星星在後面越來越遠。……像深海裡，同伴的光。','這裡沒有水。可是天空很深，跟海一樣深。'],
+ cinder:['沒有太陽的天空。可是星光也有一點暖。','我的帆在風裡張開了。這裡的光很好。'],
+ aelis:['我聽得見星星經過的聲音。很輕，像沙子在流。','夜風從這裡吹過去。我喜歡這個位置。'],
+ pyro:['……天空沒有地盤。誰都可以待著。','這裡很高。看得見遠方的地平線，有沒有在冒煙。'],
+ vandora:['這裡很暗。星光不會出賣我。……我很喜歡。','風裡有濕氣。等一下，可能會下雨。'],
+ frost:['星星的光是冷的。像冰原的夜。','在這裡，連呼吸都看得見。'],
+ sirenora:['那些往後退的光……像夢一樣。抓不住，但會記得。','這裡的風很安靜。很適合做夢。']
+};
+const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
+const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
+function deckSlot(id){ const i=deckList().indexOf(id); return DECK_SLOT[Math.max(0,i)]; }
+function deckInvite(){ const here=deckList(), others=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id));
+ const ov=panel(`<div class="eyebrow">火車尾展望台</div><h2>邀請乘客來看星星</h2><p>和你熟悉的乘客，會願意走車頂步道過來，和你一起看列車後方的天空。展望台最多站得下 ${DECK_SLOT.length} 位。</p>
+  ${others.length?`<div class="zask">${others.map(id=>`<button class="btn ghost" data-inv="${id}">邀請${PASSENGERS[id].name}${state.passengers[id].stage>=2?'':'（還不夠熟）'}</button>`).join('')}</div>`:'<p class="nb-empty">棲息車廂裡沒有其他乘客。</p>'}
+  ${here.length?`<p style="color:var(--mute);font-size:13px">現在在展望台：${here.map(id=>PASSENGERS[id].name).join('、')}</p>`:''}`,'care');
+ ov.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>{ const id=b.dataset.inv, p=PASSENGERS[id], s=state.passengers[id];
+  const yes=s.stage>=2&&deckList().length<DECK_SLOT.length, line=yes?'好。我也想看看列車後面的天空。':deckList().length>=DECK_SLOT.length?'展望台好像已經站滿了。下次吧。':'……我還想待在棲息車廂。等我們再熟一點吧。';
+  const el=document.createElement('div'); el.className='ask-bubble'; el.innerHTML=`<span class="zp">${portraitOf(p)}</span><span><b>${p.name}</b><br>${line}</span>`;
+  const pn=ov.querySelector('.panel'), o=pn.querySelector('.ask-bubble'); if(o) o.remove(); pn.appendChild(el);
+  if(!yes) return SFX.tone(392,0,.3,'sine',.02);
+  s.place='deck'; save(); SFX.tone(1046,0,.5,'sine',.03); setTimeout(()=>{ closeAll(); render(); toast(`${p.name}沿著車頂步道，來到了展望台`); },1300); }); }
+function deckTalk(id){ const p=PASSENGERS[id], s=state.passengers[id], voy=state.currentPhase==='voyage', first=!(s.deckSeen);
+ dialogue(id,[`（${p.name}倚在展望台的欄杆邊，看著${voy?'列車後方流走的星光':LOCATIONS[state.currentLocation].name+'的天空'}。）`,DECK_LINE[id][voy?0:1]],
+  [{t:'再一起看一會兒吧。',r:'嗯。'},{t:'要回棲息車廂休息嗎？',r:'好。我先回去了。',go:1}],c=>{
+   if(first){ s.deckSeen=1; s.records.push({j:state.journeyCount,t:'在展望台和你一起看了天空。'}); logJ(`和${p.name}在展望台一起看了天空。`,'life'); }
+   if(c&&c.go){ s.place=undefined; toast(`${p.name}回到了棲息車廂`); }
+   save(); render(); }); }
 
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
@@ -2552,7 +2590,7 @@ const HSDEF=[
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
  ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
-  get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
+  get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:90,y:50},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
  {id:'hab-door',scene:'habitat',name:'前往記憶典藏車廂',shape:'door',at:{x:50,y:53},act:'go:memory'},
@@ -2575,6 +2613,10 @@ const HSDEF=[
  {id:'ot-lamp',scene:'observatory',name:'尾燈',at:{x:84,y:43},layer:1,hint:'列車最後一盞燈。不論停靠或航行，它都一直亮著。'},
  {id:'ot-spot',scene:'observatory',name:()=>{ const e=spotEvent('observatory'); return e?e[1].title:'特殊觀察點'; },at:{x:30,y:46},layer:4,track:false,
   show:()=>!!spotEvent('observatory'),imp:()=>true,act:()=>{ const e=spotEvent('observatory'); if(!e) return; complete(e[0]); e[1].run(()=>render()); }},
+ /* 展望台上的乘客 */
+ ...Object.keys(PASSENGERS).map(id=>({id:'ot-p-'+id,scene:'observatory',name:PASSENGERS[id].name,shape:'npc',cls:PASSENGERS[id].sprite?'idle-stand':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,
+  get sx(){ return PASSENGERS[id].sprite?`;--sh:${deckSlot(id).h}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; }, get at(){ const d=deckSlot(id); return {x:d.x,y:d.y}; },layer:4,track:false,show:()=>atDeck(id),act:()=>deckTalk(id)})),
+ {id:'ot-invite',scene:'observatory',name:'邀請乘客來看星星',at:{x:50,y:73},layer:3,track:false,show:()=>Object.keys(PASSENGERS).some(aboard),act:()=>deckInvite()},
  {id:'ot-back',scene:'observatory',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
  /* 列車外 */
  {id:'out-tree',scene:'out:dawnForest',name:'古樹',at:{x:50,y:40},layer:2,act:'out:tree'},
