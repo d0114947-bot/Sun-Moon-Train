@@ -84,6 +84,21 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 @keyframes taintp{50%{opacity:.6}}
 .rune-res.lv-mild .rune-dot{background:#ffd27a;box-shadow:0 0 12px #ffd27a}.rune-res.lv-heavy .rune-dot{background:#ff8a8a;box-shadow:0 0 12px #ff8a8a}
 .pur-done{color:#d9c8ff;font-size:13px}
+/* 聆聽筆記・觀察速寫 */
+.dlg .hl-tip{position:absolute;bottom:calc(100% + 10px);width:260px;padding:8px 12px;border-radius:8px;background:#fff6d8;color:#3d2e18;font-size:13px;line-height:1.5;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.35);animation:fin .25s}
+.dlg .hl-tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-7px;border:7px solid transparent;border-top-color:#fff6d8}
+.snd.dim{opacity:.45}
+.ov.sketch .panel{max-width:720px}.sk-wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;align-items:center;margin:8px 0 6px}
+.sk-live{aspect-ratio:4/3;border-radius:8px;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.95),rgba(225,220,240,.85));display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sk-live>img,.sk-live>svg{max-width:92%;max-height:92%;object-fit:contain}
+.sk-sheets{display:flex;flex-direction:column;gap:10px}.sk-sheet{aspect-ratio:4/3;border-radius:4px;background:#f3ead4;display:flex;align-items:center;justify-content:center;color:#9a8664;font-size:12px;text-align:center;line-height:1.6;box-shadow:inset 0 0 0 1px rgba(122,92,48,.3)}
+.sk-sheet>img,.sk-sheet>svg{width:88%;height:88%;object-fit:contain;filter:sepia(.55) saturate(.6) contrast(1.05);mix-blend-mode:multiply}
+.sk-sheet.fresh>img,.sk-sheet.fresh>svg{animation:skdraw 1.2s ease-out}@keyframes skdraw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.sk-bar{position:relative;height:16px;margin:12px 4px 4px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(232,201,131,.35)}
+.sk-bar .zone{position:absolute;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,rgba(232,201,131,.35),rgba(255,226,150,.85),rgba(232,201,131,.35))}
+.sk-bar .ptr{position:absolute;top:-5px;width:4px;height:26px;margin-left:-2px;border-radius:2px;background:#fff;box-shadow:0 0 8px #fff}
+.sk-msg{font-size:14px}.studies .sk.blank{display:flex;align-items:center;justify-content:center;width:118px;height:84px;border:1.5px dashed rgba(122,92,48,.5);border-radius:4px;opacity:.8;filter:none;mix-blend-mode:normal;color:#7a5c30;font-size:12px;text-align:center;line-height:1.5}
+@media (max-width:600px){.sk-wrap{grid-template-columns:1fr}.sk-sheets{flex-direction:row}.sk-sheet{flex:1}}
 /* 聆聽筆記 */
 .dlg .tx mark.hl{background:none;color:#fff3c4;cursor:pointer;border-bottom:1px dashed rgba(255,230,160,.8);text-shadow:0 0 10px rgba(255,214,120,.95);animation:hlg 2.2s ease-in-out infinite;padding:0 1px}
 .dlg .tx mark.hl.got{animation:none;color:#cfe9c8;text-shadow:none;border-bottom:1px solid rgba(190,230,180,.7)}
@@ -1249,7 +1264,7 @@ function renderHUD(){
  const pend = state.pendingEvents.filter(id=>EVENTS[id]).slice(0,2).map(id=>`<button class="evt" data-act="event:${id}">${EVENTS[id].title}</button>`).join('');
  $('#hud').innerHTML=`<div class="loc">${head}</div>
  <div class="train" aria-label="車廂位置">${cars}<span class="cn">${where}</span></div>
- <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
+ <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd skb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="sketch:open" aria-label="觀察速寫">✍️</button><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
 }
 
 /* ---------- 互動派發 ---------- */
@@ -1266,6 +1281,7 @@ function act(k,v){
   case 'reunion': return reunion(v);
   case 'zone': return zoneInfo(v);
   case 'notes': return notebookPanel();
+  case 'sketch': return sketchPicker();
   case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); BGM.stop(500); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); BGM.start(); } renderHUD(); return toast(PREFS.sound===false?'音樂與音效已關閉':'音樂與音效已開啟');
   default: return (INTERACT[k+':'+v]||(()=>{}))();
  }
@@ -1656,7 +1672,7 @@ function loadGame(st,name){
 function arrivalChecks(){
  const q=[];
  // 乘客離開（固定條件）
- Object.keys(PASSENGERS).forEach(id=>{ const s=state.passengers[id]; if(s&&s.aboard&&state.journeyCount-s.boardedJourney>=PASSENGERS[id].stay) q.push(next=>farewell(id,next)); });
+ Object.keys(PASSENGERS).forEach(id=>{ const s=state.passengers[id]; if(s&&s.aboard&&state.journeyCount-s.boardedJourney>=PASSENGERS[id].stay&&readyToLeave(id)) q.push(next=>farewell(id,next));   /* 故事、筆記、速寫都完成後才下車 */ });
  // 停靠事件
  Object.entries(EVENTS).forEach(([id,e])=>{ if(e.trigger==='arrive'&&e.loc===state.currentLocation&&!done(id)&&(!e.need||e.need())) q.push(next=>e.run(next)); });
  const run=()=>{ const f=q.shift(); if(f) f(run); else { render(); checkCarriageEvents(); } }; run();
@@ -1708,7 +1724,7 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  return id==='lumi'? (state.currentLocation==='dawnForest'?'外面是我的森林呢。不過我還想再看看別的地方。':'這裡沒有樹……可是有光。光也不錯。')
   : (state.currentLocation==='starIslands'?'星河的潮汐今天很溫柔。我的島應該也在某處被這樣拍著吧。':'這裡沒有星河，但是有你們。也算是一種潮汐。'); }
 function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id];
- const fl=NOTES[id]&&noteDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
+ const fl=NOTES[id]&&fullDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
  dialogue(id,fl,null,()=>{
   s.aboard=false; s.left=true; if(s.stage<3){ s.stage=3; }
   s.records.push({j:state.journeyCount,t:`在${LOCATIONS[state.currentLocation].name}下車，留下重要回憶。`});
@@ -1726,14 +1742,20 @@ function dialogue(id,lines,choices,onEnd){
  const p=id&&PASSENGERS[id]; const el=document.createElement('div'); el.className='dlg';
  el.innerHTML=`${p?`<div class="who">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
  $('#layer').appendChild(el); let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
- let picked=null;
+ let picked=null, warned=-1;
  const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML='';
   if(p&&tx.querySelector('mark.hl')&&!state.storyFlags.noteTip){ state.storyFlags.noteTip=1; save(); toast('🗒️ 發光的字句可以點一下，記進筆記本'); }
   if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; el.querySelector('.nm').textContent='精靈'; tx.textContent=c.t; tx.classList.add('self'); chs.innerHTML='';
     lines=lines.concat(['__self__',c.r]); i++; nx.hidden=false; setTimeout(()=>{ i++; el.querySelector('.nm').textContent=p.name; tx.classList.remove('self'); show(); },900); }; chs.appendChild(b); }); }
  };
  el.querySelector('.box').addEventListener('click',e=>{ const mk=e.target.closest('mark.hl'); if(mk&&p){ takeNote(id,+mk.dataset.nk,mk); return; }
-  if(chs.children.length) return; if(lines[i]==='__self__') return; i++; if(i>=lines.length){ el.remove(); onEnd&&onEnd(picked); } else show(); });
+  if(chs.children.length) return; if(lines[i]==='__self__') return;
+  const miss=p&&tx.querySelector('mark.hl:not(.got)');
+  if(miss&&warned!==i){ warned=i; const old=el.querySelector('.hl-tip'); if(old) old.remove();
+   const tip=document.createElement('div'); tip.className='hl-tip'; tip.textContent='🗒️ 記得點一下發光的字句，把它記進筆記本';
+   el.querySelector('.box').appendChild(tip); const br=el.querySelector('.box').getBoundingClientRect(), mr=miss.getBoundingClientRect();
+   tip.style.left=Math.max(8,Math.min(br.width-260,mr.left-br.left+mr.width/2-130))+'px'; SFX.tone(1046,0,.2,'sine',.02); return; }
+  const ot=el.querySelector('.hl-tip'); if(ot) ot.remove(); i++; if(i>=lines.length){ el.remove(); onEnd&&onEnd(picked); } else show(); });
  show();
 }
 /* ================================================================
@@ -1742,7 +1764,7 @@ function dialogue(id,lines,choices,onEnd){
    - k：這則筆記屬於哪個欄位（habitat 棲息環境・habits 生物習性・abilities 特殊能力・bio 生態故事）；null 是閒聊，放不進任何欄位
    - p：對話裡要發光的原句（必須和台詞完全一致）
    - n：精靈寫進筆記本的內容
-   - 筆記本每位乘客的頁數 = 欄位數 + 1，寫滿要先擦掉一則
+   - 筆記本不會寫滿；台詞裡還有沒記下的發光字句時，要翻下一句會先跳出小框提醒
    ================================================================ */
 const NOTE_SEC={habitat:'棲息環境',habits:'生物習性',abilities:'特殊能力',bio:'生態故事'};
 const NOTES={
@@ -1804,7 +1826,6 @@ const NOTES={
 };
 const notesOf=id=>((state.notes||{})[id])||[];
 const filedOf=id=>((state.filed||{})[id])||{};
-const noteCap=id=>NOTES[id]?NOTES[id].secs.length+1:0;
 const noteDone=id=>!NOTES[id]||NOTES[id].secs.every(k=>filedOf(id)[k]!==undefined);
 const secShown=(id,k)=>!NOTES[id]||!NOTES[id].secs.includes(k)||filedOf(id)[k]!==undefined;
 const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1815,16 +1836,15 @@ function markNotes(id,line){ let h=escH(line); const N=NOTES[id]; if(!N) return 
  return h; }
 function takeNote(id,i,mk){ const N=NOTES[id]; if(!N) return; state.notes=state.notes||{}; const a=state.notes[id]=state.notes[id]||[];
  if(a.includes(i)) return toast('這句已經記下了');
- if(a.length>=noteCap(id)) return toast(`${PASSENGERS[id].name}這一頁寫滿了（${a.length}/${noteCap(id)}）。打開筆記本 🗒️ 擦掉一則再記。`);
  a.push(i); save(); if(mk){ mk.classList.add('got'); mk.title='已記下'; } SFX.tone(1568,0,.25,'triangle',.025);
- toast(`🗒️ 記下：${N.list[i].n}（${a.length}/${noteCap(id)}）`); }
+ toast(`🗒️ 記下：${N.list[i].n}`); const tip=mk&&mk.closest('.box')&&mk.closest('.box').querySelector('.hl-tip'); if(tip&&!mk.closest('.tx').querySelector('mark.hl:not(.got)')) tip.remove(); }
 /* 筆記本（HUD 的 🗒️） */
 function notebookPanel(){ const ov=panel('','notebook'), pn=ov.querySelector('.panel');
  const draw=()=>{ const ids=Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id));
   pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">值勤精靈的隨身筆記</div><h2>🗒️ 筆記本</h2>
-  <p>聽乘客說話時，發光的字句可以點一下記下來。回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位。</p>
+  <p>聽乘客說話時，發光的字句可以點一下記下來。回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>
   ${ids.length?ids.map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
-   return `<section class="nb-who"><h3>${PASSENGERS[id].name}<small>筆記 ${a.length}/${noteCap(id)} 頁・圖鑑 ${fd}/${sc.length} 欄${fd===sc.length?'・完整':''}</small></h3>
+   return `<section class="nb-who"><h3>${PASSENGERS[id].name}<small>筆記 ${a.length} 則・圖鑑欄位 ${fd}/${sc.length}・速寫 ${sketchesOf(id).length}/2${fullDone(id)?'・完整':''}</small></h3>
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }).join('')
@@ -1839,8 +1859,48 @@ function fileChooser(slot){ const [id,k]=slot.querySelector('[data-file]').datas
 function fileNote(id,k,i,btn){ const x=NOTES[id].list[i];
  if(x.k!==k){ btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); SFX.tone(330,0,.3,'sine',.02); return toast(x.k?'這則筆記好像不是在說這件事。':'這則只是閒聊，放不進圖鑑。可以到筆記本把它擦掉。'); }
  state.filed=state.filed||{}; const f=state.filed[id]=state.filed[id]||{}; f[k]=i; SFX.tone(1318,0,.7,'sine',.035); toast(`已整理：${PASSENGERS[id].name}・${NOTE_SEC[k]}`);
- if(noteDone(id)){ const s=state.passengers[id]; if(s) s.records.push({j:state.journeyCount,t:'圖鑑整理完成。'}); logJ(`${PASSENGERS[id].name}的圖鑑整理完成。`); setTimeout(()=>toast(`✦ ${PASSENGERS[id].name}的圖鑑已完整`),1400); }
- save(); openBook('life',id); }
+ save(); checkComplete(id); openBook('life',id); }
+
+/* ================================================================
+   觀察速寫 ✍️：在棲息車廂觀察乘客，看準牠動作的瞬間落筆，畫下圖鑑裡的兩張田野速寫。
+   ================================================================ */
+const sketchesOf=id=>((state.sketches||{})[id])||[];
+const sketchDone=id=>sketchesOf(id).length>=2;
+const fullDone=id=>noteDone(id)&&sketchDone(id);
+/* 圖鑑完成時的獎勵（整理筆記或畫完速寫時檢查，只觸發一次） */
+function checkComplete(id){ if(!NOTES[id]||!fullDone(id)) return; state.storyFlags=state.storyFlags||{}; if(state.storyFlags['done_'+id]) return; state.storyFlags['done_'+id]=1;
+ const s=state.passengers[id]; if(s) s.records.push({j:state.journeyCount,t:'圖鑑整理完成。'}); logJ(`${PASSENGERS[id].name}的圖鑑整理完成。`); save(); setTimeout(()=>toast(`✦ ${PASSENGERS[id].name}的圖鑑已完整`),1400); }
+/* 乘客要把故事說完、筆記都記下、兩張速寫都畫好，而且至少搭乘 stay 趟，才會下車 */
+function readyToLeave(id){ const p=PASSENGERS[id], s=state.passengers[id]; if(!s) return true;
+ if(s.talks<p.talks.length) return false; if(!sketchDone(id)) return false;
+ const N=NOTES[id]; if(N&&!N.secs.every(k=>filedOf(id)[k]!==undefined||notesOf(id).some(i=>N.list[i].k===k))) return false;
+ return true; }
+function sketchArt(id,k){ const p=PASSENGERS[id]; return p.studies?`<img src="${p.studies[k]}" alt="">`:portraitOf(p); }
+function sketchPicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('✍️ 到棲息車廂才能觀察乘客');
+ const ids=Object.keys(PASSENGERS).filter(aboard);
+ if(!ids.length) return toast('棲息車廂目前沒有乘客');
+ const ov=panel(`<div class="eyebrow">棲息車廂</div><h2>✍️ 觀察速寫</h2><p>選一位乘客，靜靜觀察牠，在牠做出動作的瞬間落筆。每位乘客可以畫兩張速寫，會收進世界與生命圖鑑。</p>
+  <div class="grid">${ids.map(id=>`<button class="card" data-sk="${id}"><div class="art">${portraitOf(PASSENGERS[id])}</div><div class="t">${PASSENGERS[id].name}</div><div class="s">速寫 ${sketchesOf(id).length} / 2</div></button>`).join('')}</div>`);
+ ov.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{ closeAll(); setTimeout(()=>sketchPanel(b.dataset.sk),260); }); }
+function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.querySelector('.panel'); let raf=0, pos=0, t0=performance.now(), zone=null;
+ const newZone=()=>{ const w=24; zone={a:12+Math.random()*(76-w),w}; };
+ const draw=()=>{ const have=sketchesOf(id), k=[0,1].find(x=>!have.includes(x));
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">棲息車廂・觀察速寫</div><h2>✍️ ${p.name}</h2>
+  <div class="sk-wrap"><div class="sk-live">${p.sprite?`<img src="${p.image}" alt="${p.name}">`:portraitOf(p)}</div>
+   <div class="sk-sheets">${[0,1].map(x=>`<div class="sk-sheet ${have.includes(x)?'drawn':''}" data-x="${x}">${have.includes(x)?sketchArt(id,x):'<span>✍️<br>尚未速寫</span>'}</div>`).join('')}</div></div>
+  ${k===undefined?`<p class="sk-msg">兩張速寫都畫好了。它們已經收進世界與生命圖鑑。</p>`:
+   `<p class="sk-msg" id="skm">${k===0?'先畫一張全身。':'再畫一張動作。'}牠會不時動一下——指針走進金色區段的那一刻，按下「落筆」。</p>
+   <div class="sk-bar"><i class="zone"></i><b class="ptr"></b></div><div class="row"><button class="btn" id="skgo">✍️ 落筆</button></div>`}`;
+  if(k===undefined) return;
+  newZone(); const bar=pn.querySelector('.sk-bar'), z=bar.querySelector('.zone'), ptr=bar.querySelector('.ptr'); z.style.left=zone.a+'%'; z.style.width=zone.w+'%';
+  const tick=()=>{ if(!ov.isConnected) return; const t=(performance.now()-t0)/2600; pos=50-50*Math.cos(t*Math.PI); ptr.style.left=pos+'%'; raf=requestAnimationFrame(tick); }; cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);
+  pn.querySelector('#skgo').onclick=()=>{ const hit=pos>=zone.a-3&&pos<=zone.a+zone.w+3, m=pn.querySelector('#skm');
+   if(!hit){ SFX.tone(330,0,.3,'sine',.02); m.textContent='牠剛好動了一下，線條歪掉了。再等下一個瞬間。'; bar.classList.remove('shake'); void bar.offsetWidth; bar.classList.add('shake'); newZone(); z.style.left=zone.a+'%'; return; }
+   state.sketches=state.sketches||{}; const a=state.sketches[id]=state.sketches[id]||[]; if(!a.includes(k)) a.push(k); save(); SFX.tone(1568,0,.5,'triangle',.03);
+   const sh=pn.querySelector(`.sk-sheet[data-x="${k}"]`); sh.innerHTML=sketchArt(id,k); sh.classList.add('drawn','fresh');
+   toast(`✍️ 畫下了${p.name}的${k===0?'全身':'動作'}速寫（${a.length}/2）`); checkComplete(id);
+   cancelAnimationFrame(raf); setTimeout(()=>{ if(ov.isConnected) draw(); },1500); }; };
+ draw(); }
 
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
@@ -2248,8 +2308,8 @@ function bookLifeIndex(){
 function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=>x.id===id); if(!e||!e.known) return bookLifeIndex();
  const i=all.indexOf(e), s=e.rec||{}, stage=s.stage||0;
  return `<section class="page l"><p class="no">No. ${specNo(i)}・${e.species}</p><div class="plate big"><div class="wash" style="background:${e.wash}"></div>${portraitOf(e)}</div><p class="caption">${e.name}・田野速寫</p>
-  <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div></section>
- <section class="page r"><h3>${e.name}</h3>${RULE}${NOTES[e.id]?`<p class="cmp ${noteDone(e.id)?'done':''}">圖鑑整理 ${NOTES[e.id].secs.filter(k=>filedOf(e.id)[k]!==undefined).length} / ${NOTES[e.id].secs.length}${noteDone(e.id)?'・完整紀錄 ✦':'・把筆記放進空白的欄位'}</p>`:''}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
+  <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>NOTES[e.id]&&!sketchesOf(e.id).includes(k)?`<div class="sk blank" style="--rot:${r}deg"><span>✍️<br>尚未速寫</span></div>`:`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div>${NOTES[e.id]&&!sketchDone(e.id)?'<p class="caption">在棲息車廂用 ✍️ 觀察牠，就能畫下速寫。</p>':''}</section>
+ <section class="page r"><h3>${e.name}</h3>${RULE}${NOTES[e.id]?`<p class="cmp ${fullDone(e.id)?'done':''}">${fullDone(e.id)?'完整紀錄 ✦':`欄位 ${NOTES[e.id].secs.filter(k=>filedOf(e.id)[k]!==undefined).length} / ${NOTES[e.id].secs.length}・速寫 ${sketchesOf(e.id).length} / 2`}</p>`:''}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
   <dt>偏好棲息</dt><dd>${ZONES[e.zone].name}</dd><dt>目前狀態</dt><dd>${s.aboard?'乘車中':s.left?'已下車・紀錄保留':'—'}</dd>
   <dt>相遇程度</dt><dd><span class="bond">${STAGE_NAMES.map((n,k)=>`<i class="${k<=stage?'on':''}" title="${n}"></i>`).join('')}<span>${STAGE_NAMES[stage]}</span></span></dd></dl>
   ${e.field&&e.field.nameNote?`<h5>${GLYPH.ring}名稱由來</h5><p>${e.field.nameNote}</p>`:''}${e.field?`<h5>${GLYPH.ring}外觀特徵</h5><p>${e.field.looks}</p><h5>${GLYPH.sun}棲息環境</h5>${secShown(e.id,'habitat')?`<p>${e.field.habitat}</p>`:fileSlot(e.id,'habitat')}<h5>${GLYPH.moon}生物習性</h5>${secShown(e.id,'habits')?`<ul class="notes">${e.field.habits.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'habits')}<h5>${GLYPH.leaf}特殊能力</h5>${secShown(e.id,'abilities')?`<ul class="notes">${e.field.abilities.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'abilities')}`:''}
