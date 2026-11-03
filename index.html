@@ -84,6 +84,16 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 @keyframes taintp{50%{opacity:.6}}
 .rune-res.lv-mild .rune-dot{background:#ffd27a;box-shadow:0 0 12px #ffd27a}.rune-res.lv-heavy .rune-dot{background:#ff8a8a;box-shadow:0 0 12px #ff8a8a}
 .pur-done{color:#d9c8ff;font-size:13px}
+/* 照顧需求 */
+.ov.care .panel{max-width:720px}.care-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:18px;align-items:center;margin:8px 0}
+.care-who{aspect-ratio:4/3;border-radius:8px;background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.9),rgba(205,200,230,.75));display:flex;align-items:center;justify-content:center;overflow:hidden;transition:box-shadow .6s}
+.care-who.ok{box-shadow:0 0 0 2px rgba(232,201,131,.8),0 0 28px rgba(255,220,140,.55)}.care-who>img,.care-who>svg{max-width:92%;max-height:92%;object-fit:contain}
+.care-dials{display:flex;flex-direction:column;gap:12px}.dial .dn{display:block;font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:5px}
+.seg{display:flex;border:1px solid rgba(232,201,131,.4);border-radius:999px;overflow:hidden}.seg button{flex:1;padding:7px 4px;background:none;border:0;color:var(--silver);cursor:pointer;font:inherit;font-size:13px}
+.seg button+button{border-left:1px solid rgba(232,201,131,.25)}.seg button.on{background:rgba(232,201,131,.85);color:#2a1d0a;font-weight:600}
+.care-react{font-size:15px;min-height:1.6em}.care-react.ok{color:#fff3c4}.care-st{font-size:13px;color:var(--mute)}
+@media (max-width:600px){.care-wrap{grid-template-columns:1fr}.seg button{font-size:12px;padding:7px 2px}}
+.card.got .s{color:#cfe9c8}
 /* 聆聽筆記・觀察速寫 */
 .dlg .hl-tip{position:absolute;bottom:calc(100% + 10px);width:260px;padding:8px 12px;border-radius:8px;background:#fff6d8;color:#3d2e18;font-size:13px;line-height:1.5;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.35);animation:fin .25s}
 .dlg .hl-tip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-7px;border:7px solid transparent;border-top-color:#fff6d8}
@@ -1264,7 +1274,7 @@ function renderHUD(){
  const pend = state.pendingEvents.filter(id=>EVENTS[id]).slice(0,2).map(id=>`<button class="evt" data-act="event:${id}">${EVENTS[id].title}</button>`).join('');
  $('#hud').innerHTML=`<div class="loc">${head}</div>
  <div class="train" aria-label="車廂位置">${cars}<span class="cn">${where}</span></div>
- <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd skb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="sketch:open" aria-label="觀察速寫">✍️</button><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
+ <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd cab ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="care:open" aria-label="照顧需求">🌡️</button><button class="snd skb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="sketch:open" aria-label="觀察速寫">✍️</button><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
 }
 
 /* ---------- 互動派發 ---------- */
@@ -1282,6 +1292,7 @@ function act(k,v){
   case 'zone': return zoneInfo(v);
   case 'notes': return notebookPanel();
   case 'sketch': return sketchPicker();
+  case 'care': return carePicker();
   case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); BGM.stop(500); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); BGM.start(); } renderHUD(); return toast(PREFS.sound===false?'音樂與音效已關閉':'音樂與音效已開啟');
   default: return (INTERACT[k+':'+v]||(()=>{}))();
  }
@@ -1698,6 +1709,8 @@ function talk(id,next){
  const p=PASSENGERS[id], s=state.passengers[id];
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
+ /* 最後、最深的那段故事：要先把牠的棲息環境調到舒適 */
+ if(fresh&&idx===p.talks.length-1&&CARE[id]&&!careOk(id)) return dialogue(id,[`（${p.name}看起來不太自在，好像還不想多說。）`,careReact(id)],null,()=>{ toast('🌡️ 先幫牠調整棲息環境吧'); render(); next&&next(); });
  if(!fresh&&NOTES[id]){ const N=NOTES[id], miss=N.secs.filter(k=>filedOf(id)[k]===undefined&&!notesOf(id).some(i=>N.list[i].k===k));
   if(miss.length){ const ni=p.talks.findIndex(t=>t.lines.some(l=>N.list.some(x=>miss.includes(x.k)&&l.includes(x.p))));
    if(ni>=0) return dialogue(id,lines,[{t:'能再跟我說一次之前那些事嗎？',r:'……好。這次聽仔細喔。',go:1},{t:'沒事，只是來看看你。',r:'嗯。'}],c=>{
@@ -1901,6 +1914,50 @@ function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.q
    toast(`✍️ 畫下了${p.name}的${k===0?'全身':'動作'}速寫（${a.length}/2）`); checkComplete(id);
    cancelAnimationFrame(raf); setTimeout(()=>{ if(ov.isConnected) draw(); },1500); }; };
  draw(); }
+
+/* ================================================================
+   照顧需求 🌡️：棲息車廂的結界可以為每位乘客個別調整溫度、光線、濕度。
+   每位乘客在意其中兩項；調對了牠會覺得舒適——信任加深，也才願意說出最後、最深的那段故事。
+   調錯時，乘客的反應會透露是太熱、太冷、太亮、太暗、太乾還是太濕。
+   ================================================================ */
+const CARE_DIM={t:{name:'溫度',lv:['寒冷','涼爽','溫暖','炎熱']},l:{name:'光線',lv:['昏暗','柔和','明亮']},h:{name:'濕度',lv:['乾燥','適中','潮濕','濃霧']}};
+const CARE_DEFAULT={t:2,l:1,h:1};
+const CARE={
+ lumi:{l:1,h:2,ok:'（露米把角上的光調得暖暖的，在濕潤的苔蘚上躺了下來。）……這裡像森林的早晨。'},
+ sola:{l:0,h:2,ok:'暗暗的、濕濕的……我看得見星星了！這是我漂流以來，睡過最舒服的地方。'},
+ felinia:{t:1,l:1,ok:'（牠蓬起羽毛，耳翼放鬆地垂下。）涼涼的風，斜斜的光。……跟山上一樣。'},
+ leviathaurora:{t:0,l:0,ok:'冷，而且暗。……我可以把光調到最小，好好休息了。'},
+ cinder:{t:3,l:2,ok:'（牠把背帆完全張開，帆面透出明亮的琥珀色。）熱熱的、亮亮的。我的帆在笑。'},
+ aelis:{l:0,h:0,ok:'乾燥的夜晚。……我的耳朵終於安靜下來了。'},
+ pyro:{t:3,h:0,ok:'（裂隙裡的熔岩光穩穩地亮著。）……乾燥，而且夠熱。不錯。'},
+ vandora:{l:0,h:2,ok:'（牠的鱗甲和陰影融在一起，只剩金色的眼睛。）又暗又濕。……這裡可以當我的葉子底下。'},
+ frost:{t:0,l:2,ok:'寒冷，明亮，像冰原上的白晝。（牠背上的冰晶亮了起來。）謝謝你。'},
+ sirenora:{l:1,h:3,ok:'霧……好濃，好安靜。柔柔的光從霧裡透過來。……我好像回到峽灣了。'}
+};
+const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
+const careOf=id=>Object.assign({},CARE_DEFAULT,((state.care||{})[id])||{});
+const careWant=id=>CARE[id]?Object.keys(CARE_DIM).filter(k=>CARE[id][k]!==undefined):[];
+const careOk=id=>!CARE[id]||careWant(id).every(k=>careOf(id)[k]===CARE[id][k]);
+function careReact(id){ if(careOk(id)) return CARE[id].ok; const c=careOf(id), k=careWant(id).find(k=>c[k]!==CARE[id][k]); return CARE_REACT[k][c[k]<CARE[id][k]?0:1]; }
+function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('🌡️ 到棲息車廂才能調整乘客的環境');
+ const ids=Object.keys(PASSENGERS).filter(aboard); if(!ids.length) return toast('棲息車廂目前沒有乘客');
+ const ov=panel(`<div class="eyebrow">棲息車廂・結界調節</div><h2>🌡️ 照顧需求</h2><p>棲息車廂的結界可以為每位乘客個別調整溫度、光線和濕度。調到牠喜歡的樣子，牠會更信任你，也才願意說出最深的故事。</p>
+  <div class="grid">${ids.map(id=>`<button class="card ${careOk(id)?'got':''}" data-care="${id}"><div class="art">${portraitOf(PASSENGERS[id])}</div><div class="t">${PASSENGERS[id].name}</div><div class="s">${careOk(id)?'舒適 ✦':'還不太自在'}</div></button>`).join('')}</div>`);
+ ov.querySelectorAll('[data-care]').forEach(b=>b.onclick=()=>{ closeAll(); setTimeout(()=>carePanel(b.dataset.care),260); }); }
+function carePanel(id){ const p=PASSENGERS[id], ov=panel('','care'), pn=ov.querySelector('.panel');
+ const draw=()=>{ const c=careOf(id), ok=careOk(id);
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">棲息車廂・結界調節</div><h2>🌡️ ${p.name}</h2>
+  <div class="care-wrap"><div class="care-who ${ok?'ok':''}">${p.sprite?`<img src="${p.image}" alt="${p.name}">`:portraitOf(p)}</div>
+  <div class="care-dials">${Object.entries(CARE_DIM).map(([k,D])=>`<div class="dial"><span class="dn">${D.name}</span><div class="seg">${D.lv.map((n,i)=>`<button class="${c[k]===i?'on':''}" data-dk="${k}" data-dv="${i}">${n}</button>`).join('')}</div></div>`).join('')}</div></div>
+  <p class="care-react ${ok?'ok':''}">${careReact(id)}</p><p class="care-st">${ok?'舒適 ✦　牠願意多說一些了。':'牠還不太自在。看看牠的反應，或翻翻圖鑑裡的棲息環境。'}</p>`;
+  pn.querySelectorAll('[data-dk]').forEach(b=>b.onclick=()=>{ const was=careOk(id); state.care=state.care||{}; state.care[id]=Object.assign(careOf(id),{[b.dataset.dk]:+b.dataset.dv}); save();
+   SFX.tone(660+(+b.dataset.dv)*110,0,.25,'sine',.02); if(!was&&careOk(id)) careComfort(id); draw(); }); };
+ draw(); }
+/* 第一次調到舒適：信任加深 */
+function careComfort(id){ const p=PASSENGERS[id], s=state.passengers[id]; SFX.chime(); state.storyFlags=state.storyFlags||{};
+ if(state.storyFlags['comfy_'+id]) return toast(`${p.name}又舒服起來了`); state.storyFlags['comfy_'+id]=1;
+ if(s){ if(s.stage<2){ s.stage=2; s.records.push({j:state.journeyCount,t:'關係：'+STAGE_NAMES[2]}); } s.records.push({j:state.journeyCount,t:'在調整好的結界裡放鬆下來。'}); }
+ logJ(`為${p.name}調整棲息結界，牠放鬆了下來。`); save(); toast(`✦ ${p.name}覺得很舒適・信任加深`); }
 
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
@@ -2164,11 +2221,11 @@ function navPanel(){ const voy=state.currentPhase==='voyage', from=voy?state.voy
 /* ---------- 記憶典藏車廂 ---------- */
 /* 航行日誌：依旅程分組；出發前的值勤步驟合併成一行，歸到它準備的那一趟旅程；每則紀錄標上類別 */
 const LOG_KIND=[['duty','值勤',/^(值勤量測|領取了|核對值勤資訊|確認前方星光號誌|確認車門聯鎖|向領頭曦淵報備)/],['route','航程',/^列車自/],
- ['purify','淨化',/界染度下降/],['life','乘客',/登上了列車|下車|再次相遇|相遇|留下了/],['grow','培育',/培植箱/],['find','發現',/發現|取得|找到|記錄到/]];
+ ['purify','淨化',/界染度下降/],['care','照顧',/棲息結界/],['life','乘客',/登上了列車|下車|再次相遇|相遇|留下了/],['grow','培育',/培植箱/],['find','發現',/發現|取得|找到|記錄到/]];
 function logKind(t){ const k=LOG_KIND.find(([,,re])=>re.test(t)); return k?k[0]:'other'; }
 function journeyPanel(){ const g={};
  state.log.forEach(l=>{ const k=logKind(l.t), j=k==='duty'?l.j+1:l.j; const b=g[j]=g[j]||{duty:[],items:[]}; if(k==='duty') b.duty.push(l.t); else b.items.push({k,t:l.t}); });
- const tag={route:'航程',life:'乘客',find:'發現',grow:'培育',purify:'淨化',other:'紀事'};
+ const tag={route:'航程',life:'乘客',find:'發現',grow:'培育',purify:'淨化',care:'照顧',other:'紀事'};
  const head=j=>{ if(j===0) return '甦醒'; const r=(g[j].items.find(x=>x.k==='route')||{}).t, m=r&&r.match(/^列車自(.+?)出發，抵達(.+?)。/);
   return m?`第 ${j} 趟旅程　<small>${m[1]} → ${m[2]}</small>`:j>state.journeyCount?`第 ${j} 趟旅程　<small>出發準備中</small>`:`第 ${j} 趟旅程`; };
  const dutyLine=a=>{ const sc=a.map(t=>t.match(/界染度 (\d+)/)).find(Boolean); const ok=a.some(t=>/^向領頭曦淵報備/.test(t));
