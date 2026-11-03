@@ -84,6 +84,23 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 @keyframes taintp{50%{opacity:.6}}
 .rune-res.lv-mild .rune-dot{background:#ffd27a;box-shadow:0 0 12px #ffd27a}.rune-res.lv-heavy .rune-dot{background:#ff8a8a;box-shadow:0 0 12px #ff8a8a}
 .pur-done{color:#d9c8ff;font-size:13px}
+/* 聆聽筆記 */
+.dlg .tx mark.hl{background:none;color:#fff3c4;cursor:pointer;border-bottom:1px dashed rgba(255,230,160,.8);text-shadow:0 0 10px rgba(255,214,120,.95);animation:hlg 2.2s ease-in-out infinite;padding:0 1px}
+.dlg .tx mark.hl.got{animation:none;color:#cfe9c8;text-shadow:none;border-bottom:1px solid rgba(190,230,180,.7)}
+.dlg .tx mark.hl.got::after{content:" 🗒️";font-size:.8em}
+@keyframes hlg{50%{text-shadow:0 0 3px rgba(255,214,120,.6)}}
+.ov.notebook .panel{max-width:620px}.nb-who{border-top:1px solid rgba(232,201,131,.25);padding-top:10px;margin-top:12px}
+.nb-who h3{margin:0 0 6px;font-size:16px}.nb-who h3 small{display:block;font-size:12px;color:var(--mute);font-weight:400;letter-spacing:.06em;margin-top:2px}
+.nb-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.nb-list li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.05)}
+.nb-list li.filed{opacity:.7}.nb-list em{font-style:normal;font-size:12px;color:#cfe9c8;white-space:nowrap}.nb-x{flex:none;font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid rgba(220,230,255,.3);background:none;color:var(--silver);cursor:pointer}
+.nb-empty{color:var(--mute);font-size:13px}
+.tome .cmp{font-size:13px;color:#7a6440;margin:4px 0 8px}.tome .cmp.done{color:#8a5a12;font-weight:600}
+.tome .file-slot{margin:4px 0 10px;padding:10px 12px;border:1.5px dashed rgba(122,92,48,.55);border-radius:6px;background:rgba(255,248,230,.35)}
+.tome .slot-btn{background:none;border:0;color:#7a5c30;cursor:pointer;font:inherit;font-size:14px;letter-spacing:.06em;padding:0}
+.tome .pick-h{margin:0 0 8px;font-size:13px;color:#6b5434}
+.tome .pick{display:block;width:100%;text-align:left;margin:0 0 6px;padding:7px 10px;border-radius:5px;border:1px solid rgba(122,92,48,.45);background:rgba(255,252,240,.8);color:#3d2e18;cursor:pointer;font:inherit;font-size:14px}
+.tome .pick.ghost{width:auto;display:inline-block;background:none}.tome .pick:hover{background:#fff8e2}
+.shake{animation:shk .35s}@keyframes shk{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 #hud{position:fixed;left:0;right:0;top:0;z-index:20;pointer-events:none;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
   padding-top:calc(env(safe-area-inset-top,0px) + 10px);padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
 #hud > *{pointer-events:auto}
@@ -965,8 +982,8 @@ const PASSENGERS = {
    abilities:[['御風滑翔','利用背部的羽翼與尾部的平衡，能在強風的山谷間進行長距離的無聲滑翔與高機動性轉向。'],['光影擬態','羽毛結構能在特定角度的陽光下折射出與周遭岩壁和霧氣相似的光澤，達到天然的視覺隱蔽效果。'],['敏銳感知','頭部耳翼的特殊羽毛結構對氣流與微弱聲音極度敏感，能提前預知山嵐的變化與潛在危險。']]},
   stay:2,
   talks:[
-   {lines:['（牠停在懸浮棲息環的最高處，金黃色的眼睛一動也不動地看著你，耳翼微微轉向你的方向。）','……這裡的風，是從哪裡吹來的？'],choices:[{t:'是列車航行時帶起的氣流。',r:'列車的風。沒有山的味道，但是很穩。……我可以在這裡停一下嗎？'},{t:'你是從哪裡飛進來的？',r:'我只是跟著一陣橫風滑翔。回過神來，就在這裡了。'}]},
-   {lines:['（牠收起雙翼，羽毛在車廂的光下泛出淡淡的粉紫。）','你們這裡的光，跟山上的晨光很像。斜斜的，很好藏起來。','……我是說，很好休息。'],choices:[{t:'你在躲什麼嗎？',r:'沒有。只是習慣了。在山上，太容易被看見的東西，常常會被盯上。'},{t:'這裡很安全。',r:'嗯。我的耳朵也這麼說。這裡的風裡，沒有危險的聲音。'}]},
+   {lines:['（牠停在懸浮棲息環的最高處，金黃色的眼睛一動也不動地看著你，耳翼微微轉向你的方向。）','我住在很高的山上。雲霧會繞著老樹，崖壁上有我的巢。','……這裡的風，是從哪裡吹來的？'],choices:[{t:'是列車航行時帶起的氣流。',r:'列車的風。沒有山的味道，但是很穩。……我可以在這裡停一下嗎？'},{t:'你是從哪裡飛進來的？',r:'我只是跟著一陣橫風滑翔。回過神來，就在這裡了。'}]},
+   {lines:['（牠收起雙翼，羽毛在車廂的光下泛出淡淡的粉紫。）','我習慣在清晨和黃昏出來。光影交替的時候，最自在。','你們這裡的光，跟山上的晨光很像。斜斜的，很好藏起來。','……我是說，很好休息。'],choices:[{t:'你在躲什麼嗎？',r:'沒有。只是習慣了。在山上，太容易被看見的東西，常常會被盯上。'},{t:'這裡很安全。',r:'嗯。我的耳朵也這麼說。這裡的風裡，沒有危險的聲音。'}]},
    {lines:['（牠從圓環上無聲地滑下來，停在離你近了一些的地方。）','山上採藥的人說，在雲裡看見我的影子，就會有好天氣。','我不知道是不是真的。不過，你的旅程，應該會很平安。'],choices:[{t:'謝謝你。',r:'（牠的耳翼輕輕抖了一下，像是在笑。）'}]}
   ],
   farewell:['風向變了。我聽得見。','前面有山的味道……很淡，但是我認得。','我要走了。如果哪天你在雲裡看見一道影子，那就是好天氣的意思。']
@@ -984,7 +1001,7 @@ const PASSENGERS = {
    abilities:[['生物冷光共鳴','能透過體表螢光頻率的變化與同類進行長距離的深海通訊，甚至能微幅干擾周遭的水流與光線。'],['深海壓強適應','體內擁有特殊的骨骼與組織結構，能完美承受千米之下的恐怖水壓，並在高速游動時將阻力降到最低。']]},
   stay:2,
   talks:[
-   {lines:['（靈泉的水面一圈一圈地暗下去，像是突然變得很深。一道幽藍的光，從水底慢慢浮了上來。）','……這裡的水，很淺。也很亮。','不過，很安靜。我喜歡安靜的地方。'],choices:[{t:'你是從深海來的嗎？',r:'深海……是很遠的地方。那裡沒有光，所以我們自己發光。'},{t:'這裡夠你休息嗎？',r:'夠了。我不需要很大的地方，只需要不被打擾。'}]},
+   {lines:['（靈泉的水面一圈一圈地暗下去，像是突然變得很深。一道幽藍的光，從水底慢慢浮了上來。）','……這裡的水，很淺。也很亮。','我來的地方沒有光，水重得像山一樣壓下來。','不過，很安靜。我喜歡安靜的地方。'],choices:[{t:'你是從深海來的嗎？',r:'深海……是很遠的地方。那裡沒有光，所以我們自己發光。'},{t:'這裡夠你休息嗎？',r:'夠了。我不需要很大的地方，只需要不被打擾。'}]},
    {lines:['（牠身上的光點沿著脊椎一路亮起，又一顆一顆熄滅，像在數著什麼。）','這是我們說話的方式。用光，而不是聲音。','在深淵裡，聲音傳得太遠，會驚動太多東西。光只會讓想看見的人看見。'],choices:[{t:'那你剛才說了什麼？',r:'我說：這列車的光，很像海面。'},{t:'我看見了。',r:'嗯。那就夠了。'}]},
    {lines:['水手們說，暴風雨的夜裡看見海面下的藍光，就是平靜的時刻。','我只是浮上來換一口氣而已。','……不過，如果那能讓他們安心，也很好。'],choices:[{t:'你一直都是獨自一個嗎？',r:'大多數時候。深海很大，同伴的光要很久才看得見一次。所以每一次看見，都會記得很久。'}]}
   ],
@@ -1007,8 +1024,8 @@ const PASSENGERS = {
    abilities:[['太陽能航行（Solar-Sailing）','這是燼風帆獸最核心的能力。牠們背部的巨大皮帆富含感光細胞與微血管網。在烈日下，這些帆會吸收大量的太陽能，轉化為微弱的生物電能。這種能量不直接用於攻擊，而是用以刺激肌肉，減少長距離奔跑時的能量消耗，並保持體溫。這讓牠們能以驚人的速度持續奔跑數小時而不顯疲憊。這也是為什麼牠們只在白天活動。'],['擬態帆（Mimicry-Sail）','在休息或遇到危險時，牠們能透過肌肉控制收起背帆，或將其張開。張開時，帆的紋理和陰影能模擬出遠處岩石的形狀，讓牠們在靜止時看起來像是一塊被風化的岩石，從而騙過捕食者。']]},
   stay:2,
   talks:[
-   {lines:['（牠一出現就退到晶石平台的邊緣，背上的兩片帆半收半張，黑曜石般的大眼睛盯著你。）','……你不是商隊。','商隊會帶著水的味道。你身上，只有光的味道。'],choices:[{t:'我是這列車的值勤精靈。',r:'精靈……沒聽過。不過，你沒有追過來。這樣就好。'},{t:'放心，這裡沒有人會抓你。',r:'每個人都這麼說。……不過你站得很遠。我相信站得遠的人。'}]},
-   {lines:['（牠把背帆完全張開，對著晶石平台的光，帆面透出琥珀色。）','這裡的光不是太陽，可是很暖。','在沙漠裡，太陽下山以後我就不能跑了。在這裡，好像可以一直醒著。'],choices:[{t:'你喜歡奔跑嗎？',r:'不是喜歡或不喜歡。帆張開，風來了，腳就自己動了。就像你們的列車一樣。'},{t:'那你要好好休息。',r:'嗯。……我會把帆收一半。這是我們休息的樣子。'}]},
+   {lines:['（牠一出現就退到晶石平台的邊緣，背上的兩片帆半收半張，黑曜石般的大眼睛盯著你。）','……你不是商隊。','我從烈日沙漠來。那裡的沙丘和岩層，一望無際，只有商隊會經過。','商隊會帶著水的味道。你身上，只有光的味道。'],choices:[{t:'我是這列車的值勤精靈。',r:'精靈……沒聽過。不過，你沒有追過來。這樣就好。'},{t:'放心，這裡沒有人會抓你。',r:'每個人都這麼說。……不過你站得很遠。我相信站得遠的人。'}]},
+   {lines:['（牠把背帆完全張開，對著晶石平台的光，帆面透出琥珀色。）','這裡的光不是太陽，可是很暖。','我的帆會把陽光存起來，讓腳不會累。','在沙漠裡，太陽下山以後我就不能跑了。在這裡，好像可以一直醒著。'],choices:[{t:'你喜歡奔跑嗎？',r:'不是喜歡或不喜歡。帆張開，風來了，腳就自己動了。就像你們的列車一樣。'},{t:'那你要好好休息。',r:'嗯。……我會把帆收一半。這是我們休息的樣子。'}]},
    {lines:['有人叫我們「偽龍」。因為我們長得像龍，卻不會噴火。','我不在意。火會燒掉東西，太陽不會。','嚮導說，我們是沙漠的靈魂。我比較喜歡這個名字。'],choices:[{t:'我也比較喜歡那個名字。',r:'（牠的尾舵輕輕擺了一下，像是在沙脊上轉了一個漂亮的彎。）'}]}
   ],
   farewell:['光的顏色變了。','前面有很亮、很熱的地方。我的帆在發燙。','我要下車了。如果你在熱浪裡看見一道琥珀色的帆影，不用叫住我。我跑得很快，但我會記得你。']
@@ -1029,8 +1046,8 @@ const PASSENGERS = {
   stay:2,
   talks:[
    {lines:['（一隻橙褐色的小生物停在自然棲台的邊緣，巨大的耳朵一轉，對準了你。）','……你的腳步聲很輕。','比旅人輕，比沙蜥重。你是誰？'],choices:[{t:'我是這列車的值勤精靈。',r:'精靈。……森林的老人們說過，精靈的腳步是聽不見的。看來他們也會說錯。'},{t:'你的耳朵真大。',r:'大耳朵聽得見沙子底下的心跳。也聽得見你剛才偷偷笑了一下。'}]},
-   {lines:['（牠用前爪輕輕撥了撥脖子上的葉形吊墜，藤蔓與星辰的紋路閃了一下。）','這是約定的記號，不是裝飾。','我答應過一位很老的朋友，要替他看看沙漠以外的世界，再回去告訴他。'],choices:[{t:'是什麼樣的朋友？',r:'他住在森林最深的地方，說話很慢，一句話要說一整個季節。……我只能說到這裡。'},{t:'那你要看得很仔細。',r:'我一直都看得很仔細。這是我的工作。'}]},
-   {lines:['我叫艾莉絲。','沙漠的人叫我們「耳語者」。他們迷路的時候，會跟著我們找到綠洲。','如果有一天你迷路了……不對，你有一整列會自己走的車。你大概不會迷路。'],choices:[{t:'說不定還是會需要你。',r:'（牠尾巴尖那撮白毛輕輕搖了一下。）那我就在暮色裡等你。'}]}
+   {lines:['白天我都在睡覺。等太陽落下，才出來找蟲子和沙蜥吃。','（牠用前爪輕輕撥了撥脖子上的葉形吊墜，藤蔓與星辰的紋路閃了一下。）','這是約定的記號，不是裝飾。','我答應過一位很老的朋友，要替他看看沙漠以外的世界，再回去告訴他。'],choices:[{t:'是什麼樣的朋友？',r:'他住在森林最深的地方，說話很慢，一句話要說一整個季節。……我只能說到這裡。'},{t:'那你要看得很仔細。',r:'我一直都看得很仔細。這是我的工作。'}]},
+   {lines:['我叫艾莉絲。','我住在森林和沙漠交界的綠洲旁邊。晚上很冷，白天很燙。','沙漠的人叫我們「耳語者」。他們迷路的時候，會跟著我們找到綠洲。','如果有一天你迷路了……不對，你有一整列會自己走的車。你大概不會迷路。'],choices:[{t:'說不定還是會需要你。',r:'（牠尾巴尖那撮白毛輕輕搖了一下。）那我就在暮色裡等你。'}]}
   ],
   farewell:['暮色要來了。我聽得見風開始唱歌。','前面有森林的味道，也有沙的味道。那是我的地方。','我會把這列車的事告訴我的朋友。他會花一整個季節，慢慢聽完。']
  },
@@ -1048,7 +1065,7 @@ const PASSENGERS = {
   stay:2,
   talks:[
    {lines:['（棲息車廂的溫度一下子升高了。晶石平台前，一頭漆黑的巨獸低伏著，裂隙間的熔岩光一明一暗。）','……退後。','這不是你的地盤，也不是我的。在弄清楚之前，不要靠近。'],choices:[{t:'（停在原地）我不會靠近。',r:'……嗯。至少你聽得懂。'},{t:'這裡是列車，不屬於任何人。',r:'不屬於任何人的地方……我沒待過那種地方。'}]},
-   {lines:['（牠的巨角頂端還在發燙，但背上的熔岩光暗了一些。）','這輛車在搖。很穩地搖。','在火山那裡，大地搖起來的時候，是在發怒。這裡不是。'],choices:[{t:'你可以在這裡休息。',r:'休息。……我很久沒有用過這個詞。'},{t:'晶石平台的光，夠你補充能量嗎？',r:'不夠熱。不過……不難受。'}]},
+   {lines:['（牠的巨角頂端還在發燙，但背上的熔岩光暗了一些。）','我身體裡有熔岩。熱可以集中在角上，撞開任何擋路的東西。','這輛車在搖。很穩地搖。','在火山那裡，大地搖起來的時候，是在發怒。這裡不是。'],choices:[{t:'你可以在這裡休息。',r:'休息。……我很久沒有用過這個詞。'},{t:'晶石平台的光，夠你補充能量嗎？',r:'不夠熱。不過……不難受。'}]},
    {lines:['人們叫我「大地之傷」。','他們說我走過的地方，都會留下焦痕。那是真的。','但這輛車的地板，一道痕跡也沒有。……我走得很小心。'],choices:[{t:'謝謝你這麼小心。',r:'（牠哼出一口帶著火星的熱氣，轉過頭去，像是不想讓你看見牠的表情。）'}]}
   ],
   farewell:['地底的聲音在叫我。很熱，很深。','那裡才是我的地盤。','……這輛車，我記住了。如果哪天大地為你們震動，那不是我在發怒。']
@@ -1109,7 +1126,7 @@ const PASSENGERS = {
    abilities:[['迷霧幻象（Mist Mimicry）','能夠將自身的生物螢光與周遭的霧氣融合，製造出海市蜃樓般的視覺干擾，使獵食者或不速之客在迷霧中迷失方向。'],['共鳴安撫（Aura Soothing）','透過背部如海葵般的巨大扇翼拍動，散發出能夠平息焦慮、撫平精神創傷的微弱電磁波與柔和光暈。']]},
   stay:2,
   talks:[
-   {lines:['（車廂上方飄著一團柔和的粉白光暈。你一抬頭，那光就往後縮了一點，觸鬚輕輕顫著。）','……不要追。','我只是……被這輛車的燈吸引過來的。它亮得很像港口。'],choices:[{t:'（停在原地，靜靜看著）',r:'……謝謝。你站著不動的樣子，和老航海者教的一樣。'},{t:'你是從霧裡來的嗎？',r:'我就是霧的一部分。很多人在霧裡想家，想著想著，就有了我。'}]},
+   {lines:['（車廂上方飄著一團柔和的粉白光暈。你一抬頭，那光就往後縮了一點，觸鬚輕輕顫著。）','……不要追。','我住在霧裡。沒有風的峽灣，霧很濃，濃到連潮聲都會變輕。','我只是……被這輛車的燈吸引過來的。它亮得很像港口。'],choices:[{t:'（停在原地，靜靜看著）',r:'……謝謝。你站著不動的樣子，和老航海者教的一樣。'},{t:'你是從霧裡來的嗎？',r:'我就是霧的一部分。很多人在霧裡想家，想著想著，就有了我。'}]},
    {lines:['（牠慢慢舒展扇狀的薄翼。光暈一亮一暗，車廂裡的空氣好像安靜了下來。）','你身上有一點點想念的味道。很淡，但是我聞得到。','別擔心。我不會拿走它。我只收集被遺忘的夢。'],choices:[{t:'被遺忘的夢，會去哪裡？',r:'會留在我的光裡。等到有一天，有人在霧中停下腳步，我就把它還給那片海。'},{t:'我在想念什麼呢？',r:'……這個，要你自己想起來才算數。我只能告訴你，那是溫暖的東西。'}]},
    {lines:['那些沒能回家的人，最後都只剩下一句話：「我想回去。」','我是由很多很多這句話組成的。','可是在這輛會自己前進的列車上……我第一次覺得，自己好像也在回家的路上。'],choices:[{t:'那就在這裡多待一會兒吧。',r:'（牠中心的光柔柔地亮了一下，整節車廂的風都停了，像時間也一起歇了一口氣。）'}]}
   ],
@@ -1232,7 +1249,7 @@ function renderHUD(){
  const pend = state.pendingEvents.filter(id=>EVENTS[id]).slice(0,2).map(id=>`<button class="evt" data-act="event:${id}">${EVENTS[id].title}</button>`).join('');
  $('#hud').innerHTML=`<div class="loc">${head}</div>
  <div class="train" aria-label="車廂位置">${cars}<span class="cn">${where}</span></div>
- <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
+ <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
 }
 
 /* ---------- 互動派發 ---------- */
@@ -1248,6 +1265,7 @@ function act(k,v){
   case 'event': { const ev=EVENTS[v]; if(ev&&!done(v)){ complete(v); ev.run(); renderHUD(); } return; }
   case 'reunion': return reunion(v);
   case 'zone': return zoneInfo(v);
+  case 'notes': return notebookPanel();
   case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); BGM.stop(500); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); BGM.start(); } renderHUD(); return toast(PREFS.sound===false?'音樂與音效已關閉':'音樂與音效已開啟');
   default: return (INTERACT[k+':'+v]||(()=>{}))();
  }
@@ -1664,6 +1682,10 @@ function talk(id,next){
  const p=PASSENGERS[id], s=state.passengers[id];
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
+ if(!fresh&&NOTES[id]){ const N=NOTES[id], miss=N.secs.filter(k=>filedOf(id)[k]===undefined&&!notesOf(id).some(i=>N.list[i].k===k));
+  if(miss.length){ const ni=p.talks.findIndex(t=>t.lines.some(l=>N.list.some(x=>miss.includes(x.k)&&l.includes(x.p))));
+   if(ni>=0) return dialogue(id,lines,[{t:'能再跟我說一次之前那些事嗎？',r:'……好。這次聽仔細喔。',go:1},{t:'沒事，只是來看看你。',r:'嗯。'}],c=>{
+    if(c&&c.go) return dialogue(id,p.talks[ni].lines,null,()=>{ render(); next&&next(); }); render(); next&&next(); }); } }
  dialogue(id,lines,fresh?node.choices:null,()=>{
   if(fresh){ s.talks++;
    const ns=Math.min(3, s.talks>=p.talks.length?3: s.talks>=2?2:1); if(ns>s.stage){ s.stage=ns; s.records.push({j:state.journeyCount,t:'關係：'+STAGE_NAMES[ns]}); toast(p.name+'・'+STAGE_NAMES[ns]); }
@@ -1686,7 +1708,8 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  return id==='lumi'? (state.currentLocation==='dawnForest'?'外面是我的森林呢。不過我還想再看看別的地方。':'這裡沒有樹……可是有光。光也不錯。')
   : (state.currentLocation==='starIslands'?'星河的潮汐今天很溫柔。我的島應該也在某處被這樣拍著吧。':'這裡沒有星河，但是有你們。也算是一種潮汐。'); }
 function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id];
- dialogue(id,p.farewell,null,()=>{
+ const fl=NOTES[id]&&noteDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
+ dialogue(id,fl,null,()=>{
   s.aboard=false; s.left=true; if(s.stage<3){ s.stage=3; }
   s.records.push({j:state.journeyCount,t:`在${LOCATIONS[state.currentLocation].name}下車，留下重要回憶。`});
   logJ(`${p.name}在${LOCATIONS[state.currentLocation].name}下車。紀錄仍保存在典藏車廂。`); save();
@@ -1703,13 +1726,122 @@ function dialogue(id,lines,choices,onEnd){
  const p=id&&PASSENGERS[id]; const el=document.createElement('div'); el.className='dlg';
  el.innerHTML=`${p?`<div class="who">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
  $('#layer').appendChild(el); let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
- const show=()=>{ tx.textContent=lines[i]; chs.innerHTML='';
-  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; el.querySelector('.nm').textContent='精靈'; tx.textContent=c.t; tx.classList.add('self'); chs.innerHTML='';
+ let picked=null;
+ const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML='';
+  if(p&&tx.querySelector('mark.hl')&&!state.storyFlags.noteTip){ state.storyFlags.noteTip=1; save(); toast('🗒️ 發光的字句可以點一下，記進筆記本'); }
+  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; el.querySelector('.nm').textContent='精靈'; tx.textContent=c.t; tx.classList.add('self'); chs.innerHTML='';
     lines=lines.concat(['__self__',c.r]); i++; nx.hidden=false; setTimeout(()=>{ i++; el.querySelector('.nm').textContent=p.name; tx.classList.remove('self'); show(); },900); }; chs.appendChild(b); }); }
  };
- el.querySelector('.box').addEventListener('click',()=>{ if(chs.children.length) return; if(lines[i]==='__self__') return; i++; if(i>=lines.length){ el.remove(); onEnd&&onEnd(); } else show(); });
+ el.querySelector('.box').addEventListener('click',e=>{ const mk=e.target.closest('mark.hl'); if(mk&&p){ takeNote(id,+mk.dataset.nk,mk); return; }
+  if(chs.children.length) return; if(lines[i]==='__self__') return; i++; if(i>=lines.length){ el.remove(); onEnd&&onEnd(picked); } else show(); });
  show();
 }
+/* ================================================================
+   聆聽筆記：乘客說話時，關鍵字句會發光，點一下記進精靈的筆記本。
+   回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位，該欄位的完整內容才會出現。
+   - k：這則筆記屬於哪個欄位（habitat 棲息環境・habits 生物習性・abilities 特殊能力・bio 生態故事）；null 是閒聊，放不進任何欄位
+   - p：對話裡要發光的原句（必須和台詞完全一致）
+   - n：精靈寫進筆記本的內容
+   - 筆記本每位乘客的頁數 = 欄位數 + 1，寫滿要先擦掉一則
+   ================================================================ */
+const NOTE_SEC={habitat:'棲息環境',habits:'生物習性',abilities:'特殊能力',bio:'生態故事'};
+const NOTES={
+ lumi:{secs:['bio'],thanks:'你把我說的話都寫下來了。那我回去以後，也要跟古樹說說你。',list:[
+  {k:'bio',p:'……你也是被光點亮的嗎？',n:'苔燈鹿是被晨光「點亮」而誕生的'},
+  {k:null,p:'這裡的苔蘚是另一個早晨的味道',n:'喜歡車上苔蘚的味道'}]},
+ sola:{secs:['bio'],thanks:'你把我的冷笑話也記下來了嗎？……沒有？好吧，至少記住了我。',list:[
+  {k:'bio',p:'我的島漂走了',n:'浮島漂離星河，從此在星河裡漂流'},
+  {k:null,p:'我還以為是一顆走錯路的彗星',n:'以為列車是走錯路的彗星'}]},
+ felinia:{secs:['habitat','habits','abilities','bio'],thanks:'你記得好仔細。山上的風，大概也沒有你記得這麼清楚。',list:[
+  {k:'habitat',p:'雲霧會繞著老樹，崖壁上有我的巢',n:'住在雲霧繚繞的高山，在崖壁上築巢'},
+  {k:'habits',p:'清晨和黃昏出來',n:'清晨與黃昏最活躍'},
+  {k:'abilities',p:'斜斜的，很好藏起來',n:'羽毛能在斜光下藏起身影（光影擬態）'},
+  {k:'bio',p:'在雲裡看見我的影子，就會有好天氣',n:'採藥人視牠的身影為好天氣與平安的象徵'},
+  {k:null,p:'這裡的風，是從哪裡吹來的？',n:'問了車廂的風從哪裡來'}]},
+ leviathaurora:{secs:['habitat','habits','abilities','bio'],thanks:'你用文字記住了光。這是我第一次，被一種不會發光的方式記得。',list:[
+  {k:'habitat',p:'沒有光，水重得像山一樣壓下來',n:'來自無光、極高壓的深海海溝'},
+  {k:'habits',p:'我喜歡安靜的地方',n:'性情溫和，喜歡安靜、避開打擾'},
+  {k:'abilities',p:'用光，而不是聲音',n:'用體表的光與同伴遠距離說話（生物冷光共鳴）'},
+  {k:'bio',p:'暴風雨的夜裡看見海面下的藍光，就是平靜的時刻',n:'水手相信海面下的藍光代表平靜的時刻'},
+  {k:null,p:'這裡的水，很淺。也很亮',n:'覺得靈泉的水很淺、很亮'}]},
+ cinder:{secs:['habitat','habits','abilities','bio'],thanks:'你把我的帆、我的沙漠都寫下來了。……那本書裡，應該有很多光吧。',list:[
+  {k:'habitat',p:'那裡的沙丘和岩層，一望無際',n:'來自烈日沙漠，沙丘與岩層交錯的深處'},
+  {k:'habits',p:'太陽下山以後我就不能跑了',n:'只在白天活動（晝行性）'},
+  {k:'abilities',p:'帆會把陽光存起來，讓腳不會累',n:'背帆吸收陽光，化成奔跑的力氣（太陽能航行）'},
+  {k:'bio',p:'嚮導說，我們是沙漠的靈魂',n:'商隊嚮導稱牠們為「沙漠的靈魂」'},
+  {k:null,p:'你身上，只有光的味道',n:'說我身上只有光的味道'}]},
+ aelis:{secs:['habitat','habits','abilities','bio'],thanks:'你寫字的聲音很輕，我一直聽著。我會跟我的朋友說，有個精靈把我記得很清楚。',list:[
+  {k:'habitat',p:'森林和沙漠交界的綠洲',n:'住在古老森林與沙漠交界的綠洲'},
+  {k:'habits',p:'等太陽落下，才出來找蟲子和沙蜥吃',n:'夜行性，黃昏後捕食昆蟲與沙蜥'},
+  {k:'abilities',p:'比旅人輕，比沙蜥重',n:'大耳朵能分辨極細微的腳步聲（聲納放大器）'},
+  {k:'bio',p:'他們迷路的時候，會跟著我們找到綠洲',n:'迷路的旅人跟著「耳語者」找到綠洲'},
+  {k:null,p:'這是約定的記號，不是裝飾',n:'吊墜是約定的記號'}]},
+ pyro:{secs:['habitat','habits','abilities','bio'],thanks:'……你寫下來的東西，不會燒掉吧。那就好。',list:[
+  {k:'habitat',p:'在火山那裡，大地搖起來的時候',n:'來自活火山帶，大地時常震動的地方'},
+  {k:'habits',p:'這不是你的地盤',n:'領地意識極強，會警告闖入者'},
+  {k:'abilities',p:'熱可以集中在角上',n:'能把體內熱能集中到巨角（熔岩核心）'},
+  {k:'bio',p:'他們說我走過的地方，都會留下焦痕',n:'走過之處留下焦痕，獵人敬而遠之'},
+  {k:null,p:'這輛車在搖。很穩地搖',n:'說列車搖得很穩'}]},
+ vandora:{secs:['habitat','habits','abilities','bio'],thanks:'你注意到的東西，比雨林裡大部分的獵物都多。……這是稱讚。',list:[
+  {k:'habitat',p:'這裡的空氣太乾了',n:'習慣非常潮濕的環境（熱帶雨林）'},
+  {k:'habits',p:'通常是我先看見它們',n:'擅長無聲伏擊，總是先發現對方'},
+  {k:'abilities',p:'還有震動。很規律、很穩的震動',n:'觸鬚能感應濕度與震動（觸鬚感應）'},
+  {k:'bio',p:'看見我的時候，通常已經太晚了',n:'雨林的人敬畏這位隱形獵手'},
+  {k:null,p:'這輛車一直在跑',n:'說列車一直在跑'}]},
+ frost:{secs:['habitat','habits','abilities','bio'],thanks:'你寫得很慢，很仔細。像在雪地上一步一步走。我喜歡這種走法。',list:[
+  {k:'habitat',p:'在萬古冰原，連呼吸都會結冰',n:'來自終年風雪、連呼吸都會結冰的冰原'},
+  {k:'habits',p:'我只是在確認，這裡誰是先來的',n:'沉穩警惕，領地意識很強'},
+  {k:'abilities',p:'在白色裡，消失是最安全的事',n:'能在暴風雪中隱去身影（冰晶折射與偽裝）'},
+  {k:'abilities',p:'水面立刻凝起細小的冰花',n:'碰到的水會瞬間結冰（極寒）'},
+  {k:'bio',p:'在暴風雪裡只看得見我們的眼睛',n:'獵人在風雪中只看得見牠的藍眼'},
+  {k:null,p:'這裡太暖了。不過，不討厭',n:'覺得車廂太暖'}]},
+ sirenora:{secs:['habitat','habits','abilities','bio'],thanks:'你把那些話都收好了。……原來被人記下來，是這種溫暖的感覺。',list:[
+  {k:'habitat',p:'沒有風的峽灣，霧很濃',n:'飄浮在濃霧籠罩的無風峽灣'},
+  {k:'habits',p:'我只收集被遺忘的夢',n:'以夢境殘留的記憶碎片維生'},
+  {k:'abilities',p:'光暈一亮一暗，車廂裡的空氣好像安靜了下來',n:'光暈能讓周圍平靜下來（共鳴安撫）'},
+  {k:'bio',p:'我是由很多很多這句話組成的',n:'由未能歸家之人的思念所化'},
+  {k:null,p:'它亮得很像港口',n:'覺得列車的燈像港口'}]}
+};
+const notesOf=id=>((state.notes||{})[id])||[];
+const filedOf=id=>((state.filed||{})[id])||{};
+const noteCap=id=>NOTES[id]?NOTES[id].secs.length+1:0;
+const noteDone=id=>!NOTES[id]||NOTES[id].secs.every(k=>filedOf(id)[k]!==undefined);
+const secShown=(id,k)=>!NOTES[id]||!NOTES[id].secs.includes(k)||filedOf(id)[k]!==undefined;
+const escH=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* 在台詞裡把可記錄的原句標成發光字 */
+function markNotes(id,line){ let h=escH(line); const N=NOTES[id]; if(!N) return h;
+ N.list.forEach((x,i)=>{ const p=escH(x.p); if(!h.includes(p)) return; const got=notesOf(id).includes(i);
+  h=h.replace(p,`<mark class="hl ${got?'got':''}" data-nk="${i}" role="button" tabindex="0" title="${got?'已記下':'點一下記進筆記本'}">${p}</mark>`); });
+ return h; }
+function takeNote(id,i,mk){ const N=NOTES[id]; if(!N) return; state.notes=state.notes||{}; const a=state.notes[id]=state.notes[id]||[];
+ if(a.includes(i)) return toast('這句已經記下了');
+ if(a.length>=noteCap(id)) return toast(`${PASSENGERS[id].name}這一頁寫滿了（${a.length}/${noteCap(id)}）。打開筆記本 🗒️ 擦掉一則再記。`);
+ a.push(i); save(); if(mk){ mk.classList.add('got'); mk.title='已記下'; } SFX.tone(1568,0,.25,'triangle',.025);
+ toast(`🗒️ 記下：${N.list[i].n}（${a.length}/${noteCap(id)}）`); }
+/* 筆記本（HUD 的 🗒️） */
+function notebookPanel(){ const ov=panel('','notebook'), pn=ov.querySelector('.panel');
+ const draw=()=>{ const ids=Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id));
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">值勤精靈的隨身筆記</div><h2>🗒️ 筆記本</h2>
+  <p>聽乘客說話時，發光的字句可以點一下記下來。回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位。</p>
+  ${ids.length?ids.map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
+   return `<section class="nb-who"><h3>${PASSENGERS[id].name}<small>筆記 ${a.length}/${noteCap(id)} 頁・圖鑑 ${fd}/${sc.length} 欄${fd===sc.length?'・完整':''}</small></h3>
+    ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
+     return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
+     :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }).join('')
+   :'<p class="nb-empty">還沒有遇見任何乘客。</p>'}`;
+  pn.querySelectorAll('[data-erase]').forEach(b=>b.onclick=()=>{ const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); draw(); }); };
+ draw(); }
+/* 圖鑑：未整理的欄位顯示放入筆記的空格 */
+function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
+function fileChooser(slot){ const [id,k]=slot.querySelector('[data-file]').dataset.file.split(':'), used=Object.values(filedOf(id)), a=notesOf(id).filter(i=>!used.includes(i));
+ slot.innerHTML=a.length?`<p class="pick-h">要把哪一則筆記整理到「${NOTE_SEC[k]}」？</p>${a.map(i=>`<button class="pick" data-pick="${id}:${k}:${i}">${NOTES[id].list[i].n}</button>`).join('')}<button class="pick ghost" data-unpick="${id}:${k}">取消</button>`
+  :`<p class="pick-h">筆記本裡沒有還沒整理的${PASSENGERS[id].name}筆記。${state.passengers[id]&&state.passengers[id].aboard?'再去聽牠說說話吧。':''}</p><button class="pick ghost" data-unpick="${id}:${k}">好</button>`; }
+function fileNote(id,k,i,btn){ const x=NOTES[id].list[i];
+ if(x.k!==k){ btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake'); SFX.tone(330,0,.3,'sine',.02); return toast(x.k?'這則筆記好像不是在說這件事。':'這則只是閒聊，放不進圖鑑。可以到筆記本把它擦掉。'); }
+ state.filed=state.filed||{}; const f=state.filed[id]=state.filed[id]||{}; f[k]=i; SFX.tone(1318,0,.7,'sine',.035); toast(`已整理：${PASSENGERS[id].name}・${NOTE_SEC[k]}`);
+ if(noteDone(id)){ const s=state.passengers[id]; if(s) s.records.push({j:state.journeyCount,t:'圖鑑整理完成。'}); logJ(`${PASSENGERS[id].name}的圖鑑整理完成。`); setTimeout(()=>toast(`✦ ${PASSENGERS[id].name}的圖鑑已完整`),1400); }
+ save(); openBook('life',id); }
+
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
 function dialogueScript(script,onEnd){ let i=0; const el=document.createElement('div'); el.className='dlg'; $('#layer').appendChild(el);
@@ -2088,7 +2220,10 @@ function openBook(ch,sub){
    const r=t.closest('[data-ch]'); if(r){ BOOK.page=0; return openBook(r.dataset.ch); }
    const l=t.closest('[data-life]'); if(l) return openBook('life',l.dataset.life);
    const b=t.closest('[data-bk]'); if(b) return openBook(b.dataset.bk);
-   const pg=t.closest('[data-pg]'); if(pg){ BOOK.page=+pg.dataset.pg; return openBook('life'); } });
+   const pg=t.closest('[data-pg]'); if(pg){ BOOK.page=+pg.dataset.pg; return openBook('life'); }
+   const fb=t.closest('[data-file]'); if(fb) return fileChooser(fb.closest('.file-slot'));
+   const pk=t.closest('[data-pick]'); if(pk){ const [id,k,i]=pk.dataset.pick.split(':'); return fileNote(id,k,+i,pk); }
+   const up=t.closest('[data-unpick]'); if(up){ const [id,k]=up.dataset.unpick.split(':'); up.closest('.file-slot').outerHTML=fileSlot(id,k); } });
   $('#layer').appendChild(ov); }
  BOOK.ch=ch; ov.querySelectorAll('[data-ch]').forEach(b=>{ b.classList.toggle('on',b.dataset.ch===ch); b.setAttribute('aria-current',b.dataset.ch===ch?'page':'false'); });
  const sp=ov.querySelector('#spread'); sp.classList.remove('turn'); void sp.offsetWidth; sp.classList.add('turn');
@@ -2114,11 +2249,11 @@ function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=
  const i=all.indexOf(e), s=e.rec||{}, stage=s.stage||0;
  return `<section class="page l"><p class="no">No. ${specNo(i)}・${e.species}</p><div class="plate big"><div class="wash" style="background:${e.wash}"></div>${portraitOf(e)}</div><p class="caption">${e.name}・田野速寫</p>
   <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div></section>
- <section class="page r"><h3>${e.name}</h3>${RULE}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${e.homeText}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
+ <section class="page r"><h3>${e.name}</h3>${RULE}${NOTES[e.id]?`<p class="cmp ${noteDone(e.id)?'done':''}">圖鑑整理 ${NOTES[e.id].secs.filter(k=>filedOf(e.id)[k]!==undefined).length} / ${NOTES[e.id].secs.length}${noteDone(e.id)?'・完整紀錄 ✦':'・把筆記放進空白的欄位'}</p>`:''}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
   <dt>偏好棲息</dt><dd>${ZONES[e.zone].name}</dd><dt>目前狀態</dt><dd>${s.aboard?'乘車中':s.left?'已下車・紀錄保留':'—'}</dd>
   <dt>相遇程度</dt><dd><span class="bond">${STAGE_NAMES.map((n,k)=>`<i class="${k<=stage?'on':''}" title="${n}"></i>`).join('')}<span>${STAGE_NAMES[stage]}</span></span></dd></dl>
-  ${e.field&&e.field.nameNote?`<h5>${GLYPH.ring}名稱由來</h5><p>${e.field.nameNote}</p>`:''}${e.field?`<h5>${GLYPH.ring}外觀特徵</h5><p>${e.field.looks}</p><h5>${GLYPH.sun}棲息環境</h5><p>${e.field.habitat}</p><h5>${GLYPH.moon}生物習性</h5><ul class="notes">${e.field.habits.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul><h5>${GLYPH.leaf}特殊能力</h5><ul class="notes">${e.field.abilities.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:''}
-  <h5>${GLYPH.leaf}${e.field?'生態故事':'田野筆記'}</h5><p>${e.bio}</p><h5>${GLYPH.ring}初見</h5><p>${e.intro}</p>
+  ${e.field&&e.field.nameNote?`<h5>${GLYPH.ring}名稱由來</h5><p>${e.field.nameNote}</p>`:''}${e.field?`<h5>${GLYPH.ring}外觀特徵</h5><p>${e.field.looks}</p><h5>${GLYPH.sun}棲息環境</h5>${secShown(e.id,'habitat')?`<p>${e.field.habitat}</p>`:fileSlot(e.id,'habitat')}<h5>${GLYPH.moon}生物習性</h5>${secShown(e.id,'habits')?`<ul class="notes">${e.field.habits.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'habits')}<h5>${GLYPH.leaf}特殊能力</h5>${secShown(e.id,'abilities')?`<ul class="notes">${e.field.abilities.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'abilities')}`:''}
+  <h5>${GLYPH.leaf}${e.field?'生態故事':'田野筆記'}</h5>${secShown(e.id,'bio')?`<p>${e.bio}</p>`:fileSlot(e.id,'bio')}<h5>${GLYPH.ring}初見</h5><p>${e.intro}</p>
   ${s.records&&s.records.length?`<h5>${GLYPH.moon}旅程紀錄</h5><ul class="recs">${s.records.map(r=>`<li><span class="no">No.${r.j}</span><span>${r.t}</span></li>`).join('')}</ul>`:''}
   <button class="backlink" data-bk="life">‹ 返回生命誌</button></section>`; }
 function bookLore(){
