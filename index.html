@@ -853,27 +853,30 @@ ART.dragonGlow=(tx,ty,sc)=>{ const body='M0 0 C 60 -50 130 -40 180 0 S 300 60 36
  <path d="M8 -12 C -14 -28 -42 -26 -62 -10 C -46 0 -20 8 8 8 Z" fill="#fbf8ff"/><path d="M-4 -16 C 6 -42 24 -54 46 -60 M4 -14 C 18 -34 34 -40 54 -42" stroke="#e8c983" stroke-width="3.5" fill="none" stroke-linecap="round"/>
  <circle cx="-24" cy="-11" r="3.5" fill="#7fe6f0"/><path d="M-58 -6 C -82 2 -98 22 -112 46 M-54 2 C -70 18 -76 34 -80 56" stroke="#e8c983" stroke-width="1.6" fill="none"/></g>`; };
 
+/* 駕駛室：使用提供的美術（cab-frame 窗戶已挖空）。窗外依停靠地點顯示風景，航行時顯示原圖的星空；
+   領頭龍、軌道、號誌仍由程式即時繪製；操控台上的裝備、晶環與聯鎖燈狀態以光效疊加 */
+const CAB_IMG={frame:'assets/cab-frame.webp',space:'assets/cab-space.webp'};
 ART.car.cab=function(state){
- const voy=state.currentPhase==='voyage', sig=CAB.signalView(), lamp=CAB.doorView();
+ const voy=state.currentPhase==='voyage', sig=CAB.signalView(), lamp=CAB.doorView(), d=state.duty, eq=state.spirit.equipment;
  const sc={red:'#ff7a7a',amber:'#ffd27a',green:'#7dffb4'}[sig]||'#556';
- const view=voy?ART.loc.voyage():LOCATIONS[state.currentLocation].art();
  let ties=''; for(let i=0;i<8;i++){ const t=Math.pow(i/8,1.5), y=900-520*t, hw=250*(1-t)+4; ties+=`<line x1="${(800-hw).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(800+hw).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#f1d58e" stroke-width="${(3*(1-t)+1).toFixed(1)}" opacity=".5"/>`; }
- return `<rect width="1600" height="900" fill="#ece8f2"/>
- <svg x="120" y="70" width="1360" height="520" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${view}
+
+ const view=voy?`<image href="${CAB_IMG.space}" x="0" y="0" width="1600" height="900" preserveAspectRatio="none"/>`:`<svg x="0" y="0" width="1600" height="560" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${LOCATIONS[state.currentLocation].art()}</svg>`;
+ return `<rect width="1600" height="900" fill="#ece8f2"/>${view}
+ <svg x="120" y="70" width="1360" height="520" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <path d="M500 900 L 790 380 L 810 380 L 1100 900" fill="#c8a85e" opacity=".12"/><path d="M560 900 L 796 380 M1040 900 L 804 380" stroke="#f1d58e" stroke-width="5" opacity=".85"/>${ties}
   <g transform="translate(1060 360)"><rect x="-10" y="0" width="20" height="320" fill="#d9d2ef"/><circle r="48" fill="#1a1c3a" stroke="#c8a85e" stroke-width="6"/><circle r="31" fill="${sc}"/><circle class="pulse" r="120" fill="${sc}" opacity=".28" filter="url(#fSoft)"/></g>
   <g class="drgfloat">${ART.dragonGlow(640,250,.9)}</g>
  </svg>
- <path d="M0 0 H1600 V900 H0 Z M120 590 L 120 200 Q 120 70 400 70 L 1200 70 Q 1480 70 1480 200 L 1480 590 Z" fill="url(#gStone)" fill-rule="evenodd"/>
- <path d="M120 590 L 120 200 Q 120 70 400 70 L 1200 70 Q 1480 70 1480 200 L 1480 590 Z" fill="url(#gGlass)"/>
- <path d="M120 590 L 120 200 Q 120 70 400 70 L 1200 70 Q 1480 70 1480 200 L 1480 590" fill="none" stroke="#c8a85e" stroke-width="10"/><path d="M800 70 V 590" stroke="#c8a85e" stroke-width="4" opacity=".55"/>
- <path d="M0 900 L 0 640 Q 800 560 1600 640 L 1600 900 Z" fill="url(#gStoneD)"/><path d="M0 640 Q 800 560 1600 640" stroke="#c8a85e" stroke-width="6" fill="none"/>
- <path d="M140 900 L 200 680 Q 800 615 1400 680 L 1460 900 Z" fill="#f6f2fa"/><path d="M200 680 Q 800 615 1400 680" stroke="#c8a85e" stroke-width="4" fill="none"/>
- <g transform="translate(800 740)"><g class="spin"><circle r="96" fill="none" stroke="#c8a85e" stroke-width="2" stroke-dasharray="3 11"/></g><polygon points="0,-70 40,0 0,70 -40,0" fill="#dff4ff"/><polygon points="0,-70 40,0 0,0" fill="#fff"/><circle r="120" fill="url(#gCyan)" opacity=".7"/><ellipse rx="110" ry="24" fill="none" stroke="#c8a85e" stroke-width="3"/></g>
- <g transform="translate(1130 735)"><circle r="58" fill="#1a1c3a" stroke="#c8a85e" stroke-width="5"/><path d="M0 -40 L 35 20 L -35 20 Z M0 40 L 35 -20 L -35 -20 Z" fill="none" stroke="${lamp==='lit'?'#ffe9a8':'#5b5a78'}" stroke-width="4"/>
-  <circle r="12" fill="${lamp==='lit'?'#fff6d8':lamp==='closing'?'#b8954e':'#3a3a55'}"/>${lamp==='lit'?'<circle r="120" fill="url(#gGold)"/>':''}</g>
- ${cabPrepArt(state)}
- <g transform="translate(470 735)"><circle r="64" fill="none" stroke="#c8a85e" stroke-width="4"/><ellipse rx="64" ry="20" fill="none" stroke="#c8a85e" stroke-width="2" transform="rotate(-20)"/><path d="M0 -50 L 10 0 L 0 50 L -10 0 Z" fill="#fff6d8"/><circle r="110" fill="url(#gViolet)" opacity=".5"/></g>`; };
+ <image href="${CAB_IMG.frame}" x="0" y="0" width="1600" height="900" preserveAspectRatio="none"/>
+ ${d.scan?'<circle cx="148" cy="470" r="120" fill="url(#gGreen)" opacity=".55"/>':''}
+ <circle cx="800" cy="440" r="${voy?140:110}" fill="url(#gCyan)" opacity="${voy?.55:.35}"/>
+ ${lamp==='lit'?'<circle cx="1124" cy="521" r="130" fill="url(#gGold)" opacity=".9"/>':lamp==='closing'?'<circle cx="1124" cy="521" r="90" fill="url(#gGold)" opacity=".35"/>':''}
+ <g transform="translate(1431 512)">
+  ${eq.tablet?'':`<g transform="translate(-52 -18)"><polygon points="0,-24 21,-12 21,12 0,24 -21,12 -21,-12" fill="#dff4ff" opacity=".9" stroke="#fff" stroke-width="2"/><circle r="38" fill="url(#gCyan)"/></g>`}
+  ${eq.compass?'':`<g transform="translate(0 -24)"><circle r="20" fill="none" stroke="#c8a85e" stroke-width="4"/><path d="M0 -15 L 5 0 L 0 15 L -5 0 Z" fill="#fff6d8"/><circle r="38" fill="url(#gGold)"/></g>`}
+  ${eq.talisman?'':`<g transform="translate(52 -18)"><path d="M0 -20 A 20 20 0 1 0 0 20 A 14 14 0 1 1 0 -20 Z" fill="#e2d6ff"/><circle cx="6" cy="0" r="5" fill="#fff6d8"/><circle r="38" fill="url(#gViolet)"/></g>`}</g>
+ ${eq.tablet?`<g transform="translate(1431 420)"><polygon points="0,-40 34,-20 34,20 0,40 -34,20 -34,-20" fill="#dff4ff" opacity=".9" stroke="#fff" stroke-width="2"/><path d="M-20 -8 H20 M-20 4 H12 M-20 16 H16" stroke="#5a6bb0" stroke-width="3"/><circle r="74" fill="url(#gCyan)" opacity=".7"/></g>`:''}`; };
 
 /* 駕駛室兩側：淨界晶環（左）、裝備台與星途符牒（右） */
 function cabPrepArt(state){ const d=state.duty, eq=state.spirit.equipment;
@@ -984,7 +987,8 @@ const CARRIAGES = {
  cab:{name:'火車頭駕駛室',short:'駕駛室',image:null},
  prep:{name:'整備前廊',short:'整備',image:null},  /* 舊存檔相容用；值勤準備已全部移到駕駛室 */
  observation:{name:'星月觀測車廂',short:'觀測',image:null},
- nature:{name:'森羅溫室車廂',short:'溫室',image:null},
+ nature:{name:'森羅溫室車廂',short:'溫室',image:'assets/nature-pano.jpg',   /* 360° 環景（左右兩端已淡入淡出接合） */
+  pano:{image:'assets/nature-pano.jpg',w:1634,h:887,hfov:112}},   /* 圖的解析度較低，視角放寬一些 */
  habitat:{name:'棲息車廂',short:'棲息',image:null},
  memory:{name:'記憶典藏車廂',short:'典藏',image:'assets/memory.jpg', /* image 為 WebGL 不可用時的平面備援 */
   pano:{image:'assets/memory-pano.jpg',w:2576,h:1274}},
@@ -2323,6 +2327,7 @@ PANO.topElev=()=>Math.atan(PANO.hr()/2)/D2R;                         /* 圖片�
 function pxToSph(col,row,W,H){ const yaw=(360*(1-col/W))%360, t=(0.5-row/H)*2*Math.PI*H/W; return {yaw:+yaw.toFixed(2),elev:+(Math.atan(t)/D2R).toFixed(2)}; }
 
 const MP=(c,r)=>pxToSph(c,r,2576,1274);
+const NP=(c,r)=>pxToSph(c,r,1634,887);   /* 森羅溫室環景的像素座標 */
 const clone=o=>JSON.parse(JSON.stringify(o));
 
 function isPanoView(){ return state.currentPhase!=='outside' && !!CARRIAGES[state.currentCarriage].pano && panoInit(); }
@@ -2370,8 +2375,8 @@ function panoMount(car){
 function panoResize(){
  if(!PANO.active||!PANO.gl) return; const st=$('#stage'); const w=st.clientWidth||1, h=st.clientHeight||1;
  PANO.w=w; PANO.h=h; const dpr=Math.min(devicePixelRatio||1,2); PANO.canvas.width=Math.round(w*dpr); PANO.canvas.height=Math.round(h*dpr);
- const asp=w/h, te=PANO.topElev(); let fov=2*Math.atan(Math.tan(45*D2R)/asp)/D2R;
- fov=Math.max(50,Math.min(fov,90,2*te-6)); PANO.fov=fov; PANO.hfov=2*Math.atan(Math.tan(fov*D2R/2)*asp)/D2R;
+ const asp=w/h, te=PANO.topElev(), hf=(CARRIAGES[PANO.active].pano.hfov||90)/2; let fov=2*Math.atan(Math.tan(hf*D2R)/asp)/D2R;   /* 每節車廂可設定水平視角 */
+ fov=Math.max(50,Math.min(fov,100,2*te-6)); PANO.fov=fov; PANO.hfov=2*Math.atan(Math.tan(fov*D2R/2)*asp)/D2R;
  PANO.maxLat=Math.max(0,te-fov/2-1.5); PANO.tLat=Math.max(-PANO.maxLat,Math.min(PANO.maxLat,PANO.tLat)); PANO.lat=PANO.tLat; PANO.need=true;
 }
 function panoBasis(){ const lo=PANO.lon*D2R, la=PANO.lat*D2R;
@@ -2768,21 +2773,21 @@ const seenOf=id=>(state.seen||{})[id];
 const NPC_AT=id=>{ if(PASSENGERS[id].spot) return PASSENGERS[id].spot; const z=ZONES[PASSENGERS[id].zone]; return {x:z.mx??z.x+4,y:z.my??z.y-12}; };
 const HSDEF=[
  /* 火車頭駕駛室 */
- {id:'cab-window',scene:'cab',name:'前方觀景窗',at:{x:33,y:30},layer:2,act:()=>cabWindow()},
+ {id:'cab-window',scene:'cab',name:'前方觀景窗',at:{x:24,y:22},layer:2,act:()=>cabWindow()},
  {id:'cab-signal',scene:'cab',name:'出發星際號誌',at:{x:63.8,y:28},layer:2,act:'cab:signal',track:false,
   lock:()=>state.currentPhase==='docked'&&CAB.signal!=='green'?(CAB.signal==='red'?'號誌仍是紅光，前方航道確認中。':'號誌轉為琥珀光，再等一下。'):null,
   imp:()=>state.currentPhase==='docked'&&CAB.signal==='green'&&!state.duty.signal, done:()=>state.currentPhase==='voyage'||!!state.duty.signal},
- {id:'cab-doors',scene:'cab',name:'車門聯鎖安全燈',at:{x:70.6,y:80},layer:2,act:'cab:doors',track:false,
+ {id:'cab-doors',scene:'cab',name:'車門聯鎖安全燈',at:{x:70.3,y:57},layer:2,act:'cab:doors',track:false,
   lock:()=>state.currentPhase==='docked'&&!doorsLit()?'安全符文還沒亮起，仍有車門未關妥。':null,
   imp:()=>state.currentPhase==='docked'&&doorsLit()&&!state.duty.doors, done:()=>state.currentPhase==='voyage'||!!state.duty.doors},
- {id:'cab-disc',scene:'cab',name:'古代控制晶盤',at:{x:50,y:80},layer:3,act:()=>discPanel(),track:false},
- {id:'cab-compass',scene:'cab',name:'星軌羅盤座',at:{x:29,y:80},layer:2,act:'cab:runes'},
+ {id:'cab-disc',scene:'cab',name:'古代控制晶盤',at:{x:50,y:49},layer:3,act:()=>discPanel(),track:false},
+ {id:'cab-compass',scene:'cab',name:'星軌羅盤座',at:{x:28.7,y:51},layer:2,act:'cab:runes'},
  {id:'cab-dragon',scene:'cab',name:'領頭・曦淵',at:{x:52,y:17},layer:4,act:'cab:dragon',track:false,
   imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)},
  /* 值勤準備（原整備前廊）：全部在駕駛室完成 */
- {id:'cab-scan',scene:'cab',name:'淨界晶環・身體量測',at:{x:15.6,y:76},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&(!state.duty.scan||!!(state.spirit.contamination&&state.spirit.contamination.value>=50)),done:()=>!!state.duty.scan&&!(state.spirit.contamination&&state.spirit.contamination.value>=50)},
- {id:'cab-equip',scene:'cab',name:'裝備台',at:{x:87.5,y:80},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
- {id:'cab-brief',scene:'cab',name:'星途符牒',at:{x:87.5,y:60},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
+ {id:'cab-scan',scene:'cab',name:'淨界晶環・身體量測',at:{x:9.6,y:52},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&(!state.duty.scan||!!(state.spirit.contamination&&state.spirit.contamination.value>=50)),done:()=>!!state.duty.scan&&!(state.spirit.contamination&&state.spirit.contamination.value>=50)},
+ {id:'cab-equip',scene:'cab',name:'裝備台',at:{x:89.4,y:62},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
+ {id:'cab-brief',scene:'cab',name:'星途符牒',at:{x:89.4,y:46.7},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
  {id:'cab-back',scene:'cab',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
  /* 星月觀測車廂 */
  {id:'obs-window',scene:'observation',name:'全景觀測窗',at:{x:50,y:30},layer:2,act:'obs:window'},
@@ -2798,15 +2803,15 @@ const HSDEF=[
  {id:'obs-const',scene:'observation',name:'星座盤',at:{x:50,y:89},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
  {id:'obs-back',scene:'observation',name:'返回棲息車廂',shape:'back',at:{x:7,y:94},act:'go:habitat'},
  /* 森羅溫室車廂 */
- {id:'nat-vault',scene:'nature',name:'稀有種子典藏櫃',at:{x:10,y:48},layer:3,act:'nat:vault',ver:()=>seedsHave().length},
- {id:'nat-pod-a',scene:'nature',name:'發光培育艙・甲',at:{x:27,y:43},layer:3,act:'nat:culture',track:false,imp:()=>!!(state.culture&&state.culture.bloomed)},
- {id:'nat-pod-b',scene:'nature',name:'發光培育艙・乙',at:{x:73,y:43},layer:2,act:()=>podB(),ver:()=>grownPlants().length},
- {id:'nat-crystal',scene:'nature',name:'界域調節晶石',at:{x:50,y:28},layer:2,act:()=>envPanel(),track:false},
- {id:'nat-samples',scene:'nature',name:'植物樣本架',at:{x:20.6,y:84},layer:3,act:()=>samplePanel(),ver:()=>SPECIMENS.filter(s=>s.have()).length},
- {id:'nat-special',scene:'nature',name:'守望藤',at:{x:90,y:60},layer:2,act:'nat:special',ver:()=>state.clues.includes('clue_ring')?2:1},
- {id:'nat-window',scene:'nature',name:'自然觀察窗',at:{x:87.5,y:24.4},layer:2,act:()=>natWindow()},
- {id:'nat-door',scene:'nature',name:'前往棲息車廂',shape:'door',at:{x:50,y:53},act:'go:habitat'},
- {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
+ {id:'nat-vault',scene:'nature',name:'稀有種子典藏櫃',at:NP(290,430),layer:3,act:'nat:vault',ver:()=>seedsHave().length},
+ {id:'nat-pod-a',scene:'nature',name:'發光培育艙・甲',at:NP(645,440),layer:3,act:'nat:culture',track:false,imp:()=>!!(state.culture&&state.culture.bloomed)},
+ {id:'nat-pod-b',scene:'nature',name:'發光培育艙・乙',at:NP(1135,440),layer:2,act:()=>podB(),ver:()=>grownPlants().length},
+ {id:'nat-crystal',scene:'nature',name:'界域調節晶石',at:NP(887,472),layer:2,act:()=>envPanel(),track:false},
+ {id:'nat-samples',scene:'nature',name:'植物樣本架',at:NP(1490,445),layer:3,act:()=>samplePanel(),ver:()=>SPECIMENS.filter(s=>s.have()).length},
+ {id:'nat-special',scene:'nature',name:'守望藤',at:NP(1592,440),layer:2,act:'nat:special',ver:()=>state.clues.includes('clue_ring')?2:1},
+ {id:'nat-window',scene:'nature',name:'自然觀察窗',at:NP(887,330),layer:2,act:()=>natWindow()},
+ {id:'nat-door',scene:'nature',name:'前往棲息車廂',shape:'door',at:NP(1306,470),act:'go:habitat'},
+ {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:NP(468,470),act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
  ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
@@ -2866,7 +2871,7 @@ const HSDEF=[
  {id:'out-back-si',scene:'out:starIslands',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'}
 ];
 /* 環景車廂：從哪扇門進來，就面向車廂內部 */
-const PANO_ENTRY={memory:{cab:MP(8,700).yaw,nature:MP(1272,700).yaw}};
+const PANO_ENTRY={memory:{cab:MP(8,700).yaw,nature:MP(1272,700).yaw},nature:{memory:NP(1306,470).yaw,habitat:NP(468,470).yaw}};
 
 const HS_SCENE=()=>state.currentPhase==='outside'?'out:'+state.currentLocation:state.currentCarriage;
 const hsName=h=>typeof h.name==='function'?h.name():h.name;
