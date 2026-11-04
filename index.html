@@ -95,6 +95,11 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .cs-board{max-width:520px;margin:8px auto;border-radius:10px;overflow:hidden}.cs-board svg{width:100%;display:block}.cs-board.done{box-shadow:0 0 24px rgba(255,220,140,.45)}
 .cs-star{cursor:pointer}.cs-star.on circle:last-child{filter:drop-shadow(0 0 6px #ffe9a8)}
 .card[disabled]{opacity:.45;cursor:default}
+/* 觀星紀錄本 */
+.ov.skybook .panel{max-width:860px}.sb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.sb-card{border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(232,201,131,.25);padding:10px 12px 12px}.sb-card h3{margin:8px 0 4px;font-size:16px}.sb-card p{font-size:13px;line-height:1.7;margin:4px 0}
+.sb-card.unk{opacity:.7}.sb-card.unk .sb-art{background:rgba(10,12,40,.6)}.sb-art{border-radius:6px;overflow:hidden;aspect-ratio:16/10;background:#0e1030}.sb-art svg{width:100%;height:100%;display:block}
+.sb-hint{color:#d9c8ff}.sb-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.sb-log li{display:flex;gap:10px;font-size:14px;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,.05)}.sb-log .no{color:var(--gold);font-family:var(--f-latin);flex:none}
 /* 照顧需求 */
 .ov.care .panel{max-width:720px}
 .ztabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.ztabs button{padding:5px 11px;border-radius:999px;border:1px solid rgba(232,201,131,.35);background:none;color:var(--silver);font:inherit;font-size:12px;cursor:pointer;position:relative}
@@ -745,6 +750,8 @@ ART.car = {
   <g transform="translate(800 470)"><circle r="120" fill="none" stroke="#f1d58e" stroke-width="2" opacity=".9"/><g class="spin"><ellipse rx="120" ry="40" fill="none" stroke="#f1d58e" stroke-width="2" opacity=".8"/></g><g class="spin r"><ellipse rx="40" ry="120" fill="none" stroke="#f1d58e" stroke-width="2" opacity=".8"/></g><g class="spin fast"><line x1="-150" y1="0" x2="150" y2="0" stroke="#fff6d8" stroke-width="1.5" opacity=".4"/></g>
    <circle r="170" fill="url(#gGold)" opacity=".25"/>${[0,1,2,3,4,5,6,7].map(i=>{const a=i*Math.PI/4;return `<circle cx="${Math.cos(a)*120}" cy="${Math.sin(a)*120}" r="4" fill="#fff6d8"/>`}).join('')}<circle r="10" fill="#fff6d8"/></g>
   <g transform="translate(230 640)"><rect x="-90" y="0" width="180" height="200" fill="url(#gStone)"/><rect x="-90" y="0" width="180" height="10" fill="#c8a85e"/><circle cx="0" cy="-30" r="60" fill="none" stroke="#c8a85e" stroke-width="5"/><ellipse cx="0" cy="-30" rx="60" ry="18" fill="none" stroke="#c8a85e" stroke-width="3" transform="rotate(-25)"/><circle cx="0" cy="-30" r="14" fill="#9a8cff"/><circle cx="0" cy="-30" r="60" fill="url(#gViolet)" opacity=".6"/></g>
+  <g transform="translate(1175 700)"><path d="M-8 0 H8 L12 150 H-12 Z" fill="#c8a85e"/><ellipse cy="150" rx="46" ry="9" fill="#c8a85e" opacity=".6"/><path d="M-62 -6 L0 6 L62 -6 L58 -44 L0 -32 L-58 -44 Z" fill="#2a2c5a" stroke="#c8a85e" stroke-width="3"/>
+   <path d="M-54 -12 L-2 -2 L-4 -36 L-52 -45 Z M54 -12 L2 -2 L4 -36 L52 -45 Z" fill="#f6eedb"/>${[[-38,-30],[-22,-20],[-30,-14],[30,-30],[18,-22],[38,-18]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.2" fill="#3d3a7a"/>`).join('')}<path d="M-38 -30 L-22 -20 L-30 -14 M30 -30 L18 -22 L38 -18" stroke="#3d3a7a" stroke-width="1" fill="none"/><circle cy="-24" r="70" fill="url(#gGold)" opacity=".35"/></g>
   <g transform="translate(1360 640)"><rect x="-110" y="0" width="220" height="200" fill="url(#gStone)"/><rect x="-110" y="0" width="220" height="10" fill="#c8a85e"/><rect x="-90" y="-110" width="180" height="96" rx="6" fill="#1d2150" stroke="#c8a85e" stroke-width="3"/>
    <text x="0" y="-70" text-anchor="middle" font-family="Cormorant Garamond,serif" font-size="22" fill="#bfe6ff">${state.currentPhase==='voyage'?'— · —':String(LOCATIONS[state.currentLocation].coord)}</text><text x="0" y="-40" text-anchor="middle" font-size="14" fill="#9a8cff" letter-spacing="4">COORD</text></g>
   <g transform="translate(1490 230)"><polygon points="0,-60 26,0 0,60 -26,0" fill="#dff4ff" opacity=".85"/><polygon points="0,-60 26,0 0,0" fill="#fff"/><circle class="pulse c" r="70" fill="${anomFound().length>0&&(state.seen||{})['obs-anomrec']!==String(anomFound().length)?'url(#gGold)':'url(#gCyan)'}"/></g>`; },
@@ -2142,8 +2149,9 @@ function skyWatch(){ const k=skyNow(); if(!k) return toast('現在的天空很�
  const lines=here.map(id=>`<li><span class="zp">${portraitOf(PASSENGERS[id])}</span><span><b>${PASSENGERS[id].name}</b><br>${(SKY_LINE[k.type]||{})[id]||`（${PASSENGERS[id].name}抬頭看著天空，看得出神了。）`}</span></li>`).join('');
  panel(`<div class="eyebrow">火車尾展望台・星象</div><h2>${S.name}</h2><div class="sky-view"><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice">${ART.defs}<rect width="1600" height="500" fill="#14163a"/>${stars(120,7,0,0,1600,500)}${skyFx(k.type)}</svg></div><p>${S.desc}</p>
   ${here.length?`<h3 class="zh">一起看的乘客</h3><ul class="zlist">${lines}</ul>`:'<p class="nb-empty">展望台上只有你。下次可以邀請乘客一起來看。</p>'}
-  ${k.watched?'':`<p class="pur-done">星光落在身上，界染度淡了一些。${first?'這一幕凝結成了回憶水晶。':''}</p>`}`,'care');
+  ${k.watched?'':`<p class="pur-done">星光落在身上，界染度淡了一些。${first?'這一幕凝結成了回憶水晶。':''}已記進星月觀測車廂的觀星紀錄本。</p>`}`,'care');
  if(!k.watched){ k.watched=true; TAINT.add(-5); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
+  state.skyLog=state.skyLog||[]; state.skyLog.push({k:'sky',type:k.type,j:state.journeyCount+1,with:here.slice()});
   logJ(`在展望台觀賞了${S.name}${here.length?`，和${here.map(id=>PASSENGERS[id].name).join('、')}一起`:''}。`,'find');
   here.forEach(id=>state.passengers[id].records.push({j:state.journeyCount+1,t:`在展望台一起看了${S.name}。`})); save(); SFX.chime(); render(); } }
 /* ---------- 星座連線 ---------- */
@@ -2172,12 +2180,33 @@ function constPanel(sel){ const sky=skyHere(), ov=panel('','care'), pn=ov.queryS
     const e=c.E.findIndex(([a,b])=>(a===pick&&b===i)||(a===i&&b===pick)); pick=null;
     if(e<0||got.has(e)){ SFX.tone(330,0,.25,'sine',.02); draw(); const m=pn.querySelector('#csm'); m.textContent='這兩顆星之間沒有星軌。再試試看。'; return; }
     got.add(e); SFX.tone(880+got.size*60,0,.4,'sine',.03);
-    if(got.size===c.E.length){ state.consts=state.consts||[]; state.consts.push(c.id); logJ(`在星座盤上辨識出了${c.name}。`,'find'); if(c.clue) addClue(c.clue); save(); SFX.chime(); toast(`✦ 辨識出星座：${c.name}`);
+    if(got.size===c.E.length){ state.consts=state.consts||[]; state.consts.push(c.id); state.skyLog=state.skyLog||[]; state.skyLog.push({k:'const',id:c.id,j:state.journeyCount+(state.currentPhase==='voyage'?1:0)}); logJ(`在星座盤上辨識出了${c.name}。`,'find'); if(c.clue) addClue(c.clue); save(); SFX.chime(); toast(`✦ 辨識出星座：${c.name}`);
      pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>✦ ${c.name}</h2><div class="cs-board done">${constSvg(c,true,true)}</div><p>${c.lore}</p>${c.clue?'<p class="pur-done">這個星座的形狀……和列車車身的圓環刻紋一模一樣。新的線索已存入線索解讀台。</p>':''}<button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; return; }
     draw(); }); };
   draw(); };
  if(sel) trace(CONSTS.find(c=>c.id===sel)); else list(); }
 function constSvg(c,small,lit){ return `<svg viewBox="0 0 400 260" aria-hidden="true"><rect width="400" height="260" rx="10" fill="#0e1030"/>${(lit||constDone(c.id))?c.E.map(([a,b])=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="#ffe9a8" stroke-width="3"/>`).join(''):''}${c.S.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="${small?6:5}" fill="#fff"/>`).join('')}</svg>`; }
+
+/* ---------- 觀星紀錄本（星月觀測車廂）：星象・星座・觀測日誌 ---------- */
+const SKY_HINT={meteor:'往日界或月界的航程都可能出現',aurora:'往月界的航程，穿越界壁時',tide:'往月界的航程，星河漲潮時',eclipse:'往日界的航程，日與月的界線上'};
+function skyBook(tab){ const ov=panel('','care skybook'), pn=ov.querySelector('.panel'); const log=state.skyLog||[], seen=state.skySeen||[];
+ const draw=t=>{ tab=t;
+  const skyTab=()=>`<div class="sb-grid">${Object.entries(SKY).map(([k,S])=>{ const rec=log.filter(x=>x.k==='sky'&&x.type===k), ok=seen.includes(k)||rec.length;
+    const who=[...new Set(rec.flatMap(x=>x.with||[]))].map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean);
+    return ok?`<article class="sb-card"><div class="sb-art"><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice">${ART.defs}<rect width="1600" height="500" fill="#14163a"/>${stars(60,k.length*5,0,0,1600,500)}${skyFx(k)}</svg></div><h3>${S.name}</h3><p>${S.desc}</p>
+     <dl class="kv"><dt>觀賞次數</dt><dd>${Math.max(rec.length,1)} 次</dd>${rec.length?`<dt>第一次</dt><dd>第 ${rec[0].j} 趟旅程</dd>`:''}<dt>一起看過</dt><dd>${who.length?who.join('、'):'只有你'}</dd></dl></article>`
+     :`<article class="sb-card unk"><div class="sb-art"></div><h3>？？？</h3><p>尚未觀測到的星象。</p><p class="sb-hint">線索：${SKY_HINT[k]}</p></article>`; }).join('')}</div>`;
+  const constTab=()=>`<div class="sb-grid">${CONSTS.map(c=>{ const r=log.find(x=>x.k==='const'&&x.id===c.id), ok=constDone(c.id);
+    return ok?`<article class="sb-card"><div class="sb-art">${constSvg(c,true,true)}</div><h3>${c.name}</h3><p>${c.lore}</p><dl class="kv"><dt>天空</dt><dd>${c.sky==='sun'?'日界':'月界'}</dd>${r?`<dt>辨識於</dt><dd>第 ${r.j} 趟旅程</dd>`:''}</dl></article>`
+     :`<article class="sb-card unk"><div class="sb-art">${constSvg(c,true)}</div><h3>？？？</h3><p>還沒連成星座的星點。</p><p class="sb-hint">線索：在${c.sky==='sun'?'日界':'月界'}的天空才看得見，去星座盤連連看。</p></article>`; }).join('')}</div>`;
+  const logTab=()=>log.length?`<ul class="sb-log">${log.slice().reverse().map(x=>x.k==='sky'?`<li><span class="no">No.${x.j}</span><span>觀賞了<b>${SKY[x.type].name}</b>${(x.with||[]).length?`，和${x.with.map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean).join('、')}一起`:''}。</span></li>`
+     :`<li><span class="no">No.${x.j}</span><span>在星座盤辨識出<b>${(CONSTS.find(c=>c.id===x.id)||{}).name}</b>。</span></li>`).join('')}</ul>`:'<p class="nb-empty">還沒有觀測紀錄。星象出現時去火車尾展望台看看，或用星座盤連連看。</p>';
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂</div><h2>觀星紀錄本</h2>
+  <p style="color:var(--mute);font-size:13px">星象 ${Object.keys(SKY).filter(k=>seen.includes(k)||log.some(x=>x.k==='sky'&&x.type===k)).length} / ${Object.keys(SKY).length}・星座 ${(state.consts||[]).length} / ${CONSTS.length}・觀測 ${log.length} 次</p>
+  <nav class="ztabs">${[['sky','星象'],['const','星座'],['log','觀測日誌']].map(([k,n])=>`<button class="${k===tab?'on':''}" data-sbt="${k}">${n}</button>`).join('')}</nav>
+  ${tab==='const'?constTab():tab==='log'?logTab():skyTab()}`;
+  pn.querySelectorAll('[data-sbt]').forEach(b=>b.onclick=()=>draw(b.dataset.sbt)); };
+ draw(tab||'sky'); }
 
 /* 多角色腳本對話（乘客互動事件） */
 const charOf=id=>PASSENGERS[id]||NPCS[id];
@@ -2680,6 +2709,7 @@ const HSDEF=[
   imp:()=>anomFound().length>0&&seenOf('obs-anomrec')!==String(anomFound().length)},
  {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:72,y:20},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
  {id:'obs-front',scene:'observation',name:'後方：火車尾展望台',shape:'door',at:{x:50,y:75},act:'go:observatory'},
+ {id:'obs-skybook',scene:'observation',name:'觀星紀錄本',at:{x:73.4,y:74.5},layer:3,track:false,act:()=>skyBook(),ver:()=>((state.skyLog||[]).length)},
  {id:'obs-const',scene:'observation',name:'星座盤',at:{x:50,y:89},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
  {id:'obs-back',scene:'observation',name:'返回棲息車廂',shape:'back',at:{x:7,y:94},act:'go:habitat'},
  /* 森羅溫室車廂 */
