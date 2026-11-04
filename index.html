@@ -652,6 +652,21 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .mote.idle-glide{animation:glide 9s ease-in-out infinite}
 @keyframes glide{0%,100%{transform:translate(-50%,-50%)}30%{transform:translate(calc(-50% + 14px),calc(-50% - 10px))}60%{transform:translate(calc(-50% - 10px),calc(-50% - 4px))}}
 .dlg .who:has(img.land){aspect-ratio:4/3;height:min(64vh,640px);bottom:20vh}
+/* 值勤精靈（玩家） */
+.dlg .who.me:has(img.land){left:max(22%,170px);aspect-ratio:3/2;height:min(40vh,400px);bottom:18vh;z-index:1}
+.dlg .who.me img{filter:drop-shadow(0 0 26px rgba(255,190,220,.45))}
+.mef{width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:-6px;margin-right:7px;border:1px solid rgba(255,200,225,.45);background:#141634}
+.snd.meb{padding:0;overflow:hidden;border-color:rgba(255,200,225,.55)}
+.snd.meb img{width:100%;height:100%;object-fit:cover;display:block}
+body.taint-mild .meimg{filter:saturate(.72) brightness(.92)}
+body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
+.me-fig{display:block;margin:4px auto 10px;height:min(34vh,300px);max-width:100%;object-fit:contain;cursor:pointer}
+.me-stat{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:8px 0}
+.me-stat dt{color:var(--mute)}
+.me-stat dd{margin:0}
+.me-eq{display:flex;gap:8px;flex-wrap:wrap}
+.me-eq span{font-size:12px;padding:2px 8px;border:1px solid var(--line);border-radius:10px;opacity:.5}
+.me-eq span.on{opacity:1;border-color:rgba(255,200,225,.6)}
 .split .portrait:has(img.land),.plate:has(img.land){aspect-ratio:4/3}
 .plate.big:has(img.land){width:min(100%,400px)}
 .portrait-wash>img.land{max-width:92%;height:auto;width:92%;margin-bottom:8%}
@@ -1480,9 +1495,26 @@ function renderHUD(){
  const pend = state.pendingEvents.filter(id=>EVENTS[id]).slice(0,2).map(id=>`<button class="evt" data-act="event:${id}">${EVENTS[id].title}</button>`).join('');
  $('#hud').innerHTML=`<div class="loc">${head}</div>
  <div class="train" aria-label="車廂位置">${cars}<span class="cn">${where}</span></div>
- <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd careb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="care:open" aria-label="照顧需求">🌡️</button><button class="snd skb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="sketch:open" aria-label="觀察速寫">✍️</button><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
+ <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd meb" data-act="me:open" aria-label="值勤精靈" title="值勤精靈"><img class="meimg" src="${ME_FACE_IMG}" alt=""></button><button class="snd careb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="care:open" aria-label="照顧需求">🌡️</button><button class="snd skb ${state.currentCarriage==='habitat'&&state.currentPhase!=='outside'?'':'dim'}" data-act="sketch:open" aria-label="觀察速寫">✍️</button><button class="snd nbk" data-act="notes:open" aria-label="筆記本">🗒️</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
 }
 
+/* ---------- 值勤精靈（玩家）：HUD 頭像與下車時點自己，可以看看自己現在的樣子 ---------- */
+function spiritFeel(){ const v=TAINT.val();
+ return v<15?'身體很輕。羽翼的粉色很亮，鱗片在光下一閃一閃。':v<35?'有一點點沉重。羽尖的粉色，好像淡了一些。':v<60?'身上很沉重，鱗片的光澤暗了下來。該去淨界晶環淨化了。':'好重……羽翼幾乎張不開。請盡快到淨界晶環淨化。'; }
+function spiritPanel(){ const e=state.spirit.equipment||{}, c=state.spirit.contamination, sp=state.spirit;
+ const nNotes=Object.values(state.notes||{}).reduce((a,x)=>a+x.length,0), nSk=Object.values(state.sketches||{}).reduce((a,x)=>a+x.length,0);
+ const nOut=Object.values(state.passengers||{}).reduce((a,x)=>a+((x&&x.outings)||[]).length,0), nPass=Object.keys(PASSENGERS).filter(id=>state.discoveredLifeforms.includes(id)).length;
+ const lore=state.clues.includes('clue_dragon');
+ const ov=panel(`<div class="eyebrow">值勤精靈</div><h2>你</h2>
+   <img class="me-fig meimg" src="${ME_IMG}" alt="值勤精靈" title="點一下，伸展羽翼">
+  <p>翠綠的鱗片、粉色的羽翼，頭頂的羽冠像一束剛亮起來的晨光。你是這列車的值勤精靈：出發前完成值勤程序，照顧乘客，記錄每一個生命的故事。</p>
+  ${lore?'<p style="color:var(--mute)">曦淵說，你是從列車自己的光裡醒來的——渡守離開前，留在列車裡的最後一道晨曦。</p>':''}
+  <dl class="me-stat"><dt>身體</dt><dd>${spiritFeel()}${c?`<br><span style="color:var(--mute);font-size:12px">上次在淨界晶環量測：界染度 ${c.value}</span>`:''}</dd>
+  <dt>裝備</dt><dd class="me-eq">${Object.entries(EQUIP).map(([k,q])=>`<span class="${e[k]?'on':''}">${q.name}${e[k]?'':'（未領取）'}</span>`).join('')}</dd>
+  <dt>足跡</dt><dd>旅程 ${state.journeyCount} 趟・遇見 ${nPass} 位乘客・聆聽筆記 ${nNotes} 則・觀察速寫 ${nSk} 張・陪乘客下車 ${nOut} 次</dd></dl>`,'care');
+ const fig=ov.querySelector('.me-fig'); let open=false;
+ fig.onclick=()=>{ open=!open; fig.src=open?ME_WINGS:ME_IMG; SFX.tone(open?1318:988,0,.45,'sine',.025); };
+}
 /* ---------- 互動派發 ---------- */
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-act]'); if(!b) return; const [k,v]=b.dataset.act.split(':'); act(k,v); });
 function act(k,v){
@@ -1499,6 +1531,7 @@ function act(k,v){
   case 'notes': return notebookPanel();
   case 'sketch': return sketchPicker();
   case 'care': return carePicker();
+  case 'me': return spiritPanel();
   case 'sound': PREFS.sound=PREFS.sound===false; savePrefs(); if(PREFS.sound===false){ SFX.stopDrone(); SFX.ambient(null); BGM.stop(500); } else { SFX.init(); if(state.currentPhase==='voyage') SFX.startDrone(); SFX.ambKey=null; SFX.ambient(HS_SCENE()); BGM.start(); } renderHUD(); return toast(PREFS.sound===false?'音樂與音效已關閉':'音樂與音效已開啟');
   default: return (INTERACT[k+':'+v]||(()=>{}))();
  }
@@ -1975,7 +2008,7 @@ function dialogue(id,lines,choices,onEnd){
  let picked=null, warned=-1;
  const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML='';
   if(p&&tx.querySelector('mark.hl')&&!state.storyFlags.noteTip){ state.storyFlags.noteTip=1; save(); toast('🗒️ 發光的字句可以點一下，記進筆記本'); }
-  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; el.querySelector('.nm').textContent='精靈'; tx.textContent=c.t; tx.classList.add('self'); chs.innerHTML='';
+  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; el.querySelector('.nm').innerHTML=ME_FACE+'精靈'; tx.textContent=c.t; tx.classList.add('self'); chs.innerHTML='';
     lines=lines.concat(['__self__',c.r]); i++; nx.hidden=false; setTimeout(()=>{ i++; el.querySelector('.nm').textContent=p.name; tx.classList.remove('self'); show(); },900); }; chs.appendChild(b); }); }
  };
  el.querySelector('.box').addEventListener('click',e=>{ const mk=e.target.closest('mark.hl'); if(mk&&p){ takeNote(id,+mk.dataset.nk,mk); return; }
@@ -2412,7 +2445,7 @@ const FORAGE={
  dawnForest:{spots:[[30,80],[84,86],[90,56],[14,64]],pool:[['dew',5],['mosslight',4],['seed_sunfern',1]]},
  starIslands:{spots:[[36,84],[88,86],[12,74],[90,52]],pool:[['sand',5],['stardust',4],['seed_tidebloom',1]]}
 };
-const COMP_SLOT={x:60,y:74};
+const COMP_SLOT={x:60,y:74}, ME_SLOT={x:46,y:76};
 const COMP_LINE={
  lumi:{dawnForest:'這是我的森林！……古樹在那裡。走，我帶你去一個只有我知道的地方。',starIslands:'這裡沒有樹，可是有好多光。像森林的早晨被打碎了。'},
  sola:{dawnForest:'樹好高！浮島上沒有這麼高的東西。……我可以爬上去嗎？我沒有手。算了。',starIslands:'這是我的星河！……跟我來，我想讓你看一個地方。'},
@@ -2481,7 +2514,8 @@ function dialogueScript(script,onEnd){ let i=0; const el=document.createElement(
  const cast=[...new Set(script.map(x=>x[0]).filter(w=>w!=='self'&&w!=='dragon'))], side=w=>w==='dragon'?'50%':cast.length>1?(cast.indexOf(w)===0?'30%':'70%'):w==='lumi'?'32%':'68%';
  const show=()=>{ const [who,t]=script[i], p=charOf(who);
   const duo=cast.length>1&&who!=='dragon';   /* 兩位乘客的互動：兩位都在畫面上，說話的那位亮起 */
-  el.innerHTML=`${duo?cast.slice(0,2).map(w=>`<div class="who ${w===who?'':'dim'}" style="left:${side(w)}">${portraitOf(charOf(w))}</div>`).join(''):p?`<div class="who" style="left:${side(who)}">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx">${t}</div><div class="nx">▼</div></div>`; };
+  const me=!duo&&cast.length<=1&&script.some(x=>x[0]==='self')&&(cast.length===1||script.some(x=>x[0]==='dragon')), meTalk=who==='self';
+  el.innerHTML=`${duo?cast.slice(0,2).map(w=>`<div class="who ${w===who?'':'dim'}" style="left:${side(w)}">${portraitOf(charOf(w))}</div>`).join(''):p?`<div class="who" style="left:${side(who)}">${portraitOf(p)}</div>`:''}${me?meFig(!meTalk):''}<div class="box"><div class="nm">${p?p.name:(cast.length>1?'':ME_FACE)+'精靈'}</div><div class="tx">${t}</div><div class="nx">▼</div></div>`; };
  el.addEventListener('click',()=>{ i++; if(i>=script.length){ el.remove(); onEnd&&onEnd(); render(); } else show(); }); show(); }
 
 /* 過場演出 */
@@ -2615,6 +2649,9 @@ document.addEventListener('keydown',e=>{ if(!PANO.active||!RUNNING||$('#layer').
 /* ================================================================
    各車廂精修內容
    ================================================================ */
+const ME_IMG='assets/spirit.webp', ME_WINGS='assets/spirit-wings.webp', ME_FACE_IMG='assets/spirit-face.webp';
+const ME_FACE=`<img class="mef meimg" src="${ME_FACE_IMG}" alt="">`;
+const meFig=dim=>`<div class="who me ${dim?'dim':''}"><img class="land meimg" src="${ME_IMG}" alt="值勤精靈"></div>`;
 const portraitOf=p=>p.image?`<img class="${p.land?'land':''}" src="${p.image}" alt="${esc(p.name||'')}" loading="lazy">`:p.art();
 const viewSvg=()=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${state.currentPhase==='voyage'?ART.loc.voyage():LOCATIONS[state.currentLocation].art()}</svg>`;
 const ORIGIN_NOTE={seed_ancient_a:'守護者封存・列車甦醒時已在櫃中',seed_ancient_b:'守護者封存・列車甦醒時已在櫃中',seed_ancient_c:'守護者封存・列車甦醒時已在櫃中',
@@ -3041,6 +3078,7 @@ const HSDEF=[
  {id:'out-f1-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[1]?{x:f.spots[1].x,y:f.spots[1].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(1),act:()=>forageTake(1)},
  {id:'out-f2-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
  {id:'out-f3-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[3]?{x:f.spots[3].x,y:f.spots[3].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(3),act:()=>forageTake(3)},
+ {id:'out-me-df',scene:'out:dawnForest',name:'值勤精靈',shape:'npc',cls:'idle-stand',color:'#f2b5cf',sprite:ME_IMG,sx:';--sh:21%;--ar:456/300',at:ME_SLOT,layer:4,track:false,show:()=>true,act:()=>spiritPanel()},
  {id:'out-comp-df',scene:'out:dawnForest',name:()=>state.companion?PASSENGERS[state.companion].name:'',shape:'npc',cls:'idle-stand',color:()=>state.companion?PASSENGERS[state.companion].color:'#fff',get sprite(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?p.image:null; },get sx(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?`;--sh:22%;--ar:${p.ar||'590/420'}`:''; },at:COMP_SLOT,layer:4,track:false,show:()=>!!state.companion,act:()=>compTalk()},
  {id:'out-mossbed',scene:'out:dawnForest',name:'古樹根部的苔蘚床',at:{x:30,y:56},layer:3,track:false,show:()=>state.companion==='lumi',imp:()=>!(state.places||[]).includes('lumi'),act:()=>placeVisit('lumi')},
  {id:'out-back-df',scene:'out:dawnForest',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'},
@@ -3053,6 +3091,7 @@ const HSDEF=[
  {id:'out-f1-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[1]?{x:f.spots[1].x,y:f.spots[1].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(1),act:()=>forageTake(1)},
  {id:'out-f2-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
  {id:'out-f3-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[3]?{x:f.spots[3].x,y:f.spots[3].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(3),act:()=>forageTake(3)},
+ {id:'out-me-si',scene:'out:starIslands',name:'值勤精靈',shape:'npc',cls:'idle-stand',color:'#f2b5cf',sprite:ME_IMG,sx:';--sh:21%;--ar:456/300',at:ME_SLOT,layer:4,track:false,show:()=>true,act:()=>spiritPanel()},
  {id:'out-comp-si',scene:'out:starIslands',name:()=>state.companion?PASSENGERS[state.companion].name:'',shape:'npc',cls:'idle-stand',color:()=>state.companion?PASSENGERS[state.companion].color:'#fff',get sprite(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?p.image:null; },get sx(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?`;--sh:22%;--ar:${p.ar||'590/420'}`:''; },at:COMP_SLOT,layer:4,track:false,show:()=>!!state.companion,act:()=>compTalk()},
  {id:'out-drift',scene:'out:starIslands',name:'浮島漂走的痕跡',at:{x:70,y:44},layer:3,track:false,show:()=>state.companion==='sola',imp:()=>!(state.places||[]).includes('sola'),act:()=>placeVisit('sola')},
  {id:'out-back-si',scene:'out:starIslands',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'}
