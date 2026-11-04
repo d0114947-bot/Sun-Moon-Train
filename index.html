@@ -1208,6 +1208,27 @@ const PASSENGERS = {
    {lines:['（牠慢慢抬起一隻巨大的手，又慢慢放下。地板輕輕震了一下——苔蘚棲台上，幾株小芽一起冒了出來。）','……我走過的地方，草會長，泉水會變清。','所以森林裡的精靈和走獸……都跟在我後面走。','牠們把我當成……一座會走路的庇護所。我很少說話。可是，我喜歡牠們跟著。'],choices:[{t:'這輛車也跟著你一起長出了新芽。',r:'（牠臉上的岩石紋路，好像鬆開了一點。那也許是一個笑。）……那這輛車，也是我的森林了。'}]}
   ],
   farewell:['……地脈在叫我。很慢，很遠。','我該回去，繼續睡了。下一次醒來……也許是一百年以後。','你那時候不在了也沒關係。我走過的地方，會長出新的森林。……那裡面，會有你的味道。']
+ },
+ lynx:{name:'霜晶冰原獸',type:'other',species:'Frost-Crested Glimmer-Lynx',zone:'rings',spot:{x:57,y:24},spriteH:17,ar:'510/300',color:'radial-gradient(circle,#f6fbff,#9cc6e6)',
+  image:'assets/lynx.webp',still:'assets/lynx-still.webp',studies:['assets/lynx-s1.webp','assets/lynx-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'終年積雪的高山雪嶺・極地冰原・寒冷的魔法冰川地帶',
+  intro:'列車穿過結冰的航道時，沿著結霜的車窗疾走而過的銀白影子。牠走過的地方沒有一點聲音，只留下一串細小的晶塵。',
+  bio:'在冰封的極北之境，霜晶冰原獸被當地巡山人視為冰雪的化身與冬之精靈。傳說牠們的每一次躍動都能激起微小的晶塵，而牠們守護著古老的冰川祕境，唯有心地純淨的旅人能在風雪中偶遇其優雅如幻影的身影。',
+  field:{alias:'冰脊靈貓、冬影',
+   cls:'極地奇幻獸類',
+   danger:'中',
+   rarity:'稀有',
+   looks:'<b>頭部與面容：</b>擁有類似大型貓科（如山貓）的輪廓，雙耳尖端帶有深色簇毛，雙眼透出晶瑩的冰藍色光芒，面部線條銳利而優雅。<br><b>毛髮與冰晶：</b>全身覆蓋著密集的銀白與淡灰相間絨毛，背部脊椎線條、尾巴以及四肢上生長著晶瑩剔透的冰晶或水晶狀背棘，在光線下折射出冰藍色澤。<br><b>軀幹與四肢：</b>體態矯健有力，四肢肌肉線條流暢，爪子銳利，正處於動態奔馳或跳躍的張力姿勢中。',
+   habitat:'終年積雪的高山雪嶺、極地冰原或寒冷的魔法冰川地帶。',
+   habits:[['活動時間','晨昏與夜間活動為主，適應極度嚴寒的氣候。'],['飲食','以捕獵極地小型魔獸、食用高山冰晶植物的根莖為生。'],['社交','多數時間獨來獨往，性格孤傲敏捷，警覺性極高，對陌生領域有強烈的領地意識。']],
+   abilities:[['寒冰折射','能透過背部的冰晶吸收並折射月光或日光，在危急時製造短暫的眩光以隱蔽身形。'],['踏雪無痕','移動時幾乎不發出聲響，且能短暫在雪面或垂直冰壁上高速疾走。']]},
+  stay:2,
+  talks:[
+   {lines:['（懸浮棲息環的陰影裡，一雙冰藍色的眼睛盯著你。你往前一步，牠背上的冰晶就豎了起來。）','……別再靠近了。這一段圓環，是我的。','我來的地方，雪從來不化。高山雪嶺，再往北，就是冰原。','那裡沒有人。……沒有人，才好。'],choices:[{t:'（退後一步，表示沒有惡意）',r:'……哼。至少你懂規矩。'},{t:'你是從冰原來的嗎？',r:'冰原的邊上。冰原本身……太大了，誰也佔不完。'}]},
+   {lines:['（天色暗下來，牠的眼睛反而更亮了。牠在圓環上來回走了一圈，一點聲音也沒有。）','天快黑的時候，才是我的時間。白天太亮，雪會刺眼。','我吃雪地裡的小魔獸，還有冰晶草的根。脆的。','我走路沒有聲音。雪地上不會留下腳印，冰壁上也一樣。……所以獵物從來不知道我來過。','昨天晚上，我在車頂跑了一圈。這輛車的車頂，很適合奔跑。'],choices:[{t:'你剛剛走過去，我真的什麼都沒聽到。',r:'……當然。'},{t:'冰晶草的根好吃嗎？',r:'……冷冷的，有一點甜。你不會喜歡的。'}]},
+   {lines:['（你一走近，牠背上的冰晶忽然一亮——刺眼的白光閃過，等你再睜開眼，牠已經站在另一個圓環上了。）','……習慣了。有東西靠近，我就會這樣。','巡山人說，我們是冬天的精靈。說我們守著古老的冰川。','……我只是守著一個地方。冰川的深處，有一個很安靜的祕境。只有心地乾淨的旅人，才走得到那裡。','你……大概走得到。'],choices:[{t:'謝謝你這麼說。',r:'（牠別過頭，尾巴上的冰晶輕輕碰出一串細小的晶塵。）……不要說出去。'}]}
+  ],
+  farewell:['風雪的味道變了。冰川在叫我回去。','祕境不能沒有人守著太久。','……下次在風雪裡看到一閃一閃的光，別追。那是我在跟你說，我看見你了。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -1304,6 +1325,7 @@ const EVENTS = {
  board_frost:{trigger:'voyage',at:.35,need:()=>!state.discoveredLifeforms.includes('frost')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=5,run:n=>boarding('frost','列車穿過一段冰冷的航道，車窗上爬滿了細白的霜花。棲息車廂的靈泉邊，水面結起一圈薄冰——一雙冰川般湛藍的眼睛，正安靜地看著你。',n)},
  board_sirenora:{trigger:'voyage',at:.6,need:()=>!state.discoveredLifeforms.includes('sirenora')&&!!state.voyage&&state.voyage.to==='dawnForest'&&state.journeyCount>=6,run:n=>boarding('sirenora','列車駛進一片濃得化不開的霧。車窗外什麼都看不見，只有一抹溫柔的粉白光暈，隨著霧氣輕輕擺盪，穿過車壁，飄進了棲息車廂。',n)},
  board_titan:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=7&&!state.discoveredLifeforms.includes('titan'),run:n=>boarding('titan','列車停靠的時候，月台輕輕震了一下，又一下。森林邊緣，一座長滿苔蘚與蕨葉的小山緩緩站起，帶著一陣草木清香的晨霧，一步一步走上了車門。',n)},
+ board_lynx:{trigger:'voyage',at:.45,need:()=>!state.discoveredLifeforms.includes('lynx')&&!!state.voyage&&state.voyage.to==='starIslands'&&state.journeyCount>=8,run:n=>boarding('lynx','列車駛過一段結冰的航道，車頂傳來幾下輕得幾乎聽不見的腳步。一道銀白的影子沿著結霜的車窗疾走而過，沒有留下任何聲音，只留下一串細小的晶塵——然後鑽進了棲息車廂的懸浮棲息環。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:()=>boarding('sola','星河的潮汐拍上車窗。一團會發光的生命順著潮水，輕輕滑進了車廂。')},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  meet_lumi_sola:{trigger:'carriage',car:'habitat',need:()=>aboard('lumi')&&aboard('sola'),title:'露米與索拉',run:()=>dialogueScript([
@@ -1346,6 +1368,11 @@ const EVENTS = {
    ['lumi','那我可以爬上去嗎？你肩膀上的蕨葉看起來好軟。'],['titan','（過了很久，巨大的手慢慢放到地上，掌心朝上。）……慢慢來。'],
    ['self','露米踩著巨靈的手，爬上了長滿蕨葉的肩膀。牠角上的光點一個一個亮起來，照亮了巨靈像岩石一樣的臉。'],['titan','……森林裡的小東西，都喜歡待在這裡。'],['lumi','因為這裡是會走路的森林嘛。']
   ],'露米爬上了苔淵巨靈長滿蕨葉的肩膀。','會走路的森林','露米踩著巨靈的手，爬上長滿蕨葉的肩膀。「因為這裡是會走路的森林嘛。」')},
+ int_frost_lynx:{trigger:'carriage',car:'habitat',need:()=>aboard('frost')&&aboard('lynx'),title:'霜脊冰原獸與霜晶冰原獸',run:()=>interScene('lynx','frost',[
+   ['lynx','（懸浮棲息環上傳來一聲低低的嘶聲。）……你身上有冰原的味道。'],['frost','你也是。北邊的雪嶺。'],['lynx','那裡是我的地盤。'],['frost','冰原是我的地盤。……雪嶺，我很少上去。太陡了。'],
+   ['lynx','冰原，我很少下去。太平了，沒有地方躲。'],['self','（兩雙冰藍色的眼睛對望了很久。車廂的溫度，好像又降了一點。）'],['frost','……那就跟以前一樣。你在上面，我在下面。'],
+   ['lynx','（牠背上的冰晶輕輕一閃，像是點了點頭。）……嗯。冷的地方，分一半給你。'],['self','從那天起，懸浮棲息環上常常飄下細小的晶塵，落在晶石平台邊的霜花上。']
+  ],'霜晶冰原獸和霜脊冰原獸，把冷的地方分成了上下兩半。','上面與下面','「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。')},
  int_sirenora_levi:{trigger:'carriage',car:'habitat',need:()=>aboard('sirenora')&&aboard('leviathaurora'),title:'霧與深海',run:()=>interScene('sirenora','leviathaurora',[
    ['sirenora','你身上有很深、很深的水的味道。'],['leviathaurora','你身上有霧的味道。……深海沒有霧。'],['sirenora','那深海有什麼？'],['leviathaurora','有光。很少，很遠。看見一次，就會記得很久。'],
    ['sirenora','我收集的那些夢裡，常常有人夢見海面下的藍光。他們說，那是平靜的時刻。'],['leviathaurora','……（光點一顆一顆亮起，又一顆一顆熄滅，像是在數著什麼。）那是我浮上來換氣的時候。'],
@@ -1887,6 +1914,7 @@ function talk(id,next){
 }
 function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  if(id==='titan') return state.currentPhase==='voyage'?'……車在搖。像地脈……在翻身。':'……（牠一動也不動。肩上的蕨葉間，一隻小蟲正在散步。）';
+ if(id==='lynx') return state.currentPhase==='voyage'?'……（圓環上空空的。過了一會兒，你才發現牠一直趴在你頭頂上方。）':'外面有雪的味道嗎？……沒有。算了。';
  if(id==='sirenora') return state.currentPhase==='voyage'?'……外面有霧的聲音。我在聽。':'這盞燈很溫暖。我再停一下就好。';
  if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
@@ -2004,7 +2032,17 @@ const NOTES={
   {k:'abilities',p:'我不動的時候，就只是一座長苔蘚的小山',n:'靜止時和周圍環境沒有兩樣（自然偽裝）'},
   {k:'abilities',p:'我走過的地方，草會長，泉水會變清',n:'行走時能讓植物生長、泉水變清（承載生態）'},
   {k:'bio',p:'一座會走路的庇護所',n:'森林的精靈與走獸把牠當成行走的庇護所'},
-  {k:null,p:'這輛車的石頭……有一點星星的味道',n:'覺得車上的石頭有星星的味道'}]}
+  {k:null,p:'這輛車的石頭……有一點星星的味道',n:'覺得車上的石頭有星星的味道'}]},
+ lynx:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。動作很輕，像在雪地上走路。……不錯。',list:[
+  {k:'habitat',p:'雪從來不化。高山雪嶺，再往北，就是冰原',n:'來自終年積雪的高山雪嶺與冰原'},
+  {k:'habits',p:'天快黑的時候，才是我的時間',n:'晨昏與夜間才出來活動'},
+  {k:'habits',p:'我吃雪地裡的小魔獸，還有冰晶草的根',n:'捕食小型魔獸，也吃冰晶植物的根'},
+  {k:'habits',p:'這一段圓環，是我的',n:'孤傲警覺，領地意識很強'},
+  {k:'abilities',p:'刺眼的白光閃過',n:'背上的冰晶能折射出眩光藏起身影（寒冰折射）'},
+  {k:'abilities',p:'雪地上不會留下腳印，冰壁上也一樣',n:'走路沒有聲音，能在冰壁上疾走（踏雪無痕）'},
+  {k:'bio',p:'巡山人說，我們是冬天的精靈',n:'巡山人視牠為冬之精靈'},
+  {k:'bio',p:'只有心地乾淨的旅人，才走得到那裡',n:'守護古老的冰川祕境，只有心地純淨的旅人能遇見'},
+  {k:null,p:'這輛車的車頂，很適合奔跑',n:'喜歡在車頂奔跑'}]}
 };
 const notesOf=id=>((state.notes||{})[id])||[];
 const filedOf=id=>((state.filed||{})[id])||{};
@@ -2105,7 +2143,8 @@ const CARE={
  vandora:{l:0,h:2,ok:'（牠的鱗甲和陰影融在一起，只剩金色的眼睛。）又暗又濕。……這裡可以當我的葉子底下。'},
  frost:{t:0,l:2,ok:'寒冷，明亮，像冰原上的白晝。（牠背上的冰晶亮了起來。）謝謝你。'},
  sirenora:{l:1,h:3,auto:true,ok:'霧……好濃，好安靜。柔柔的光從霧裡透過來。……我好像回到峽灣了。'},
- titan:{t:1,h:2,ok:'（牠肩上的苔蘚吸飽了水氣，顏色深了一點。）……涼涼的，濕濕的。像紅木森林的霧。……我可以……再睡一下了。'}
+ titan:{t:1,h:2,ok:'（牠肩上的苔蘚吸飽了水氣，顏色深了一點。）……涼涼的，濕濕的。像紅木森林的霧。……我可以……再睡一下了。'},
+ lynx:{t:0,l:0,ok:'（牠的眼睛在昏暗裡亮成兩點冰藍。）寒冷，安靜，看不清楚的夜。……像冰原的晨昏。這裡，我可以睡。'}
 };
 const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
 const CARE_WHY={t:['那裡太冷了。','那裡太熱了。'],l:['那裡太暗了。','那裡太亮了。'],h:['那裡太乾了。','那裡太潮濕了。']};
@@ -2184,7 +2223,8 @@ const DECK_LINE={
  vandora:['這裡很暗。星光不會出賣我。……我很喜歡。','風裡有濕氣。等一下，可能會下雨。'],
  frost:['星星的光是冷的。像冰原的夜。','在這裡，連呼吸都看得見。'],
  sirenora:['那些往後退的光……像夢一樣。抓不住，但會記得。','這裡的風很安靜。很適合做夢。'],
- titan:['……星星，走得好快。我一百年……才走一步。','……這裡的風，有森林的味道。我站一下就好。']
+ titan:['……星星，走得好快。我一百年……才走一步。','……這裡的風，有森林的味道。我站一下就好。'],
+ lynx:['星星的光是冷的。……從這裡看，像冰原上的月光。','這裡夠高。我喜歡高的地方，看得見誰在靠近。']
 };
 const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
 const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
@@ -2344,7 +2384,8 @@ const COMP_LINE={
  vandora:{dawnForest:'濕的。暗的。……這裡很適合躲起來。',starIslands:'太亮了。我躲在你影子後面。'},
  frost:{dawnForest:'這裡太暖了。……不過，晨霧有一點點像冰原的早晨。',starIslands:'星光是冷的。我喜歡這裡。'},
  sirenora:{dawnForest:'晨霧……雖然很淡，還是讓我想起峽灣。',starIslands:'這裡有很多被遺忘的夢，在星河裡漂。'},
- titan:{dawnForest:'……這裡的樹，很年輕。（牠走過的地方，冒出了一小片新芽。）',starIslands:'……腳底下，沒有地脈。我……走慢一點。'}
+ titan:{dawnForest:'……這裡的樹，很年輕。（牠走過的地方，冒出了一小片新芽。）',starIslands:'……腳底下，沒有地脈。我……走慢一點。'},
+ lynx:{dawnForest:'太暖了。樹太多，沒有地方跑。……我跟在你後面就好。',starIslands:'浮島的邊很陡，像冰壁。……我去跑一圈，馬上回來。'}
 };
 const PLACES={
  lumi:{loc:'dawnForest',name:'古樹根部的苔蘚床',text:'露米帶你繞到古樹的另一邊。粗大的樹根之間，鋪著一片發光的苔蘚床，每一片苔葉上都停著一滴晨露。「我就是在這裡被點亮的。」露米輕輕說。苔蘚床的中央，有一株你沒見過的小蕨。',give:'seed_sunfern',mem:'露米出生的地方'},
@@ -2695,6 +2736,7 @@ const MEMORIES=[
  {id:'int_vandora_aelis',title:'夜裡的捉迷藏',who:'vandora',who2:'aelis',have:()=>done('int_vandora_aelis'),text:'一個用耳朵找，一個用觸鬚找。航行的夜裡，兩個夜行者誰也沒有贏，誰也不想停。'},
  {id:'int_sirenora_pyro',title:'第一次的安睡',who:'sirenora',who2:'pyro',have:()=>done('int_sirenora_pyro'),text:'「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。'},
  {id:'int_titan_lumi',title:'會走路的森林',who:'lumi',who2:'titan',have:()=>done('int_titan_lumi'),text:'露米踩著巨靈的手，爬上長滿蕨葉的肩膀。「因為這裡是會走路的森林嘛。」'},
+ {id:'int_frost_lynx',title:'上面與下面',who:'lynx',who2:'frost',have:()=>done('int_frost_lynx'),text:'「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。'},
  {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
  {id:'sky_meteor',title:'流星雨',scene:'voyage',have:()=>(state.skySeen||[]).includes('meteor'),text:SKY.meteor.desc},
  {id:'sky_aurora',title:'界壁極光',scene:'voyage',have:()=>(state.skySeen||[]).includes('aurora'),text:SKY.aurora.desc},
@@ -2713,6 +2755,7 @@ const MEMORIES=[
  {id:'frost',title:'霜花與湛藍的眼睛',who:'frost',have:()=>state.discoveredLifeforms.includes('frost'),text:PASSENGERS.frost.intro},
  {id:'sirenora',title:'霧中的粉白光暈',who:'sirenora',have:()=>state.discoveredLifeforms.includes('sirenora'),text:PASSENGERS.sirenora.intro},
  {id:'titan',title:'會走路的小山',who:'titan',have:()=>state.discoveredLifeforms.includes('titan'),text:PASSENGERS.titan.intro},
+ {id:'lynx',title:'車窗上的晶塵',who:'lynx',have:()=>state.discoveredLifeforms.includes('lynx'),text:PASSENGERS.lynx.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -2765,6 +2808,7 @@ const CODEX_LIFE=[
  {id:'frost',passenger:'frost'},
  {id:'sirenora',passenger:'sirenora'},
  {id:'titan',passenger:'titan'},
+ {id:'lynx',passenger:'lynx'},
  {id:'reserve-5',type:'domain'}
 ];
 function codexEntry(e){
@@ -2913,7 +2957,7 @@ const HSDEF=[
  {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:NP(468,470),act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
- ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
+ ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:90,y:50},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
