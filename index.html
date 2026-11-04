@@ -100,6 +100,8 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .sb-card{border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(232,201,131,.25);padding:10px 12px 12px}.sb-card h3{margin:8px 0 4px;font-size:16px}.sb-card p{font-size:13px;line-height:1.7;margin:4px 0}
 .sb-card.unk{opacity:.7}.sb-card.unk .sb-art{background:rgba(10,12,40,.6)}.sb-art{border-radius:6px;overflow:hidden;aspect-ratio:16/10;background:#0e1030}.sb-art svg{width:100%;height:100%;display:block}
 .sb-hint{color:#d9c8ff}.sb-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.sb-log li{display:flex;gap:10px;font-size:14px;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,.05)}.sb-log .no{color:var(--gold);font-family:var(--f-latin);flex:none}
+/* 世界觀 */
+.tome .hist{font-size:14px;line-height:1.85}.tome .hist b{color:#7a5c30}
 /* 照顧需求 */
 .ov.care .panel{max-width:720px}
 .ztabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.ztabs button{padding:5px 11px;border-radius:999px;border:1px solid rgba(232,201,131,.35);background:none;color:var(--silver);font:inherit;font-size:12px;cursor:pointer;position:relative}
@@ -615,7 +617,7 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .types b{display:block;font-size:15px;letter-spacing:.1em;color:var(--ink)}
 .types b small{font-weight:400;font-size:12px;color:var(--ink-3)}
 .inkmap{width:100%;height:auto;display:block;margin-top:4px;color:var(--ink-2);font-family:var(--hand)}
-.places{display:flex;flex-direction:column;gap:14px}
+.places{display:flex;flex-direction:column;gap:14px;padding-bottom:36px}
 .place{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:start}
 .place .vg{aspect-ratio:3/2;max-width:100%;border-radius:3px;overflow:hidden;filter:sepia(.55) saturate(.8) contrast(.95);box-shadow:0 0 0 1px rgba(95,71,44,.4)}
 .place .vg svg{width:100%;height:100%;display:block}
@@ -975,10 +977,10 @@ const LOCATIONS = {
  origin:{name:'沉睡之地',realm:'？',domain:'列車停泊處',coord:'０ · ００ · ００',desc:'列車沉睡多年的停泊處。石造拱廊沒入薄霧，沒有任何記錄說明這裡屬於日界還是月界。',art:()=>ART.loc.origin()},
  dawnForest:{name:'晨曦森林',realm:'日界',domain:'地球',coord:'Ⅰ · 07 · 12',desc:'地球上一片人類從未踏足的古老森林。晨光像水一樣在樹冠之間流動，有些生命只在光線最斜的那一刻才看得見。',art:ART.loc.dawnForest,ready:true},
  starIslands:{name:'星河浮島',realm:'月界',domain:'宇宙空間',coord:'Ⅳ · 31 · 88',desc:'一條星河橫越黑暗，岩島在河面上無聲漂浮。島上的晶體會吸收星光，再在下一個週期緩緩吐出。',art:ART.loc.starIslands,ready:true},
- reverseRealm:{name:'逆生之境',realm:'月界',domain:'異世界',coord:'？',desc:'重力與自然規則不同的世界。',art:()=>ART.loc.locked(31,140)},
- boundlessCorridor:{name:'無界迴廊',realm:'月界',domain:'五維空間',coord:'？',desc:'空間重疊、方向錯位。',art:()=>ART.loc.locked(41,200)},
- silentVoid:{name:'寂滅虛空',realm:'月界',domain:'虛無空間',coord:'？',desc:'記憶碎片、失落生命、無邊黑暗。',art:()=>ART.loc.locked(51,260)},
- timeriftSea:{name:'時隙之海',realm:'月界',domain:'時空裂隙',coord:'？',desc:'時間異常、不同時間線、過去與未來。',art:()=>ART.loc.locked(61,30)}
+ reverseRealm:{name:'逆生之境',realm:'月界',domain:'異世界',coord:'？',desc:'重力朝上、河水流回源頭的世界。在這裡，花會凋謝成花苞，花苞再縮回種子；老人會慢慢變回孩子。',art:()=>ART.loc.locked(31,140)},
+ boundlessCorridor:{name:'無界迴廊',realm:'月界',domain:'五維空間',coord:'？',desc:'空間互相重疊、方向彼此錯位的長廊。同一扇門，從左邊打開和從右邊打開，會通往不同的地方。',art:()=>ART.loc.locked(41,200)},
+ silentVoid:{name:'寂滅虛空',realm:'月界',domain:'虛無空間',coord:'？',desc:'沒有光、沒有聲音的空白，只有漂浮的記憶碎片，和還在等待的失落生命。',art:()=>ART.loc.locked(51,260)},
+ timeriftSea:{name:'時隙之海',realm:'月界',domain:'時空裂隙',coord:'？',desc:'時間像潮水一樣起伏的海。浪頭裡映著過去與未來，有時，也映著一列很久以前的白色列車。',art:()=>ART.loc.locked(61,30)}
 };
 const LOC_ORDER = ['dawnForest','starIslands','reverseRealm','boundlessCorridor','silentVoid','timeriftSea'];
 
@@ -1215,6 +1217,58 @@ const CLUES = {
  clue_sola_legend:{title:'星河的傳說',text:'索拉轉述：星河的老水母說，有一列白色的車，會在世界快要熄滅的地方停下來。'},
  clue_seed:{title:'無法開啟的封印',text:'種子保存櫃中有三枚守護者封存的古種。封印只回應某種條件，而列車目前尚未滿足。'}
 };
+/* ================================================================
+   世界觀：日與月的起源、界壁與渡口、渡守（古代守護者）、大熄滅、曦淵
+   世界觀頁會隨著讀到的線索一段一段顯現；界域地誌在抵達或解讀座標後記下每個地方的淵源。
+   ================================================================ */
+const LOC_LORE={
+ origin:'它不在日界，也不在月界，而是在界壁本身上——所有渡口的起點，所以座標是「０・００・００」。石造拱廊是渡守留下的城門。大熄滅之後，列車就停在這裡，和整座渡口一起沉睡。',
+ dawnForest:'傳說第一道晨曦落下時，最先照到的就是這片森林。從那以後，晨光在這裡總是停留得特別久，所以有些生命只在光線最斜的那一刻才看得見。古樹是渡守種下的「渡口樹」，樹上的圓環是渡口印記，標記著日界少數能讓列車停靠的地方。人類一直沒有找到這裡，因為它藏在時間的一道皺褶裡。',
+ starIslands:'浮島不是在星河裡長出來的。它們是熄滅的世界剝落下來的碎片，被星河的潮汐接住，在河面上漂流。島上的晶體吸收星光，是因為它們還記得自己原本那片天空的樣子。潮汐會把浮島送往新的地方——漂走的島，也許不是消失，而是被帶去了某個需要它的地方。',
+ reverseRealm:'逆生之境原本也走到了盡頭。渡守趕到的時候，已經來不及帶走所有生命，於是他們做了一件從來沒做過的事：把這個世界的時間翻轉過來。從此它不再走向終點，而是一步一步走回起點。那裡的居民相信，等世界回到最初的那一天，渡守就會回來。',
+ boundlessCorridor:'這裡曾是渡守的工坊。列車的車廂、圓環印記、星河上的航道，都是在迴廊深處畫出來的。迴廊連接著每一個渡口，渡守透過它往返各個世界——直到大熄滅之後，迴廊的門一扇一扇關上，只剩下方向錯亂、走不到盡頭的長廊。',
+ silentVoid:'大熄滅留下的空白。世界熄滅之後，它們的記憶不會立刻消失，而是在這裡慢慢漂流，像海面上的泡沫。這裡不是邪惡的地方，而是世界們安息的所在。只是，有些記憶還沒準備好被遺忘；有些生命，還在等一列車來接它們。',
+ timeriftSea:'所有世界的時間，最後都會流進這片海。渡守相信，在時隙之海裡沒有真正的結束——只要找到對的那一道浪，就能回到某一個時刻。星空裡的古列車座指向這裡；存檔水晶裡那段訊息的後半句，也指向這裡。'
+};
+/* 領頭龍在航行時會聊起往事（每段一次，依旅程數解鎖） */
+const DRAGON_LORE=[
+ {id:'dl_wall',need:()=>state.journeyCount>=1,lines:[['dragon','你知道列車剛才穿過的是什麼嗎？'],['self','……界壁？'],['dragon','嗯。每個世界都被一層看不見的膜包著，守住它自己的規則。穿過去的時候，另一個世界的規則會沾在你身上。'],['dragon','那就是界染。積得太深，你會被那個世界慢慢改寫。所以每次出發前，我都要你量測。'],['self','原來不只是例行公事。'],['dragon','列車上沒有例行公事。每一件事，都是有人用很久的時間想出來的。']]},
+ {id:'dl_ferry',need:()=>state.journeyCount>=3,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的人，叫自己「渡守」。他們在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……他們不屬於日界，也不屬於月界。他們誕生在界壁上，是光與倒影交界的地方長出來的生命。'],['dragon','他們的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
+ {id:'dl_dimming',need:()=>state.journeyCount>=5,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……他們走了。我不知道去了哪裡。']]},
+ {id:'dl_name',need:()=>state.journeyCount>=7,clue:'clue_dragon',lines:[['self','領頭，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們走之前，把最後一道晨曦留在了列車裡。'],['self','……最後一道晨曦？'],['dragon','你醒來的時候，有一點光落在你身上。記得嗎？'],['dragon','那就是了。']]}
+];
+const LORE_CLUES={
+ clue_ferrykeepers:{title:'渡守',text:'領頭曦淵說，建造列車的古代守護者自稱「渡守」。他們誕生在界壁上，在每個渡口留下圓環印記，並在世界將要熄滅時趕到那裡，帶走來不及離開的生命和種子。'},
+ clue_dimming:{title:'大熄滅',text:'很久以前，無數世界在同一個紀元相繼熄滅，留下的空白連成了寂滅虛空。渡守用盡力量穩住界壁，列車從此停在沉睡之地。'},
+ clue_dragon:{title:'最後一道晨曦',text:'曦淵是第一個登上列車的生命。渡守離開前，把最後一道晨曦留在了列車裡——值勤精靈醒來時落在身上的那一點光，就是它。'},
+ clue_ash:{title:'熄滅的世界',text:'灰燼蕨標本的採集日期，屬於一個已經不存在的曆法。渡守會在世界熄滅之前，帶走那裡最後的植物。三枚封存種子，也許也是這樣來的。'},
+ clue_island:{title:'浮島的來歷',text:'星河浮島是熄滅的世界剝落下來的碎片，被星河的潮汐接住。浮島漂走，也許是被送往新的地方。'},
+ clue_wall:{title:'界壁在呼吸',text:'界壁極光出現時，界壁會像呼吸一樣一明一暗。光變薄的那一瞬間，就是渡口打開的時候。'},
+ clue_wake2:{title:'訊息的後半句',text:'存檔水晶裡的訊息終於讀得出後半句：「……若有一日列車再次醒來，願醒來的那一位，替我們把剩下的路走完。我們在時間的另一端。」'}
+};
+/* 世界觀頁：每一頁 [標題, 內容, 顯現條件]；條件未達成時墨跡模糊 */
+function lorePages(){ const has=id=>state.clues.includes(id), any=(...a)=>a.some(has);
+ const sec=(ok,t,body,hint)=>ok?`<h5>${t}</h5>${body}`:`<h5>${t}</h5><p class="blur">${hint||'這一段的墨跡尚未顯現。'}</p>`;
+ return [
+  ['序・日與月',`<h5>${GLYPH.sun}日界</h5><p>日界是現實世界，唯一包含地球。地球遵循一般的物理規則與時間流動，人類文明存在於此。地球上仍有人類無法觀測的生命、古老遺跡與特殊能量。</p>
+   <h5>${GLYPH.moon}月界</h5><p>月界不是一顆星球，而是所有非地球領域的統稱：宇宙與星系、平行宇宙、異世界、五維與高維空間、虛無空間、時空裂隙，以及不受一般時空規則限制的未知領域。</p>
+   <p>每個空間都可以有自己的物理規則與生命型態。它們不一定彼此相連，也無法畫在同一張地圖上。</p><p class="aside">日界與月界並非善惡對立，只是不同的領域體系。</p>`],
+  ['起源・第一道晨曦',`<p>最初什麼都沒有，只有一片沒有形狀、也沒有時間的「渾沌之海」。</p><p>某一刻，第一道晨曦落進了海裡。光落下的地方，時間開始流動，萬物有了先後——那裡成為日界，也就是地球。</p>
+   <p>光的周圍，留下了無數的倒影。每一道倒影都用自己的方式理解「光」：有的讓重力朝上，有的讓時間倒流，有的乾脆沒有形狀。這些倒影各自成為一個領域，合稱月界。</p>
+   <p class="aside">古老的說法：日界是光，月界是光的千萬種倒影。沒有光，就沒有倒影；沒有倒影，光也無從被看見。</p>`],
+  ['界壁・渡口・星河',`<h5>${GLYPH.ring}界壁</h5><p>每個領域都被一層看不見的薄膜包著，叫作界壁。界壁守住每個世界自己的規則；穿越它的生命，身上會沾上另一個世界的規則——這就是「界染」。積得太深，生命會被那個世界的規則慢慢改寫。</p>
+   ${sec(any('clue_ring','clue_ferrykeepers'),`${GLYPH.ring}渡口`,'<p>界壁並不是到處一樣厚。少數變薄的地方叫作渡口，列車只能在渡口停靠。建造列車的人在每個渡口都留下了圓環印記——晨曦森林古樹上的圓環，就是其中之一。</p>','（找到古樹上的圓環之後，這一段才會顯現。）')}
+   ${sec(any('clue_wall'),`${GLYPH.moon}界壁的呼吸`,'<p>界壁不是靜止的。它會像呼吸一樣一明一暗，變薄的那一瞬間，渡口就打開了。界壁極光，是人們唯一能用眼睛看見的呼吸。</p>','（觀賞過界壁極光之後，這一段才會顯現。）')}
+   <h5>${GLYPH.leaf}星河</h5><p>在月界的領域之間，流著一條由光組成的長河。它是所有倒影彼此相連的地方，也是列車航道最早的樣子。星河有潮汐，潮水會把流落的東西帶往新的地方。</p>`],
+  ['渡守',`${sec(any('clue_ring','clue_lumi_tale','clue_ferrykeepers'),`${GLYPH.ring}建造列車的人`,'<p>建造列車的古代守護者，自稱「渡守」。他們不屬於日界，也不屬於月界——據說他們誕生在界壁上，是光與倒影交界處長出來的生命。</p>','（讀到更多關於古代守護者的線索後，這一段才會顯現。）')}
+   ${sec(any('clue_sola_legend','clue_ash','clue_ferrykeepers'),`${GLYPH.leaf}熄滅之前`,'<p>每一個世界都會走到盡頭，這不是誰的錯。但在熄滅之前，總有來不及離開的生命、還沒說完的故事，和一顆還想發芽的種子。渡守會在那之前趕到，列車就是為了把它們帶走而造的。</p>','（墨跡模糊。只看得出「熄滅」兩個字。）')}
+   ${sec(has('clue_dimming'),`${GLYPH.moon}大熄滅`,'<p>很久以前，無數領域在同一個紀元裡相繼熄滅，留下的空白連成一片，成為寂滅虛空。渡守把剩下的力量都用來穩住界壁，讓空白不再擴大。列車在那之後，停在了沉睡之地。</p>','（墨跡模糊。這一頁似乎記著一場很大的災難。）')}
+   ${sec(has('clue_wake2'),`${GLYPH.sun}時間的另一端`,'<p>渡守最後去了哪裡，沒有任何紀錄。古樹說他們離開時「看起來不難過」；星空裡留著一座古列車座；存檔水晶裡的訊息還有後半句——他們也許沒有消失，只是去了時間的另一端，在那裡等著。</p>','（最後一段的墨跡還沒有顯現。）')}`],
+  ['曦淵與值勤精靈',`${sec(any('clue_dragon'),`${GLYPH.sun}曦淵`,'<p>「曦」是晨光，「淵」是深淵。領頭龍一半出生在日界的黎明，一半出生在月界最深的黑暗。牠是第一個登上列車的生命；渡守離開後，牠獨自守著沉睡的列車。</p>','（航行時多和領頭聊聊，這一段才會顯現。）')}
+   ${sec(any('clue_dragon'),`${GLYPH.ring}值勤精靈`,'<p>你醒來的那一刻，有一點光落在你身上。那是渡守離開前，留在列車裡的最後一道晨曦。所以你不知道自己從哪裡來——你是從列車自己的光裡醒來的。</p>','（墨跡模糊。這一頁好像在寫你自己。）')}
+   <h5>${GLYPH.leaf}列車</h5><ul class="facts"><li>由渡守建造，能穿越日界與月界，在渡口停靠。</li><li>沉睡多年，如今重新啟動。</li><li>由值勤精靈負責巡視、維護與探索。</li><li>不同領域的生命會自行登車，短暫停留後各自離開。</li></ul>`]
+ ]; }
+Object.assign(CLUES,LORE_CLUES);
 const CLUE_ORDER = Object.keys(CLUES);
 
 /* 事件：trigger 決定何時檢查；auto=true 立即演出；否則進入待處理入口（最多顯示兩個） */
@@ -1401,7 +1455,7 @@ const INTERACT = {
  'mem:log'(){ panel(`<div class="eyebrow">旅程之書</div><h2>旅程紀錄</h2><ul class="log">${state.log.slice().reverse().map(l=>`<li><span class="j">No.${l.j}</span><span>${l.t}</span></li>`).join('')}</ul>`); },
  'mem:items'(){ itemsPanel(); },
  'mem:clues'(){ panel(`<div class="eyebrow">記憶典藏車廂</div><h2>線索解讀台</h2><p>散落在各個界域的古代片段。拼起來，就是這列車與守護者的過去。</p><p style="color:var(--mute)">${state.clues.length} / ${CLUE_ORDER.length} 片段已解讀</p>${CLUE_ORDER.map(id=>state.clues.includes(id)?`<div class="clue"><b>${CLUES[id].title}</b><br>${CLUES[id].text}</div>`:`<div class="clue unk">— 尚未解讀的片段 —</div>`).join('')}`); },
- 'mem:save'(){ savePanel('game'); },
+ 'mem:save'(){ if(state.clues.length>=8&&!state.clues.includes('clue_wake2')){ addClue('clue_wake2'); toast('存檔水晶裡斷掉的訊息……多讀出了一句'); } savePanel('game'); },
  /* 火車頭駕駛室：值勤準備與出發確認 */
  'prep:scan'(){ scanPanel(); },
  'prep:equip'(){ equipPanel(); },
@@ -1432,6 +1486,10 @@ const NPCS = { dragon:{name:'曦淵・領頭', art:()=>ART.portrait.dragon()} };
 const ROUTE = ['dawnForest','starIslands'];   /* 既定航程：依序循環停靠已開放的站點 */
 const ROUTE_INFO = {
  dawnForest:{speed:'星潮七節（界壁區間限三節）',order:'晨霧帶延伸至月台外緣，進站前鳴鈴兩聲。',warn:'日界時間流動穩定；車外光苔怕驚擾，停靠時請熄去車頭燈。'},
+ reverseRealm:{speed:'逆潮三節',order:'進入後車內時鐘會倒轉，屬正常現象。',warn:'重力方向相反；下車時請抓緊車門扶手。'},
+ boundlessCorridor:{speed:'無定',order:'請勿在迴廊內開啟未標示圓環的門。',warn:'方向會互相重疊，以星軌羅盤為準。'},
+ silentVoid:{speed:'星潮一節',order:'全車熄去非必要燈光，保持安靜。',warn:'界染度上升極快，停靠時間請盡量縮短。'},
+ timeriftSea:{speed:'隨潮',order:'看見過去的列車時，請勿鳴笛。',warn:'時間流不穩定；車外的一刻，可能是車內的一天。'},
  starIslands:{speed:'星潮九節（浮島航道限五節）',order:'星河潮汐偏高，車廂連接處保持關閉。',warn:'穿越日月界壁時，車廂內可能出現不明光紋。'}
 };
 const EQUIP = {
@@ -1529,7 +1587,9 @@ function dragonTalk(){
  const first=!state.storyFlags.metDragon;
  const intro=first?[['dragon','……你醒了。'],['dragon','我是這列車的領頭，曦淵。列車由我引領，但能不能出發，要等值勤者把一切確認清楚。'],['dragon','從今天起，你就是這列車的值勤精靈。每次出發前，來向我報備。'],['self','是，領頭。']]:[];
  if(first){ state.storyFlags.metDragon=1; save(); }
- if(state.currentPhase==='voyage') return dialogueScript(intro.concat([['dragon','航道很穩。去車廂裡走走吧，到站時我會讓你知道。']]));
+ if(state.currentPhase==='voyage'){ state.storyFlags.dragonLore=state.storyFlags.dragonLore||[]; const L=DRAGON_LORE.find(x=>!state.storyFlags.dragonLore.includes(x.id)&&x.need());
+  if(L) return dialogueScript(intro.concat(L.lines),()=>{ state.storyFlags.dragonLore.push(L.id); if(L.clue) addClue(L.clue); logJ('航行中，領頭曦淵說起了列車的往事。'); save(); });
+  return dialogueScript(intro.concat([['dragon','航道很穩。去車廂裡走走吧，到站時我會讓你知道。']])); }
  const d=state.duty, miss=[];
  if(!d.scan) miss.push('身體污染值量測'); if(!equipAll()) miss.push('航程裝備'); if(!d.briefing) miss.push('星途符牒的資訊核對');
  if(!d.signal) miss.push('前方星光號誌'); if(!d.doors) miss.push('車門聯鎖安全燈');
@@ -2158,7 +2218,7 @@ function skyWatch(){ const k=skyNow(); if(!k) return toast('現在的天空很�
  panel(`<div class="eyebrow">火車尾展望台・星象</div><h2>${S.name}</h2><div class="sky-view"><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice">${ART.defs}<rect width="1600" height="500" fill="#14163a"/>${stars(120,7,0,0,1600,500)}${skyFx(k.type)}</svg></div><p>${S.desc}</p>
   ${here.length?`<h3 class="zh">一起看的乘客</h3><ul class="zlist">${lines}</ul>`:'<p class="nb-empty">展望台上只有你。下次可以邀請乘客一起來看。</p>'}
   ${k.watched?'':`<p class="pur-done">星光落在身上，界染度淡了一些。${first?'這一幕凝結成了回憶水晶。':''}已記進星月觀測車廂的觀星紀錄本。</p>`}`,'care');
- if(!k.watched){ k.watched=true; TAINT.add(-5); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
+ if(!k.watched){ k.watched=true; TAINT.add(-5); if(k.type==='aurora') addClue('clue_wall'); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
   state.skyLog=state.skyLog||[]; state.skyLog.push({k:'sky',type:k.type,j:state.journeyCount+1,with:here.slice()});
   logJ(`在展望台觀賞了${S.name}${here.length?`，和${here.map(id=>PASSENGERS[id].name).join('、')}一起`:''}。`,'find');
   here.forEach(id=>state.passengers[id].records.push({j:state.journeyCount+1,t:`在展望台一起看了${S.name}。`})); save(); SFX.chime(); render(); } }
@@ -2275,7 +2335,7 @@ function compTalk(){ const id=state.companion, p=PASSENGERS[id], s=state.passeng
 function placeVisit(id){ const P=PLACES[id], first=!(state.places||[]).includes(id);
  panel(`<div class="eyebrow">${LOCATIONS[P.loc].name}・和${PASSENGERS[id].name}一起</div><h2>${P.name}</h2><p>${P.text}</p>${first?`<p class="pur-done">${COLLECTIBLES[P.give]?`取得：${COLLECTIBLES[P.give].name}。`:`取得：${MATS[P.give].name} ×2。`}這一幕凝結成了回憶水晶。</p>`:''}`,'care');
  if(first){ state.places=state.places||[]; state.places.push(id); if(COLLECTIBLES[P.give]) addItem(P.give,true); else { state.materials=state.materials||{}; state.materials[P.give]=matCount(P.give)+2; }
-  logJ(`${PASSENGERS[id].name}帶你去了${P.name}。`,'life'); state.passengers[id].records.push({j:state.journeyCount,t:`帶你去了${P.name}。`}); save(); SFX.chime(); render(); } }
+  logJ(`${PASSENGERS[id].name}帶你去了${P.name}。`,'life'); if(id==='sola') addClue('clue_island'); state.passengers[id].records.push({j:state.journeyCount,t:`帶你去了${P.name}。`}); save(); SFX.chime(); render(); } }
 /* 材料的用途：澆灌（培育艙）、淨化（守望藤） */
 function matButtons(use){ return Object.entries(MATS).filter(([m,M])=>M.use===use&&matCount(m)>0).map(([m,M])=>`<button class="btn ghost" data-mat="${m}">${use==='water'?'用':'點燃'}${M.name}${use==='water'?'澆灌':''}（剩 ${matCount(m)}）</button>`).join(''); }
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-mat]'); if(!b) return; const m=b.dataset.mat, M=MATS[m]; if(matCount(m)<1) return;
@@ -2503,7 +2563,7 @@ function samplePanel(){ const n=SPECIMENS.filter(s=>s.have()).length;
  <div class="grid">${SPECIMENS.map(s=>s.have()?`<button class="card" data-sp="${s.id}"><div class="art">${leafSvg(s.color)}</div><div class="t">${s.name}</div><div class="s">${s.src}</div></button>`:`<div class="card locked"><div class="art">${leafSvg('#777')}</div><div class="t">未收集</div></div>`).join('')}</div><div id="spd"></div>`);
  const show=id=>{ const s=SPECIMENS.find(x=>x.id===id); ov.querySelectorAll('[data-sp]').forEach(b=>b.classList.toggle('got',b.dataset.sp===id));
   ov.querySelector('#spd').innerHTML=`<div class="showcase"><div class="gem3d leaf">${leafSvg(s.color)}</div><div><h3>${s.name}</h3><dl class="kv"><dt>來源</dt><dd>${s.src}</dd></dl><p>${s.desc}</p></div></div>`; };
- ov.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>show(b.dataset.sp)); show('ash_fern'); }
+ ov.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>show(b.dataset.sp)); show('ash_fern'); addClue('clue_ash'); }
 function natWindow(){ const voy=state.currentPhase==='voyage', L=LOCATIONS[state.currentLocation];
  panel(`<div class="eyebrow">森羅溫室車廂</div><h2>自然觀察窗</h2><div class="mini-view">${viewSvg()}</div><p>${voy?'窗外沒有土地，只有星雲緩緩退開。保存櫃裡的種子在這種時候特別安靜。':state.currentLocation==='origin'?'窗外是沉睡之地。石造拱廊沒入薄霧，看不到任何植物。':`窗外是${L.name}。${L.desc}`}</p>`); }
 
@@ -2690,6 +2750,7 @@ function openBook(ch,sub){
    const l=t.closest('[data-life]'); if(l) return openBook('life',l.dataset.life);
    const b=t.closest('[data-bk]'); if(b) return openBook(b.dataset.bk);
    const pg=t.closest('[data-pg]'); if(pg){ BOOK.page=+pg.dataset.pg; return openBook('life'); }
+   const lp=t.closest('[data-lp]'); if(lp){ BOOK.lp=+lp.dataset.lp; return openBook('lore'); }
    const fb=t.closest('[data-file]'); if(fb) return fileChooser(fb.closest('.file-slot'));
    const pk=t.closest('[data-pick]'); if(pk){ const [id,k,i]=pk.dataset.pick.split(':'); return fileNote(id,k,+i,pk); }
    const up=t.closest('[data-unpick]'); if(up){ const [id,k]=up.dataset.unpick.split(':'); up.closest('.file-slot').outerHTML=fileSlot(id,k); } });
@@ -2728,16 +2789,12 @@ function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=
 function bookLore(){
  const met=new Set(state.discoveredLifeforms.map(id=>PASSENGERS[id]&&PASSENGERS[id].type).filter(Boolean));
  const TYPES={other:'來自其他世界、星球、宇宙或平行領域的生命。',domain:'由某個空間、自然現象或特殊維度孕育而生的生命。',mind:'由思想、記憶、夢境、情緒或意識凝成的生命，不一定具有實體。',lost:'因災難、世界崩壞或領域消失，失去原本居所的生命。'};
- return `<section class="page l"><h3>序・日與月</h3>${RULE}
-  <h5>${GLYPH.sun}日界</h5><p>日界是現實世界，唯一包含地球。地球遵循一般的物理規則與時間流動，人類文明存在於此。地球上仍有人類無法觀測的生命、古老遺跡與特殊能量。</p>
-  <h5>${GLYPH.moon}月界</h5><p>月界不是一顆星球，而是所有非地球領域的統稱：宇宙與星系、平行宇宙、異世界、五維與高維空間、虛無空間、時空裂隙，以及不受一般時空規則限制的未知領域。</p>
-  <p>每個空間都可以有自己的物理規則與生命型態。它們不一定彼此相連，也無法畫在同一張地圖上。</p>
-  <p class="aside">日界與月界並非善惡對立，只是不同的領域體系。</p><div class="folio"><span></span><span>i</span><span></span></div></section>
- <section class="page r"><h3>列車</h3>${RULE}
-  <ul class="facts"><li>由古代守護者建造。</li><li>能穿越日界與月界，尋找可以停靠的節點。</li><li>沉睡多年，如今重新啟動。</li><li>由值勤精靈負責巡視、維護與探索。</li><li>不同領域的生命會自行登車，短暫停留後各自離開。</li></ul>
-  <h5>${GLYPH.leaf}四類生命</h5><div class="types">${Object.entries(LIFE_TYPES).map(([k,n])=>`<div><b>${n}${met.has(k)?'':'<small>（尚未遇見）</small>'}</b><span class="${met.has(k)?'':'blur'}">${TYPES[k]}</span></div>`).join('')}</div>
-  <h5>${GLYPH.ring}古代守護者</h5><p class="blur">這一段的墨跡尚未顯現，只看得出幾個斷續的筆畫。</p><p class="tally">已讀取的線索 ${state.clues.length} / ${CLUE_ORDER.length} 片段，保存在古代資料保存裝置。</p>
-  <div class="folio"><span></span><span>ii</span><span></span></div></section>`; }
+ const pages=lorePages().concat([['四類生命',`<div class="types">${Object.entries(LIFE_TYPES).map(([k,n])=>`<div><b>${n}${met.has(k)?'':'<small>（尚未遇見）</small>'}</b><span class="${met.has(k)?'':'blur'}">${TYPES[k]}</span></div>`).join('')}</div>
+  <p class="tally">已讀取的線索 ${state.clues.length} / ${CLUE_ORDER.length} 片段，保存在記憶典藏車廂的線索解讀台。讀到的線索越多，這本書的墨跡就顯現得越多。</p>`]]);
+ const spreads=Math.ceil(pages.length/2); BOOK.lp=Math.max(0,Math.min(BOOK.lp||0,spreads-1));
+ const roman=['i','ii','iii','iv','v','vi','vii','viii'];
+ const pg=(i,side)=>{ const p=pages[i]; return `<section class="page ${side}">${p?`<h3>${p[0]}</h3>${RULE}${p[1]}`:''}<div class="folio">${side==='l'&&BOOK.lp>0?`<button data-lp="${BOOK.lp-1}">‹ 前頁</button>`:'<span></span>'}<span>${roman[i]||''}</span>${side==='r'&&BOOK.lp<spreads-1?`<button data-lp="${BOOK.lp+1}">後頁 ›</button>`:'<span></span>'}</div></section>`; };
+ return pg(BOOK.lp*2,'l')+pg(BOOK.lp*2+1,'r'); }
 function bookAtlas(){
  const order=['origin',...state.visitedLocations], P=id=>[MAPPOS[id][0]*.5,MAPPOS[id][1]*.66];
  const route=order.map(P).map(([x,y])=>`${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
@@ -2750,7 +2807,7 @@ function bookAtlas(){
   ${order.length>1?`<polyline points="${route}" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 4" opacity=".75"/>`:''}${dots}
   <g transform="translate(452 372)" fill="none" stroke="currentColor" stroke-width="1"><circle r="18"/><path d="M0 -24 L4 0 L0 24 L-4 0 Z"/><text y="-28" text-anchor="middle" font-size="9" fill="currentColor" stroke="none">北</text></g></svg>`;
  const place=id=>{ const s=locStatus(id), L=LOCATIONS[id];
-  return `<div class="place ${s==='seen'?'':'unk'}"><div class="vg">${locSvg(id)}</div><div><b>${s==='fog'?'訊號微弱的光點':L.name}</b><small>${L.realm}・${s==='fog'?'未知領域':L.domain}</small>${s==='seen'?`<p>${L.desc}</p>`:`<p class="blur">尚未抵達，這裡的記載還是空白的。</p>`}</div></div>`; };
+  return `<div class="place ${s==='seen'?'':'unk'}"><div class="vg">${locSvg(id)}</div><div><b>${s==='fog'?'訊號微弱的光點':L.name}</b><small>${L.realm}・${s==='fog'?'未知領域':L.domain}</small>${s==='seen'?`<p>${L.desc}</p>${LOC_LORE[id]?`<p class="hist"><b>淵源</b>　${LOC_LORE[id]}</p>`:''}`:revealed(id)?`<p>${L.desc}</p><p class="hist"><b>淵源</b>　${LOC_LORE[id]}</p><p><small>座標已解讀・尚未抵達</small></p>`:`<p class="blur">尚未抵達，這裡的記載還是空白的。</p>`}</div></div>`; };
  return `<section class="page l"><h3>界域地誌</h3>${RULE}<p>列車走過的路線以虛線記下。月界的領域不一定彼此相連，這張圖只標出它們在星圖上的方位。</p>${map}<div class="folio"><span></span><span>iii</span><span></span></div></section>
  <section class="page r"><div class="places">${['origin',...LOC_ORDER].map(place).join('')}</div><div class="folio"><span></span><span>iv</span><span></span></div></section>`; }
 
@@ -2783,7 +2840,7 @@ const HSDEF=[
  {id:'cab-disc',scene:'cab',name:'古代控制晶盤',at:{x:50,y:49},layer:3,act:()=>discPanel(),track:false},
  {id:'cab-compass',scene:'cab',name:'星軌羅盤座',at:{x:28.7,y:51},layer:2,act:'cab:runes'},
  {id:'cab-dragon',scene:'cab',name:'領頭・曦淵',at:{x:52,y:17},layer:4,act:'cab:dragon',track:false,
-  imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)},
+  imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)||(state.currentPhase==='voyage'&&DRAGON_LORE.some(x=>x.need()&&!(state.storyFlags.dragonLore||[]).includes(x.id)))},
  /* 值勤準備（原整備前廊）：全部在駕駛室完成 */
  {id:'cab-scan',scene:'cab',name:'淨界晶環・身體量測',at:{x:9.6,y:52},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&(!state.duty.scan||!!(state.spirit.contamination&&state.spirit.contamination.value>=50)),done:()=>!!state.duty.scan&&!(state.spirit.contamination&&state.spirit.contamination.value>=50)},
  {id:'cab-equip',scene:'cab',name:'裝備台',at:{x:89.4,y:62},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
