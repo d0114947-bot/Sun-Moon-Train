@@ -221,40 +221,141 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .vine-leaf{position:absolute;width:12px;height:7px;border-radius:50% 0;background:#a6e39a;opacity:0;animation:leaffall 3.2s ease-in forwards}
 @keyframes leaffall{0%{opacity:0;transform:translate(0,0) rotate(0)}15%{opacity:.9}100%{opacity:0;transform:translate(var(--dx),200px) rotate(260deg)}}
 
-/* ---------- 手寫紀錄本（界域地誌、線索解讀筆記）：一頁一頁翻，右上角掛著書籤 ---------- */
+
+/* ---------- 棲息區的結界調節：從右邊滑出的遙控器 ---------- */
+.ov.drawer{background:transparent;backdrop-filter:none;justify-content:flex-end;align-items:center;pointer-events:none;animation:none}
+.ov.drawer .panel{pointer-events:auto;width:min(320px,90vw);max-height:calc(100vh - 90px);margin:40px 14px 0 0;padding:18px 18px 20px;border-radius:30px 30px 34px 34px;border:none;
+ background:linear-gradient(170deg,#faf8f3,#e2ddd3);color:#2b2a35;box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 2px 0 #fff,inset 0 -4px 8px rgba(0,0,0,.08);animation:rmin .38s cubic-bezier(.2,.8,.3,1)}
+.ov.drawer.closing .panel{animation:rmout .26s ease forwards}
+@keyframes rmin{from{transform:translateX(120%)}}@keyframes rmout{to{transform:translateX(120%)}}
+.ov.drawer .panel::before{display:none}
+.ov.drawer .close{background:#e6e1d8;color:#5a5560;border-color:#cfc9be;top:12px;right:12px}
+.rm-brand{text-align:center;font-size:11px;letter-spacing:.4em;color:#8b8578;margin:2px 0 10px}
+.rm-lcd{border-radius:12px;padding:10px 14px;background:linear-gradient(#bfe0cb,#a9d2b8);color:#1f3a2b;font-family:ui-monospace,monospace;box-shadow:inset 0 2px 6px rgba(0,0,0,.25);display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;font-size:13px}
+.rm-lcd b{grid-column:1/-1;font-family:var(--f-display);font-size:17px;letter-spacing:.14em}
+.rm-lcd .st{grid-column:1/-1;font-size:12px;opacity:.8}
+.ov.drawer .care-dials{margin-top:14px;gap:10px}
+.ov.drawer .dial .dn{color:#6f6a76}
+.ov.drawer .seg{border:none;gap:6px;overflow:visible}
+.ov.drawer .seg button{border-radius:999px;background:linear-gradient(#fff,#e9e5dd);color:#3d3a46;box-shadow:0 2px 0 #c9c3b8,0 3px 6px rgba(0,0,0,.12);border:none!important;padding:8px 2px;font-size:13px}
+.ov.drawer .seg button.on{background:linear-gradient(#ffd98a,#f0b85a);color:#3a2408;box-shadow:0 1px 0 #b98a3c,inset 0 1px 3px rgba(0,0,0,.15);transform:translateY(1px)}
+.ov.drawer .zlist{margin-top:14px;gap:6px}
+.ov.drawer .zlist li{background:rgba(0,0,0,.05);color:#3a3644;font-size:13px}
+.ov.drawer .zlist li.ok{box-shadow:inset 0 0 0 1px #78c493}
+.ov.drawer .zlist small{color:#7a7480}
+.ov.drawer .zp{display:none}
+.rm-ask{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.rm-ask>span{width:100%;font-size:11px;letter-spacing:.2em;color:#8b8578}
+.rm-ask button{border:none;border-radius:999px;padding:6px 12px;font-size:12.5px;background:#d9e6f2;color:#28405a;cursor:pointer;box-shadow:0 2px 0 #b3c4d4}
+.rm-empty{font-size:13px;color:#8b8578;margin:12px 0 0}
+.ov.drawer .btn{background:#2f6b4a;color:#fff;border-color:#2f6b4a}
+.ov.drawer .pur-done{color:#2f6b4a}
+/* 正在說話的乘客：場景裡原本的圖先藏起來，畫面上只有一隻 */
+#scene .talking{opacity:0!important;pointer-events:none;transition:opacity .25s}
+.dlg .dsk{display:flex;align-items:center;gap:8px;font-size:16px!important;padding:7px 18px 7px 14px!important;top:-22px!important}
+.dlg .dsk svg{width:22px;height:22px}
+
+
+/* ---------- 月界導航裝置（併入古代星圖） ---------- */
+.ov.navov .panel{display:flex;flex-direction:column;width:min(1120px,100%);height:min(calc(100vh - 40px),820px);padding:16px 16px 12px}
+.nav-top{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:2px 40px 10px 0}
+.nav-top>div{padding:6px 10px;border:1px solid rgba(232,201,131,.28);border-radius:6px;background:rgba(10,12,30,.5);min-width:0}
+.nav-top span{display:block;font-size:11px;letter-spacing:.16em;color:var(--mute)}
+.nav-top b{display:block;font-weight:500;font-family:var(--f-display);font-size:14px;line-height:1.45}
+@media (max-width:760px){.nav-top{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-top>div:last-child{grid-column:1/-1}}
+.nav-map{position:relative;flex:1;min-height:0;border-radius:8px;overflow:hidden;background:#0b0d26}
+.nav-map>svg{position:absolute;inset:0;width:100%;height:100%}
+.nav-map .st{cursor:pointer}.nav-map .st.sel .ring{stroke:#fff3c4}
+.nav-tip{position:absolute;z-index:2;width:min(300px,70vw);padding:12px 14px;border-radius:10px;background:rgba(14,16,40,.92);border:1px solid rgba(232,201,131,.5);box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:13.5px;line-height:1.7;display:none;animation:sayin .3s ease}
+.nav-tip.on{display:block}
+.nav-tip b{font-family:var(--f-display);font-size:16px;letter-spacing:.1em}
+.nav-tip .btn{margin-top:8px;padding:6px 14px;font-size:13px}
+.nav-hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--mute);letter-spacing:.08em;pointer-events:none}
+/* 空間座標：直接顯示在場景上 */
+.hs.readout{pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;transform:translate(-50%,-50%)}
+.hs.readout .ro-k{font-size:10px;letter-spacing:.3em;color:#9fe8f0;text-shadow:0 0 6px #000}
+.hs.readout .ro-v{font-family:ui-monospace,monospace;font-size:15px;letter-spacing:.12em;color:#c9fbff;padding:3px 10px;border-radius:4px;background:rgba(6,20,40,.62);box-shadow:0 0 14px rgba(127,230,240,.45);text-shadow:0 0 8px #7fe6f0;white-space:nowrap}
+/* 星座盤：圓形的盤面 */
+.cs-disc{position:relative;width:min(520px,86vw);aspect-ratio:1;margin:8px auto 0;border-radius:50%;
+ background:radial-gradient(circle,#1a1d4a 0,#0e1030 62%,#0a0b22 70%,#c8a85e 70.4%,#6b5526 71.5%,#14163a 72%);box-shadow:0 0 0 6px rgba(200,168,94,.35),0 0 60px rgba(154,140,255,.25)}
+.cs-disc::before{content:"";position:absolute;inset:14%;border-radius:50%;border:1px dashed rgba(232,201,131,.35);animation:spin 80s linear infinite}
+.cs-slot{all:unset;position:absolute;width:30%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-align:center}
+.cs-slot svg{width:100%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 2px rgba(232,201,131,.45);transition:transform .25s}
+.cs-slot:hover svg{transform:scale(1.06)}
+.cs-slot span{font-family:var(--f-display);font-size:13px;letter-spacing:.12em}
+.cs-slot small{font-size:10.5px;color:var(--mute)}
+.cs-slot:disabled{cursor:default;opacity:.4}
+.cs-slot.got svg{box-shadow:0 0 0 2px #ffe9a8,0 0 18px rgba(255,233,168,.5)}
+.cs-hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;font-family:var(--f-display);letter-spacing:.2em;font-size:13px;color:#e8c983;pointer-events:none}
+.cs-round{display:block;width:min(460px,80vw);margin:6px auto 0}
+.cs-round.lit .cs-star circle:last-child{animation:starlit 1.4s ease-out}
+.cs-round.lit line{animation:linelit 1.4s ease-out}
+@keyframes starlit{30%{r:12px;fill:#fffbe6;filter:drop-shadow(0 0 10px #fff3c4)}}
+@keyframes linelit{30%{stroke:#fff;stroke-width:5px}}
+
+
+/* ---------- 展望台：星光、刻紋、乘客 ---------- */
+.starlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 95.5% 58%,rgba(255,246,210,.95) 0,rgba(255,226,150,.55) 2.2%,rgba(255,214,140,.18) 9%,transparent 22%);mix-blend-mode:screen;animation:slon .6s ease}
+.starlight::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 70% 80%,rgba(255,220,150,.16),transparent 55%)}
+@keyframes slon{from{opacity:0}}
+.eg-board{display:block;width:min(440px,80vw);margin:6px auto 0;touch-action:none}
+.eg-board .eg-n{cursor:pointer}
+.eg-board.done{filter:drop-shadow(0 0 16px rgba(255,220,140,.7))}
+.eg-board.done .eg-l{animation:linelit 1.4s ease-out}
+.ov.float .fl.rub .cr{clip-path:none;border-radius:50%;aspect-ratio:1;background:radial-gradient(circle,#4a3a26,#2a2016)}
+.ov.float .fl.rub .cr>svg{inset:6%;width:88%;height:88%}
+/* 同行乘客：在畫面裡走來走去 */
+#scene [data-hs^="out-comp-"].mote{animation:compwalk 26s ease-in-out infinite}
+#scene [data-hs^="out-comp-"].mote .spr{animation:compflip 26s step-end infinite}
+@keyframes compwalk{0%,100%{translate:0 0}22%,26%{translate:-14vw 0}48%{translate:-2vw 0}56%,60%{translate:6vw 0}80%{translate:-4vw 0}}
+@keyframes compflip{0%{scale:1 1}24%{scale:-1 1}58%{scale:1 1}}
+
+/* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
-.jr-book{position:relative;width:min(660px,94vw);height:min(calc(100vh - 150px),800px);margin-top:112px;perspective:2400px;user-select:none;-webkit-user-select:none}
-.jr-sheet{position:absolute;inset:0;overflow:auto;touch-action:pan-y;border-radius:4px 14px 14px 4px;color:#3b3024;font-family:"LXGW WenKai TC","Kaiti TC","BiauKai",serif;cursor:grab;
- background:radial-gradient(circle at 12% 18%,rgba(140,100,50,.2) 0 2px,transparent 3px) 0 0/97px 89px,radial-gradient(circle at 70% 60%,rgba(140,100,50,.16) 0 1.5px,transparent 2.5px) 0 0/61px 73px,radial-gradient(circle at 40% 80%,rgba(120,80,40,.12) 0 3px,transparent 4px) 0 0/151px 131px,radial-gradient(ellipse at 50% 40%,#f7f0d8,#ebe0bc 70%,#ddcc9e);
- box-shadow:0 30px 70px rgba(0,0,0,.55),inset 20px 0 30px -20px rgba(90,60,20,.5),inset 0 0 50px rgba(150,110,50,.2)}
-.jr-sheet.base{z-index:2}
-.jr-sheet.flip{z-index:3;transform-origin:left center;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:none;box-shadow:0 30px 70px rgba(0,0,0,.55),inset -30px 0 40px -30px rgba(90,60,20,.45)}
-.jr-sheet.flip.on{display:block}
-.jr-sheet.flip.anim{transition:transform .5s cubic-bezier(.3,.1,.3,1)}
-.jr-in{padding:30px clamp(20px,5vw,46px) 64px clamp(28px,6vw,56px)}
-.jr-no{font-size:13px;color:#9a7d55;letter-spacing:.2em;margin:0 0 6px}
-.jr-h{font-size:clamp(28px,4.6vw,40px);font-weight:700;margin:0;transform:rotate(-2.2deg);transform-origin:left;color:#2e2418;font-family:inherit;letter-spacing:.08em}
-.jr-sub{margin:6px 0 14px;font-size:15px;color:#7a6142;transform:rotate(-1deg)}
-.jr-p{font-size:clamp(17px,2.3vw,19.5px);line-height:1.95;margin:12px 0;transform:rotate(-.6deg)}
-.jr-p+.jr-p{transform:rotate(.7deg)}
+.jr-book{position:relative;width:min(560px,94vw);height:min(calc(100vh - 150px),780px);margin-top:112px;perspective:2600px;user-select:none;-webkit-user-select:none;
+ border-radius:8px;background:linear-gradient(135deg,#3b4a37,#26321f);box-shadow:0 34px 80px rgba(0,0,0,.6),inset 0 0 0 2px rgba(0,0,0,.25)}
+.jr-book.spread{width:min(1080px,96vw)}
+.jr-pages{position:absolute;inset:10px 12px 12px 12px;z-index:1}
+.jr-sheet{position:absolute;top:0;bottom:0;overflow:hidden;color:#3b3024;font-family:"LXGW WenKai TC","Kaiti TC","BiauKai",serif;cursor:grab;
+ background:linear-gradient(90deg,rgba(120,90,50,.12),transparent 8%,transparent 92%,rgba(120,90,50,.08)),radial-gradient(ellipse at 50% 40%,#f8f2df,#efe5c9 75%,#e6d9b6);box-shadow:0 1px 0 #d9ccaa,0 3px 0 #e8dcc0,0 5px 0 #d6c8a5}
+.single .jr-sheet{left:0;right:0;border-radius:3px 6px 6px 3px}
+.spread .jr-sheet.L{left:0;width:50%;border-radius:6px 0 0 6px;box-shadow:inset -26px 0 30px -24px rgba(80,55,25,.55),0 3px 0 #d6c8a5}
+.spread .jr-sheet.R{left:50%;width:50%;border-radius:0 6px 6px 0;box-shadow:inset 26px 0 30px -24px rgba(80,55,25,.55),0 3px 0 #d6c8a5}
+.jr-frame{position:absolute;inset:14px 14px 40px;pointer-events:none;border:1px solid rgba(122,90,68,.55);outline:1px solid rgba(122,90,68,.3);outline-offset:-6px;
+ background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20transform=''%20fill='none'%20stroke='%237a5a44'%20stroke-linecap='round'%3E%3Cpath%20d='M3%2061V3H61'%20stroke-width='1.4'/%3E%3Cpath%20d='M9%2055V9H55'%20stroke-width='.8'/%3E%3Cpath%20d='M9%2026c9%200%2017-8%2017-17'%20stroke-width='1.2'/%3E%3Cpath%20d='M13%2033c13%200%2020-7%2020-20'%20stroke-width='.9'/%3E%3Ccircle%20cx='18'%20cy='18'%20r='3.4'%20fill='%237a5a44'%20stroke='none'/%3E%3Cpath%20d='M26%209c3-5%2010-4%2011%201s-5%206-7%203M9%2026c-5%203-4%2010%201%2011s6-5%203-7'%20stroke-width='1.1'/%3E%3Cpath%20d='M33%2013c5-2%209%201%208%205M13%2033c-2%205%201%209%205%208'%20stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") top left/56px no-repeat,url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20transform='translate(64%200)%20scale(-1%201)'%20fill='none'%20stroke='%237a5a44'%20stroke-linecap='round'%3E%3Cpath%20d='M3%2061V3H61'%20stroke-width='1.4'/%3E%3Cpath%20d='M9%2055V9H55'%20stroke-width='.8'/%3E%3Cpath%20d='M9%2026c9%200%2017-8%2017-17'%20stroke-width='1.2'/%3E%3Cpath%20d='M13%2033c13%200%2020-7%2020-20'%20stroke-width='.9'/%3E%3Ccircle%20cx='18'%20cy='18'%20r='3.4'%20fill='%237a5a44'%20stroke='none'/%3E%3Cpath%20d='M26%209c3-5%2010-4%2011%201s-5%206-7%203M9%2026c-5%203-4%2010%201%2011s6-5%203-7'%20stroke-width='1.1'/%3E%3Cpath%20d='M33%2013c5-2%209%201%208%205M13%2033c-2%205%201%209%205%208'%20stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") top right/56px no-repeat,url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20transform='translate(0%2064)%20scale(1%20-1)'%20fill='none'%20stroke='%237a5a44'%20stroke-linecap='round'%3E%3Cpath%20d='M3%2061V3H61'%20stroke-width='1.4'/%3E%3Cpath%20d='M9%2055V9H55'%20stroke-width='.8'/%3E%3Cpath%20d='M9%2026c9%200%2017-8%2017-17'%20stroke-width='1.2'/%3E%3Cpath%20d='M13%2033c13%200%2020-7%2020-20'%20stroke-width='.9'/%3E%3Ccircle%20cx='18'%20cy='18'%20r='3.4'%20fill='%237a5a44'%20stroke='none'/%3E%3Cpath%20d='M26%209c3-5%2010-4%2011%201s-5%206-7%203M9%2026c-5%203-4%2010%201%2011s6-5%203-7'%20stroke-width='1.1'/%3E%3Cpath%20d='M33%2013c5-2%209%201%208%205M13%2033c-2%205%201%209%205%208'%20stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") bottom left/56px no-repeat,url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cg%20transform='translate(64%2064)%20scale(-1%20-1)'%20fill='none'%20stroke='%237a5a44'%20stroke-linecap='round'%3E%3Cpath%20d='M3%2061V3H61'%20stroke-width='1.4'/%3E%3Cpath%20d='M9%2055V9H55'%20stroke-width='.8'/%3E%3Cpath%20d='M9%2026c9%200%2017-8%2017-17'%20stroke-width='1.2'/%3E%3Cpath%20d='M13%2033c13%200%2020-7%2020-20'%20stroke-width='.9'/%3E%3Ccircle%20cx='18'%20cy='18'%20r='3.4'%20fill='%237a5a44'%20stroke='none'/%3E%3Cpath%20d='M26%209c3-5%2010-4%2011%201s-5%206-7%203M9%2026c-5%203-4%2010%201%2011s6-5%203-7'%20stroke-width='1.1'/%3E%3Cpath%20d='M33%2013c5-2%209%201%208%205M13%2033c-2%205%201%209%205%208'%20stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") bottom right/56px no-repeat}
+.jr-in{position:absolute;inset:30px 30px 56px 34px;overflow:auto;touch-action:pan-y;padding:4px 6px 20px;line-height:32px;
+ background:repeating-linear-gradient(to bottom,transparent 0 31px,rgba(140,105,80,.28) 31px 32px);background-attachment:local}
+.jr-sheet.blank .jr-frame{opacity:.6}
+.jr-flip{position:absolute;top:0;bottom:0;display:none;transform-style:preserve-3d;z-index:3}
+.jr-flip.on{display:block}.jr-flip.anim{transition:transform .5s cubic-bezier(.3,.1,.3,1)}
+.single .jr-flip{left:0;right:0;transform-origin:left center}
+.spread .jr-flip.fwd{left:50%;width:50%;transform-origin:left center}
+.spread .jr-flip.bwd{left:0;width:50%;transform-origin:right center}
+.jr-flip .face{left:0!important;right:0;width:auto!important;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.jr-flip .bk{transform:rotateY(180deg)}
+.jr-no{font-size:13px;color:#9a7d55;letter-spacing:.2em;margin:0;line-height:32px}
+.jr-h{font-size:clamp(26px,3.6vw,34px);font-weight:700;margin:0;line-height:64px;transform:rotate(-1.6deg);transform-origin:left;color:#2e2418;font-family:inherit;letter-spacing:.08em}
+.jr-sub{margin:0;font-size:15px;color:#7a6142;line-height:32px}
+.jr-p{font-size:clamp(17px,2vw,19px);line-height:32px;margin:0 0 32px;transform:rotate(-.4deg)}
+.jr-p+.jr-p{transform:rotate(.5deg)}
 .jr-lore{color:#5b4a35}
-.jr-me{font-size:clamp(17px,2.3vw,19.5px);line-height:1.95;margin:22px 0 6px;padding:10px 14px;color:#6a3d55;border-left:3px solid rgba(176,96,127,.55);background:rgba(255,236,242,.4);transform:rotate(1.1deg)}
+.jr-me{font-size:clamp(17px,2vw,19px);line-height:32px;margin:0 0 32px;padding:0 12px;color:#6a3d55;border-left:3px solid rgba(176,96,127,.55);transform:rotate(.8deg)}
 .jr-me::before{content:"✎ 我的想法";display:block;font-size:13px;color:#b0607f;letter-spacing:.12em}
-.jr-photo{margin:12px auto 20px;width:min(86%,460px);background:#fffdf6;padding:10px 10px 6px;box-shadow:0 8px 18px rgba(60,40,10,.3);transform:rotate(var(--r));position:relative}
+.jr-photo{margin:10px auto 26px;width:min(86%,440px);background:#fffdf6;padding:9px 9px 4px;box-shadow:0 8px 18px rgba(60,40,10,.3);transform:rotate(var(--r));position:relative;line-height:1.4}
 .jr-photo .ph{aspect-ratio:16/9;overflow:hidden;background:#222}.jr-photo .ph svg{width:100%;height:100%;display:block}
-.jr-photo figcaption{text-align:center;font-size:14px;color:#6b5a44;padding-top:4px}
+.jr-photo figcaption{text-align:center;font-size:14px;color:#6b5a44;padding:4px 0}
 .jr-photo::before,.jr-photo::after{content:"";position:absolute;width:84px;height:24px;background:rgba(236,220,168,.74);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .jr-photo::before{top:-10px;left:-20px;transform:rotate(-33deg)}
 .jr-photo::after{bottom:-8px;right:-22px;transform:rotate(-27deg)}
-.jr-blot{height:150px;margin:24px auto;width:70%;background:radial-gradient(ellipse,rgba(70,50,30,.28),transparent 65%);filter:blur(5px)}
-.jr-clue{margin:10px 0 30px;transform:rotate(var(--r,0deg))}
-.jr-clue h4{font-size:23px;margin:0 0 2px;display:inline-block;border-bottom:2px solid rgba(120,80,40,.35);font-family:inherit}
+.jr-blot{height:128px;margin:16px auto;width:70%;background:radial-gradient(ellipse,rgba(70,50,30,.28),transparent 65%);filter:blur(5px)}
+.jr-clue{margin:0 0 32px;transform:rotate(var(--r,0deg))}
+.jr-clue h4{font-size:22px;margin:0;line-height:32px;display:inline-block;border-bottom:2px solid rgba(120,80,40,.35);font-family:inherit}
 .jr-clue.unk{opacity:.42}
-.jr-nav{position:absolute;bottom:12px;z-index:4;width:42px;height:42px;border-radius:50%;border:1px solid rgba(90,60,30,.35);background:rgba(255,250,235,.8);color:#5b4128;font-size:22px;cursor:pointer;line-height:1}
-.jr-nav.prev{left:16px}.jr-nav.next{right:16px}.jr-nav:disabled{opacity:.25;cursor:default}
-.jr-folio{position:absolute;bottom:22px;left:0;right:0;text-align:center;z-index:4;font-family:"LXGW WenKai TC",serif;color:#7a6142;font-size:14px;pointer-events:none}
+.jr-nav{position:absolute;bottom:-50px;z-index:4;width:42px;height:42px;border-radius:50%;border:1px solid rgba(232,201,131,.5);background:rgba(20,22,46,.85);color:#f3e2b4;font-size:22px;cursor:pointer;line-height:1}
+.jr-nav.prev{left:8px}.jr-nav.next{right:8px}.jr-nav:disabled{opacity:.25;cursor:default}
+.jr-folio{position:absolute;bottom:-40px;left:0;right:0;text-align:center;z-index:4;font-family:"LXGW WenKai TC",serif;color:#cdbf9a;font-size:14px;pointer-events:none}
 .jr-book>.close{position:absolute;top:-16px;right:-12px;z-index:6}
-.jr-tabs{position:absolute;right:58px;top:-114px;display:flex;gap:5px;z-index:1}
+.jr-tabs{position:absolute;right:58px;top:-114px;display:flex;gap:5px;z-index:0}
 .jr-tab{position:relative;width:34px;height:160px;padding:0;border:none;background:none;cursor:pointer;transform:rotate(var(--tilt));transform-origin:50% 100%;transition:transform .25s;display:flex;flex-direction:column;align-items:center}
 .jr-tab .cord{width:22px;height:40px;margin-bottom:-10px;position:relative;z-index:1}
 .jr-tab .bm{position:relative;flex:1;width:100%;display:flex;justify-content:center;padding-top:22px;writing-mode:vertical-rl;font-family:"LXGW WenKai TC",serif;font-size:14px;letter-spacing:.1em;color:#3b2a1e;
@@ -262,7 +363,27 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .jr-tab .bm::before{content:"";position:absolute;top:7px;left:50%;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:#2a2016;box-shadow:0 0 0 2px #c9a54f}
 .jr-tab:hover,.jr-tab.on{transform:rotate(0) translateY(-12px)}
 .jr-tab.on .bm{color:#8a2f2a;font-weight:700}
-@media (max-width:520px){.jr-tabs{right:40px;gap:3px}.jr-tab{width:30px}}
+@media (max-width:520px){.jr-tabs{right:40px;gap:3px}.jr-tab{width:28px}}
+/* 筆記本內頁 */
+.jr-in .nb-list{list-style:none;margin:0;padding:0}
+.jr-in .nb-list li{display:flex;justify-content:space-between;gap:10px;line-height:32px;font-size:17px}
+.jr-in .nb-list li.filed span{text-decoration:line-through;text-decoration-color:rgba(160,60,60,.6);color:#8a7c66}
+.jr-in .nb-list em{font-style:normal;font-size:12px;color:#5f8a5f;white-space:nowrap}
+.jr-in .nb-x{border:none;background:none;color:#a0523e;font-family:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.jr-in .nb-empty{color:#8a7a62;font-size:16px}
+.jr-in .sb-art{margin:6px 0 10px;border-radius:4px;overflow:hidden;aspect-ratio:16/6;box-shadow:0 4px 10px rgba(60,40,10,.25)}
+.jr-in .sb-art svg{width:100%;height:100%;display:block}
+.jr-in .sb-c{margin:0 0 32px}
+.jr-in .sb-c h4{font-size:21px;margin:0;line-height:32px;font-family:inherit}
+.jr-in .sb-c small{color:#8a7a62;font-size:13px}
+.jr-in .sb-c.unk{opacity:.45}
+/* 畫面中央的廣播：一個字一個字出現，點一下消失 */
+#announce{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:25;pointer-events:none;text-align:center;opacity:0;transition:opacity .5s;width:min(760px,88vw)}
+#announce.on{opacity:1}
+#announce .an-c{display:block;font-size:13px;letter-spacing:.5em;color:#e8c983;margin-bottom:8px;text-shadow:0 0 10px #000}
+#announce .an-t{font-family:var(--f-display);font-size:clamp(17px,2.2vw,24px);letter-spacing:.14em;line-height:1.9;color:#fff6dc;text-shadow:0 0 6px #000,0 0 18px rgba(0,0,0,.95),0 0 40px rgba(0,0,0,.8)}
+#announce .an-tap{display:block;margin-top:10px;font-size:12px;letter-spacing:.3em;color:rgba(255,246,220,.6);opacity:0;transition:opacity .6s;text-shadow:0 0 8px #000}
+#announce.done .an-tap{opacity:1}
 /* ---------- 漂浮的水晶（回憶水晶、收藏櫃）：沒有視窗 ---------- */
 .ov.float{display:block;background:radial-gradient(ellipse at 50% 45%,rgba(46,40,100,.5),rgba(4,5,14,.88))}
 .ov.float>.close{position:absolute;top:16px;right:16px}
@@ -1214,18 +1335,7 @@ const LIFE_TYPES = {other:'異界生命',domain:'界域生命',mind:'意念生�
 const ZONES = {spring:{name:'靈泉水域',x:50,y:77,mx:57,my:60},rings:{name:'懸浮棲息環',x:50,y:21,mx:30,my:24},moss:{name:'自然棲台',x:24,y:57,mx:36,my:59},crystal:{name:'晶石能量平台',x:70,y:61},veil:{name:'靜謐結界',x:88,y:63,mx:85,my:44},rest:{name:'特殊生命休憩區',x:14,y:76}};   /* 座標為棲息車廂原圖的百分比 */
 
 const PASSENGERS = {
- lumi:{name:'露米',type:'domain',species:'苔燈鹿',home:'dawnForest',zone:'moss',color:'radial-gradient(circle,#f4ffe6,#7cc98a)',art:ART.portrait.lumi,
-  intro:'晨曦森林的晨光凝成的幼鹿。牠的角是會發光的枝條，每長出一個節，森林就多記住一個早晨。',
-  bio:'苔燈鹿不是從母體出生，而是在古樹根部的苔蘚裡，被某一道晨光「點亮」。露米對森林以外的世界一無所知，卻一點也不害怕。',
-  stay:2,
-  talks:[
-   {lines:['（牠歪著頭，角上的光點一明一滅。）','……你也是被光點亮的嗎？你身上有一點點跟我一樣的味道。'],choices:[{t:'我是精靈，負責照看這輛列車。',r:'精靈。我記住了。那這輛列車也是被點亮的嗎？它好像在呼吸。'},{t:'我也不太確定自己是怎麼來的。',r:'那我們一樣。古樹說，不知道從哪裡來的東西，最適合去很遠的地方。'}]},
-   {lines:['這裡的苔蘚是另一個早晨的味道。不是我的森林，但是很好聞。','我想看看沒有樹的地方長什麼樣子。看完了，我會自己回去。'],choices:[{t:'你隨時想下車都可以。',r:'嗯。我會自己決定的。森林說過，要自己走回去，路才會記得你。'},{t:'沒有樹的地方，可能很冷喔。',r:'那我就把角點亮一點。'}]},
-   {lines:['我角上新長了一節。','（牠低下頭，一粒沾著露水的種子落在你掌心。）','這是晨露苔的種子。你們有一節很多玻璃罐的車廂，對吧？種在那裡，它會記得今天。'],choices:[{t:'我會好好照顧它。',r:'不用照顧。給它光就好。'}],give:'seed_dewmoss'},
-   {lines:['古樹以前講過一個故事。','很久很久以前，有一列會發光的車，停在森林邊上。車上的人在古樹身上畫了一個圓圈，然後就再也沒回來。','你的車上，也有一樣的圓圈喔。'],choices:[{t:'……那些人是誰？',r:'古樹沒說。它只說，他們走的時候，看起來不難過。'}],clue:'clue_lumi_tale'}
-  ],
-  farewell:['我角上的節，已經多到數不清了。','我想回去，讓古樹看看我記住了多少個早晨。','謝謝你的列車。下次經過森林的時候，如果看見很亮的光，那可能是我。']
- },
+ 
  sola:{name:'索拉',type:'lost',species:'星汐水母',home:'starIslands',zone:'rings',zoneAlt:'spring',color:'radial-gradient(circle,#f5f0ff,#9a8cff)',art:ART.portrait.sola,
   intro:'在星河中漂流的星汐水母。牠原本棲息的浮島在一次潮汐裡漂離星河，至今沒有回來。',
   bio:'星汐水母以星光為食，靠潮汐在浮島之間移動。索拉的浮島失落之後，牠在星河裡漂了很久，練出一身樂觀，以及很多冷笑話。',
@@ -1488,7 +1598,7 @@ const CLUES = {
  clue_wake:{title:'沉睡的紀錄',text:'典藏車廂的存檔水晶中殘存一段斷裂的訊息：「……若有一日列車再次醒來，願醒來的那一位……」其後的內容無法讀取。'},
  clue_ring:{title:'相同的圓環',text:'晨曦森林的古樹上刻著與列車門框相同的圓環。兩者的刻痕深度與角度完全一致，像是出自同一雙手。'},
  clue_voyage:{title:'航行中亮起的符號',text:'首次穿越界壁時，車廂連接處浮現一列無法辨識的符號，持續七次心跳的時間後熄滅。'},
- clue_lumi_tale:{title:'古樹的故事',text:'露米轉述：很久以前，一列發光的車停在森林邊，車上的人在古樹上畫了圓圈，離開時「看起來不難過」。'},
+ 
  clue_sola_legend:{title:'星河的傳說',text:'索拉轉述：星河的老水母說，有一列白色的車，會在世界快要熄滅的地方停下來。'},
  clue_seed:{title:'無法開啟的封印',text:'種子保存櫃中有三枚守護者封存的古種。封印只回應某種條件，而列車目前尚未滿足。'}
 };
@@ -1548,28 +1658,23 @@ const CLUE_ORDER = Object.keys(CLUES);
 
 /* 事件：trigger 決定何時檢查；auto=true 立即演出；否則進入待處理入口（最多顯示兩個） */
 const EVENTS = {
- board_lumi:{trigger:'arrive',loc:'dawnForest',auto:true,run:()=>boarding('lumi','列車停靠的瞬間，一道晨光沿著月台爬上車門。光裡，有什麼生命正在靠近。')},
+ 
  board_felinia:{trigger:'arrive',need:()=>!state.discoveredLifeforms.includes('felinia'),run:n=>boarding('felinia','列車停靠的時候，月台上颳起一陣橫風。一道帶著虹彩的影子貼著車窗滑過，無聲地鑽進了棲息車廂。',n)},
- board_leviathaurora:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('leviathaurora'),run:n=>boarding('leviathaurora','列車停靠在星河岸邊，棲息車廂的靈泉忽然暗了下去。一道幽藍的光，從看不見底的水中慢慢浮了上來。',n)},
+ board_leviathaurora:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('leviathaurora'),run:n=>boarding('leviathaurora','列車停靠的時候，棲息車廂的靈泉忽然暗了下去。一道幽藍的光，從看不見底的水中慢慢浮了上來。',n)},
  board_cinder:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('cinder')&&state.journeyCount>=3,run:n=>boarding('cinder','列車停靠的時候，月台上的陽光變得熾熱。一道琥珀色的帆影沿著車廂外壁掠過，輕巧地落進了棲息車廂。',n)},
- board_aelis:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=3,run:n=>boarding('aelis','列車停靠的時候，森林邊緣正好沉進暮色。一雙琥珀色的大眼睛從樹影裡亮起，一隻戴著葉形吊墜的小生物，輕巧地跳上了車門。',n)},
- board_pyro:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('pyro')&&state.journeyCount>=4,run:n=>boarding('pyro','列車停靠的時候，浮島的天空被染成赤紅，車身微微一震。棲息車廂的溫度驟然升高，晶石平台前，多了一道漆黑而沉重的身影。',n)},
- board_vandora:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('vandora')&&state.journeyCount>=5,run:n=>boarding('vandora','列車停靠在晨曦森林外圍的夜色裡，車窗上凝了一層薄薄的水氣。棲息車廂的自然棲台上，一片苔葉輕輕動了一下——那不是葉子。',n)},
+ board_aelis:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=3,run:n=>boarding('aelis','列車停靠的時候，月台邊正好沉進暮色。一雙琥珀色的大眼睛從暗處亮起，一隻戴著葉形吊墜的小生物，輕巧地跳上了車門。',n)},
+ board_pyro:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('pyro')&&state.journeyCount>=4,run:n=>boarding('pyro','列車停靠的時候，天空被染成赤紅，車身微微一震。棲息車廂的溫度驟然升高，晶石平台前，多了一道漆黑而沉重的身影。',n)},
+ board_vandora:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('vandora')&&state.journeyCount>=5,run:n=>boarding('vandora','列車停靠在一片夜色裡，車窗上凝了一層薄薄的水氣。棲息車廂的自然棲台上，一片苔葉輕輕動了一下——那不是葉子。',n)},
  board_frost:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('frost')&&state.journeyCount>=6,run:n=>boarding('frost','列車停靠的時候，月台吹來一陣冰冷的風，車窗上爬滿了細白的霜花。棲息車廂的靈泉邊，水面結起一圈薄冰——一雙冰川般湛藍的眼睛，正安靜地看著你。',n)},
  board_sirenora:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('sirenora')&&state.journeyCount>=7,run:n=>boarding('sirenora','列車停靠的時候，月台起了一片濃得化不開的霧。車窗外什麼都看不見，只有一抹溫柔的粉白光暈，隨著霧氣輕輕擺盪，穿過車壁，飄進了棲息車廂。',n)},
- board_titan:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=7&&!state.discoveredLifeforms.includes('titan'),run:n=>boarding('titan','列車停靠的時候，月台輕輕震了一下，又一下。森林邊緣，一座長滿苔蘚與蕨葉的小山緩緩站起，帶著一陣草木清香的晨霧，一步一步走上了車門。',n)},
+ board_titan:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=7&&!state.discoveredLifeforms.includes('titan'),run:n=>boarding('titan','列車停靠的時候，月台輕輕震了一下，又一下。月台盡頭，一座長滿苔蘚與蕨葉的小山緩緩站起，帶著一陣草木清香的晨霧，一步一步走上了車門。',n)},
  board_lynx:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('lynx')&&state.journeyCount>=9,run:n=>boarding('lynx','列車停靠的時候，車頂傳來幾下輕得幾乎聽不見的腳步。一道銀白的影子沿著結霜的車窗疾走而過，沒有留下任何聲音，只留下一串細小的晶塵——然後鑽進了棲息車廂的懸浮棲息環。',n)},
  board_strider:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('strider')&&state.journeyCount>=10,run:n=>boarding('strider','列車停靠的時候，月台上的風忽然轉了向。棲息車廂的休憩區裡，一道灰褐色的身影昂首站著，把刀刃般的長角迎向車廂裡流動的風。',n)},
- board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:()=>boarding('sola','星河的潮汐拍上車窗。一團會發光的生命順著潮水，輕輕滑進了車廂。')},
+ board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:n=>boarding('sola','列車停靠的時候，一陣潮水般的星光拍上車窗。一團會發光的生命順著光，輕輕滑進了車廂。',n)},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
- meet_lumi_sola:{trigger:'carriage',car:'habitat',who:['lumi','sola'],need:()=>aboard('lumi')&&aboard('sola'),title:'露米與索拉',run:()=>dialogueScript([
-   ['lumi','你是會飛的水嗎？'],['sola','我是會講笑話的水。差很多喔。'],['lumi','那講一個。'],['sola','為什麼森林從來不迷路？……因為它們都有「根」據。'],['lumi','（角上的光一起閃了一下）'],['sola','她笑了！我第一次在這輛車上讓人笑出來！'],['self','兩道光在棲息車廂裡輕輕繞著彼此轉了一圈。']
-  ],()=>{logJ('露米與索拉在棲息車廂相遇。索拉的笑話終於有人笑了。');})},
+ 
  /* ---------- 乘客之間的互動：兩位乘客同時在車上（有些還要特定條件）時，進入棲息車廂就會出現 ---------- */
- int_lumi_felinia:{trigger:'carriage',car:'habitat',who:['lumi','felinia'],need:()=>aboard('lumi')&&aboard('felinia'),title:'露米與羽貓獸',run:()=>interScene('lumi','felinia',[
-   ['lumi','你從很高的地方下來的嗎？你的羽毛上有雲的味道。'],['felinia','……嗯。山很高，雲會繞著樹。'],['lumi','山上也有早晨嗎？'],['felinia','有。第一道光照到崖壁的時候，整座山都會變成金色。'],
-   ['lumi','（角上的光點一個一個亮起來。）那我要記住這個早晨。我還沒看過，但是我先記住。'],['felinia','（羽貓獸的耳翼輕輕抖了一下，從圓環上滑下來，停在幼鹿旁邊。）'],['self','一隻沒看過山，一隻很久沒看過森林。牠們安靜地靠在一起，看著車窗外的光。']
-  ],'露米和羽貓獸聊起了山上的早晨。','露米與羽貓獸','沒看過山的幼鹿，和很久沒看過森林的羽貓獸，靠在一起看窗外的光。')},
+ 
  int_sola_levi:{trigger:'carriage',car:'habitat',who:['sola','leviathaurora'],need:()=>aboard('sola')&&aboard('leviathaurora'),title:'索拉與淵光巨',run:()=>interScene('sola','leviathaurora',[
    ['sola','哇，好大的光！你也是從海裡來的嗎？我是從星河來的，那也算一種海吧！'],['leviathaurora','……（牠身上的光點沿著脊椎亮了一下。）'],['sola','你剛剛是不是在說話？用光說話？好厲害！那我講一個笑話，你用光笑給我看。'],
    ['sola','為什麼深海的魚都不怕黑？……因為牠們都很「深」思熟慮！'],['leviathaurora','（光點停了一拍，然後從頭到尾，一路亮到了尾鰭。）'],['sola','牠笑了！整條都亮了！這是我聽過最大的笑聲！'],['self','靈泉的水面映著一大一小兩團光，一閃一閃，像在說只有它們聽得懂的話。']
@@ -1597,11 +1702,7 @@ const EVENTS = {
    ['self','（霧羽海葵龍慢慢舒展扇翼。柔和的光暈與低頻的共鳴，一圈一圈地漫過晶石平台。）'],['pyro','……（裂隙裡的熔岩光，第一次暗得這麼慢、這麼穩。）'],['pyro','……這是什麼。'],['sirenora','是安靜。你可以先不用守著了，這裡有人在看著。'],
    ['self','燼角巨獸閉上了赤紅的眼睛。那是牠登車以來，第一次真正地睡著。']
   ],'霧羽海葵龍的共鳴安撫，讓燼角巨獸第一次真正地睡著。','第一次的安睡','「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。',()=>{ const s=state.passengers.pyro; if(s&&s.stage<3){ s.stage=Math.max(s.stage,2); } })},
- int_titan_lumi:{trigger:'carriage',car:'habitat',who:['titan','lumi'],need:()=>aboard('titan')&&aboard('lumi'),title:'苔淵巨靈與露米',run:()=>interScene('lumi','titan',[
-   ['lumi','（露米繞著那座長苔蘚的小山轉了三圈。）……這座山，有呼吸！'],['titan','……嗯。'],['lumi','你也是森林來的嗎？你身上有古樹的味道，跟我家一樣！'],['titan','……很老的森林。比你的古樹……還老一點。'],
-   ['lumi','那我可以爬上去嗎？你肩膀上的蕨葉看起來好軟。'],['titan','（過了很久，巨大的手慢慢放到地上，掌心朝上。）……慢慢來。'],
-   ['self','露米踩著巨靈的手，爬上了長滿蕨葉的肩膀。牠角上的光點一個一個亮起來，照亮了巨靈像岩石一樣的臉。'],['titan','……森林裡的小東西，都喜歡待在這裡。'],['lumi','因為這裡是會走路的森林嘛。']
-  ],'露米爬上了苔淵巨靈長滿蕨葉的肩膀。','會走路的森林','露米踩著巨靈的手，爬上長滿蕨葉的肩膀。「因為這裡是會走路的森林嘛。」')},
+ 
  int_frost_lynx:{trigger:'carriage',car:'habitat',who:['frost','lynx'],need:()=>aboard('frost')&&aboard('lynx'),title:'霜脊冰原獸與霜晶冰原獸',run:()=>interScene('lynx','frost',[
    ['lynx','（懸浮棲息環上傳來一聲低低的嘶聲。）……你身上有冰原的味道。'],['frost','你也是。北邊的雪嶺。'],['lynx','那裡是我的地盤。'],['frost','冰原是我的地盤。……雪嶺，我很少上去。太陡了。'],
    ['lynx','冰原，我很少下去。太平了，沒有地方躲。'],['self','（兩雙冰藍色的眼睛對望了很久。車廂的溫度，好像又降了一點。）'],['frost','……那就跟以前一樣。你在上面，我在下面。'],
@@ -1661,7 +1762,7 @@ function dust(n=14){ let o='<div class="dust">'; const r=rnd(n*7); for(let i=0;i
 
 function neighbors(car){ const i=TRAIN.indexOf(car); return {fwd:TRAIN[i-1],back:TRAIN[i+1]}; }
 
-function render(){ TAINT.fx(); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
+function render(){ TAINT.fx(); setTimeout(compAuto,0); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
  layout();
  const sc=$('#scene'); let h='', panoView=null;
  if(state.currentPhase==='outside'){ h=renderOutside(); }
@@ -1674,6 +1775,7 @@ function render(){ TAINT.fx(); if(RUNNING) checkReveal(); if(RUNNING&&state.curr
   if(c==='cab') CAB.begin();
   if(c==='observatory'&&state.currentPhase==='voyage') h+='<canvas class="streaks" id="streaks"></canvas>';
   h += C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
+  if(c==='observatory'&&state.storyFlags.starLight) h+='<div class="starlight"></div>';
   if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;   /* 星象疊在展望台的天空上 */
   h += dust();
   h += '<div class="vignette"></div>';
@@ -1692,8 +1794,8 @@ function renderHUD(){
   : `<div class="realm">${L.realm}・${L.domain}</div><div class="name">${L.name}</div><div class="meta">旅程 <b>${state.journeyCount}</b>　乘客 ${Object.keys(PASSENGERS).filter(aboard).length}</div>`;
  const where = ph==='outside' ? '列車外' : CARRIAGES[state.currentCarriage].short;
  const pend = state.pendingEvents.filter(id=>EVENTS[id]).slice(0,2).map(id=>`<button class="evt" data-act="event:${id}">${EVENTS[id].title}</button>`).join('');
- const q=questText();
- $('#hud').innerHTML=`<div class="hl"><div class="loc">${head}</div>${q?`<div class="quest" id="quest">${q}</div>`:''}</div>
+ const q=questText(); announce(q);
+ $('#hud').innerHTML=`<div class="hl"><div class="loc">${head}</div></div>
  <div class="train" aria-label="車廂位置">${cars}<span class="cn">${where}</span></div>
  <div class="right">${pend}<span class="phase">${ph==='docked'?'停靠中':ph==='outside'?'外部探索':'航行中'}</span><button class="snd nbk" data-act="notes:open" aria-label="筆記本"><span>🗒️</span>筆記本</button><button class="snd ${PREFS.sound===false?'off':''}" data-act="sound:toggle" aria-label="音效開關">♪</button></div>`;
 }
@@ -1823,6 +1925,17 @@ const meSay=t=>`<div class="mesay"><span>精靈</span>${t}</div>`;
 function hintOnce(k,t){ state.hints=state.hints||{}; if(state.hints[k]) return ''; state.hints[k]=1; save(); return `<p class="hint1">${t}</p>`; }
 const PED_IMG='assets/cab-pedestal.webp', COMPASS_IMG='assets/cab-compass.webp', DISC_IMG='assets/cab-disc.webp';
 /* 畫面左上角：接下來要做什麼 */
+/* 畫面中央的廣播：提示換了新內容才播一次，一個字一個字出現；點一下就消失 */
+const ANN={q:null,t:0,iv:0,ready:0};
+function announce(text){ if(!text||!RUNNING) return; const plain=text.replace(/<b>(.*?)<\/b>/,'【$1】').replace(/<[^>]+>/g,'');
+ if(state.annSeen===plain) return; state.annSeen=plain; save(); ANN.q=plain; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,700); }
+function annTry(){ if(!ANN.q) return; if(document.querySelector('#layer .cine,#layer .dlg,#layer .ov,#mainscreen')||TRANS.busy){ ANN.t=setTimeout(annTry,700); return; }
+ const t=ANN.q; ANN.q=null; let el=$('#announce'); if(!el){ el=document.createElement('div'); el.id='announce'; el.setAttribute('aria-live','polite'); document.body.appendChild(el); }
+ el.className='on'; el.innerHTML='<span class="an-c">♪ 列 車 廣 播 ♪</span><div class="an-t"></div><span class="an-tap">輕觸畫面關閉</span>';
+ const box=el.querySelector('.an-t'); let k=0; clearInterval(ANN.iv); ANN.ready=performance.now()+500; SFX.tone(784,0,.5,'sine',.025); SFX.tone(1046,.18,.6,'sine',.025);
+ ANN.iv=setInterval(()=>{ if(k>=t.length){ clearInterval(ANN.iv); el.classList.add('done'); return; } box.textContent+=t[k++]; },65); }
+function annHide(){ const el=$('#announce'); if(el){ el.classList.remove('on','done'); } clearInterval(ANN.iv); }
+document.addEventListener('pointerdown',()=>{ const el=$('#announce'); if(el&&el.classList.contains('on')&&performance.now()>ANN.ready) annHide(); },true);
 function questText(){ if(!state.introDone) return ''; const ph=state.currentPhase, here=state.currentCarriage;
  if((state.boardQ||[]).length&&state.currentCarriage!=='habitat'&&ph!=='outside') return '<b>新乘客</b>有新的生命上車了！到棲息車廂看看。';
  if(ph==='outside') return '<b>探索</b>點地上發光的東西採集材料；逛完了，從車門回到列車。';
@@ -1833,13 +1946,14 @@ function questText(){ if(!state.introDone) return ''; const ph=state.currentPhas
  if(ph==='voyage'&&state.voyage){ const v=state.voyage, ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id));
   if(!v.checked) return '<b>出發了</b>到棲息車廂，確認乘客們的狀況。';
   const nw=ids.find(id=>state.passengers[id].talks===0); if(nw) return `<b>新乘客</b>去棲息車廂，和${PASSENGERS[nw].name}打個招呼。`;
-  const sad=ids.find(id=>CARE[id]&&!careOk(id)&&state.passengers[id].talks>0); if(sad) return `<b>照顧</b>${PASSENGERS[sad].name}在棲息車廂不太舒服，到結界調節晶石調整環境，或請牠換個位置。`;
+  const sad=ids.find(id=>CARE[id]&&!careOk(id)&&state.passengers[id].talks>0); if(sad) return `<b>照顧</b>${PASSENGERS[sad].name}在棲息車廂不太舒服。點牠所在的區域調整結界，或請牠換個位置。`;
   if(skyNow()&&!skyNow().watched) return '<b>星象</b>天空出現了星象！到火車尾展望台觀賞。';
   return `<b>航行中</b>前往${LOCATIONS[v.to].name}。可以聽乘客說話、做筆記和速寫，到站時曦淵會通知你。`; }
  return ''; }
 function equipAll(){ const e=state.spirit.equipment; return !!(e.tablet&&e.compass&&e.talisman); }
 function prepDone(){ const d=state.duty; return !!(d.scan&&equipAll()&&d.briefing); }
-function nextStop(){ const cur=state.currentLocation; const i=ROUTE.indexOf(cur); return i<0?ROUTE[0]:ROUTE[(i+1)%ROUTE.length]; }
+function routeOk(id){ return !!id&&id!=='origin'&&id!==state.currentLocation&&!!LOCATIONS[id]&&!!LOCATIONS[id].ready&&state.unlockedLocations.includes(id); }
+function nextStop(){ if(state.currentPhase!=='voyage'&&routeOk(state.routeNext)) return state.routeNext; const cur=state.currentLocation; const i=ROUTE.indexOf(cur); return i<0?ROUTE[0]:ROUTE[(i+1)%ROUTE.length]; }
 function trainNo(){ return `日月 ${String(state.journeyCount+1).padStart(3,'0')} 次`; }
 function talismanEffect(dest){ return LOCATIONS[dest].realm==='日界'?'晨曦紋：抵禦日界時間流的沖刷':'月輝紋：穩定異界的重力與意念干擾'; }
 
@@ -1966,7 +2080,7 @@ const PURIFY={
  plant:{n:15,label:'以淨化植株淨身',done:'培育出的植株吐出一圈柔光，把殘留的異界氣息一點一點吸了進去。',log:'以培育艙的淨化植株淨身'},
  spring:{n:6,label:'在靈泉淨身',done:'清澈的泉水漫過指尖，帶走了一層看不見的灰。',log:'在棲息車廂的靈泉淨身'}
 };
-const SOOTHE={sirenora:{n:12,t:'霧羽海葵龍的扇翼輕輕拍動，柔和的光暈與低頻共鳴包圍了你。'},lumi:{n:5,t:'露米蹭了蹭你的手，苔燈的微光暖暖的。'}};
+const SOOTHE={sirenora:{n:12,t:'霧羽海葵龍的扇翼輕輕拍動，柔和的光暈與低頻共鳴包圍了你。'}};
 const taintLevel=v=>v<20?'純淨':v<50?'微染':'重染';
 const TAINT={
  val(){ return Math.round(state.spirit.taint||0); },
@@ -2009,7 +2123,7 @@ setInterval(()=>{
 },250);
 function voyageArrive(){
  const v=state.voyage, dest=v.to, from=LOCATIONS[v.from].name;
- state.voyage=null; state.journeyCount++; state.currentLocation=dest; state.currentPhase='docked';
+ state.voyage=null; state.journeyCount++; state.currentLocation=dest; state.routeNext=null; state.currentPhase='docked';
  if(!state.visitedLocations.includes(dest)) state.visitedLocations.push(dest);
  if(state.culture && !state.culture.bloomed){ state.culture.bloomed=true; }   // 培植箱：經過一次航行即開花
  state.duty=dutyFresh();
@@ -2155,13 +2269,21 @@ function loadGame(st,name){
  toast('已喚回：'+name);
 }
 
+/* 這一站有誰上車：誰、幾位都是隨機的（第一次停靠一定會遇到一位）；來自這個界域的生命比較容易出現 */
+function rollBoarders(){ if(state.currentLocation==='origin') return [];
+ const waiting=state.boardQ||[], pool=Object.keys(PASSENGERS).filter(id=>EVENTS['board_'+id]&&!done('board_'+id)&&!state.discoveredLifeforms.includes(id)&&!waiting.includes('board_'+id));
+ const room=6-Object.keys(PASSENGERS).filter(aboard).length-waiting.length; if(!pool.length||room<=0) return [];
+ const r=Math.random(), n=Math.min(room,state.visitedLocations.length<=1&&!state.discoveredLifeforms.length?1:r<.3?0:r<.8?1:2), out=[];
+ for(let k=0;k<n&&pool.length;k++){ const w=pool.map(id=>PASSENGERS[id].home===state.currentLocation?3:1), tot=w.reduce((a,b)=>a+b,0); let x=Math.random()*tot, at=0;
+  while(x>w[at]){ x-=w[at]; at++; } out.push('board_'+pool.splice(Math.min(at,pool.length-1),1)[0]); }
+ return out; }
 function arrivalChecks(){
  const q=[];
  // 乘客離開（固定條件）
  Object.keys(PASSENGERS).forEach(id=>{ const s=state.passengers[id]; if(s&&s.aboard&&state.journeyCount-s.boardedJourney>=PASSENGERS[id].stay&&readyToLeave(id)) q.push(next=>farewell(id,next));   /* 故事、筆記、速寫都完成後才下車 */ });
  // 停靠事件
- const brd=[];
- Object.entries(EVENTS).forEach(([id,e])=>{ if(e.trigger==='arrive'&&(!e.loc||e.loc===state.currentLocation)&&!done(id)&&(!e.need||e.need())){ if(id.startsWith('board_')) brd.push(id); else q.push(next=>e.run(next)); } });
+ const brd=rollBoarders();
+ Object.entries(EVENTS).forEach(([id,e])=>{ if(e.trigger==='arrive'&&!id.startsWith('board_')&&(!e.loc||e.loc===state.currentLocation)&&!done(id)&&(!e.need||e.need())) q.push(next=>e.run(next)); });
  if(brd.length){ state.boardQ=(state.boardQ||[]).filter(x=>!brd.includes(x)).concat(brd); save();
   if(state.currentCarriage!=='habitat') q.push(next=>{ toast('棲息車廂那邊好像有動靜……有新的生命上車了！'); next(); }); }
  const run=()=>{ const f=q.shift(); if(f) f(run); else { render(); checkCarriageEvents(); } }; run();
@@ -2188,7 +2310,7 @@ function talk(id,next){
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
  /* 最後、最深的那段故事：要先把牠的棲息環境調到舒適 */
- if(fresh&&idx===p.talks.length-1&&CARE[id]&&!careOk(id)) return dialogue(id,[`（${p.name}看起來不太自在，好像還不想多說。）`,careReact(id)],null,()=>{ toast('🌡️ 先到結界調節晶石，幫牠調整棲息環境吧'); render(); next&&next(); });
+ if(fresh&&idx===p.talks.length-1&&CARE[id]&&!careOk(id)) return dialogue(id,[`（${p.name}看起來不太自在，好像還不想多說。）`,careReact(id)],null,()=>{ toast('點牠所在的區域，幫牠調整一下結界吧'); render(); next&&next(); });
  if(!fresh&&NOTES[id]){ const N=NOTES[id], miss=N.secs.filter(k=>filedOf(id)[k]===undefined&&!notesOf(id).some(i=>N.list[i].k===k));
   if(miss.length){ const ni=p.talks.findIndex(t=>t.lines.some(l=>N.list.some(x=>miss.includes(x.k)&&l.includes(x.p))));
    if(ni>=0) return dialogue(id,lines,[{t:'能再跟我說一次之前那些事嗎？',r:'……好。這次聽仔細喔。',go:1},{t:'沒事，只是來看看你。',r:'嗯。'}],c=>{
@@ -2233,9 +2355,9 @@ function reunion(id){ const p=PASSENGERS[id], s=state.passengers[id];
 
 /* 對話介面：大型立繪 + 文字框 */
 function dialogue(id,lines,choices,onEnd){
- const p=id&&PASSENGERS[id]; const el=document.createElement('div'); el.className='dlg';
+ const p=id&&PASSENGERS[id]; const el=document.createElement('div'); el.className='dlg'; if(p) el.dataset.who=id;
  const canSk=p&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside'&&!atDeck(id)&&!sketchDone(id);
- el.innerHTML=`${p?`<div class="who">${portraitOf(p)}</div>`:''}<div class="box">${canSk?`<button class="dsk" aria-label="觀察速寫">✍️ 觀察速寫 ${sketchesOf(id).length}/2</button>`:''}<div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
+ el.innerHTML=`${p?`<div class="who">${portraitOf(p)}</div>`:''}<div class="box">${canSk?`<button class="dsk" aria-label="觀察速寫"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L16.5 4.1a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#f3d9a0" stroke="#5a4632" stroke-width="1.2" stroke-linejoin="round"/><path d="M14.8 5.8l3.4 3.4" stroke="#5a4632" stroke-width="1.2"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#3b2f25"/></svg>觀察速寫 ${sketchesOf(id).length}/2</button>`:''}<div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
  $('#layer').appendChild(el);
  if(canSk) el.querySelector('.dsk').onclick=ev=>{ ev.stopPropagation(); el.remove(); render(); setTimeout(()=>sketchPanel(id),200); }; let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
  let picked=null, warned=-1;
@@ -2264,9 +2386,7 @@ function dialogue(id,lines,choices,onEnd){
    ================================================================ */
 const NOTE_SEC={habitat:'棲息環境',habits:'生物習性',abilities:'特殊能力',bio:'生態故事'};
 const NOTES={
- lumi:{secs:['bio'],thanks:'你把我說的話都寫下來了。那我回去以後，也要跟古樹說說你。',list:[
-  {k:'bio',p:'……你也是被光點亮的嗎？',n:'苔燈鹿是被晨光「點亮」而誕生的'},
-  {k:null,p:'這裡的苔蘚是另一個早晨的味道',n:'喜歡車上苔蘚的味道'}]},
+ 
  sola:{secs:['bio'],thanks:'你把我的冷笑話也記下來了嗎？……沒有？好吧，至少記住了我。',list:[
   {k:'bio',p:'我的島漂走了',n:'浮島漂離星河，從此在星河裡漂流'},
   {k:null,p:'我還以為是一顆走錯路的彗星',n:'以為列車是走錯路的彗星'}]},
@@ -2363,19 +2483,16 @@ function takeNote(id,i,mk){ const N=NOTES[id]; if(!N) return; state.notes=state.
  a.push(i); save(); if(mk){ mk.classList.add('got'); mk.title='已記下'; } SFX.tone(1568,0,.25,'triangle',.025);
  toast(`🗒️ 記下：${N.list[i].n}`); const tip=mk&&mk.closest('.box')&&mk.closest('.box').querySelector('.hl-tip'); if(tip&&!mk.closest('.tx').querySelector('mark.hl:not(.got)')) tip.remove(); }
 /* 筆記本（HUD 的 🗒️） */
-function notebookPanel(){ const ov=panel('','notebook'), pn=ov.querySelector('.panel');
- const draw=()=>{ const ids=Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id)), top=pn.querySelector('.nbk-page')?pn.querySelector('.nbk-page').scrollTop:0;
-  pn.innerHTML=`<button class="close" aria-label="闔上筆記本">✕</button><div class="nbk-book"><span class="nbk-ribbon"></span><div class="nbk-page"><div class="eyebrow">值勤精靈的隨身筆記</div><h2>筆記本</h2>
-  <p>聽乘客說話時，發光的字句點一下就能記下來。回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>
-  ${ids.length?ids.map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
-   return `<section class="nb-who"><h3>${PASSENGERS[id].name}<small>筆記 ${a.length} 則・圖鑑欄位 ${fd}/${sc.length}・速寫 ${sketchesOf(id).length}/2${fullDone(id)?'・完整':''}</small></h3>
+function notebookPanel(){
+ const ids=()=>Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id));
+ const pages=()=>[`<h3 class="jr-h">筆記本</h3><p class="jr-sub">值勤精靈的隨身筆記</p><p class="jr-p">聽乘客說話的時候，發光的字句點一下，就會記在這裡。</p><p class="jr-p">回到記憶典藏車廂，在「世界與生命圖鑑」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>${ids().length?'':'<p class="nb-empty">還沒有遇見任何乘客。</p>'}`]
+  .concat(ids().map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
+   return `<section class="nb-who"><h3 class="jr-h">${PASSENGERS[id].name}</h3><p class="jr-sub">筆記 ${a.length} 則・圖鑑欄位 ${fd}/${sc.length}・速寫 ${sketchesOf(id).length}/2${fullDone(id)?'・完整 ✦':''}</p>
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
-     :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }).join('')
-   :'<p class="nb-empty">還沒有遇見任何乘客。</p>'}</div></div>`;
-  const pg=pn.querySelector('.nbk-page'); if(pg) pg.scrollTop=top;
-  pn.querySelectorAll('[data-erase]').forEach(b=>b.onclick=()=>{ const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); draw(); }); };
- draw(); }
+     :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
+ return journal({cls:'notebook',title:'筆記本',pages,tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
+  onClick:(e,ov)=>{ const b=e.target.closest('[data-erase]'); if(!b) return; const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); ov.refresh(); }}); }
 /* 圖鑑：未整理的欄位顯示放入筆記的空格 */
 function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
 function fileChooser(slot){ const [id,k]=slot.querySelector('[data-file]').dataset.file.split(':'), used=Object.values(filedOf(id)), a=notesOf(id).filter(i=>!used.includes(i));
@@ -2438,7 +2555,7 @@ const CARE_DIM={t:{name:'溫度',lv:['寒冷','涼爽','溫暖','炎熱']},l:{na
 const ZONE_ENV0={spring:{t:1,l:1,h:2},rings:{t:1,l:1,h:1},moss:{t:2,l:1,h:2},crystal:{t:2,l:2,h:0},veil:{t:1,l:0,h:3},rest:{t:2,l:1,h:1}};
 const GUEST_SLOT={spring:{x:62,y:80,h:17},rings:{x:58,y:31,h:15},moss:{x:8,y:50,h:16},crystal:{x:79,y:58,h:15},veil:{x:93,y:50,h:16},rest:{x:22,y:84,h:16}};
 const CARE={
- lumi:{l:1,h:2,auto:true,ok:'（露米把角上的光調得暖暖的，在濕潤的苔蘚上躺了下來。）……這裡像森林的早晨。'},
+ 
  sola:{l:0,h:2,auto:true,ok:'暗暗的、濕濕的……我看得見星星了！這是我漂流以來，睡過最舒服的地方。'},
  felinia:{t:1,l:1,auto:true,ok:'（牠蓬起羽毛，耳翼放鬆地垂下。）涼涼的風，斜斜的光。……跟山上一樣。'},
  leviathaurora:{t:0,l:0,ok:'冷，而且暗。……我可以把光調到最小，好好休息了。'},
@@ -2484,27 +2601,25 @@ function careCheck(){ const msg=autoSettle(), got=Object.keys(PASSENGERS).filter
  if(got.length) SFX.chime(); const t=msg.concat(got.map(id=>`✦ ${PASSENGERS[id].name}覺得很舒適・信任加深`)); if(t.length) toast(t.join('　')); }
 /* 區域面板：環境調節、目前在這裡的乘客、詢問其他乘客要不要過來 */
 const ZONE_ST=(k,n)=>({spring:n?'水面泛起細小的光紋':'水面平靜，光點在水底緩慢流動',rings:n?'圓環隨著停留者的節奏緩慢旋轉':'圓環以固定的節奏緩慢浮動',crystal:n?'供能中・晶石光芒穩定':'待命・晶石保持低亮度',veil:'結界穩定・聲音在邊緣變得很輕',moss:n?'根系微微舒展':'苔蘚保持濕潤',rest:n?'空間正隨著停留者慢慢塑形':'空間尚未被任何生命塑形'})[k];
-function zoneInfo(k){ const ov=panel('','care'), pn=ov.querySelector('.panel');
- const D={spring:'清澈的靈泉，水域生命與能量生命會在這裡找到熟悉的浮力。',rings:'緩慢旋轉的金色圓環，適合飛行與漂浮的生命停留。',moss:'鋪滿苔蘚與根系的棲台，植物生命與森林生物喜歡這裡。',crystal:'會釋放穩定能量的晶石平台，需要補充能量的生命可以在此停留。',veil:'一層幾乎看不見的結界，聲音與念頭在裡面會變得很輕。',rest:'為特殊生命預留的空間，會隨著停留者慢慢塑形。'};
- const draw=z=>{ k=z; const e=zoneEnv(k), here=zoneHere(k), others=Object.keys(PASSENGERS).filter(id=>aboard(id)&&zoneOf(id)!==k);
-  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">棲息車廂・結界調節</div>
-  <nav class="ztabs">${Object.keys(ZONES).map(z=>`<button class="${z===k?'on':''} ${zoneHere(z).some(id=>!careOk(id))?'warn':''}" data-z="${z}">${ZONES[z].name}</button>`).join('')}</nav>
-  <h2>${ZONES[k].name}</h2><p>${D[k]}</p><dl class="kv"><dt>目前狀態</dt><dd>${ZONE_ST(k,here.length)}</dd></dl>
+function zoneInfo(k){ document.querySelectorAll('#layer .ov.drawer').forEach(o=>o.remove());
+ const ov=panel('','care drawer'), pn=ov.querySelector('.panel');
+ const draw=()=>{ const e=zoneEnv(k), here=zoneHere(k), others=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id)&&zoneOf(id)!==k);
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="rm-brand">結 界 調 節</div>
+  <div class="rm-lcd"><b>${ZONES[k].name}</b><span class="st">${ZONE_ST(k,here.length)}</span>${Object.entries(CARE_DIM).map(([d,Dm])=>`<span>${dimName(d,k)}・${Dm.lv[e[d]]}</span>`).join('')}</div>
   <div class="care-dials">${Object.entries(CARE_DIM).map(([d,Dm])=>`<div class="dial"><span class="dn">${dimName(d,k)}</span><div class="seg">${Dm.lv.map((n,i)=>`<button class="${e[d]===i?'on':''}" data-dk="${d}" data-dv="${i}">${n}</button>`).join('')}</div></div>`).join('')}</div>
-  <h3 class="zh">在這裡的乘客</h3>${here.length?`<ul class="zlist">${here.map(id=>`<li class="${careOk(id)?'ok':''}"><span class="zp">${portraitOf(PASSENGERS[id])}</span><span><b>${PASSENGERS[id].name}</b>${careOk(id)?'・舒適 ✦':''}<br><small>${careReact(id)}</small></span></li>`).join('')}</ul>`:'<p class="nb-empty">目前沒有乘客。</p>'}
-  ${others.length?`<h3 class="zh">詢問其他乘客</h3><div class="zask">${others.map(id=>`<button class="btn ghost" data-ask="${id}">詢問${PASSENGERS[id].name}要不要過來</button>`).join('')}</div>`:''}
-  ${k==='spring'?`<p style="color:var(--mute);font-size:13px">清澈的泉水能洗去一些界染。</p>${purifyBtn('spring')}`:''}`;
-  pn.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>draw(b.dataset.z));
+  ${here.length?`<ul class="zlist">${here.map(id=>`<li class="${careOk(id)?'ok':''}"><span class="zp">${portraitOf(PASSENGERS[id])}</span><span><b>${PASSENGERS[id].name}</b>${careOk(id)?'・舒適 ✦':''}<br><small>${careReact(id)}</small></span></li>`).join('')}</ul>`:'<p class="rm-empty">這一區目前沒有乘客。</p>'}
+  ${others.length?`<div class="rm-ask"><span>請其他乘客過來</span>${others.map(id=>`<button data-ask="${id}">${PASSENGERS[id].name}</button>`).join('')}</div>`:''}
+  ${k==='spring'?purifyBtn('spring'):''}`;
   pn.querySelectorAll('[data-dk]').forEach(b=>b.onclick=()=>{ state.zoneEnv=state.zoneEnv||{}; state.zoneEnv[k]=Object.assign(zoneEnv(k),{[b.dataset.dk]:+b.dataset.dv}); save();
-   SFX.tone(660+(+b.dataset.dv)*110,0,.25,'sine',.02); careCheck(); render(); draw(k); });
-  pn.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>askMove(b.dataset.ask,k,()=>draw(k))); };
- draw(k); }
+   SFX.tone(660+(+b.dataset.dv)*110,0,.25,'sine',.02); careCheck(); render(); draw(); });
+  pn.querySelectorAll('[data-ask]').forEach(b=>b.onclick=()=>askMove(b.dataset.ask,k,draw)); };
+ draw(); }
 function askMove(id,z,after){ const p=PASSENGERS[id], m=mismatch(id,z), full=!canHost(id,z);
  const yes=!m&&!full, line=yes?'好。……那裡聽起來比較適合我。':full?'那裡已經有別人了。我不想擠。':`（${p.name}想了想。）${CARE_WHY[m.k][m.dir]}我待在這裡就好。`;
- const el=document.createElement('div'); el.className='ask-bubble'; el.innerHTML=`<span class="zp">${portraitOf(p)}</span><span><b>${p.name}</b><br>${line}</span>`;
- const pn=document.querySelector('#layer .ov.care .panel'); if(pn){ const o=pn.querySelector('.ask-bubble'); if(o) o.remove(); pn.appendChild(el); }
- if(yes){ movePassenger(id,z); SFX.tone(1046,0,.5,'sine',.03); careCheck(); render(); setTimeout(()=>{ after&&after(); },1600); } else SFX.tone(392,0,.3,'sine',.02); }
-function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('🌡️ 到棲息車廂才能調整棲息環境');
+ dialogueScript([['self',`${p.name}，要不要到${ZONES[z].name}這邊來？`],[id,line]],()=>{
+  if(yes){ movePassenger(id,z); SFX.tone(1046,0,.5,'sine',.03); careCheck(); render(); } else SFX.tone(392,0,.3,'sine',.02);
+  after&&after(); }); }
+function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('到棲息車廂，點乘客所在的區域就能調整結界');
  const ids=Object.keys(PASSENGERS).filter(aboard), bad=ids.find(id=>!careOk(id)); zoneInfo(bad?zoneOf(bad):'spring'); }
 
 /* 乘客之間的互動：播放兩位乘客的對話，結束後寫進航行日誌、兩位乘客的紀錄，並凝結成回憶水晶 */
@@ -2517,9 +2632,9 @@ function interScene(a,b,script,log,title,memText,extra){
    - 要先和乘客「熟悉」（關係第二階段）牠才願意來；展望台最多同時站四位
    - 點展望台上的乘客可以一起看風景，或請牠回棲息車廂
    ================================================================ */
-const DECK_SLOT=[{x:34,y:72,h:20},{x:66,y:72,h:20},{x:23,y:85,h:23},{x:77,y:85,h:23}];
+const DECK_SLOT=[{x:31,y:80,h:36},{x:69,y:80,h:36},{x:15,y:96,h:42},{x:85,y:96,h:42}];
 const DECK_LINE={
- lumi:['星星一直往後跑。……它們是不是也要回家？','從這裡看，森林好小。我要記住它現在的樣子。'],
+ 
  sola:['那條光帶是星河嗎？我的島，說不定就在那裡面。','在這裡吹風，好像站在浮島的邊邊上。'],
  felinia:['這裡的風從後面吹來，很適合滑翔。……我只是說說而已。','站在高的地方看遠方，跟在山上一樣。'],
  leviathaurora:['星星在後面越來越遠。……像深海裡，同伴的光。','這裡沒有水。可是天空很深，跟海一樣深。'],
@@ -2542,10 +2657,47 @@ function deckInvite(){ const here=deckList(), others=Object.keys(PASSENGERS).fil
   ${here.length?`<p style="color:var(--mute);font-size:13px">現在在展望台：${here.map(id=>PASSENGERS[id].name).join('、')}</p>`:''}`,'care');
  ov.querySelectorAll('[data-inv]').forEach(b=>b.onclick=()=>{ const id=b.dataset.inv, p=PASSENGERS[id], s=state.passengers[id];
   const yes=s.stage>=2&&deckList().length<DECK_SLOT.length, line=yes?'好。我也想看看列車後面的天空。':deckList().length>=DECK_SLOT.length?'展望台好像已經站滿了。下次吧。':'……我還想待在棲息車廂。等我們再熟一點吧。';
-  const el=document.createElement('div'); el.className='ask-bubble'; el.innerHTML=`<span class="zp">${portraitOf(p)}</span><span><b>${p.name}</b><br>${line}</span>`;
-  const pn=ov.querySelector('.panel'), o=pn.querySelector('.ask-bubble'); if(o) o.remove(); pn.appendChild(el);
-  if(!yes) return SFX.tone(392,0,.3,'sine',.02);
-  s.place='deck'; save(); SFX.tone(1046,0,.5,'sine',.03); setTimeout(()=>{ closeAll(); render(); toast(`${p.name}穿過星月觀測車廂，來到了展望台`); },1300); }); }
+  closeOv(ov); dialogueScript([['self',`${p.name}，要不要一起去展望台看星星？`],[id,line]],()=>{ if(!yes) return SFX.tone(392,0,.3,'sine',.02);
+   s.place='deck'; save(); SFX.tone(1046,0,.5,'sine',.03); render(); toast(`${p.name}穿過星月觀測車廂，來到了展望台`); }); }); }
+
+/* ================================================================
+   展望台的地面刻紋：每到一個地方，地板上會浮現那裡的刻紋。沿著淡淡的刻痕把刻紋描完，拓本會收進記憶典藏車廂。
+   ================================================================ */
+const ENGR={origin:[6,1,'沉睡之環'],dawnForest:[5,2,'晨光之星'],starIslands:[7,3,'星河之結'],reverseRealm:[8,3,'逆流之輪'],boundlessCorridor:[9,4,'迴廊之門'],silentVoid:[5,1,'寂靜之印'],timeriftSea:[7,2,'時潮之紋']};
+const ENGR_OK=loc=>(state.engr||[]).includes(loc);
+function engrPts(loc){ const [n]=ENGR[loc]; return Array.from({length:n},(_,i)=>{ const a=-Math.PI/2+i*2*Math.PI/n; return [200+150*Math.cos(a),200+150*Math.sin(a)]; }); }
+function engrEdges(loc){ const [n,k]=ENGR[loc]; return Array.from({length:n},(_,i)=>[i,(i+k)%n]); }
+function engrSvg(loc,got,cur,cls){ const P=engrPts(loc), E=engrEdges(loc);
+ return `<svg class="${cls||''}" viewBox="0 0 400 400" aria-label="${ENGR[loc][2]}"><circle cx="200" cy="200" r="190" fill="#3a2c1c"/><circle cx="200" cy="200" r="182" fill="none" stroke="#c8a85e" stroke-width="2" opacity=".7"/><circle cx="200" cy="200" r="168" fill="none" stroke="#c8a85e" stroke-width=".8" stroke-dasharray="2 6" opacity=".6"/>
+  ${E.map(([a,b],i)=>`<line class="eg-l" x1="${P[a][0].toFixed(1)}" y1="${P[a][1].toFixed(1)}" x2="${P[b][0].toFixed(1)}" y2="${P[b][1].toFixed(1)}" stroke="${got&&got.has(i)?'#ffd98a':'#a08860'}" stroke-width="${got&&got.has(i)?5:1.6}" ${got&&got.has(i)?'':'stroke-dasharray="4 7" opacity=".55"'} stroke-linecap="round"/>`).join('')}
+  ${P.map(([x,y],i)=>`<g class="eg-n" data-en="${i}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="22" fill="transparent"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${cur===i?10:7}" fill="${cur===i?'#fff3c4':'#e8c983'}" stroke="#3a2c1c" stroke-width="2"/></g>`).join('')}</svg>`; }
+function engravePanel(){ const loc=state.currentLocation;
+ if(state.currentPhase==='voyage') return panel(`<div class="eyebrow">火車尾展望台</div><h2>地面刻紋</h2>${meSay('航行的時候，刻紋很淡，什麼都看不出來。等停靠的時候再來看看。')}`,'small stage');
+ if(ENGR_OK(loc)) return panel(`<div class="eyebrow">火車尾展望台・${LOCATIONS[loc].name}</div><h2>${ENGR[loc][2]}</h2>${engrSvg(loc,new Set(engrEdges(loc).map((_,i)=>i)),null,'eg-board done')}${meSay('這裡的刻紋已經拓下來了，收在記憶典藏車廂的刻紋拓本裡。')}`,'stage');
+ const ov=panel('','stage'), pn=ov.querySelector('.panel'), E=engrEdges(loc), got=new Set(); let cur=null;
+ const draw=msg=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">火車尾展望台・${LOCATIONS[loc].name}</div><h2>地面刻紋</h2>${engrSvg(loc,got,cur,'eg-board')}${meSay(msg||`地板上浮現了淡淡的刻痕……沿著刻痕，從一個點描到下一個點。（${got.size} / ${E.length}）`)}`;
+  pn.querySelectorAll('[data-en]').forEach(g=>g.addEventListener('pointerdown',()=>{ const i=+g.dataset.en;
+   if(cur===null){ cur=i; SFX.tone(660,0,.25,'sine',.02); return draw(); }
+   const e=E.findIndex(([a,b])=>(a===cur&&b===i)||(a===i&&b===cur));
+   if(e<0||got.has(e)){ SFX.tone(330,0,.25,'sine',.02); cur=i; return draw('這兩點之間沒有刻痕。換一個點試試看。'); }
+   got.add(e); cur=i; SFX.tone(784+got.size*50,0,.35,'sine',.03);
+   if(got.size===E.length){ state.engr=state.engr||[]; state.engr.push(loc); logJ(`在展望台描完了${LOCATIONS[loc].name}的刻紋「${ENGR[loc][2]}」。`,'find'); save(); SFX.chime(); toast(`✦ 拓下刻紋：${ENGR[loc][2]}`); render();
+    cur=null; draw(`描完了！刻紋亮了起來……是「${ENGR[loc][2]}」。拓本收進記憶典藏車廂了。`); pn.querySelector('.eg-board').classList.add('done'); return; }
+   draw(); })); };
+ draw(); }
+function rubbingPanel(){ const ids=['origin',...LOC_ORDER];
+ return floatField({cls:'rubs',title:'刻紋拓本',sub:()=>`在展望台拓下的刻紋 ${ids.filter(ENGR_OK).length} / ${ids.length}`,
+  items:ids.map(id=>({id,have:ENGR_OK(id),cls:'gem rub',inner:engrSvg(id,new Set(engrEdges(id).map((_,i)=>i)),null,''),label:ENGR[id][2]})),
+  view:id=>`<h2>${ENGR[id][2]}</h2><div style="width:min(360px,70vw)">${engrSvg(id,new Set(engrEdges(id).map((_,i)=>i)),null,'eg-board done')}</div>${meSay(`在${LOCATIONS[id].name}停靠的時候，展望台的地板上浮現的刻紋。`)}`}); }
+
+/* 同行的乘客：下車一陣子後，會主動跟你說話 */
+let COMPT=0;
+function compAuto(){ clearTimeout(COMPT); if(state.currentPhase!=='outside'||!state.companion) return; const key='ca_'+state.journeyCount+'_'+state.currentLocation;
+ if(state.storyFlags[key]) return;
+ COMPT=setTimeout(()=>{ if(state.currentPhase!=='outside'||!state.companion||state.storyFlags[key]) return;
+  if(document.querySelector('#layer .ov,#layer .dlg,#layer .cine')||TRANS.busy) return compAuto();
+  state.storyFlags[key]=1; save(); compTalk(); },7000); }
+
 function deckTalk(id){ const p=PASSENGERS[id], s=state.passengers[id], voy=state.currentPhase==='voyage', first=!(s.deckSeen);
  dialogue(id,[`（${p.name}倚在展望台的欄杆邊，看著${voy?'列車後方流走的星光':LOCATIONS[state.currentLocation].name+'的天空'}。）`,DECK_LINE[id][voy?0:1]],
   [{t:'再一起看一會兒吧。',r:'嗯。'},{t:'要回棲息車廂休息嗎？',r:'好。我先回去了。',go:1}],c=>{
@@ -2569,12 +2721,12 @@ const SKY={
  eclipse:{name:'日月交疊',desc:'在日與月的界線上，太陽和月亮短暫地重疊在一起。天空暗了一瞬，邊緣亮起一圈金色的光環。',fx:'eclipse'}
 };
 const SKY_LINE={
- meteor:{sola:'流星！快許願！……我許了「找到我的島」。說出來就不靈了嗎？那我再許一次。',felinia:'它們劃過去的樣子，像山谷裡的滑翔。',lumi:'星星掉下來了！……它們會掉到森林裡嗎？',cinder:'跑得好快。比我還快。',aelis:'我聽得見它們燒起來的聲音。很細，像沙子。'},
+ meteor:{sola:'流星！快許願！……我許了「找到我的島」。說出來就不靈了嗎？那我再許一次。',felinia:'它們劃過去的樣子，像山谷裡的滑翔。',cinder:'跑得好快。比我還快。',aelis:'我聽得見它們燒起來的聲音。很細，像沙子。'},
  aurora:{leviathaurora:'……那片光在動。像深海裡，很久很久以前看過的同伴。',frost:'冰原的極夜，天空也會這樣燒起來。……我想家了。',sirenora:'光在霧裡流動……那些夢，也是這個顏色。',vandora:'光太多了。不過……很好看。'},
  tide:{sola:'是星河的潮汐！……我的島，就是被這樣的潮汐帶走的。',sirenora:'潮水和霧，都在往同一個方向走。',leviathaurora:'這是天空的潮汐。……原來天上也有海。'},
- eclipse:{pyro:'日和月重疊了。……大地發抖的時候，天空也是這樣暗下來。',lumi:'太陽被吃掉了！……啊，又出來了。',aelis:'暮色。白天裡的暮色。是我的時間。',frost:'光變冷了。'}
+ eclipse:{pyro:'日和月重疊了。……大地發抖的時候，天空也是這樣暗下來。',aelis:'暮色。白天裡的暮色。是我的時間。',frost:'光變冷了。'}
 };
-const SKY_FANS=['sola','leviathaurora','felinia','sirenora','aelis','frost','lumi'];   /* 喜歡天空的乘客：星象出現時會自己去展望台 */
+const SKY_FANS=['sola','leviathaurora','felinia','sirenora','aelis','frost'];   /* 喜歡天空的乘客：星象出現時會自己去展望台 */
 const SKY_WIN=.22;
 function skyForecast(dest){ const jc=state.journeyCount, moon=realmKey(dest)==='moon', list=moon?['aurora','tide','meteor']:['meteor','eclipse'];
  return {type:list[jc%list.length],at:+(.28+((jc*37)%30)/100).toFixed(2),started:false,ended:false,watched:false}; }
@@ -2616,50 +2768,46 @@ const CONSTS=[
 ];
 const skyHere=()=>state.currentPhase==='voyage'?'moon':realmKey(state.currentLocation);
 const constDone=id=>(state.consts||[]).includes(id);
-function constPanel(sel){ const sky=skyHere(), ov=panel('','care'), pn=ov.querySelector('.panel');
+function constPanel(sel){ const sky=skyHere(), ov=panel('','care stage'), pn=ov.querySelector('.panel');
+ const POS=[[50,17],[83,50],[50,83],[17,50]];
  const list=()=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂</div><h2>星座盤</h2>
-  <p>星座盤映出${state.currentPhase==='voyage'?'航道上方':LOCATIONS[state.currentLocation].name+'上方'}的星空（${sky==='sun'?'日界':'月界'}的天空）。點一顆星，再點另一顆星，把它們連成星座。</p><p style="color:var(--mute);font-size:13px">已辨識 ${(state.consts||[]).length} / ${CONSTS.length} 個星座。日界和月界看得見的星座不同。</p>
-  <div class="grid">${CONSTS.map(c=>`<button class="card ${constDone(c.id)?'got':''}" data-cs="${c.id}" ${c.sky!==sky&&!constDone(c.id)?'disabled':''}><div class="art">${constSvg(c,true)}</div><div class="t">${constDone(c.id)||c.sky===sky?c.name:'？？？'}</div><div class="s">${constDone(c.id)?'已辨識':c.sky===sky?'可以連線':`要在${c.sky==='sun'?'日界':'月界'}的天空才看得見`}</div></button>`).join('')}</div>`;
+  <div class="cs-disc">${CONSTS.map((c,k)=>{ const ok=constDone(c.id), can=c.sky===sky; return `<button class="cs-slot ${ok?'got':''}" data-cs="${c.id}" style="left:${POS[k%4][0]}%;top:${POS[k%4][1]}%" ${!can&&!ok?'disabled':''}>${constRound(c,ok)}<span>${ok||can?c.name:'？？？'}</span><small>${ok?'已辨識':can?'可以連線':`${c.sky==='sun'?'日界':'月界'}的天空`}</small></button>`; }).join('')}
+   <div class="cs-hub">${sky==='sun'?'日界':'月界'}的天空<br>${(state.consts||[]).length} / ${CONSTS.length}</div></div>
+  ${meSay(`盤面映著${state.currentPhase==='voyage'?'航道上方':LOCATIONS[state.currentLocation].name+'上方'}的星空。選一個星座，把星點連起來吧。`)}`;
   pn.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>trace(CONSTS.find(c=>c.id===b.dataset.cs))); };
- const trace=c=>{ if(constDone(c.id)){ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>${c.name}</h2><div class="cs-board">${constSvg(c,true,true)}</div><p>${c.lore}</p><button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; return; }
+ const doneView=c=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>✦ ${c.name}</h2><div class="cs-board done">${constRound(c,true)}</div>${meSay(c.lore)}${c.clue&&state.clues.includes(c.clue)?meSay('這個星座的形狀……和列車車身的圓環刻紋一模一樣。'):''}<button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; };
+ const trace=c=>{ if(constDone(c.id)) return doneView(c);
   let pick=null; const got=new Set();
-  const draw=()=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤・連線</div><h2>${c.name}</h2><p id="csm">沿著淡淡的星軌，把星點兩兩連起來。（${got.size} / ${c.E.length}）</p>
-   <div class="cs-board"><svg viewBox="0 0 400 260"><rect width="400" height="260" rx="10" fill="#0e1030"/>${stars(40,c.id.length*7,0,0,400,260)}
-    ${c.E.map(([a,b],i)=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="${got.has(i)?'#ffe9a8':'#8a86c8'}" stroke-width="${got.has(i)?3:1.2}" ${got.has(i)?'':'stroke-dasharray="3 6" opacity=".55"'}/>`).join('')}
-    ${c.S.map(([x,y],i)=>`<g class="cs-star ${pick===i?'on':''}" data-st="${i}"><circle cx="${x}" cy="${y}" r="16" fill="transparent"/><circle cx="${x}" cy="${y}" r="${pick===i?7:5}" fill="${pick===i?'#fff3c4':'#fff'}"/></g>`).join('')}</svg></div>
-   <button class="plink" id="csb">‹ 返回星座盤</button>`;
+  const draw=msg=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤・連線</div><h2>${c.name}</h2><p id="csm">${msg||`沿著淡淡的星軌，把星點兩兩連起來。（${got.size} / ${c.E.length}）`}</p>
+   <div class="cs-board">${constRound(c,false,true,pick,got)}</div><button class="plink" id="csb">‹ 返回星座盤</button>`;
    pn.querySelector('#csb').onclick=list;
    pn.querySelectorAll('[data-st]').forEach(g=>g.onclick=()=>{ const i=+g.dataset.st; if(pick===null||pick===i){ pick=pick===i?null:i; return draw(); }
     const e=c.E.findIndex(([a,b])=>(a===pick&&b===i)||(a===i&&b===pick)); pick=null;
-    if(e<0||got.has(e)){ SFX.tone(330,0,.25,'sine',.02); draw(); const m=pn.querySelector('#csm'); m.textContent='這兩顆星之間沒有星軌。再試試看。'; return; }
+    if(e<0||got.has(e)){ SFX.tone(330,0,.25,'sine',.02); return draw('這兩顆星之間沒有星軌。再試試看。'); }
     got.add(e); SFX.tone(880+got.size*60,0,.4,'sine',.03);
     if(got.size===c.E.length){ state.consts=state.consts||[]; state.consts.push(c.id); state.skyLog=state.skyLog||[]; state.skyLog.push({k:'const',id:c.id,j:state.journeyCount+(state.currentPhase==='voyage'?1:0)}); logJ(`在星座盤上辨識出了${c.name}。`,'find'); if(c.clue) addClue(c.clue); save(); SFX.chime(); toast(`✦ 辨識出星座：${c.name}`);
-     pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>✦ ${c.name}</h2><div class="cs-board done">${constSvg(c,true,true)}</div><p>${c.lore}</p>${c.clue?'<p class="pur-done">這個星座的形狀……和列車車身的圓環刻紋一模一樣。新的線索已存入線索解讀台。</p>':''}<button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; return; }
+     draw('連起來了！'); const sv=pn.querySelector('.cs-round'); sv.classList.add('lit'); setTimeout(()=>{ if(pn.isConnected) doneView(c); },1500); return; }
     draw(); }); };
   draw(); };
  if(sel) trace(CONSTS.find(c=>c.id===sel)); else list(); }
+function constRound(c,lit,game,pick,got){ return `<svg class="${game?'cs-round':''}" viewBox="0 -70 400 400" aria-hidden="${game?'false':'true'}"><defs><radialGradient id="csg-${c.id}"><stop offset="0" stop-color="#1d2154"/><stop offset="1" stop-color="#0b0c26"/></radialGradient></defs><circle cx="200" cy="130" r="198" fill="url(#csg-${c.id})"/>${stars(36,c.id.length*7,30,-40,340,340)}
+  ${game?c.E.map(([a,b],i)=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="${got.has(i)?'#ffe9a8':'#8a86c8'}" stroke-width="${got.has(i)?3:1.2}" ${got.has(i)?'':'stroke-dasharray="3 6" opacity=".55"'}/>`).join(''):lit?c.E.map(([a,b])=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="#ffe9a8" stroke-width="3"/>`).join(''):''}
+  ${c.S.map(([x,y],i)=>game?`<g class="cs-star ${pick===i?'on':''}" data-st="${i}"><circle cx="${x}" cy="${y}" r="18" fill="transparent"/><circle cx="${x}" cy="${y}" r="${pick===i?8:6}" fill="${pick===i?'#fff3c4':'#fff'}"/></g>`:`<circle cx="${x}" cy="${y}" r="7" fill="#fff"/>`).join('')}</svg>`; }
 function constSvg(c,small,lit){ return `<svg viewBox="0 0 400 260" aria-hidden="true"><rect width="400" height="260" rx="10" fill="#0e1030"/>${(lit||constDone(c.id))?c.E.map(([a,b])=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="#ffe9a8" stroke-width="3"/>`).join(''):''}${c.S.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="${small?6:5}" fill="#fff"/>`).join('')}</svg>`; }
 
 /* ---------- 觀星紀錄本（星月觀測車廂）：星象・星座・觀測日誌 ---------- */
 const SKY_HINT={meteor:'往日界或月界的航程都可能出現',aurora:'往月界的航程，穿越界壁時',tide:'往月界的航程，星河漲潮時',eclipse:'往日界的航程，日與月的界線上'};
-function skyBook(tab){ const ov=panel('','care skybook'), pn=ov.querySelector('.panel'); const log=state.skyLog||[], seen=state.skySeen||[];
- const draw=t=>{ tab=t;
-  const skyTab=()=>`<div class="sb-grid">${Object.entries(SKY).map(([k,S])=>{ const rec=log.filter(x=>x.k==='sky'&&x.type===k), ok=seen.includes(k)||rec.length;
-    const who=[...new Set(rec.flatMap(x=>x.with||[]))].map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean);
-    return ok?`<article class="sb-card"><div class="sb-art"><svg viewBox="0 0 1600 500" preserveAspectRatio="xMidYMid slice">${ART.defs}<rect width="1600" height="500" fill="#14163a"/>${stars(60,k.length*5,0,0,1600,500)}${skyFx(k)}</svg></div><h3>${S.name}</h3><p>${S.desc}</p>
-     <dl class="kv"><dt>觀賞次數</dt><dd>${Math.max(rec.length,1)} 次</dd>${rec.length?`<dt>第一次</dt><dd>第 ${rec[0].j} 趟旅程</dd>`:''}<dt>一起看過</dt><dd>${who.length?who.join('、'):'只有你'}</dd></dl></article>`
-     :`<article class="sb-card unk"><div class="sb-art"></div><h3>？？？</h3><p>尚未觀測到的星象。</p><p class="sb-hint">線索：${SKY_HINT[k]}</p></article>`; }).join('')}</div>`;
-  const constTab=()=>`<div class="sb-grid">${CONSTS.map(c=>{ const r=log.find(x=>x.k==='const'&&x.id===c.id), ok=constDone(c.id);
-    return ok?`<article class="sb-card"><div class="sb-art">${constSvg(c,true,true)}</div><h3>${c.name}</h3><p>${c.lore}</p><dl class="kv"><dt>天空</dt><dd>${c.sky==='sun'?'日界':'月界'}</dd>${r?`<dt>辨識於</dt><dd>第 ${r.j} 趟旅程</dd>`:''}</dl></article>`
-     :`<article class="sb-card unk"><div class="sb-art">${constSvg(c,true)}</div><h3>？？？</h3><p>還沒連成星座的星點。</p><p class="sb-hint">線索：在${c.sky==='sun'?'日界':'月界'}的天空才看得見，去星座盤連連看。</p></article>`; }).join('')}</div>`;
-  const logTab=()=>log.length?`<ul class="sb-log">${log.slice().reverse().map(x=>x.k==='sky'?`<li><span class="no">No.${x.j}</span><span>觀賞了<b>${SKY[x.type].name}</b>${(x.with||[]).length?`，和${x.with.map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean).join('、')}一起`:''}。</span></li>`
-     :`<li><span class="no">No.${x.j}</span><span>在星座盤辨識出<b>${(CONSTS.find(c=>c.id===x.id)||{}).name}</b>。</span></li>`).join('')}</ul>`:'<p class="nb-empty">還沒有觀測紀錄。星象出現時去火車尾展望台看看，或用星座盤連連看。</p>';
-  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂</div><h2>觀星紀錄本</h2>
-  <p style="color:var(--mute);font-size:13px">星象 ${Object.keys(SKY).filter(k=>seen.includes(k)||log.some(x=>x.k==='sky'&&x.type===k)).length} / ${Object.keys(SKY).length}・星座 ${(state.consts||[]).length} / ${CONSTS.length}・觀測 ${log.length} 次</p>
-  <nav class="ztabs">${[['sky','星象'],['const','星座'],['log','觀測日誌']].map(([k,n])=>`<button class="${k===tab?'on':''}" data-sbt="${k}">${n}</button>`).join('')}</nav>
-  ${tab==='const'?constTab():tab==='log'?logTab():skyTab()}`;
-  pn.querySelectorAll('[data-sbt]').forEach(b=>b.onclick=()=>draw(b.dataset.sbt)); };
- draw(tab||'sky'); }
+function skyBook(tab){ const log=state.skyLog||[], seen=state.skySeen||[];
+ const skyP=Object.entries(SKY).map(([k,S])=>{ const rec=log.filter(x=>x.k==='sky'&&x.type===k), ok=seen.includes(k)||rec.length;
+   const who=[...new Set(rec.flatMap(x=>x.with||[]))].map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean);
+   return ok?`<div class="sb-c"><p class="jr-no">星象</p><h3 class="jr-h">${S.name}</h3><div class="sb-art"><svg viewBox="0 0 1600 600" preserveAspectRatio="xMidYMid slice">${ART.defs}<rect width="1600" height="600" fill="#14163a"/>${stars(60,k.length*5,0,0,1600,600)}${skyFx(k)}</svg></div><p class="jr-p">${S.desc}</p><p class="jr-me">看了 ${Math.max(rec.length,1)} 次${rec.length?`，第一次是第 ${rec[0].j} 趟旅程`:''}。${who.length?`那時候${who.join('、')}也在旁邊。`:'那時候只有我一個人。'}</p></div>`
+    :`<div class="sb-c unk"><p class="jr-no">星象</p><h3 class="jr-h">？？？</h3><div class="jr-blot"></div><p class="jr-p">還沒看過的星象。聽說${SKY_HINT[k]}會出現。</p></div>`; });
+ const conP=CONSTS.map(c=>{ const r=log.find(x=>x.k==='const'&&x.id===c.id), ok=constDone(c.id);
+   return ok?`<div class="sb-c"><p class="jr-no">星座・${c.sky==='sun'?'日界':'月界'}的天空</p><h3 class="jr-h">${c.name}</h3><div class="sb-art">${constSvg(c,true,true)}</div><p class="jr-p">${c.lore}</p>${r?`<p class="jr-me">第 ${r.j} 趟旅程，在星座盤上連出來的。</p>`:''}</div>`
+    :`<div class="sb-c unk"><p class="jr-no">星座</p><h3 class="jr-h">？？？</h3><div class="sb-art">${constSvg(c,true)}</div><p class="jr-p">還沒連成星座的星點。要在${c.sky==='sun'?'日界':'月界'}的天空才看得見。</p></div>`; });
+ const logP=`<h3 class="jr-h">觀測日誌</h3>${log.length?`<ul class="nb-list">${log.slice().reverse().map(x=>`<li><span>No.${x.j}　${x.k==='sky'?`觀賞了${SKY[x.type].name}${(x.with||[]).length?`，和${x.with.map(id=>PASSENGERS[id]&&PASSENGERS[id].name).filter(Boolean).join('、')}一起`:''}`:`在星座盤連出了${(CONSTS.find(c=>c.id===x.id)||{}).name}`}</span></li>`).join('')}</ul>`:'<p class="nb-empty">還沒有觀測紀錄。星象出現時去火車尾展望台看看，或用星座盤連連看。</p>'}`;
+ const pages=skyP.concat(conP,[logP]), at={sky:0,const:skyP.length,log:skyP.length+conP.length};
+ return journal({cls:'skybook',title:'觀星紀錄本',pages,page:at[tab]||0,tabs:[['星象',at.sky],['星座',at.const],['日誌',at.log]]}); }
 
 /* ================================================================
    下車探索
@@ -2681,7 +2829,7 @@ const FORAGE={
 };
 const COMP_SLOT={x:60,y:74};
 const COMP_LINE={
- lumi:{dawnForest:'這是我的森林！……古樹在那裡。走，我帶你去一個只有我知道的地方。',starIslands:'這裡沒有樹，可是有好多光。像森林的早晨被打碎了。'},
+ 
  sola:{dawnForest:'樹好高！浮島上沒有這麼高的東西。……我可以爬上去嗎？我沒有手。算了。',starIslands:'這是我的星河！……跟我來，我想讓你看一個地方。'},
  felinia:{dawnForest:'樹冠上的風很好。……不過，還是比不上山上的風。',starIslands:'沒有風，只有光。……要滑翔的話，有點難。'},
  leviathaurora:{dawnForest:'空氣好輕。……我在這裡，像浮在很淺的水面上。',starIslands:'星河。……不是水，可是我游得過去。'},
@@ -2696,7 +2844,7 @@ const COMP_LINE={
  strider:{dawnForest:'樹太密，風被切碎了。……我聽得有點吃力。',starIslands:'這裡的風很乾淨。……我想跑一下，可以嗎？'}
 };
 const PLACES={
- lumi:{loc:'dawnForest',name:'古樹根部的苔蘚床',text:'露米帶你繞到古樹的另一邊。粗大的樹根之間，鋪著一片發光的苔蘚床，每一片苔葉上都停著一滴晨露。「我就是在這裡被點亮的。」露米輕輕說。苔蘚床的中央，有一株你沒見過的小蕨。',give:'seed_sunfern',mem:'露米出生的地方'},
+ 
  sola:{loc:'starIslands',name:'浮島漂走的痕跡',text:'索拉帶你到浮島群的邊緣。星河的河道上，留著一道長長的、微微發亮的痕跡，一路延伸到看不見的遠方。「我的島，是從這裡漂走的。」索拉繞著痕跡轉了一圈，「我每次來，都覺得它好像還在前面等我。」',give:'stardust',mem:'浮島漂走的地方'}
 };
 /* 每次停靠產生的採集點（同一次停靠固定不變） */
@@ -2748,9 +2896,15 @@ function dialogueScript(script,onEnd){ let i=0; const el=document.createElement(
  const cast=[...new Set(script.map(x=>x[0]).filter(w=>w!=='self'&&w!=='dragon'))], side=w=>w==='dragon'?'50%':cast.length>1?(cast.indexOf(w)===0?'30%':'70%'):w==='lumi'?'32%':'68%';
  const show=()=>{ const [who,t]=script[i], p=charOf(who);
   const duo=cast.length>1&&who!=='dragon';   /* 兩位乘客的互動：兩位都在畫面上，說話的那位亮起 */
+  el.dataset.who=duo?cast.slice(0,2).join(' '):(p&&PASSENGERS[who]?who:''); talkSync();
   el.innerHTML=`${duo?cast.slice(0,2).map(w=>`<div class="who ${w===who?'':'dim'}" style="left:${side(w)}">${portraitOf(charOf(w))}</div>`).join(''):p?`<div class="who" style="left:${side(who)}">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:'精靈'}</div><div class="tx">${t}</div><div class="nx">▼</div></div>`; };
  el.addEventListener('click',()=>{ i++; if(i>=script.length){ el.remove(); onEnd&&onEnd(); render(); } else show(); }); show(); }
 
+/* 正在對話的乘客：場景裡原本的圖藏起來，避免畫面上同時有兩隻 */
+function talkSync(){ const ids=[...document.querySelectorAll('#layer .dlg[data-who]')].flatMap(d=>d.dataset.who.split(' ').filter(Boolean));
+ document.querySelectorAll('#scene [data-hs]').forEach(e=>{ const h=e.dataset.hs, comp=/^out-comp-/.test(h)&&state.companion;
+  e.classList.toggle('talking',ids.some(id=>h.endsWith('-p-'+id)||h==='ot-p-'+id||(comp&&state.companion===id))); }); }
+new MutationObserver(()=>{ talkSync(); if(document.querySelector('#layer .dlg,#layer .ov,#layer .cine')&&$('#announce.on')) annHide(); }).observe(document.documentElement,{childList:true,subtree:true});
 /* 過場演出 */
 function cine(lines,onDone,img,titleCard){ const el=document.createElement('div'); el.className='cine';
  let i=0; const draw=()=>{ el.innerHTML=`${img?`<img src="${img}" alt="">`:'<div class="stars"></div>'}<div class="shade"></div><div class="txt">${lines[i]}</div><div class="tap">輕觸繼續</div>`; if(i>0&&img){ const im=el.querySelector('img'); im.style.animation='none'; im.style.transform='scale(1.05)'; } };
@@ -3006,18 +3160,37 @@ const ANOMS=[
 const ANOM_SLOTS=4;
 const anomFound=()=>ANOMS.filter(a=>a.have());
 function anomPanel(){ const seen=new Set(state.storyFlags.anomSeen||[]), f=anomFound();
- const gem=c=>`<svg class="ic" viewBox="0 0 40 40" aria-hidden="true"><polygon points="20,3 31,20 20,37 9,20" fill="${c}"/><polygon points="20,3 31,20 20,20" fill="#fff" opacity=".6"/></svg>`;
- const unk=`<div class="anom unk">${gem('#555a7a')}<h4>未記錄的異象</h4><p class="blur">光的形狀還沒有被看清楚，晶石裡只留下模糊的影子。</p></div>`;
- panel(`<div class="eyebrow">星月觀測車廂</div><h2>異象紀錄晶石</h2><p style="color:var(--mute)">已記錄 ${f.length} 種空間異象。</p>
- <div class="anoms">${ANOMS.map(a=>a.have()?`<div class="anom ${seen.has(a.id)?'':'new'}">${gem(seen.has(a.id)?'#bfe6ff':'#f1d58e')}<h4>${a.name}${seen.has(a.id)?'':'<span class="tagnew">新</span>'}</h4><small>${a.where}</small><p>${a.text}</p></div>`:unk).join('')}${unk.repeat(Math.max(0,ANOM_SLOTS-ANOMS.length))}</div>`);
+ const items=ANOMS.map(a=>({id:a.id,have:a.have(),cls:'gem'+(seen.has(a.id)||!a.have()?'':' anom new'),inner:gemIcon(seen.has(a.id)?'#bfe6ff':'#f1d58e'),label:a.name+(seen.has(a.id)?'':' ✦')}))
+  .concat(Array.from({length:Math.max(0,ANOM_SLOTS-ANOMS.length)},(_,k)=>({id:'x'+k,have:false,cls:'gem'})));
+ floatField({cls:'anomf',title:'異象紀錄晶石',sub:()=>`記錄到的空間異象 ${f.length} 種`,items,
+  view:id=>{ const a=ANOMS.find(x=>x.id===id); return `<div class="showcase"><div class="gem3d">${gemIcon('#bfe6ff')}</div><h2>${a.name}</h2><p class="fl-where">${a.where}</p>${meSay(a.text)}</div>`; }});
  state.storyFlags.anomSeen=f.map(a=>a.id); save(); }
-function navPanel(){ const voy=state.currentPhase==='voyage', from=voy?state.voyage.from:state.currentLocation, to=voy?state.voyage.to:nextStop(), ri=ROUTE_INFO[to]||{}, p=voy?state.voyage.progress:0;
- panel(`<div class="eyebrow">月界導航裝置</div><h2>${voy?'航行中':'預定航程'}</h2>
- <div class="route"><div class="nd">${LOCATIONS[from].name}<small>${voy?'出發站':'目前停靠'}・${LOCATIONS[from].realm}</small></div><div class="ln"><i style="left:${(p*100).toFixed(0)}%"></i></div><div class="nd" style="text-align:right">${LOCATIONS[to].name}<small>${voy?'目的地':'下一站'}・${LOCATIONS[to].realm}</small></div></div>
- <dl class="kv"><dt>航行速限</dt><dd>${ri.speed||'—'}</dd><dt>注意命令</dt><dd>${ri.order||'無'}</dd><dt>界域警告</dt><dd>${ri.warn||'無'}</dd><dt>出發方式</dt><dd>${voy?'自動航行中':'值勤確認完成、領頭核准後自動出發'}</dd></dl>
- <p style="color:var(--mute);font-size:13px">導航裝置只顯示航程，無法改變列車的方向。</p>
- <div class="nav-list">${LOC_ORDER.map(id=>{ const L=LOCATIONS[id], un=state.unlockedLocations.includes(id)&&L.ready, cur=!voy&&id===state.currentLocation, nx=id===to;
-  return `<div class="dest ${cur||nx?'cur':''}" style="cursor:default"><div class="art" style="${un?'':'filter:grayscale(1) brightness(.35)'}">${locSvg(id)}</div><div class="meta"><div class="t">${un?L.name:'訊號微弱'}</div><div class="s">${L.realm}・${un?L.domain:'未知領域'}${cur?'　目前停靠':''}${nx?'　下一站':''}</div></div></div>`; }).join('')}</div>`); }
+function navPanel(){ const ov=panel('','navov'), pn=ov.querySelector('.panel'); let sel=null;
+ const draw=()=>{ const voy=state.currentPhase==='voyage', cur=voy?null:state.currentLocation, from=voy?state.voyage.from:cur, to=voy?state.voyage.to:nextStop(), L=LOCATIONS[to], ri=ROUTE_INFO[to]||{};
+  const [fx,fy]=MAPPOS[from], [tx,ty]=MAPPOS[to], p=voy?state.voyage.progress:0, sx=fx+(tx-fx)*p, sy=fy+(ty-fy)*p;
+  const pts=['origin',...LOC_ORDER].map(id=>{ const [x,y]=MAPPOS[id], st=locStatus(id), N=LOCATIONS[id];
+   if(st==='fog') return `<g class="st fog ${sel===id?'sel':''}" data-st="${id}"><circle cx="${x}" cy="${y}" r="22" fill="#9a8cff" opacity=".35" filter="url(#nvfog)"/><circle cx="${x}" cy="${y}" r="30" fill="transparent"/></g>`;
+   return `<g class="st ${st} ${sel===id?'sel':''}" data-st="${id}"><circle class="ring" cx="${x}" cy="${y}" r="17" fill="none" stroke="${id===to?'#e8c983':'transparent'}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="${st==='seen'?26:16}" fill="url(#nvglow)" opacity="${st==='seen'?.9:.45}"/><circle cx="${x}" cy="${y}" r="${st==='seen'?7:4.5}" fill="${st==='seen'?'#fff6d8':'#bfc6ff'}"/><circle cx="${x}" cy="${y}" r="30" fill="transparent"/><text x="${x}" y="${y+38}" text-anchor="middle" font-size="17" fill="${st==='seen'?'#f3ead2':'#a9add0'}" font-family="Noto Serif TC,serif" letter-spacing="2">${N.name}</text></g>`; }).join('');
+  const info=[['今日車次',trainNo()],[voy?'目的地':'預定停靠',`${L.name}`],['航行速限',ri.speed||'—'],['注意命令',ri.order||'無'],['界域警告',ri.warn||'無']];
+  pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂・月界導航裝置</div><div class="nav-top">${info.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>
+  <div class="nav-map"><svg viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="img" aria-label="星圖"><defs><radialGradient id="nvglow"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#e8c983" stop-opacity="0"/></radialGradient><filter id="nvfog" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="8"/></filter></defs>
+   <rect width="1000" height="620" fill="#0b0d26"/>${stars(170,77,0,0,1000,620)}
+   <circle cx="490" cy="310" r="292" fill="none" stroke="rgba(154,140,255,.4)" stroke-dasharray="3 10"/><text x="490" y="34" text-anchor="middle" font-size="15" fill="#a9a0ff" letter-spacing="8" font-family="Noto Serif TC,serif">月界</text>
+   <circle cx="490" cy="310" r="74" fill="rgba(232,201,131,.06)" stroke="rgba(232,201,131,.55)"/><text x="490" y="226" text-anchor="middle" font-size="14" fill="#e8c983" letter-spacing="6" font-family="Noto Serif TC,serif">日界・地球</text>
+   <line x1="${fx}" y1="${fy}" x2="${tx}" y2="${ty}" stroke="#e8c983" stroke-width="2.4" stroke-dasharray="6 8" opacity=".9"/>${pts}
+   <g transform="translate(${sx.toFixed(1)} ${sy.toFixed(1)})"><circle r="12" fill="none" stroke="#7fe6f0" stroke-width="2"><animate attributeName="r" values="9;18;9" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;.3;1" dur="2.4s" repeatCount="indefinite"/></circle><circle r="4" fill="#7fe6f0"/></g></svg>
+   <div class="nav-tip" id="smi"></div><div class="nav-hint">${voy?'航行中，航程不能更改。':state.duty.reported?'已經跟曦淵說好要出發了。':'點星點看看；可以改變下一站。'}</div></div>`;
+  pn.querySelectorAll('[data-st]').forEach(g=>g.addEventListener('click',e=>{ e.stopPropagation(); sel=g.dataset.st; draw(); tip(g.dataset.st); }));
+  pn.querySelector('.nav-map').addEventListener('click',()=>{ sel=null; pn.querySelectorAll('.st.sel').forEach(x=>x.classList.remove('sel')); pn.querySelector('#smi').classList.remove('on'); }); };
+ const tip=id=>{ const voy=state.currentPhase==='voyage', st=locStatus(id), N=LOCATIONS[id], cur=voy?null:state.currentLocation, to=voy?state.voyage.to:nextStop(), box=pn.querySelector('#smi'), map=pn.querySelector('.nav-map');
+  const can=!voy&&!state.duty.reported&&routeOk(id)&&id!==to;
+  box.innerHTML=st==='fog'?'<b>訊號微弱</b><br>'+unlockInfo(id):`<b>${N.name}</b><br><span style="color:var(--mute)">${N.realm}・${N.domain}・座標 ${N.coord}</span><br>${st==='seen'?N.desc:revealed(id)&&!N.ready?'座標已解讀，但通往這裡的航道還沒有開通。':'尚未抵達。導航裝置已能鎖定它的訊號。'}${id===cur?'<br><span style="color:var(--gold)">列車目前停靠於此。</span>':''}${id===to?`<br><span style="color:var(--gold)">${voy?'航行目的地':'下一站'}</span>`:''}${can?`<br><button class="btn" data-route="${id}">設為下一站</button>`:''}`;
+  const g=pn.querySelector(`[data-st="${id}"] circle`), r=g.getBoundingClientRect(), m=map.getBoundingClientRect(), x=r.left+r.width/2-m.left, y=r.top+r.height/2-m.top;
+  box.classList.add('on'); const bw=box.offsetWidth, bh=box.offsetHeight; box.style.left=Math.max(8,Math.min(m.width-bw-8,x+(x>m.width/2?-bw-24:24)))+'px'; box.style.top=Math.max(8,Math.min(m.height-bh-8,y-bh/2))+'px';
+  const b=box.querySelector('[data-route]'); if(b) b.onclick=e=>{ e.stopPropagation(); setRoute(id); draw(); tip(id); }; box.onclick=e=>e.stopPropagation(); };
+ const setRoute=id=>{ state.routeNext=id; if(state.duty.briefing){ state.duty.briefing=false; toast('航程改了，星途符牒要重新核對一次'); } else toast(`下一站改成${LOCATIONS[id].name}`);
+  logJ(`在月界導航裝置把下一站改成${LOCATIONS[id].name}。`); SFX.tone(988,0,.5,'sine',.03); save(); render(); };
+ draw(); }
 
 /* ---------- 記憶典藏車廂 ---------- */
 /* 航行日誌：依旅程分組；出發前的值勤步驟合併成一行，歸到它準備的那一趟旅程；每則紀錄標上類別 */
@@ -3039,17 +3212,17 @@ const MEMORIES=[
  {id:'wake',title:'甦醒',scene:'origin',have:()=>!!state.introDone,text:'列車在沉睡之地醒來。四周是白色的石、金色的弧，與一扇巨大的窗。從那天起，由你來巡視它。'},
  {id:'dragon',title:'和曦淵相遇',who:'dragon',have:()=>!!state.storyFlags.metDragon,text:'「車上的大小事，就交給你這個值勤精靈了。每次要出發前，來跟我說一聲就好。」'},
  {id:'depart',title:'第一次出發',scene:'voyage',have:()=>state.journeyCount>=1,text:'「那我們出發吧。」軌道一節一節亮起，延伸進沒有地面的地方。'},
- {id:'lumi',title:'晨光中的幼鹿',who:'lumi',have:()=>state.discoveredLifeforms.includes('lumi'),text:PASSENGERS.lumi.intro},
+ 
  {id:'ring',title:'相同的圓環',scene:'dawnForest',have:()=>state.clues.includes('clue_ring'),text:CLUES.clue_ring.text},
  {id:'sola',title:'漂流的星汐水母',who:'sola',have:()=>state.discoveredLifeforms.includes('sola'),text:PASSENGERS.sola.intro},
- {id:'int_lumi_felinia',title:'露米與羽貓獸',who:'lumi',who2:'felinia',have:()=>done('int_lumi_felinia'),text:'沒看過山的幼鹿，和很久沒看過森林的羽貓獸，靠在一起看窗外的光。'},
+ 
  {id:'int_sola_levi',title:'光的笑聲',who:'sola',who2:'leviathaurora',have:()=>done('int_sola_levi'),text:'索拉講了一個冷笑話。淵光巨從頭到尾鰭，一路亮了起來——那是用光發出的笑聲。'},
  {id:'int_cinder_pyro',title:'偽龍與暴君',who:'cinder',who2:'pyro',have:()=>done('int_cinder_pyro'),text:'「名字都是別人取的。」兩道影子並排待在晶石平台上，一道琥珀色，一道熔岩色。'},
  {id:'int_pyro_frost',title:'冰與火的界線',who:'pyro',who2:'frost',have:()=>done('int_pyro_frost'),text:'一邊結冰，一邊冒煙。兩頭巨獸誰也沒有越過靈泉——這輛車的地盤，不屬於牠們任何一個。'},
  {id:'int_felinia_aelis',title:'兩種耳朵',who:'aelis',who2:'felinia',have:()=>done('int_felinia_aelis'),text:'一個聽地下的心跳，一個聽天上的風。牠們同時轉向窗外，聽見了你聽不見的聲音。'},
  {id:'int_vandora_aelis',title:'夜裡的捉迷藏',who:'vandora',who2:'aelis',have:()=>done('int_vandora_aelis'),text:'一個用耳朵找，一個用觸鬚找。航行的夜裡，兩個夜行者誰也沒有贏，誰也不想停。'},
  {id:'int_sirenora_pyro',title:'第一次的安睡',who:'sirenora',who2:'pyro',have:()=>done('int_sirenora_pyro'),text:'「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。'},
- {id:'int_titan_lumi',title:'會走路的森林',who:'lumi',who2:'titan',have:()=>done('int_titan_lumi'),text:'露米踩著巨靈的手，爬上長滿蕨葉的肩膀。「因為這裡是會走路的森林嘛。」'},
+ 
  {id:'int_frost_lynx',title:'上面與下面',who:'lynx',who2:'frost',have:()=>done('int_frost_lynx'),text:'「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。'},
  {id:'int_cinder_strider',title:'同一陣風',who:'strider',who2:'cinder',have:()=>done('int_cinder_strider'),text:'「我們是同一陣風養大的。」一個張帆，一個昂角，約好到了開闊的地方再比一場。'},
  {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
@@ -3057,10 +3230,10 @@ const MEMORIES=[
  {id:'sky_aurora',title:'界壁極光',scene:'voyage',have:()=>(state.skySeen||[]).includes('aurora'),text:SKY.aurora.desc},
  {id:'sky_tide',title:'星河潮汐',scene:'voyage',have:()=>(state.skySeen||[]).includes('tide'),text:SKY.tide.desc},
  {id:'sky_eclipse',title:'日月交疊',scene:'voyage',have:()=>(state.skySeen||[]).includes('eclipse'),text:SKY.eclipse.desc},
- {id:'place_lumi',title:'露米出生的地方',who:'lumi',have:()=>(state.places||[]).includes('lumi'),text:PLACES.lumi.text},
+ 
  {id:'place_sola',title:'浮島漂走的地方',who:'sola',have:()=>(state.places||[]).includes('sola'),text:PLACES.sola.text},
- {id:'meet',title:'露米與索拉',who:'lumi',who2:'sola',have:()=>done('meet_lumi_sola'),text:'兩道光在棲息車廂裡輕輕繞著彼此轉了一圈。索拉的笑話，終於有人笑了。'},
- {id:'bye_lumi',title:'告別・露米',who:'lumi',have:()=>!!(state.passengers.lumi&&state.passengers.lumi.left),text:PASSENGERS.lumi.farewell[2]},
+ 
+ 
  {id:'felinia',title:'乘風而來的羽貓獸',who:'felinia',have:()=>state.discoveredLifeforms.includes('felinia'),text:PASSENGERS.felinia.intro},
  {id:'leviathaurora',title:'從靈泉浮上的藍光',who:'leviathaurora',have:()=>state.discoveredLifeforms.includes('leviathaurora'),text:PASSENGERS.leviathaurora.intro},
  {id:'cinder',title:'琥珀色的帆影',who:'cinder',have:()=>state.discoveredLifeforms.includes('cinder'),text:PASSENGERS.cinder.intro},
@@ -3083,37 +3256,47 @@ function memArt(m){ if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspe
    手寫紀錄本：一頁一頁左右翻（滑鼠按住左右拖曳、書籤、左右鍵），像玩家自己記下來的筆記
    ================================================================ */
 function journal(o){
- let i=Math.max(0,Math.min(o.page||0,o.pages.length-1)), busy=false; const TILT=[-4,2,-2,3,-1,4,-3,1,-2,2];
+ const make=()=>typeof o.pages==='function'?o.pages():o.pages; let pages=make(), N=pages.length;
+ const sp=innerWidth>=860, al=k=>sp?k-(k%2):k, TILT=[-4,2,-2,3,-1,4,-3,1,-2,2,-3,1];
+ let i=al(Math.max(0,Math.min(o.page||0,N-1))), busy=false, turn=null;
  const ov=document.createElement('div'); ov.className='ov jr '+(o.cls||'');
- ov.innerHTML=`<div class="jr-book" role="dialog" aria-label="${o.title}"><div class="jr-tabs">${o.tabs.map(([t,p],k)=>`<button class="jr-tab" data-go="${p}" style="--tilt:${TILT[k%TILT.length]}deg" aria-label="${t}"><svg class="cord" viewBox="0 0 24 46" aria-hidden="true"><path d="M12 46 C 5 34, 19 26, 11 4" fill="none" stroke="#3b2a1e" stroke-width="2.2" stroke-linecap="round"/><rect x="6.5" y="14" width="10" height="11" rx="3.5" fill="#d9b25c" stroke="#8a6a28" stroke-width="1"/><path d="M8 18h7M8 21h7" stroke="#8a6a28" stroke-width=".8"/></svg><span class="bm">${t}</span></button>`).join('')}</div>
-  <div class="jr-sheet base"></div><div class="jr-sheet flip"></div>
+ ov.innerHTML=`<div class="jr-book ${sp?'spread':'single'}" role="dialog" aria-label="${o.title}"><div class="jr-tabs">${o.tabs.map(([t,p],k)=>`<button class="jr-tab" data-go="${p}" style="--tilt:${TILT[k%TILT.length]}deg" aria-label="${t}"><svg class="cord" viewBox="0 0 24 46" aria-hidden="true"><path d="M12 46 C 5 34, 19 26, 11 4" fill="none" stroke="#3b2a1e" stroke-width="2.2" stroke-linecap="round"/><rect x="6.5" y="14" width="10" height="11" rx="3.5" fill="#d9b25c" stroke="#8a6a28" stroke-width="1"/><path d="M8 18h7M8 21h7" stroke="#8a6a28" stroke-width=".8"/></svg><span class="bm">${t}</span></button>`).join('')}</div>
+  <div class="jr-pages"><div class="jr-sheet L"></div><div class="jr-sheet R"></div><div class="jr-flip"><div class="jr-sheet face fr"></div><div class="jr-sheet face bk"></div></div></div>
   <button class="jr-nav prev" aria-label="上一頁">‹</button><button class="jr-nav next" aria-label="下一頁">›</button><div class="jr-folio"></div><button class="close" aria-label="闔上">✕</button></div>`;
  $('#layer').appendChild(ov);
- const base=ov.querySelector('.base'), flip=ov.querySelector('.flip'), prev=ov.querySelector('.prev'), next=ov.querySelector('.next');
- const put=(el,k)=>{ el.innerHTML=`<div class="jr-in">${o.pages[k]}</div>`; el.scrollTop=0; };
- const curTab=()=>o.tabs.reduce((a,t)=>t[1]<=i?t[1]:a,0);
- const sync=()=>{ ov.querySelector('.jr-folio').textContent=`${i+1} / ${o.pages.length}`; ov.querySelectorAll('.jr-tab').forEach(t=>t.classList.toggle('on',+t.dataset.go===curTab())); prev.disabled=i<=0; next.disabled=i>=o.pages.length-1; ov.dataset.page=i; };
- const ang=a=>{ flip.style.transform=`rotateY(${a}deg)`; };
- let turn=null;   /* {to,dir} */
- const begin=to=>{ if(busy||to===i||to<0||to>=o.pages.length) return false; const dir=to>i?1:-1; turn={to,dir};
-  flip.classList.remove('anim'); if(dir>0){ put(flip,i); put(base,to); ang(0); } else { put(flip,to); put(base,i); ang(-180); } flip.classList.add('on'); void flip.offsetWidth; return true; };
- const end=(commit)=>{ if(!turn) return; const t=turn; turn=null; busy=true; flip.classList.add('anim');
-  const fin=()=>{ busy=false; flip.classList.remove('on','anim'); if(commit){ i=t.to; SFX.page(); } put(base,i); sync(); };
-  ang(commit?(t.dir>0?-180:0):(t.dir>0?0:-180)); setTimeout(fin,520); };
+ const q=c=>ov.querySelector(c), L=q('.jr-sheet.L'), R=q('.jr-sheet.R'), F=q('.jr-flip'), fr=q('.fr'), bk=q('.bk'), prev=q('.prev'), next=q('.next');
+ if(!sp) L.remove();
+ const put=(el,k)=>{ const ok=k>=0&&k<N; el.innerHTML=`<i class="jr-frame"></i>${ok?`<div class="jr-in">${pages[k]}</div>`:''}`; el.classList.toggle('blank',!ok); };
+ const sync=()=>{ q('.jr-folio').textContent=sp?`${i+1}${i+1<N?'–'+(i+2):''} / ${N}`:`${i+1} / ${N}`; const on=o.tabs.reduce((a,t)=>al(t[1])<=i?t[1]:a,o.tabs.length?o.tabs[0][1]:0);
+  ov.querySelectorAll('.jr-tab').forEach(t=>t.classList.toggle('on',+t.dataset.go===on)); prev.disabled=i<=0; next.disabled=i+(sp?2:1)>=N; ov.dataset.page=i; };
+ const show=()=>{ if(sp){ put(L,i); put(R,i+1); } else put(R,i); sync(); };
+ const ang=a=>{ F.style.transform=`rotateY(${a}deg)`; };
+ const begin=to=>{ to=al(to); if(busy||to===i||to<0||to>=N) return false; const dir=to>i?1:-1; turn={to,dir};
+  F.className='jr-flip on '+(dir>0?'fwd':'bwd');
+  if(sp){ if(dir>0){ put(fr,i+1); put(bk,to); put(R,to+1); } else { put(fr,i); put(bk,to+1); put(L,to); } ang(0); }
+  else { bk.innerHTML=''; if(dir>0){ put(fr,i); put(R,to); ang(0); } else { put(fr,to); ang(-180); } }
+  void F.offsetWidth; return true; };
+ const drag=p=>{ const d=turn.dir; ang(sp?(d>0?Math.max(-180,Math.min(0,p*180)):Math.min(180,Math.max(0,p*180))):(d>0?Math.max(-180,Math.min(0,p*180)):Math.max(-180,Math.min(0,-180+p*180)))); };
+ const end=commit=>{ if(!turn) return; const t=turn; turn=null; busy=true; F.classList.add('anim');
+  ang(sp?(commit?(t.dir>0?-180:180):0):(commit?(t.dir>0?-180:0):(t.dir>0?0:-180)));
+  setTimeout(()=>{ busy=false; F.className='jr-flip'; if(commit){ i=t.to; SFX.page(); } show(); },520); };
  const go=to=>{ if(begin(to)) requestAnimationFrame(()=>end(true)); };
- prev.onclick=e=>{ e.stopPropagation(); go(i-1); }; next.onclick=e=>{ e.stopPropagation(); go(i+1); };
+ const step=sp?2:1;
+ prev.onclick=e=>{ e.stopPropagation(); go(i-step); }; next.onclick=e=>{ e.stopPropagation(); go(i+step); };
  ov.querySelectorAll('.jr-tab').forEach(t=>t.onclick=e=>{ e.stopPropagation(); go(+t.dataset.go); });
- ov.addEventListener('click',e=>{ if(e.target===ov||e.target.closest('.close')) closeOv(ov); });
- ov.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') go(i+1); if(e.key==='ArrowLeft') go(i-1); });
- /* 按住左右拖曳：頁面跟著手指翻起來，放開時翻過去或落回原位 */
- const book=ov.querySelector('.jr-book'); let g=null;
- book.addEventListener('pointerdown',e=>{ if(busy||e.target.closest('button')) return; if(e.pointerType==='mouse'&&e.button!==0) return; g={id:e.pointerId,x:e.clientX,y:e.clientY,on:false,w:book.clientWidth}; });
+ ov.addEventListener('click',e=>{ if(e.target===ov||e.target.closest('.jr-book>.close')) return closeOv(ov); if(o.onClick) o.onClick(e,ov); });
+ ov.tabIndex=-1; ov.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') go(i+step); if(e.key==='ArrowLeft') go(i-step); });
+ /* 按住左右拖曳：紙頁跟著手指翻起來，放開時翻過去或落回原位 */
+ const book=q('.jr-pages'); let g=null;
+ book.addEventListener('pointerdown',e=>{ if(busy||e.target.closest('button,a,input')) return; if(e.pointerType==='mouse'&&e.button!==0) return; g={id:e.pointerId,x:e.clientX,y:e.clientY,on:false,w:book.clientWidth/(sp?2:1)}; });
  book.addEventListener('pointermove',e=>{ if(!g||e.pointerId!==g.id) return; const dx=e.clientX-g.x, dy=e.clientY-g.y;
-  if(!g.on){ if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy)) return; if(!begin(dx<0?i+1:i-1)){ g=null; return; } g.on=true; try{ book.setPointerCapture(e.pointerId); }catch(_){} }
-  const p=Math.max(-1,Math.min(1,dx/g.w*1.4)); ang(turn.dir>0?Math.min(0,p*180):Math.max(-180,-180+p*180)); });
+  if(!g.on){ if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy)) return; if(!begin(dx<0?i+step:i-step)){ g=null; return; } g.on=true; try{ book.setPointerCapture(e.pointerId); }catch(_){} }
+  drag(Math.max(-1,Math.min(1,dx/g.w*1.2))); });
  const up=e=>{ if(!g||e.pointerId!==g.id) return; const on=g.on, dx=e.clientX-g.x, w=g.w; g=null; if(!on||!turn) return; end(turn.dir>0?dx<-w*.25:dx>w*.25); };
  book.addEventListener('pointerup',up); book.addEventListener('pointercancel',up);
- put(base,i); sync(); SFX.page(); return ov; }
+ ov.refresh=()=>{ const keep=[...ov.querySelectorAll('.jr-sheet:not(.face) .jr-in')].map(x=>x.scrollTop); pages=make(); N=pages.length; i=al(Math.min(i,N-1)); show(); ov.querySelectorAll('.jr-sheet:not(.face) .jr-in').forEach((x,k)=>x.scrollTop=keep[k]||0); };
+ ov.goTo=k=>go(k);
+ show(); SFX.page(); return ov; }
 
 /* 界域地誌：七個地點，一頁一個；照片貼得歪歪的，最後寫下自己的想法 */
 const ATLAS_ME={
@@ -3137,7 +3320,7 @@ function atlasBook(page){ const ids=['origin',...LOC_ORDER];
 
 /* 線索解讀筆記：讀到的片段，和我自己的推想 */
 const CLUE_ME={clue_const_train:'星座裡也有一列火車。是誰把它畫上天空的？',clue_wake:'「願醒來的那一位……」那一位，是我嗎？',clue_ring:'古樹上和車身上，都有同一個圓環。這列車以前一定來過這裡。',
- clue_voyage:'那些符號亮了七次心跳。我數過了，真的是七次。',clue_lumi_tale:'古樹記得建造列車的人。樹的記憶，比我的還要長。',clue_sola_legend:'索拉說這個傳說的時候，難得沒有笑。',
+ clue_voyage:'那些符號亮了七次心跳。我數過了，真的是七次。',clue_sola_legend:'索拉說這個傳說的時候，難得沒有笑。',
  clue_seed:'打不開的封印……也許不是打不開，只是時候還沒到。',clue_ferrykeepers:'渡守。終於知道他們的名字了。',clue_dimming:'那麼多世界一起熄滅……光是想像就覺得好冷。',
  clue_dragon:'我是從列車的光裡醒來的。原來，我一直都在這裡。',clue_ash:'熄滅的世界留下了灰。灰裡，還有沒說完的故事。',clue_island:'浮島是碎片，卻被星河接住了。被接住，真好。',
  clue_wall:'界壁會呼吸。下次看到極光，我要跟著它一起呼吸看看。',clue_wake2:'「我們在時間的另一端。」——我會把剩下的路走完的。'};
@@ -3238,7 +3421,7 @@ function discPanel(){ const voy=state.currentPhase==='voyage', d=state.duty, c=s
    生物立繪：在 CODEX_LIFE（或 PASSENGERS）的 image 欄位填入透明背景 PNG 路徑即可替換；未填時使用程式繪製的立繪。
    ================================================================ */
 const CODEX_LIFE=[
- {id:'lumi',passenger:'lumi'},
+ 
  {id:'sola',passenger:'sola'},
  /* 預留給之後提供的生物立繪：填入 name／species／type／home／zone／intro／desc／image／wash，並以 known() 決定何時解鎖 */
  {id:'felinia',passenger:'felinia'},
@@ -3377,11 +3560,9 @@ const HSDEF=[
  {id:'cab-brief',scene:'cab',name:'星途符牒',at:{x:89.4,y:46.7},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
  {id:'cab-back',scene:'cab',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
  /* 星月觀測車廂 */
- {id:'obs-window',scene:'observation',name:'全景觀測窗',at:{x:42,y:16},layer:2,act:'obs:window'},
- {id:'obs-chart',scene:'observation',name:'古代星圖',at:{x:8,y:34},layer:3,act:()=>starMap(),ver:()=>state.visitedLocations.length},
  {id:'obs-scope',scene:'observation',name:'星月觀測儀',at:{x:17,y:47},layer:2,act:()=>scopePanel()},
  {id:'obs-nav',scene:'observation',name:'月界導航裝置',at:{x:33,y:47},layer:3,act:'obs:nav',track:false},
- {id:'obs-coord',scene:'observation',name:'空間座標顯示器',at:{x:90,y:45},layer:2,act:'obs:coord'},
+ {id:'obs-coord',scene:'observation',name:()=>state.currentPhase==='voyage'&&state.voyage?'航行中 → '+LOCATIONS[state.voyage.to].coord:LOCATIONS[state.currentLocation].coord+'・'+String(state.journeyCount*7+5).padStart(3,'0'),readout:true,at:{x:90,y:45},layer:1,track:false},
  {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:76,y:49},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
   imp:()=>anomFound().length>0&&seenOf('obs-anomrec')!==String(anomFound().length)},
  {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:57,y:10},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
@@ -3404,7 +3585,6 @@ const HSDEF=[
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:97,y:56},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
- {id:'hab-care',scene:'habitat',name:'結界調節晶石',at:{x:76.5,y:40},layer:3,track:false,act:()=>carePicker(),imp:()=>Object.keys(PASSENGERS).some(id=>aboard(id)&&!atDeck(id)&&CARE[id]&&!careOk(id)&&state.passengers[id].talks>0)},
  {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:47},act:'go:observation'},
  {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:3,y:90},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
@@ -3418,18 +3598,18 @@ const HSDEF=[
  {id:'mem-armillary',scene:'memory',name:'日月儀',at:MP(268,610),layer:3,act:()=>orreryPanel(),ver:()=>state.visitedLocations.length},
  {id:'mem-mirror',scene:'memory',name:'映心鏡・照照自己',at:MP(615,495),layer:3,track:false,act:()=>spiritPanel(),imp:()=>state.storyFlags.mirrorSeen!==taintLevel(TAINT.val())},
  {id:'mem-save',scene:'memory',name:'存檔水晶',shape:'save',at:MP(1923,782),layer:3,act:'mem:save',track:false},
+ {id:'mem-rubbing',scene:'memory',name:'刻紋拓本',at:MP(1288,1110),layer:3,act:()=>rubbingPanel(),ver:()=>(state.engr||[]).length},
  {id:'mem-door',scene:'memory',name:'前往火車頭駕駛室',shape:'door',at:MP(1272,700),act:'go:cab'},
  {id:'mem-rear',scene:'memory',name:'後方連接門：森羅溫室車廂',shape:'door',at:MP(8,700),act:'go:nature'},
  /* 火車尾展望台 */
- {id:'ot-view',scene:'observatory',name:()=>state.currentPhase==='voyage'?'後方觀景區・遠去的星光':'後方觀景區・'+LOCATIONS[state.currentLocation].name,at:{x:50,y:32},layer:2,act:'obs2:view',track:false},
- {id:'ot-rail',scene:'observatory',name:'金屬欄杆',at:{x:50,y:58},layer:1,hint:'冰涼的金屬欄杆被磨得很光滑，雕花藤蔓在末端收成一個小小的圓環。'},
- {id:'ot-floor',scene:'observatory',name:'地面刻紋',at:{x:50,y:94},layer:1,hint:'木地板中央嵌著一圈金屬刻紋，被鞋底磨得很淡，已經看不出原本的圖樣。'},
- {id:'ot-lamp',scene:'observatory',name:'尾燈',at:{x:95.5,y:61},layer:1,hint:'列車最後一盞燈。不論停靠或航行，它都一直亮著。'},
+ {id:'ot-floor',scene:'observatory',name:()=>state.currentPhase==='voyage'?'地面刻紋':ENGR_OK(state.currentLocation)?'地面刻紋・已拓下':'地面刻紋・'+LOCATIONS[state.currentLocation].name,at:{x:50,y:94},layer:3,track:false,act:()=>engravePanel(),
+  imp:()=>state.currentPhase==='docked'&&!ENGR_OK(state.currentLocation),done:()=>state.currentPhase==='docked'&&ENGR_OK(state.currentLocation)},
+ {id:'ot-lamp',scene:'observatory',name:()=>state.storyFlags.starLight?'星光・亮著':'星光',at:{x:95.5,y:61},layer:2,track:false,act:()=>{ state.storyFlags.starLight=!state.storyFlags.starLight; SFX.tone(state.storyFlags.starLight?1318:659,0,.6,'sine',.03); save(); render(); }},
  {id:'ot-spot',scene:'observatory',name:()=>{ const e=spotEvent('observatory'); return e?e[1].title:'特殊觀察點'; },at:{x:28,y:40},layer:4,track:false,
   show:()=>!!spotEvent('observatory'),imp:()=>true,act:()=>{ const e=spotEvent('observatory'); if(!e) return; complete(e[0]); e[1].run(()=>render()); }},
  /* 展望台上的乘客 */
  ...Object.keys(PASSENGERS).map(id=>({id:'ot-p-'+id,scene:'observatory',name:PASSENGERS[id].name,shape:'npc',cls:PASSENGERS[id].sprite?'idle-stand':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,
-  get sx(){ return PASSENGERS[id].sprite?`;--sh:${deckSlot(id).h}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; }, get at(){ const d=deckSlot(id); return {x:d.x,y:d.y}; },layer:4,track:false,show:()=>atDeck(id),act:()=>deckTalk(id)})),
+  get sx(){ return PASSENGERS[id].sprite?`;--sh:${Math.min(deckSlot(id).h,Math.round(spriteHFor(id)*1.9))}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; }, get at(){ const d=deckSlot(id); return {x:d.x,y:d.y}; },layer:4,track:false,show:()=>atDeck(id),act:()=>deckTalk(id)})),
  {id:'ot-invite',scene:'observatory',name:'邀請乘客來看星星',at:{x:50,y:80},layer:3,track:false,show:()=>Object.keys(PASSENGERS).some(aboard),act:()=>deckInvite()},
  {id:'ot-sky',scene:'observatory',name:()=>skyNow()?'觀賞：'+SKY[skyNow().type].name:'星象',at:{x:50,y:14},layer:3,track:false,show:()=>!!skyNow(),imp:()=>!!skyNow()&&!skyNow().watched,act:()=>skyWatch()},
  {id:'ot-back',scene:'observatory',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},act:'go:observation'},
@@ -3437,14 +3617,13 @@ const HSDEF=[
  {id:'out-tree',scene:'out:dawnForest',name:'古樹',at:{x:50,y:40},layer:2,act:'out:tree'},
  {id:'out-ring',scene:'out:dawnForest',name:'古樹上的圓環',at:{x:50,y:62},layer:2,act:'out:ring',imp:()=>!state.collectibles.includes('relic_ring')},
  {id:'out-moss',scene:'out:dawnForest',name:'林間光苔',at:{x:20,y:88},layer:1,hint:'只在晨光最斜的時候發亮的苔蘚。人類經過時，它們會在同一瞬間熄滅。'},
- {id:'out-lumi',scene:'out:dawnForest',name:'熟悉的光',shape:'npc',cls:'idle-hop',color:()=>PASSENGERS.lumi.color,at:{x:78,y:70},layer:4,track:false,imp:()=>true,
-  show:()=>{ const s=state.passengers.lumi; return !!(s&&!s.aboard&&s.left&&!done('reunion_lumi_'+state.journeyCount)); },act:()=>reunion('lumi')},
+ 
  {id:'out-f0-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[0]?{x:f.spots[0].x,y:f.spots[0].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(0),act:()=>forageTake(0)},
  {id:'out-f1-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[1]?{x:f.spots[1].x,y:f.spots[1].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(1),act:()=>forageTake(1)},
  {id:'out-f2-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
  {id:'out-f3-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[3]?{x:f.spots[3].x,y:f.spots[3].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(3),act:()=>forageTake(3)},
  {id:'out-comp-df',scene:'out:dawnForest',name:()=>state.companion?PASSENGERS[state.companion].name:'',shape:'npc',cls:'idle-stand',color:()=>state.companion?PASSENGERS[state.companion].color:'#fff',get sprite(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?p.image:null; },get sx(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?`;--sh:22%;--ar:${p.ar||'590/420'}`:''; },at:COMP_SLOT,layer:4,track:false,show:()=>!!state.companion,act:()=>compTalk()},
- {id:'out-mossbed',scene:'out:dawnForest',name:'古樹根部的苔蘚床',at:{x:30,y:56},layer:3,track:false,show:()=>state.companion==='lumi',imp:()=>!(state.places||[]).includes('lumi'),act:()=>placeVisit('lumi')},
+ 
  {id:'out-back-df',scene:'out:dawnForest',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'},
  {id:'out-crystal',scene:'out:starIslands',name:'漂浮晶體',at:{x:51,y:40},layer:2,act:'out:crystal',imp:()=>!state.collectibles.includes('crystal_echo')},
  {id:'out-spore',scene:'out:starIslands',name:'晶體縫隙',at:{x:25,y:60},layer:2,act:'out:spore',imp:()=>!state.collectibles.includes('seed_starspore')},
@@ -3477,6 +3656,7 @@ function hsState(h){
 }
 function hsBtn(h,pano){ const st=hsState(h), sh=h.shape||'obj', nm=esc(hsName(h)), sb=h.scene==='cab'?stepBadge(h.id):'';
  const attrs=`data-hs="${h.id}"${pano?` data-hid="${h.id}"`:''} style="${pano?'visibility:hidden':`left:${h.at.x}%;top:${h.at.y}%`}${h.sx||''}"`;
+ if(h.readout) return `<div class="hs readout" ${attrs}><span class="ro-k">空間座標</span><span class="ro-v">${nm}</span></div>`;
  if(sh==='npc'&&h.sprite) return `<button class="mote sprite st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}"><span class="spr"><img src="${h.sprite}" alt="" draggable="false"></span><span class="lb">${nm}</span></button>`;
  if(sh==='npc') return `<button class="mote st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}"><span class="orb" style="background:${h.color()}"></span><span class="lb">${nm}</span></button>`;
  return `<button class="hs st-${st} ${sh==='obj'?'':sh}" ${attrs} aria-label="${nm}${st==='locked'?'（尚未開啟）':''}">${sb}<span class="mk"></span><span class="lb">${nm}</span></button>`;
