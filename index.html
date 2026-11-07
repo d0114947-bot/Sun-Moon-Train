@@ -258,7 +258,7 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 月界導航裝置（併入古代星圖） ---------- */
 .ov.navov .panel{display:flex;flex-direction:column;width:min(1120px,100%);height:min(calc(100vh - 40px),820px);padding:16px 16px 12px}
-.nav-top{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:2px 40px 10px 0}
+.nav-top{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:2px 40px 10px 0}
 .nav-top>div{padding:6px 10px;border:1px solid rgba(232,201,131,.28);border-radius:6px;background:rgba(10,12,30,.5);min-width:0}
 .nav-top span{display:block;font-size:11px;letter-spacing:.16em;color:var(--mute)}
 .nav-top b{display:block;font-weight:500;font-family:var(--f-display);font-size:14px;line-height:1.45}
@@ -1178,6 +1178,33 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .zpot{position:absolute;width:3%;min-width:22px;transform:translate(-50%,-100%);pointer-events:none;z-index:2;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
 .zpot svg{display:block;width:100%}
 @media (max-width:700px){.gpods{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* 星座護佑（控制晶盤） */
+.bless{margin:6px auto 0;max-width:760px;text-align:center}
+.bless-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.bless-c{width:170px;background:rgba(255,255,255,.04);border:1px solid rgba(232,201,131,.25);border-radius:14px;padding:8px 8px 10px;color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bless-c svg{width:52px;height:52px}
+.bless-c b{font-family:var(--f-display);letter-spacing:.12em;color:#f3e2b4;font-size:14px}
+.bless-c small{font-size:11.5px;line-height:1.5;opacity:.85}
+.bless-c.on{border-color:#e8c983;box-shadow:0 0 0 2px rgba(232,201,131,.35),0 0 20px rgba(232,201,131,.25);background:rgba(232,201,131,.1)}
+.bless-c[disabled]{cursor:default}.bless-c[disabled]:not(.on){opacity:.45}
+.ov.discov .disc-ring{max-height:min(46vh,400px)}
+.ov.discov .panel{padding-top:20px}
+/* 星象預報 */
+.nav-fc{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(232,201,131,.35);color:#f3e2b4;font-size:13px;line-height:1.7}
+.nav-fc small{color:#cfd3f5}
+/* 乘客家鄉的星座 */
+.cs-home{margin-top:10px;text-align:center}
+.ov.csov .panel.has-home{width:min(960px,100%);display:grid;grid-template-columns:minmax(0,1fr) 250px;column-gap:18px;align-items:center}
+.has-home>.close,.has-home>.eyebrow,.has-home>h2{grid-column:1/-1}
+.has-home>.cs-disc{grid-column:1;width:min(500px,58vw)}
+.has-home>.cs-home{grid-column:2;margin-top:0}
+.has-home .cs-hrow{max-height:58vh;overflow:auto;padding:4px}
+@media (max-width:760px){.ov.csov .panel.has-home{grid-template-columns:1fr}.has-home>.cs-home{grid-column:1}}
+.cs-hrow{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.cs-hslot{width:112px;background:none;border:1px solid rgba(160,170,255,.25);border-radius:14px;padding:6px;color:inherit;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.cs-hslot svg{width:74px;height:74px}.cs-hslot span{font-family:var(--f-display);letter-spacing:.1em;color:#f3e2b4;font-size:13px}.cs-hslot small{font-size:11px;opacity:.75}
+.cs-hslot.got{border-color:rgba(232,201,131,.6)}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -2014,6 +2041,85 @@ function unlockSeed(id,next){ if(seedOpen(id)){ next&&next(); return; } const o=
  cine(['森羅溫室的方向，傳來很輕的一聲「喀」。','種子櫃裡的一枚古種，封印自己鬆開了。',`它叫作「${o.n}」。`],once1(()=>{ SFX.chime(); toast('古種解封：'+o.n); actCheck(); next&&next(); })); }
 
 
+
+/* ================================================================
+   星座護佑：星座盤上辨識出的星座，出發前可以在駕駛室的控制晶盤選一座護佑這一趟航行
+   ================================================================ */
+const BLESS={
+ deer:{t:'穿越界壁時，界染度只增加一半'},
+ wing:{t:'觀賞星象時，淨化的效果加倍'},
+ jelly:{t:'下一站，一定會有新的生命在等'},
+ train:{t:'這一趟，培育艙裡的植物不論光照都會長'}
+};
+const voyBless=()=>state.storyFlags.voyBless||null;
+function blessRow(voy){ const got=CONSTS.filter(c=>constDone(c.id)), cur=voy?voyBless():state.blessNext;
+ return `<div class="bless"><p class="jar-sub">星座護佑${voy?'・這一趟':''}</p>${got.length?`<div class="bless-row">${got.map(c=>`<button class="bless-c ${cur===c.id?'on':''}" data-bless="${c.id}" ${voy?'disabled':''}>${constRound(c,true)}<b>${c.name}</b><small>${BLESS[c.id].t}</small></button>`).join('')}</div>
+  <p class="hint1">${voy?(cur?`這一趟受到${CONSTS.find(c=>c.id===cur).name}的護佑。`:'這一趟沒有選擇星座護佑。'):'選一座星座，護佑下一趟航行（只維持一趟）。'}</p>`
+  :'<p class="hint1">在星月觀測車廂的星座盤連出星座，就能在這裡請星座護佑航行。</p>'}</div>`; }
+function blessBind(ov){ ov.querySelectorAll('[data-bless]').forEach(b=>b.onclick=()=>{ const id=b.dataset.bless; state.blessNext=state.blessNext===id?null:id; save(); SFX.tone(state.blessNext?988:520,0,.5,'sine',.03);
+ ov.querySelectorAll('[data-bless]').forEach(x=>x.classList.toggle('on',x.dataset.bless===state.blessNext));
+ const h=ov.querySelector('.bless .hint1'); if(h) h.textContent=state.blessNext?`下一趟航行，會受到${CONSTS.find(c=>c.id===state.blessNext).name}的護佑：${BLESS[state.blessNext].t}。`:'選一座星座，護佑下一趟航行（只維持一趟）。'; }); }
+
+/* 星象預報：導航裝置上，每條航線會遇到的星象 */
+const fcName=(voy,to)=>{ const k=voy?state.voyage.sky:(to?skyForecast(to):null); return k&&SKY[k.type]?SKY[k.type].name:'—'; };
+function fcWho(type){ const who=Object.keys(REQ).filter(id=>reqOn(id)&&REQ[id].kind==='sky'&&REQ[id].sky===type&&aboard(id)).map(id=>PASSENGERS[id].name);
+ const flw=(state.pods||[]).filter(c=>c&&c.st<2&&SKY_BLOOM[type].includes(c.p)).map(c=>PLANTS[c.p].name); return {who,flw}; }
+function fcHtml(id){ const t=skyForecast(id).type, {who,flw}=fcWho(t);
+ return `<div class="nav-fc">✦ 星象預報：${SKY[t].name}${who.length?`<br><small>${who.join('、')}在等這片天空</small>`:''}${flw.length?`<br><small>溫室的${[...new Set(flw)].join('、')}也在等</small>`:''}</div>`; }
+
+/* ================================================================
+   乘客家鄉的星座：在展望台和熟悉的乘客一起看天空時，牠會指出家鄉的星座；
+   連好之後，下次找牠說話會多一段故事
+   ================================================================ */
+const HOME_C={
+ felinia:{name:'風谷座',S:[[120,170],[170,140],[230,140],[280,170],[200,90],[140,80],[260,80]],E:[[0,1],[1,2],[2,3],[1,4],[2,4],[4,5],[4,6]],
+  point:'那幾顆星，像不像一隻張開翅膀的貓？在我的山谷，大家叫它「風谷座」。看到它升起來，就是可以滑翔的季節了。',
+  story:['你把風谷座連起來了？','……我第一次滑翔，就是朝著它飛的。飛得太遠，迷路了，是它帶我回家。','現在它也在這裡。……所以我不會迷路了。']},
+ leviathaurora:{name:'深淵燈座',S:[[80,150],[150,120],[230,120],[300,150],[230,180],[150,180],[330,100]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[3,6]],
+  point:'……那幾顆，看起來像我家的燈。深海裡，我們叫它「深淵燈座」。只有浮到水面的時候才看得到。',
+  story:['……你連好了。深淵燈座。','我們一生只浮上水面幾次。每一次，都是為了看它。','現在每天都看得到。……我好像，一直都在水面上了。']},
+ cinder:{name:'帆影座',S:[[200,50],[200,210],[120,190],[280,190],[150,100],[250,100]],E:[[0,1],[1,2],[1,3],[0,4],[0,5],[4,2],[5,3]],
+  point:'看到那幾顆星沒？三角形的，像一面帆。沙原上的旅人叫它「帆影座」，跟著它走，就能找到下一片綠洲。',
+  story:['帆影座！你真的連出來了。','長輩說，我的帆就是照著它的形狀長的。','以前覺得是騙小孩的。現在……我有點相信了。']},
+ aelis:{name:'長耳座',S:[[200,190],[160,145],[240,145],[120,55],[280,55],[145,100],[255,100]],E:[[0,1],[0,2],[1,5],[5,3],[2,6],[6,4]],
+  point:'那兩顆亮亮的，像不像一對大耳朵？我們叫它「長耳座」。暮色的時候它會先出來聽一聽，確定夜晚安全了，其他星星才出來。',
+  story:['長耳座……是你連的嗎？','奶奶說，長耳座會替我們聽遠方的聲音。','所以……她現在也在聽嗎？……嗯。我相信。']},
+ pyro:{name:'燼角座',S:[[200,210],[200,145],[150,110],[250,110],[110,50],[290,50],[200,80]],E:[[0,1],[1,2],[1,3],[2,4],[3,5],[1,6]],
+  point:'……那個。兩支角。我們火山的孩子，出生那天都要對著「燼角座」吼一聲。',
+  story:['燼角座。你連起來了。','我出生那天，吼得太小聲。大家都笑我。','……（燼角巨獸對著天空輕輕吼了一聲，很小，很溫柔。）']},
+ vandora:{name:'夜葉座',S:[[200,40],[150,100],[250,100],[140,170],[260,170],[200,220],[200,130]],E:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,5],[0,6],[6,5]],
+  point:'……那片葉子。不是真的葉子，是星星。我們叫它「夜葉座」。白天躲起來的，都在它底下睡覺。',
+  story:['……你把夜葉座連好了。','小時候，我不敢出來。媽媽說，夜葉座會幫我遮光。','……原來它一直在。在這麼遠的地方也在。']},
+ frost:{name:'霜脊座',S:[[60,170],[120,150],[180,140],[240,140],[300,150],[350,170],[150,100],[270,100]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,6],[3,7]],
+  point:'那一長排星，看到了嗎？像一道背脊。冰原上叫它「霜脊座」，是最早的那隻冰原獸，躺在天上睡著了。',
+  story:['霜脊座。……謝謝你把牠連起來。','傳說牠睡著之前說：「冷的地方，也可以很溫柔。」','……我一直想變成那樣。']},
+ sirenora:{name:'霧扇座',S:[[200,215],[100,95],[150,62],[200,50],[250,62],[300,95]],E:[[0,1],[0,2],[0,3],[0,4],[0,5],[1,2],[4,5]],
+  point:'霧散開的時候，能看到那把扇子。「霧扇座」。霧裡的族群，用它來數夜晚有多長。',
+  story:['霧扇座……你連起來了呢。','在霧裡，我們很少看得到星星。所以每次看到霧扇座，大家會一起唱歌。','……要聽嗎？（空氣裡響起很輕很輕的嗡鳴。）']},
+ titan:{name:'苔山座',S:[[60,210],[140,120],[200,60],[260,120],[340,210],[200,155]],E:[[0,1],[1,2],[2,3],[3,4],[1,5],[5,3]],
+  point:'……那座山。……星星的山。……「苔山座」。……我的家。',
+  story:['……苔山座。……你連的。','……我在那座山下，睡了很久。……醒來，山還在天上。','……謝謝。……很安心。']},
+ lynx:{name:'霜瞳座',S:[[100,130],[160,90],[240,90],[300,130],[240,170],[160,170],[200,130]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,0],[6,1],[6,4]],
+  point:'……那裡。一隻眼睛。「霜瞳座」。……牠一直看著冰原，所以我們不會走丟。',
+  story:['……霜瞳座。','我出生的那天，有極光，也有它。','……兩個都看到了。……夠了。']},
+ strider:{name:'旅角座',S:[[80,205],[140,175],[200,150],[260,130],[320,110],[250,70],[330,50]],E:[[0,1],[1,2],[2,3],[3,4],[3,5],[4,6]],
+  point:'那條彎彎的線，像一支角，也像一條路。我們叫它「旅角座」，所有出發的旅人，都會先找到它。',
+  story:['旅角座！你連好了。','我第一次出發的時候，也是先找它。後來就一直走，一直走。','原來它一路都跟著我。……下一次出發，我會記得跟它打招呼。']},
+ sola:{name:'回家座',S:[[120,195],[200,205],[280,195],[200,150],[200,75],[165,110],[235,110]],E:[[0,1],[1,2],[1,3],[3,4],[4,5],[4,6]],
+  point:'看到了嗎？那顆星底下，有一座小島！我叫它「回家座」。……是我自己取的名字。',
+  story:['回家座！你幫我連起來了！','我每天晚上都在找它。只要看得到它，我就知道我的島還在。','……所以，我一定找得到回家的路。對吧？']}
+};
+const homeC=pid=>{ const H=HOME_C[pid]; return H&&{id:'h_'+pid,pid,name:H.name,S:H.S,E:H.E,lore:`${PASSENGERS[pid].name}指給你看的家鄉星座。${H.point}`}; };
+const homeList=()=>(state.homeConsts||[]).map(homeC).filter(Boolean);
+const constById=id=>CONSTS.find(c=>c.id===id)||(id.startsWith('h_')?homeC(id.slice(2)):null);
+function homePoint(id,next){ const p=PASSENGERS[id], s=state.passengers[id], H=HOME_C[id];
+ dialogue(id,[`（${p.name}忽然抬起頭，指著天空的一角。）`,H.point,'……你也看得到嗎？'],[{t:'看得到。我記下來了。',r:'嗯！'}],()=>{
+  state.homeConsts=state.homeConsts||[]; if(!state.homeConsts.includes(id)) state.homeConsts.push(id); s.deckSeen=1;
+  s.records.push({j:state.journeyCount,t:`在展望台指給你看家鄉的星座：${H.name}。`}); logJ(`${p.name}指給你看家鄉的星座：${H.name}。`,'life'); save();
+  toast(`星座盤多了一個星座：${H.name}`); render(); next&&next(); }); }
+function homeStory(id,next){ const s=state.passengers[id], H=HOME_C[id];
+ dialogue(id,H.story,null,()=>{ s.homeTold=1; TAINT.add(-2); s.records.push({j:state.journeyCount,t:`聊起了家鄉的${H.name}。`}); logJ(`和${PASSENGERS[id].name}聊起了家鄉的${H.name}。`,'life'); save(); render(); next&&next(); }); }
+
 /* ================================================================
    乘客的請求：關係到「熟悉」之後，乘客會拜託你一件事
    kind: sky 在展望台一起看某種天象｜loc 帶牠到某個地點｜out 停靠某地時帶牠一起下車
@@ -2494,7 +2600,7 @@ const sensesHTML=id=>SENSES[id]?`<span class="senses">${SENSES[id].map((t,k)=>`<
 const VOYAGE_MS=150000; let RUNNING=false;
 function startDeparture(){
  const dest=nextStop(), from=state.currentLocation, fromName=LOCATIONS[from].name;
- state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); state.storyFlags.departTaint=TAINT.val(); TAINT.add(TAINT_GAIN[realmKey(dest)].cross); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
+ state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); state.storyFlags.departTaint=TAINT.val(); state.storyFlags.voyBless=state.blessNext||null; state.blessNext=null; TAINT.add(voyBless()==='deer'?Math.round(TAINT_GAIN[realmKey(dest)].cross/2):TAINT_GAIN[realmKey(dest)].cross); if(voyBless()) setTimeout(()=>toast(`✦ 這一趟受到${CONSTS.find(c=>c.id===voyBless()).name}的護佑`),1800); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
  cine(['領頭曦淵展開雙翼，前方的星光號誌化作一道長長的光軌。列車自行啟動了。',`列車離開${fromName}。`,'車輪下的軌道一節一節亮起，延伸進沒有地面的地方。','日與月的界線，在窗外緩緩翻轉。'],
   ()=>{ SFX.startDrone(); render(); tipOnce('t_voy','列車自動航行中・可在車廂間自由走動'); },'assets/voyage.jpg');
 }
@@ -2676,7 +2782,7 @@ function rollBoarders(){ if(state.currentLocation==='origin') return [];
  const waiting=state.boardQ||[], pool=Object.keys(PASSENGERS).filter(id=>EVENTS['board_'+id]&&!done('board_'+id)&&!state.discoveredLifeforms.includes(id)&&!waiting.includes('board_'+id));
  const room=6-Object.keys(PASSENGERS).filter(aboard).length-waiting.length; if(!pool.length||room<=0) return [];
  const seen=state.scopeSeen||[];
- const r=Math.random(), n=Math.min(room,state.visitedLocations.length<=1&&!state.discoveredLifeforms.length?1:r<.3?0:r<.8?1:2), out=[];
+ const r=Math.random(), n=Math.min(room,Math.max(voyBless()==='jelly'?1:0,state.visitedLocations.length<=1&&!state.discoveredLifeforms.length?1:r<.3?0:r<.8?1:2)), out=[];
  for(let k=0;k<n&&pool.length;k++){ const w=pool.map(id=>(PASSENGERS[id].home===state.currentLocation?3:1)*(seen.includes(id)?4:1)), tot=w.reduce((a,b)=>a+b,0); let x=Math.random()*tot, at=0;
   while(x>w[at]){ x-=w[at]; at++; } out.push('board_'+pool.splice(Math.min(at,pool.length-1),1)[0]); }
  return out; }
@@ -2714,6 +2820,7 @@ function boarding(id,line,next){
 function talk(id,next){
  const p=PASSENGERS[id], s=state.passengers[id];
  if(REQ[id]&&!reqOf(id)&&s.talks>=2&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') return reqAsk(id,next);
+ if(HOME_C[id]&&constDone('h_'+id)&&!s.homeTold) return homeStory(id,next);
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
  /* 最後、最深的那段故事：要先把牠的棲息環境調到舒適 */
@@ -3110,6 +3217,7 @@ function compAuto(){ clearTimeout(COMPT); if(state.currentPhase!=='outside'||!st
   state.storyFlags[key]=1; save(); compTalk(); },7000); }
 
 function deckTalk(id){ const p=PASSENGERS[id], s=state.passengers[id], voy=state.currentPhase==='voyage', first=!(s.deckSeen);
+ if(HOME_C[id]&&s.stage>=2&&!(state.homeConsts||[]).includes(id)) return homePoint(id);
  dialogue(id,[`（${p.name}倚在展望台的欄杆邊，看著${voy?'列車後方流走的星光':LOCATIONS[state.currentLocation].name+'的天空'}。）`,DECK_LINE[id][voy?0:1]],
   [{t:'再一起看一會兒吧。',r:'嗯。'},{t:'要回棲息車廂休息嗎？',r:'好。我先回去了。',go:1}],c=>{
    if(first){ s.deckSeen=1; s.records.push({j:state.journeyCount,t:'在展望台和你一起看了天空。'}); logJ(`和${p.name}在展望台一起看了天空。`,'life'); }
@@ -3165,7 +3273,7 @@ function skyWatch(){ const k=skyNow(); if(!k) return toast('現在的天空很�
  const S=SKY[k.type], here=deckList(), first=!(state.skySeen||[]).includes(k.type), was=k.watched;
  const script=[['self',`${S.name}……${S.desc}`]].concat(here.map(id=>[id,(SKY_LINE[k.type]||{})[id]||`（${PASSENGERS[id].name}抬頭看著天空，看得出神了。）`]));
  if(!was) script.push(['self',`星光落在身上，好輕。${first?'這一幕，會凝結成回憶水晶吧。':''}`]);
- if(!was){ k.watched=true; TAINT.add(-5); if(k.type==='aurora') addClue('clue_wall'); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
+ if(!was){ k.watched=true; TAINT.add(voyBless()==='wing'?-10:-5); if(k.type==='aurora') addClue('clue_wall'); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
   state.skyLog=state.skyLog||[]; state.skyLog.push({k:'sky',type:k.type,j:state.journeyCount+1,with:here.slice()});
   logJ(`在展望台觀賞了${S.name}${here.length?`，和${here.map(id=>PASSENGERS[id].name).join('、')}一起`:''}。`,'find');
   here.forEach(id=>state.passengers[id].records.push({j:state.journeyCount+1,t:`在展望台一起看了${S.name}。`})); save(); SFX.chime(); }
@@ -3185,13 +3293,14 @@ function constPanel(sel){ const sky=skyHere(), ov=panel('','stage csov'), pn=ov.
  const POS=[[50,17],[83,50],[50,83],[17,50]];
  const list=()=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂</div><h2>星座盤</h2>
   <div class="cs-disc">${CONSTS.map((c,k)=>{ const ok=constDone(c.id), can=c.sky===sky; return `<button class="cs-slot ${ok?'got':''}" data-cs="${c.id}" style="left:${POS[k%4][0]}%;top:${POS[k%4][1]}%" ${!can&&!ok?'disabled':''}>${constRound(c,ok)}<span>${ok||can?c.name:'？？？'}</span><small>${ok?'已辨識':can?'可以連線':`${c.sky==='sun'?'日界':'月界'}的天空`}</small></button>`; }).join('')}
-   <div class="cs-hub">${sky==='sun'?'日界':'月界'}的天空<br>${(state.consts||[]).length} / ${CONSTS.length}</div></div>
+   <div class="cs-hub">${sky==='sun'?'日界':'月界'}的天空<br>${CONSTS.filter(c=>constDone(c.id)).length} / ${CONSTS.length}</div></div>
+  ${homeList().length?`<div class="cs-home"><p class="jar-sub">乘客指給你看的星座</p><div class="cs-hrow">${homeList().map(c=>`<button class="cs-hslot ${constDone(c.id)?'got':''}" data-cs="${c.id}">${constRound(c,constDone(c.id))}<span>${c.name}</span><small>${PASSENGERS[c.pid].name}${constDone(c.id)?'・已連好':''}</small></button>`).join('')}</div></div>`:''}
   ${meSay(`盤面映著${state.currentPhase==='voyage'?'航道上方':LOCATIONS[state.currentLocation].name+'上方'}的星空。選一個星座，把星點連起來吧。`)}`;
-  pn.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>trace(CONSTS.find(c=>c.id===b.dataset.cs))); };
- const doneView=c=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>✦ ${c.name}</h2><div class="cs-board done">${constRound(c,true)}</div>${meSay(c.lore)}${c.clue&&state.clues.includes(c.clue)?meSay('這個星座的形狀……和列車車身的圓環刻紋一模一樣。'):''}<button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; };
+  pn.classList.toggle('has-home',homeList().length>0); pn.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>trace(constById(b.dataset.cs))); };
+ const doneView=c=>{ pn.classList.remove('has-home'); pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤</div><h2>✦ ${c.name}</h2><div class="cs-board done">${constRound(c,true)}</div>${meSay(c.lore)}${c.clue&&state.clues.includes(c.clue)?meSay('這個星座的形狀……和列車車身的圓環刻紋一模一樣。'):''}${BLESS[c.id]?meSay(`出發前，可以在駕駛室的控制晶盤請${c.name}護佑航行：${BLESS[c.id].t}。`):c.pid&&!state.passengers[c.pid].homeTold?meSay(`去跟${PASSENGERS[c.pid].name}說說吧。`):''}<button class="plink" id="csb">‹ 返回星座盤</button>`; pn.querySelector('#csb').onclick=list; };
  const trace=c=>{ if(constDone(c.id)) return doneView(c);
   let pick=null; const got=new Set();
-  const draw=msg=>{ pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤・連線</div><h2>${c.name}</h2><p id="csm">${msg||`沿著淡淡的星軌，把星點兩兩連起來。（${got.size} / ${c.E.length}）`}</p>
+  const draw=msg=>{ pn.classList.remove('has-home'); pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星座盤・連線</div><h2>${c.name}</h2><p id="csm">${msg||`沿著淡淡的星軌，把星點兩兩連起來。（${got.size} / ${c.E.length}）`}</p>
    <div class="cs-board">${constRound(c,false,true,pick,got)}</div><button class="plink" id="csb">‹ 返回星座盤</button>`;
    pn.querySelector('#csb').onclick=list;
    const link=i=>{ if(pick===null){ pick=i; SFX.tap(); return draw(); } if(pick===i) return;
@@ -3199,7 +3308,7 @@ function constPanel(sel){ const sky=skyHere(), ov=panel('','stage csov'), pn=ov.
     if(e<0){ SFX.tone(330,0,.25,'sine',.02); pick=i; return draw('這兩顆星之間沒有星軌。從這顆星重新連看看。'); }
     if(!got.has(e)){ got.add(e); SFX.tone(880+got.size*60,0,.4,'sine',.03); }
     pick=i;   /* 接著從這顆星繼續連 */
-    if(got.size===c.E.length){ state.consts=state.consts||[]; state.consts.push(c.id); state.skyLog=state.skyLog||[]; state.skyLog.push({k:'const',id:c.id,j:state.journeyCount+(state.currentPhase==='voyage'?1:0)}); logJ(`在星座盤上辨識出了${c.name}。`,'find'); if(c.clue) addClue(c.clue); save(); SFX.chime(); toast(`✦ 辨識出星座：${c.name}`);
+    if(got.size===c.E.length){ state.consts=state.consts||[]; state.consts.push(c.id); state.skyLog=state.skyLog||[]; state.skyLog.push({k:'const',id:c.id,j:state.journeyCount+(state.currentPhase==='voyage'?1:0)}); logJ(`在星座盤上辨識出了${c.name}。`,'find'); if(c.clue) addClue(c.clue); save(); SFX.chime(); toast(c.pid?`✦ 連好了${c.name}・去跟${PASSENGERS[c.pid].name}說說吧`:`✦ 辨識出星座：${c.name}`);
      pick=null; draw('連起來了！'); const sv=pn.querySelector('.cs-round'); sv.classList.add('lit'); setTimeout(()=>{ if(pn.isConnected) doneView(c); },1500); return; }
     draw(); };
    /* 按住拖曳：滑過的星點會一顆接一顆連起來 */
@@ -3208,7 +3317,7 @@ function constPanel(sel){ const sky=skyHere(), ov=panel('','stage csov'), pn=ov.
    const mvh=e=>{ if(!down) return; const el=document.elementFromPoint(e.clientX,e.clientY), g=el&&el.closest&&el.closest('[data-st]'); if(g&&+g.dataset.st!==pick) link(+g.dataset.st); };
    window.addEventListener('pointermove',mvh); const upf=()=>{ down=false; window.removeEventListener('pointermove',mvh); window.removeEventListener('pointerup',upf); }; window.addEventListener('pointerup',upf); };
   draw(); };
- if(sel) trace(CONSTS.find(c=>c.id===sel)); else list(); }
+ if(sel) trace(constById(sel)); else list(); }
 function constRound(c,lit,game,pick,got){ return `<svg class="${game?'cs-round':''}" viewBox="0 -70 400 400" aria-hidden="${game?'false':'true'}"><defs><radialGradient id="csg-${c.id}"><stop offset="0" stop-color="#1d2154"/><stop offset="1" stop-color="#0b0c26"/></radialGradient></defs><circle cx="200" cy="130" r="198" fill="url(#csg-${c.id})"/>${stars(36,c.id.length*7,30,-40,340,340)}
   ${game?c.E.map(([a,b],i)=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="${got.has(i)?'#ffe9a8':'#8a86c8'}" stroke-width="${got.has(i)?3:1.2}" ${got.has(i)?'':'stroke-dasharray="3 6" opacity=".55"'}/>`).join(''):lit?c.E.map(([a,b])=>`<line x1="${c.S[a][0]}" y1="${c.S[a][1]}" x2="${c.S[b][0]}" y2="${c.S[b][1]}" stroke="#ffe9a8" stroke-width="3"/>`).join(''):''}
   ${c.S.map(([x,y],i)=>game?`<g class="cs-star ${pick===i?'on':''}" data-st="${i}"><circle cx="${x}" cy="${y}" r="18" fill="transparent"/><circle cx="${x}" cy="${y}" r="${pick===i?8:6}" fill="${pick===i?'#fff3c4':'#fff'}"/></g>`:`<circle cx="${x}" cy="${y}" r="7" fill="#fff"/>`).join('')}</svg>`; }
@@ -3525,7 +3634,7 @@ function gardenSync(){ state.pods=state.pods||[null,null,null,null]; while(state
  state.seedGot=state.seedGot||[];
  Object.entries(PLANTS).forEach(([p,P])=>{ if(P.rare&&state.collectibles.includes('seed_'+p)&&!state.seedGot.includes(p)){ state.seedGot.push(p); state.seedBag=state.seedBag||{}; state.seedBag[p]=(state.seedBag[p]||0)+1; } }); }
 /* 航行一趟：照對光、或停靠時陪過它，就長一段 */
-function gardenGrow(){ (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; const P=PLANTS[c.p]; if(lightOk(c)||c.tk) c.st=P.rare?c.st+1:2; c.tk=null; }); }
+function gardenGrow(){ (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; const P=PLANTS[c.p]; if(lightOk(c)||c.tk||voyBless()==='train') c.st=P.rare?c.st+1:2; c.tk=null; }); }
 function podLightNote(){ const L=(state.pods||[]).map((c,k)=>c&&c.st<2?`${POD_N[k]}艙・${PLANTS[c.p].name}（${PLANTS[c.p].light==='any'?'什麼光都可以':'喜歡'+LIGHT_N[PLANTS[c.p].light]} ${lightOk(c)?'✓':'✗'}）`:null).filter(Boolean);
  return L.length?`<p class="envkv">${L.join('　')}</p>`:''; }
 
@@ -3809,7 +3918,7 @@ function navPanel(){ const ov=panel('','navov'), pn=ov.querySelector('.panel'); 
   const pts=['origin',...LOC_ORDER].map(id=>{ const [x,y]=MAPPOS[id], st=locStatus(id), N=LOCATIONS[id];
    if(st==='fog') return `<g class="st fog ${sel===id?'sel':''}" data-st="${id}"><circle cx="${x}" cy="${y}" r="22" fill="#9a8cff" opacity=".35" filter="url(#nvfog)"/><circle cx="${x}" cy="${y}" r="30" fill="transparent"/></g>`;
    return `<g class="st ${st} ${sel===id?'sel':''}" data-st="${id}"><circle class="ring" cx="${x}" cy="${y}" r="17" fill="none" stroke="${id===to?'#e8c983':'transparent'}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="${st==='seen'?26:16}" fill="url(#nvglow)" opacity="${st==='seen'?.9:.45}"/><circle cx="${x}" cy="${y}" r="${st==='seen'?7:4.5}" fill="${st==='seen'?'#fff6d8':'#bfc6ff'}"/><circle cx="${x}" cy="${y}" r="30" fill="transparent"/><text x="${x}" y="${y+38}" text-anchor="middle" font-size="17" fill="${st==='seen'?'#f3ead2':'#a9add0'}" font-family="Noto Serif TC,serif" letter-spacing="2">${N.name}</text></g>`; }).join('');
-  const info=[['今日車次',trainNo()],[voy?'目的地':'預定停靠',`${L.name}`],['航行速限',ri.speed||'—'],['注意命令',ri.order||'無'],['界域警告',ri.warn||'無']];
+  const info=[['今日車次',trainNo()],[voy?'目的地':'預定停靠',`${L.name}`],['航行速限',ri.speed||'—'],['注意命令',ri.order||'無'],['星象預報',fcName(voy,to)],['界域警告',ri.warn||'無']];
   pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂・月界導航裝置</div><div class="nav-top">${info.map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join('')}</div>
   <div class="nav-map"><svg viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" role="img" aria-label="星圖"><defs><radialGradient id="nvglow"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset="1" stop-color="#e8c983" stop-opacity="0"/></radialGradient><filter id="nvfog" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="8"/></filter></defs>
    <rect width="1000" height="620" fill="#0b0d26"/>${stars(170,77,0,0,1000,620)}
@@ -3823,6 +3932,7 @@ function navPanel(){ const ov=panel('','navov'), pn=ov.querySelector('.panel'); 
  const tip=id=>{ const voy=state.currentPhase==='voyage', st=locStatus(id), N=LOCATIONS[id], cur=voy?null:state.currentLocation, to=voy?state.voyage.to:nextStop(), box=pn.querySelector('#smi'), map=pn.querySelector('.nav-map');
   const can=!voy&&!state.duty.reported&&routeOk(id)&&id!==to;
   box.innerHTML=st==='fog'?'<b>訊號微弱</b><br>'+unlockInfo(id):`<b>${N.name}</b><br><span style="color:var(--mute)">${N.realm}・${N.domain}・座標 ${N.coord}</span><br>${st==='seen'?N.desc:revealed(id)&&!N.ready?'座標已解讀，但通往這裡的航道還沒有開通。':'尚未抵達。導航裝置已能鎖定它的訊號。'}${id===cur?'<br><span style="color:var(--gold)">列車目前停靠於此。</span>':''}${id===to?`<br><span style="color:var(--gold)">${voy?'航行目的地':'下一站'}</span>`:''}${can?`<br><button class="btn" data-route="${id}">設為下一站</button>`:''}`;
+  if(!voy&&st!=='fog'&&id!==cur&&routeOk(id)) box.insertAdjacentHTML('beforeend',fcHtml(id));
   const g=pn.querySelector(`[data-st="${id}"] circle`), r=g.getBoundingClientRect(), m=map.getBoundingClientRect(), x=r.left+r.width/2-m.left, y=r.top+r.height/2-m.top;
   box.classList.add('on'); const bw=box.offsetWidth, bh=box.offsetHeight; box.style.left=Math.max(8,Math.min(m.width-bw-8,x+(x>m.width/2?-bw-24:24)))+'px'; box.style.top=Math.max(8,Math.min(m.height-bh-8,y-bh/2))+'px';
   const b=box.querySelector('[data-route]'); if(b) b.onclick=e=>{ e.stopPropagation(); setRoute(id); draw(); tip(id); }; box.onclick=e=>e.stopPropagation(); };
@@ -4054,7 +4164,7 @@ function discPanel(){ const voy=state.currentPhase==='voyage', d=state.duty, c=s
  const P=(r,a)=>`${(200+r*Math.cos(a)).toFixed(1)} ${(200+r*Math.sin(a)).toFixed(1)}`;
  const arc=i=>{ const a0=i/6*2*Math.PI-Math.PI/2+.04, a1=(i+1)/6*2*Math.PI-Math.PI/2-.04; return `M${P(150,a0)} A150 150 0 0 1 ${P(150,a1)} L${P(136,a1)} A136 136 0 0 0 ${P(136,a0)} Z`; };
  const status=[trainNo(), voy?`自動航行中 ${Math.round(state.voyage.progress*100)}%`:`停靠於${LOCATIONS[state.currentLocation].name}`, `${voy?'目的地':'下一站'} ${LOCATIONS[to].name}`,
-  `速限 ${(ROUTE_INFO[to]||{}).speed||'—'}`, `號誌 ${{red:'紅光',amber:'琥珀光',green:'綠光'}[sig]}`, `車門 ${voy||doorsLit()?'全數關妥':'尚未關妥'}`,
+  `速限 ${(ROUTE_INFO[to]||{}).speed||'—'}`, `星象 ${fcName(voy,to)}`, `號誌 ${{red:'紅光',amber:'琥珀光',green:'綠光'}[sig]}`, `車門 ${voy||doorsLit()?'全數關妥':'尚未關妥'}`,
   `界染度 ${c?c.value+'（'+c.level+'）':'未量測'}`, `乘車生命 ${Object.keys(PASSENGERS).filter(aboard).length}`, '各車廂 正常'];
  const top=status.slice(0,4).join('　✦　'), bot=status.slice(4).join('　✦　');
  const svg=`<svg class="disc-ring" viewBox="0 0 400 400" role="img" aria-label="控制晶盤：${segs.map(([n,o])=>n+(o?'完成':'未完成')).join('、')}">
@@ -4065,7 +4175,7 @@ function discPanel(){ const voy=state.currentPhase==='voyage', d=state.duty, c=s
   ${segs.map(([n,o],i)=>{ const a=(i+.5)/6*2*Math.PI-Math.PI/2; return `<path d="${arc(i)}" fill="${o?'rgba(232,201,131,.9)':'rgba(140,140,200,.25)'}"/><text x="${(200+122*Math.cos(a)).toFixed(1)}" y="${(204+122*Math.sin(a)).toFixed(1)}" text-anchor="middle" font-size="12" fill="${o?'#f3dca0':'#9ea3d0'}" font-family="Noto Serif TC,serif">${n}</text>`; }).join('')}
   <text font-size="13.5" fill="#efe3c2" letter-spacing="1" font-family="Noto Serif TC,serif"><textPath href="#dsc-top" startOffset="50%" text-anchor="middle">${top}</textPath></text><text font-size="13.5" fill="#efe3c2" letter-spacing="1" font-family="Noto Serif TC,serif" dominant-baseline="hanging"><textPath href="#dsc-bot" startOffset="50%" text-anchor="middle">${bot}</textPath></text>
  </svg>`;
- panel(`<div class="eyebrow">火車頭駕駛室</div><h2>控制晶盤</h2>${svg}`,'stage'); }
+ const ov=panel(`<div class="eyebrow">火車頭駕駛室</div><h2>控制晶盤</h2>${svg}${blessRow(voy)}`,'stage discov'); blessBind(ov); }
 
 /* ================================================================
    浮空典藏書：世界觀・界域地誌・生命圖鑑（羊皮紙博物誌樣式）
