@@ -1801,6 +1801,10 @@ const CLUE_ORDER = Object.keys(CLUES);
 
 /* 事件：trigger 決定何時檢查；auto=true 立即演出；否則進入待處理入口（最多顯示兩個） */
 const EVENTS = {
+ seed_a:{trigger:'arrive',loc:'reverseRealm',need:()=>!seedOpen('seed_ancient_a'),run:n=>unlockSeed('seed_ancient_a',n)},
+ seed_b:{trigger:'arrive',loc:'boundlessCorridor',need:()=>!seedOpen('seed_ancient_b'),run:n=>unlockSeed('seed_ancient_b',n)},
+ seed_c:{trigger:'arrive',loc:'timeriftSea',need:()=>!seedOpen('seed_ancient_c'),run:n=>unlockSeed('seed_ancient_c',n)},
+ finale:{trigger:'arrive',loc:'silentVoid',run:n=>playFinale(n)},
  
  board_felinia:{trigger:'arrive',need:()=>!state.discoveredLifeforms.includes('felinia'),run:n=>boarding('felinia','列車停靠的時候，月台上颳起一陣橫風。一道帶著虹彩的影子貼著車窗滑過，無聲地鑽進了棲息車廂。',n)},
  board_leviathaurora:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('leviathaurora'),run:n=>boarding('leviathaurora','列車停靠的時候，棲息車廂的靈泉忽然暗了下去。一道幽藍的光，從看不見底的水中慢慢浮了上來。',n)},
@@ -1878,6 +1882,77 @@ function save(){ try{ state.savedAt=Date.now(); localStorage.setItem(SAVE_KEY,JS
 
 const aboard = id => !!(state.passengers[id]&&state.passengers[id].aboard);
 const done = id => state.completedEvents.includes(id);
+
+/* ================================================================
+   主線後半與結局：乘客紀念品、古種解封、地點依幕開放、結局判定
+   ================================================================ */
+/* 乘客下車時留下的紀念品（終章時放在渡口樹旁） */
+const KEEPS={
+ felinia:['浮羽','#ffd6ec','一根虹彩尾羽。放開手，它不會掉下去，會在半空中慢慢轉圈。'],
+ leviathaurora:['淵光鱗','#7fd6ff','一枚幽藍的鱗片。放進水裡，水面會映出一小片極光。'],
+ cinder:['帆影琥珀','#f2b866','從帆緣剝落的一片琥珀色薄膜。對著光看，裡面有風吹過的紋路。'],
+ aelis:['暮色吊墜','#c9e39a','刻著藤蔓的葉形吊墜。靠近耳邊，能聽見很遠的風在唱歌。'],
+ pyro:['溫燼石','#ff8a5c','巨角上掉下來的一小塊燼石。過了很多天，摸起來還是溫的。'],
+ vandora:['翠晶甲片','#5fd3a0','一片翡翠色的晶甲，在暗處會泛出彩虹般的光。'],
+ frost:['不融的霜晶','#cfeaff','一塊冰晶。放在手心不會融化，只會讓手心涼涼的。'],
+ sirenora:['瓶中霧','#f0d6ff','一只小瓶子，裡面裝著一縷粉白色的霧。霧一直在輕輕擺盪。'],
+ titan:['苔石','#8fbf72','一顆長滿苔蘚的小石頭。上面的小蟲，好像也決定留下來。'],
+ lynx:['冰晶鬚','#e6f4ff','一根細細的冰晶鬍鬚。它掉下來的時候，一點聲音都沒有。'],
+ strider:['風角尖','#c8b49a','換角時留下的一節角尖。對著它吹氣，會發出很輕的笛聲。'],
+ sola:['一滴星潮','#9fb8ff','一滴裝在晶殼裡的星河潮水，會跟著星河一漲一落。']
+};
+Object.entries(KEEPS).forEach(([p,[n,c,d]])=>{ COLLECTIBLES['keep_'+p]={name:n,kind:'keep',icon:c,desc:d,from:p}; });
+const keepsHave=()=>Object.keys(KEEPS).filter(p=>state.collectibles.includes('keep_'+p));
+function keepSync(){ Object.keys(KEEPS).forEach(p=>{ const s=state.passengers[p]; if(s&&s.left&&!state.collectibles.includes('keep_'+p)) addItem('keep_'+p,true); }); }
+
+/* 三枚古種：在逆生之境、無界迴廊、時隙之海各解開一枚 */
+const SEED_OPEN={
+ seed_ancient_a:{n:'晨種',loc:'reverseRealm',d:'封印解開了。種皮裡透出一點晨光，摸起來暖暖的，像剛被太陽照過。'},
+ seed_ancient_b:{n:'潮種',loc:'boundlessCorridor',d:'封印解開了。拿近耳邊，能聽見很遠的潮聲，一下一下，像在呼吸。'},
+ seed_ancient_c:{n:'暮種',loc:'timeriftSea',d:'封印解開了。它是三枚裡最暗的一枚，卻一直亮著，像傍晚最後的那一刻。'}
+};
+const seedOpen=id=>(state.seedOpen||[]).includes(id);
+Object.entries(SEED_OPEN).forEach(([id,o])=>{ const c=COLLECTIBLES[id], n0=c.name, d0=c.desc; delete c.sealed;
+ Object.defineProperties(c,{sealed:{get:()=>!seedOpen(id),enumerable:true},name:{get:()=>seedOpen(id)?'古種・'+o.n:n0,enumerable:true},desc:{get:()=>seedOpen(id)?o.d:d0,enumerable:true}}); });
+const once1=f=>{ let d=0; return (...a)=>{ if(!d){ d=1; f(...a); } }; };
+function unlockSeed(id,next){ if(seedOpen(id)){ next&&next(); return; } const o=SEED_OPEN[id];
+ state.seedOpen=(state.seedOpen||[]).concat(id); logJ(`森羅溫室種子櫃裡的一枚古種解開了封印：${o.n}。`); save();
+ cine(['森羅溫室的方向，傳來很輕的一聲「喀」。','種子櫃裡的一枚古種，封印自己鬆開了。',`它叫作「${o.n}」。`],once1(()=>{ SFX.chime(); toast('古種解封：'+o.n); actCheck(); next&&next(); })); }
+
+/* 地點一幕一幕開放（地點的場景做好、ready 之後才會真的打開） */
+const ACTS=[
+ {locs:['reverseRealm','boundlessCorridor'],need:()=>state.clues.includes('clue_dragon'),say:'航行符號亮了一個，沒有熄滅。日月儀上，同時浮現了兩個新的座標。'},
+ {locs:['timeriftSea'],need:()=>seedOpen('seed_ancient_a')&&seedOpen('seed_ancient_b'),say:'航行符號又亮了一個。日月儀上，多了一片會起伏的海。'},
+ {locs:['silentVoid'],need:()=>seedOpen('seed_ancient_c'),say:'七個符號亮了六個。最後一個，指向一片什麼都沒有的地方。'}
+];
+function actCheck(){ ACTS.forEach(a=>{ if(!a.need()) return; const nw=a.locs.filter(l=>LOCATIONS[l].ready&&!state.unlockedLocations.includes(l)); if(!nw.length) return; state.unlockedLocations.push(...nw); save(); announce(a.say); }); }
+
+/* 結局判定：界染度＋紀念品數量 */
+const END_KEEPS=8;
+function endingType(){ const t=TAINT.val(), k=keepsHave().length; return t>=70?'night':(t<30&&k>=END_KEEPS?'dawn':'return'); }
+const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩車尾的星光，照亮一小圈。','漂浮的碎片從光圈邊緣經過。每一片，都是一個世界最後的那一刻。','你沒有去修好它們。你只是看著。碎片就一片一片安靜下來。',
+ '空白的正中央，有一點很小、很暗的光。它在等。','那是一隻像霧面玻璃做成的小生命。它身體裡的那點光，和你身上的一模一樣。','它帶著你穿過碎片，走到空白的邊緣。',
+ '那裡站著一排身影，手按在看不見的牆上。','是渡守。他們還活著。','「你來了。」','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
+const ENDINGS={
+ dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。他們已經替你放了。','樹亮了。界壁穩住了。渡守一個一個放下了手。','空白裡，長出了一片新的晨曦森林。','渡守和遺曦登上列車。車廂第一次像從前那樣熱鬧。','「這次，換你當渡守了。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
+ return:{title:'歸光',lines:['你知道還差的是什麼。','你身上的那道晨曦，是渡守留下的最後一道光。現在，你把它還回去。','樹亮了。界壁穩住了。渡守一個一個放下了手。','你覺得自己變得很輕，很亮。','渡守們登上列車，替你把它開了回去。','……很久很久以後，在一列沉睡的列車裡，','有一點光，落在一個新的值勤精靈身上。']},
+ night:{title:'長夜',lines:['可是光不夠。','樹亮了一下，又暗了下去。渡守的手，還按在牆上。','一道熟悉的龍影從黑暗裡衝過來，把列車拉回了界壁外。','「還不是時候。」曦淵說。「先去把身上的重量放下吧。」']}
+};
+function playFinale(next){
+ /* 還在車上的乘客，也在這時放下自己的紀念品 */
+ Object.keys(KEEPS).forEach(p=>{ const s=state.passengers[p]; if(s&&s.aboard&&s.stage>=2) addItem('keep_'+p,true); });
+ const type=endingType(), E=ENDINGS[type]; save();
+ cine(FINALE,once1(()=>cine(E.lines,once1(()=>{
+  if(type==='night'){ state.storyFlags.finaleTried=(state.storyFlags.finaleTried||0)+1; logJ('在寂滅虛空裡，光還不夠。曦淵把列車拉了回來。'); save(); render(); next&&next(); return; }
+  state.ending=type; complete('finale'); logJ(`旅程的終點：${E.title}。`); save();
+  cine([`<span class="big">結局・${E.title}</span><span class="sub">${type==='dawn'?'列車會繼續航行':'一點光，落在新的旅程上'}</span>`],once1(()=>{
+   if(type==='dawn'){ render(); next&&next(); return; }
+   const ov=panel(`<div class="eyebrow">旅程的終點</div><h2>歸光</h2>${meSay('……很久很久以後，有一點光，落在一列沉睡的列車裡。')}<div class="row" style="margin-top:14px"><button class="btn" id="ngp">再一次醒來</button></div>`,'small');
+   ov.querySelector('#ngp').onclick=()=>newGamePlus(); }),null,true); }))));
+}
+/* 二周目：從開場重來，開場文字不變，之後多一張畫面 */
+function newGamePlus(){ const n=(state.ngPlus||0)+1; closeAll(); startNew(); state.ngPlus=n; save(); }
+
 function complete(id){ if(!done(id)) state.completedEvents.push(id); state.pendingEvents=state.pendingEvents.filter(e=>e!==id); save(); }
 function logJ(t,k){ const e={j:state.journeyCount+(state.currentPhase==='voyage'?1:0),t}; if(k) e.k=k; state.log.push(e); save(); }  /* 航行途中的事記到正在進行的那一趟 */
 function addItem(id,quiet){ if(!state.collectibles.includes(id)){ state.collectibles.push(id); save(); if(!quiet) toast('收藏：'+COLLECTIBLES[id].name); return true;} return false; }
@@ -1905,7 +1980,7 @@ function dust(n=14){ let o='<div class="dust">'; const r=rnd(n*7); for(let i=0;i
 
 function neighbors(car){ const i=TRAIN.indexOf(car); return {fwd:TRAIN[i-1],back:TRAIN[i+1]}; }
 
-function render(){ TAINT.fx(); setTimeout(compAuto,0); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
+function render(){ TAINT.fx(); if(RUNNING){ keepSync(); actCheck(); } setTimeout(compAuto,0); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
  layout();
  const sc=$('#scene'); let h='', panoView=null;
  if(state.currentPhase==='outside'){ h=renderOutside(); }
@@ -2524,9 +2599,10 @@ function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id];
  const fl=NOTES[id]&&fullDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
  dialogue(id,fl,null,()=>{
   s.aboard=false; s.left=true; s.place=undefined; if(s.stage<3){ s.stage=3; }
-  s.records.push({j:state.journeyCount,t:`在${LOCATIONS[state.currentLocation].name}下車，留下重要回憶。`});
+  const K=KEEPS[id]; if(K) addItem('keep_'+id,true);
+  s.records.push({j:state.journeyCount,t:`在${LOCATIONS[state.currentLocation].name}下車，留下重要回憶${K?'和「'+K[0]+'」':''}。`});
   logJ(`${p.name}在${LOCATIONS[state.currentLocation].name}下車。紀錄仍保存在典藏車廂。`); save();
-  cine([`${p.name}的光沿著車門滑出去，`,'在月台邊停了一下，然後消失在遠處。'],next);
+  cine([`${p.name}的光沿著車門滑出去，`,'在月台邊停了一下，然後消失在遠處。'].concat(K?[`你的手心裡，多了一樣東西：「${K[0]}」。`]:[]),once1(()=>{ if(K) toast('紀念品收進典藏車廂的收藏櫃'); next&&next(); }));
  });
 }
 function reunion(id){ const p=PASSENGERS[id], s=state.passengers[id];
@@ -3242,7 +3318,7 @@ function seedPanel(){
  const pick=b=>ov.querySelectorAll('.jar').forEach(x=>x.classList.toggle('on',x===b));
  const show=id=>{ const c=COLLECTIBLES[id]; if(c.sealed) addClue('clue_seed'); pick(ov.querySelector(`[data-seed="${id}"]`)); SFX.glass(); sayReset(ov);
   ov.querySelector('#sv').innerHTML=`<div class="seed3d"><div class="orbit"></div><div class="core" style="--c:${c.color}"></div>${c.sealed?'<div class="seal"></div>':''}</div>`+
-   meSay(`（拿起瓶子，對著光看）這是<b>${c.name}</b>。${c.desc}${c.sealed?'<br>瓶口的封印，一點反應也沒有。':''}<br><small style="color:#8a7d9a">${ORIGIN_NOTE[id]||''}・${seedStatus(id)}</small>`); };
+   meSay(`（拿起瓶子，對著光看）這是<b>${c.name}</b>。${c.desc}${c.sealed?'<br>瓶口的封印，一點反應也沒有。':SEED_OPEN[id]?'<br>它好像不想被種在培育艙裡。它在等一個沒有光的地方。':''}<br><small style="color:#8a7d9a">${ORIGIN_NOTE[id]||''}・${seedStatus(id)}</small>`); };
  ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>show(b.dataset.seed));
  ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=meSay(`<b>${M.name}</b>，還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
  const first=have.find(id=>!COLLECTIBLES[id].sealed)||have[0]; if(first) show(first);
@@ -3263,7 +3339,7 @@ function culturePanel(){ const c=state.culture, mode=!c?'empty':c.bloomed?'bloom
   const ov=panel(head+meSay(`開花了！${s.name}長成了<b>${COLLECTIBLES[pid].name}</b>。${COLLECTIBLES[pid].desc}`)+`<div class="row" style="margin-top:12px"><button class="btn" id="hv">收進典藏</button></div>`,'stage');
   ov.querySelector('#hv').onclick=()=>{ addItem(pid); logJ(`${s.name}在培植箱中開出了${COLLECTIBLES[pid].name}。`); state.culture=null; save(); closeOv(ov); render(); }; return; }
  if(c) return panel(head+meSay(`${COLLECTIBLES[c.seed].name}安靜地泡在培育液裡，葉片正在慢慢舒展。再航行一次，應該就會開花了。`)+(matButtons('water')?meSay('……對了，採集來的材料可以拿來澆灌，讓它馬上開花。')+`<div class="row" style="margin-top:10px">${matButtons('water')}</div>`:''),'stage');
- const ready=state.collectibles.filter(id=>COLLECTIBLES[id].kind==='seed'&&!COLLECTIBLES[id].sealed&&!state.collectibles.includes(COLLECTIBLES[id].bloom));
+ const ready=state.collectibles.filter(id=>COLLECTIBLES[id].kind==='seed'&&!COLLECTIBLES[id].sealed&&COLLECTIBLES[id].bloom&&!state.collectibles.includes(COLLECTIBLES[id].bloom));
  const ov=panel(head+(ready.length?meSay('培育艙是空的。要放哪一顆種子進去呢？')+`<div class="jars">${ready.map(id=>`<button class="jar seed" data-p="${id}">${jarSvg(jarSeed(COLLECTIBLES[id].color))}<span class="tag">${COLLECTIBLES[id].name}</span></button>`).join('')}</div>`:meSay('培育艙是空的，可是典藏櫃裡沒有能培育的種子了……旅途中，也許會遇到新的種子。')),'stage');
  ov.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ state.culture={seed:b.dataset.p,journey:state.journeyCount,bloomed:false}; logJ(`將${COLLECTIBLES[b.dataset.p].name}放入培植箱。`); save(); closeOv(ov); render(); toast('種子放進培育艙了'); setTimeout(()=>culturePanel(),320); });
 }
@@ -3557,10 +3633,10 @@ function floatField(o){
 function memoryPanel(){ return floatField({cls:'mems',title:'回憶水晶',sub:()=>`凝結的片刻 ${memsHave().length} / ${MEMORIES.length}`,
   items:MEMORIES.map(m=>({id:m.id,have:m.have(),cls:'shard',attr:`data-m="${m.id}"`,inner:memArt(m),label:m.title})),
   view:id=>{ const m=MEMORIES.find(x=>x.id===id); return `<h2>${m.title}</h2><div class="memview"><div class="cr">${memArt(m)}</div><blockquote>${m.text}</blockquote></div>`; }}); }
-function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item');
- return floatField({cls:'items',title:'收藏櫃',sub:()=>`旅途中留下的東西 ${itemsHave().length} / ${items.length}`,
+function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item').concat(keepsHave().map(p=>'keep_'+p));
+ return floatField({cls:'items',title:'收藏櫃',sub:()=>`旅途中留下的東西 ${itemsHave().length}${keepsHave().length?`・乘客的紀念品 ${keepsHave().length}`:''}`,
   items:items.map(id=>({id,have:state.collectibles.includes(id),cls:'gem',attr:`data-it="${id}"`,inner:gemIcon(COLLECTIBLES[id].icon),label:COLLECTIBLES[id].name})),
-  view:id=>{ const c=COLLECTIBLES[id]; return `<div class="showcase"><div class="gem3d">${gemIcon(c.icon)}</div><h2>${c.name}</h2><p class="fl-where">${ORIGIN_NOTE[id]||''}</p><p style="max-width:460px;line-height:1.9">${c.desc}</p></div>`; }}); }
+  view:id=>{ const c=COLLECTIBLES[id]; return `<div class="showcase"><div class="gem3d">${gemIcon(c.icon)}</div><h2>${c.name}</h2><p class="fl-where">${ORIGIN_NOTE[id]||(c.from?PASSENGERS[c.from].name+'下車時留下':'')}</p><p style="max-width:460px;line-height:1.9">${c.desc}</p></div>`; }}); }
 
 /* 日月儀：像地球儀一樣的球，標出七個界域的位置；可以拖曳轉動 */
 const GLOBE_POS={origin:[0,4],dawnForest:[-42,24],starIslands:[58,40],reverseRealm:[128,-26],boundlessCorridor:[196,14],silentVoid:[252,-42],timeriftSea:[310,-6]};
@@ -4109,7 +4185,8 @@ function intro(){
   state.introDone=true; addClue('clue_wake');
   /* 開場結束 → 進入小精靈的值勤準備 */
   state.currentCarriage='cab'; render();
-  cine(['<span class="big">值勤準備</span><span class="sub">駕駛室・身體量測・裝備領取・資訊核對</span>'],()=>{ toast('點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true);
+  (state.ngPlus?f=>cine(['（這一點光……好像在哪裡見過。）','（你想不起來。可是心裡有一個地方，暖暖的。）'],f):f=>f())(()=>
+  cine(['<span class="big">值勤準備</span><span class="sub">駕駛室・身體量測・裝備領取・資訊核對</span>'],()=>{ toast('點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true));
  });
 }
 function boot(){ normalizeState(); render(); showMain(); }
