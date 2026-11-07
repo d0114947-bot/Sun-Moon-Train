@@ -1225,6 +1225,18 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .dustgame.end .dg-mote{display:none}
 @keyframes dgfall{from{transform:translateY(0) rotate(0)}to{transform:translateY(calc(100vh + 80px)) rotate(240deg)}}
 @keyframes dggot{to{transform:scale(2.2);opacity:0}}
+
+/* 觀測儀：地點的影子 */
+.scope-shadow.place{width:16%;filter:drop-shadow(0 0 6px rgba(200,220,255,.8));opacity:.5}
+.scope-shadow.place svg{width:100%;display:block;pointer-events:none}
+.scope-shadow.place.found{opacity:1;filter:drop-shadow(0 0 14px rgba(255,236,170,.9))}
+/* 異象研究 */
+.res-list{list-style:none;padding:0;margin:12px 0;display:flex;flex-direction:column;gap:12px}
+.res-list li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:8px 10px;border-bottom:1px dashed rgba(90,70,40,.3)}
+.res-list b{font-size:16px}.res-list span{grid-column:1;font-size:12px;opacity:.7}
+.res-list em{grid-column:1/-1;font-style:normal;font-size:13px;color:#7a5a20}
+.res-go{grid-row:1/3;grid-column:2;border:1px solid #8a6a30;background:rgba(232,201,131,.25);color:#4a3410;border-radius:999px;padding:5px 14px;font:inherit;font-size:13px;cursor:pointer}
+.res-go:hover{background:rgba(232,201,131,.45)}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -1889,6 +1901,13 @@ function lorePages(){ const has=id=>state.clues.includes(id), any=(...a)=>a.some
    <h5>${GLYPH.leaf}列車</h5><ul class="facts"><li>由渡守建造，能穿越日界與月界，在渡口停靠。</li><li>沉睡多年，如今重新啟動。</li><li>由值勤精靈負責巡視、維護與探索。</li><li>不同領域的生命會自行登車，短暫停留後各自離開。</li></ul>`]
  ]; }
 Object.assign(CLUES,LORE_CLUES);
+/* 在線索解讀台研究異象，得到的線索 */
+Object.assign(CLUES,{
+ clue_r_rift:{title:'層層疊起的界壁',text:'界壁不是一道牆，而是很多層薄薄的光疊在一起。折光的地方，是其中一層變薄了——像是有人一直在補，卻怎麼也補不完。'},
+ clue_r_seven:{title:'沒有亮過的第七個符號',text:'航行符號一共七個，對應七個渡口。其中一個從來沒有亮過，它指向日月儀上的一片空白——那裡，還沒有渡口。'},
+ clue_r_hands:{title:'界壁另一邊的手',text:'亂流的波紋，間隔完全一致，不像自然形成。像是有人在界壁的另一邊用手撐著——手一鬆，這邊就起了亂流。'},
+ clue_r_wait:{title:'空白中央的光',text:'寂滅虛空的正中央，有一點很小、很暗的光。它的顏色和精靈身上的晨光一模一樣，像是在那裡等了很久很久。'}
+});
 const CLUE_ORDER = Object.keys(CLUES);
 
 /* 事件：trigger 決定何時檢查；auto=true 立即演出；否則進入待處理入口（最多顯示兩個） */
@@ -2065,13 +2084,49 @@ function unlockSeed(id,next){ if(seedOpen(id)){ next&&next(); return; } const o=
 
 
 
+
+/* ================================================================
+   觀測儀裡的遠方地點：找到地點的影子後，日月儀上那個方向的霧會散開一部分
+   ================================================================ */
+const PLACE_SH={
+ reverseRealm:{at:3,x:30,y:40,line:'星光裡，有一片倒著生長的森林——樹根朝著天空，葉子往地底下長。',glimpse:'一片倒著生長的森林。樹根朝著天空。',
+  svg:'<path d="M10 30 h180" stroke="#cfe0ff" stroke-width="3"/>'+[30,70,110,150].map((x,i)=>`<path d="M${x} 30 v${26+i%2*10} M${x} ${44+i%2*6} l-14 ${16} M${x} ${44+i%2*6} l14 16" stroke="#cfe0ff" stroke-width="3" fill="none"/><path d="M${x-12} 26 q12 -26 24 0" stroke="#cfe0ff" stroke-width="3" fill="none"/>`).join('')},
+ boundlessCorridor:{at:5,x:66,y:30,line:'一道沒有盡頭的長廊。同一扇門，在兩個地方同時打開。',glimpse:'一道沒有盡頭的長廊，門在兩個地方同時打開。',
+  svg:[0,1,2,3,4].map(i=>{ const w=150-i*28, h=80-i*14, x=100-w/2, y=90-h; return `<path d="M${x} 90 V${y+w/4} A${w/2} ${w/4} 0 0 1 ${x+w} ${y+w/4} V90" stroke="#cfe0ff" stroke-width="${3-i*.4}" fill="none" opacity="${1-i*.15}"/>`; }).join('')},
+ timeriftSea:{at:7,x:40,y:68,line:'一片會起伏的海。浪頭裡，好像映著另一列白色的列車。',glimpse:'一片會起伏的海，浪裡映著白色的列車。',
+  svg:'<path d="M0 60 q25 -18 50 0 t50 0 t50 0 t50 0" stroke="#cfe0ff" stroke-width="3" fill="none"/><path d="M0 78 q25 -14 50 0 t50 0 t50 0 t50 0" stroke="#cfe0ff" stroke-width="2.4" fill="none" opacity=".7"/><rect x="62" y="34" width="22" height="12" rx="3" fill="#eef4ff"/><rect x="88" y="36" width="20" height="10" rx="2" fill="#eef4ff" opacity=".85"/><rect x="112" y="37" width="18" height="9" rx="2" fill="#eef4ff" opacity=".7"/>'},
+ silentVoid:{at:9,x:74,y:62,line:'……什麼都沒有。可是那片空白的正中央，有一點很小、很暗的光。它好像在等。',glimpse:'一片什麼都沒有的地方。正中央有一點很暗的光。',
+  svg:'<circle cx="100" cy="50" r="44" fill="#05050c" stroke="#cfe0ff" stroke-width="1.5" stroke-dasharray="3 6"/><circle cx="100" cy="50" r="3.5" fill="#ffe7a8"/>'}
+};
+const placeSeen=id=>(state.placeSeen||[]).includes(id);
+const placeShadow=()=>{ const id=Object.keys(PLACE_SH).find(l=>state.journeyCount>=PLACE_SH[l].at&&!placeSeen(l)&&locStatus(l)==='fog'); return id?{place:id,x:PLACE_SH[id].x,y:PLACE_SH[id].y}:null; };
+function placeFound(id){ if(placeSeen(id)) return; state.placeSeen=(state.placeSeen||[]).concat(id); logJ(`在星月觀測儀裡，看到了遠方某個地方的影子。`,'find'); save(); SFX.chime();
+ if(id==='silentVoid') setTimeout(()=>toast('異象紀錄晶石記下了：不屬於任何人的影子'),1600); }
+const maskName=n=>n.slice(0,1)+'？'.repeat(Math.max(1,n.length-1));
+
+/* ================================================================
+   異象研究：異象紀錄晶石記下的異象，可以在記憶典藏車廂的線索解讀台研究，解出新的線索
+   ================================================================ */
+const ANOM_RES={
+ anomaly_rift:{clue:'clue_r_rift',lines:[['self','（把界壁的折光放在解讀台上，用放大鏡一層一層地看。）'],['self','……折光不是一道裂縫。是好幾層很薄的光，疊在一起。'],['self','其中一層特別薄。像是……有人一直在補，可是補不完。']]},
+ voyage_symbol:{clue:'clue_r_seven',lines:[['self','（把航行符號的拓印攤開，和日月儀上的界域一個一個對照。）'],['self','七個符號……剛好對上七個界域。'],['self','可是有一個符號，從來沒有亮過。它指著的地方，日月儀上是一片空白。']]},
+ anom_turb:{clue:'clue_r_hands',lines:[['self','（把亂流的紋路描下來，一圈一圈對齊。）'],['self','這些波紋的間隔……完全一樣。不是自然的亂流。'],['self','像是有人在界壁的另一邊，用手撐著。手稍微一鬆，這邊就起了波紋。'],['self','……那個人，還在那裡嗎？']]},
+ anom_void:{clue:'clue_r_wait',lines:[['self','（把觀測儀的紀錄調出來，一格一格放大那一點光。）'],['self','它不是星星，也不是生命的影子。'],['self','它的光……和我身上的光，顏色一樣。'],['self','它在等誰呢？']]}
+};
+const resDone=id=>state.clues.includes(ANOM_RES[id].clue);
+function anomResearch(id,book){ const R=ANOM_RES[id]; if(!R||resDone(id)) return; if(book) closeOv(book);
+ setTimeout(()=>dialogueScript(R.lines,()=>{ addClue(R.clue); logJ(`在線索解讀台研究了「${ANOMS.find(a=>a.id===id).name}」。`,'find'); save(); SFX.chime(); toast(`✦ 解讀出新線索：${CLUES[R.clue].title}`); render(); }),300); }
+function resPage(){ const f=anomFound(); if(!f.length) return null;
+ return `<h3 class="jr-h">異象研究</h3><p class="jr-sub">異象紀錄晶石記下的異象，放到解讀台上研究</p><ul class="res-list">${f.map(a=>`<li><b>${a.name}</b><span>${a.where}</span>${resDone(a.id)?`<em>已解讀 → ${CLUES[ANOM_RES[a.id].clue].title}</em>`:`<button class="res-go" data-rs="${a.id}">研究</button>`}</li>`).join('')}</ul>
+  ${ANOMS.length>f.length?`<p class="jr-p" style="opacity:.6">（還有 ${ANOMS.length-f.length} 種異象沒有記錄到。）</p>`:''}`; }
+
 /* ================================================================
    觀測報告：出發前到星月觀測車廂觀測前方界壁，再告訴曦淵；曦淵會避開擾動，穿越界壁時界染度增加得少一點
    ================================================================ */
 const WALL_LV=['平穩','微擾','亂流'], WALL_SAVE={平穩:1,微擾:2,亂流:4};
 const wallLv=to=>WALL_LV[(state.journeyCount*5+String(to).length*3+(LOC_ORDER.indexOf(to)+1))%3];
 const obsOk=to=>{ const o=state.duty&&state.duty.obs; return !!(o&&o.to===to); };
-function obsWall(){ const to=nextStop(); if(!to) return; const lv=wallLv(to); state.duty.obs={to,lv}; logJ(`觀測了往${LOCATIONS[to].name}的前方界壁：${lv}。`); save(); SFX.tone(lv==='亂流'?440:880,0,.6,'sine',.03);
+function obsWall(){ const to=nextStop(); if(!to) return; const lv=wallLv(to); state.duty.obs={to,lv}; if(lv==='亂流'&&!state.storyFlags.anomTurb){ state.storyFlags.anomTurb=1; setTimeout(()=>toast('亂流裡有奇怪的紋路……異象紀錄晶石記下來了'),2200); } logJ(`觀測了往${LOCATIONS[to].name}的前方界壁：${lv}。`); save(); SFX.tone(lv==='亂流'?440:880,0,.6,'sine',.03);
  toast(`前方界壁：${lv}　去駕駛室告訴曦淵吧`); tipMark('obsrep'); }
 const OBS_REPLY={平穩:'平穩啊，那就照平常的航道走。謝謝你先看了。',微擾:'有一點擾動嗎……好，我會壓低一點飛，從旁邊繞過去。',亂流:'亂流？……幸好你先看了。我繞遠一點，從比較平穩的地方穿過去。'};
 
@@ -3935,18 +3990,20 @@ function starMap(){
 /* 星月觀測儀・望遠鏡：拖曳鏡頭掃過窗外的星空，找出藏在星光裡的生命影子。找到的生命，接下來的停靠站比較容易上車 */
 function scopeShadows(){ const pool=Object.keys(PASSENGERS).filter(id=>!state.discoveredLifeforms.includes(id)&&EVENTS['board_'+id]&&!done('board_'+id)&&PASSENGERS[id].still);
  const seed=state.journeyCount*7+(state.currentPhase==='voyage'?3:0), r=rnd(seed+11), out=[]; const p=pool.slice();
- for(let k=0;k<Math.min(2,p.length);k++){ const j=Math.floor(r()*p.length); out.push({id:p.splice(j,1)[0],x:14+r()*72,y:18+r()*64}); } return out; }
+ for(let k=0;k<Math.min(2,p.length);k++){ const j=Math.floor(r()*p.length); out.push({id:p.splice(j,1)[0],x:14+r()*72,y:18+r()*64}); } const pl=placeShadow(); if(pl) out.push(pl); return out; }
 function scopePanel(){ const voy=state.currentPhase==='voyage', loc=voy?state.voyage.to:state.currentLocation, sh=scopeShadows(); state.scopeSeen=state.scopeSeen||[];
  const ov=panel(`<div class="eyebrow">星月觀測車廂</div><h2>星月觀測儀</h2>
   <div class="scope-wrap"><div class="scope-sky"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><defs><radialGradient id="scn1"><stop offset="0" stop-color="${LOCATIONS[loc].realm==='日界'?'#ffcf8a':'#9a8cff'}" stop-opacity=".45"/><stop offset="1" stop-color="#0b0d26" stop-opacity="0"/></radialGradient><radialGradient id="scn2"><stop offset="0" stop-color="#6fd0e0" stop-opacity=".3"/><stop offset="1" stop-color="#0b0d26" stop-opacity="0"/></radialGradient></defs>
    <rect width="1600" height="900" fill="#080a1f"/><ellipse cx="420" cy="300" rx="520" ry="240" fill="url(#scn1)" transform="rotate(-18 420 300)"/><ellipse cx="1180" cy="620" rx="460" ry="200" fill="url(#scn2)" transform="rotate(12 1180 620)"/>${stars(520,state.journeyCount+5,0,0,1600,900)}</svg>
-   ${sh.map(o=>`<div class="scope-shadow ${state.scopeSeen.includes(o.id)?'found':''}" data-sh="${o.id}" style="left:${o.x}%;top:${o.y}%"><img src="${PASSENGERS[o.id].still}" alt=""></div>`).join('')}</div><div class="scope-reticle"></div></div>`,'stage scopeov');
+   ${sh.map(o=>o.place?`<div class="scope-shadow place" data-sh="pl:${o.place}" style="left:${o.x}%;top:${o.y}%"><svg viewBox="0 0 200 100">${PLACE_SH[o.place].svg}</svg></div>`:`<div class="scope-shadow ${state.scopeSeen.includes(o.id)?'found':''}" data-sh="${o.id}" style="left:${o.x}%;top:${o.y}%"><img src="${PASSENGERS[o.id].still}" alt=""></div>`).join('')}</div><div class="scope-reticle"></div></div>`,'stage scopeov');
  const wrap=ov.querySelector('.scope-wrap'), sky=ov.querySelector('.scope-sky'); let X=-33.3, Y=-33.3, g=null;
  const put=()=>{ sky.style.transform=`translate(${X}%,${Y}%)`; }; put();
  wrap.addEventListener('pointerdown',e=>{ if(e.target.closest('[data-sh]')) return; g={x:e.clientX,y:e.clientY,X,Y,w:wrap.clientWidth}; try{ wrap.setPointerCapture(e.pointerId); }catch(_){} });
  wrap.addEventListener('pointermove',e=>{ if(!g) return; X=Math.max(-66.6,Math.min(0,g.X+(e.clientX-g.x)/g.w*100/3)); Y=Math.max(-66.6,Math.min(0,g.Y+(e.clientY-g.y)/g.w*100/3)); put(); });
  wrap.addEventListener('pointerup',()=>{ g=null; });
- ov.querySelectorAll('[data-sh]').forEach(el=>el.addEventListener('pointerdown',e=>{ e.stopPropagation(); const id=el.dataset.sh, p=PASSENGERS[id];
+ ov.querySelectorAll('[data-sh]').forEach(el=>el.addEventListener('pointerdown',e=>{ e.stopPropagation(); const id=el.dataset.sh;
+  if(id.startsWith('pl:')){ const pl=id.slice(3); placeFound(pl); el.classList.add('found'); sayReset(ov); ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(`……那不是生命的影子。是很遠很遠的某個地方。<br>${PLACE_SH[pl].line}<br><small>日月儀上，那個方向的霧好像散開了一點。</small>`)); return; }
+  const p=PASSENGERS[id];
   if(!state.scopeSeen.includes(id)){ state.scopeSeen.push(id); save(); }
   el.classList.add('found'); SFX.chime(); sayReset(ov);
   ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(`咦……星光裡有一道影子在動。那是……某種生命的影子？<br>牠好像正朝著列車的方向。下一站，說不定會遇見牠。`)); }));
@@ -3955,7 +4012,9 @@ function skyLine(){ const v=state.voyage, k=v&&v.sky; if(state.currentPhase!=='v
  const S=SKY[k.type].name; return k.ended?`${S}（已經結束）`:k.started?`${S}・正在發生！到火車尾展望台觀賞`:`${S}・約在航程 ${Math.round(k.at*100)}%–${Math.round((k.at+SKY_WIN)*100)}% 出現`; }
 const ANOMS=[
  {id:'anomaly_rift',name:'界壁的折光',where:'星月觀測車廂・觀測窗外',have:()=>state.collectibles.includes('anomaly_rift'),text:COLLECTIBLES.anomaly_rift.desc},
- {id:'voyage_symbol',name:'航行中亮起的符號',where:'車廂連接處・航行途中',have:()=>state.clues.includes('clue_voyage'),text:CLUES.clue_voyage.text}
+ {id:'voyage_symbol',name:'航行中亮起的符號',where:'車廂連接處・航行途中',have:()=>state.clues.includes('clue_voyage'),text:CLUES.clue_voyage.text},
+ {id:'anom_turb',name:'亂流裡的紋路',where:'星月觀測車廂・前方界壁觀測',have:()=>!!state.storyFlags.anomTurb,text:'觀測前方界壁時，亂流裡有一圈一圈規律的波紋，像是從界壁的另一邊傳過來的。'},
+ {id:'anom_void',name:'不屬於任何人的影子',where:'星月觀測儀・很遠很遠的地方',have:()=>placeSeen('silentVoid'),text:'觀測儀裡，一片空白的正中央有一點很暗的光。它不像星星，也不像生命的影子。'}
 ];
 const ANOM_SLOTS=4;
 const anomFound=()=>ANOMS.filter(a=>a.have());
@@ -3963,7 +4022,7 @@ function anomPanel(){ const seen=new Set(state.storyFlags.anomSeen||[]), f=anomF
  const items=ANOMS.map(a=>({id:a.id,have:a.have(),cls:'gem'+(seen.has(a.id)||!a.have()?'':' anom new'),inner:gemIcon(seen.has(a.id)?'#bfe6ff':'#f1d58e'),label:a.name+(seen.has(a.id)?'':' ✦')}))
   .concat(Array.from({length:Math.max(0,ANOM_SLOTS-ANOMS.length)},(_,k)=>({id:'x'+k,have:false,cls:'gem'})));
  floatField({cls:'anomf',title:'異象紀錄晶石',sub:()=>`記錄到的空間異象 ${f.length} 種`,items,
-  view:id=>{ const a=ANOMS.find(x=>x.id===id); return `<div class="showcase"><div class="gem3d">${gemIcon('#bfe6ff')}</div><h2>${a.name}</h2><p class="fl-where">${a.where}</p>${meSay(a.text)}</div>`; }});
+  view:id=>{ const a=ANOMS.find(x=>x.id===id); return `<div class="showcase"><div class="gem3d">${gemIcon('#bfe6ff')}</div><h2>${a.name}</h2><p class="fl-where">${a.where}</p>${meSay(a.text+(ANOM_RES[id]?(resDone(id)?`<br><small>已在線索解讀台解讀：${CLUES[ANOM_RES[id].clue].title}</small>`:'<br><small>……帶到記憶典藏車廂的線索解讀台，仔細研究看看吧。</small>'):''))}</div>`; }});
  state.storyFlags.anomSeen=f.map(a=>a.id); save(); }
 function navPanel(){ const ov=panel('','navov'), pn=ov.querySelector('.panel'); let sel=null;
  const draw=()=>{ const voy=state.currentPhase==='voyage', cur=voy?null:state.currentLocation, from=voy?state.voyage.from:cur, to=voy?state.voyage.to:nextStop(), L=LOCATIONS[to], ri=ROUTE_INFO[to]||{};
@@ -4131,11 +4190,13 @@ const CLUE_ME={clue_const_train:'星座裡也有一列火車。是誰把它畫�
  clue_seed:'打不開的封印……也許不是打不開，只是時候還沒到。',clue_ferrykeepers:'渡守。終於知道他們的名字了。',clue_dimming:'那麼多世界一起熄滅……光是想像就覺得好冷。',
  clue_dragon:'我是從列車的光裡醒來的。原來，我一直都在這裡。',clue_ash:'熄滅的世界留下了灰。灰裡，還有沒說完的故事。',clue_island:'浮島是碎片，卻被星河接住了。被接住，真好。',
  clue_wall:'界壁會呼吸。下次看到極光，我要跟著它一起呼吸看看。',clue_wake2:'「我們在時間的另一端。」——我會把剩下的路走完的。'};
-function clueBook(){ const ids=CLUE_ORDER, per=2, pages=[], R=[-1.5,1.2,-.8,1.6,-1.2,.9];
+function clueBook(){ const ids=CLUE_ORDER, per=2, pages=[], R=[-1.5,1.2,-.8,1.6,-1.2,.9], rp=resPage();
  for(let k=0;k<ids.length;k+=per) pages.push((k===0?`<h3 class="jr-h">線索解讀筆記</h3><p class="jr-sub">已解讀 ${state.clues.length} / ${ids.length} 個片段</p>`:`<p class="jr-no">線索解讀筆記・${k/per+1}</p>`)+
   ids.slice(k,k+per).map((id,j)=>state.clues.includes(id)?`<div class="jr-clue" style="--r:${R[(k+j)%R.length]}deg"><h4>${CLUES[id].title}</h4><p class="jr-p">${CLUES[id].text}</p>${CLUE_ME[id]?`<p class="jr-me">${CLUE_ME[id]}</p>`:''}</div>`:`<div class="jr-clue unk"><h4>？</h4><p class="jr-p">（還沒讀到的片段）</p></div>`).join(''));
  const tabOf=k=>{ const id=ids.slice(k*per,k*per+per).find(x=>state.clues.includes(x)); return id?CLUES[id].title.slice(0,5):'？'; };
- return journal({cls:'clues',title:'線索解讀筆記',pages,tabs:pages.map((_,k)=>[tabOf(k),k])}); }
+ const tabs=pages.map((_,k)=>[tabOf(k),k+(rp?1:0)]); if(rp){ pages.unshift(rp); tabs.unshift(['異象研究',0]); }
+ const bk=journal({cls:'clues',title:'線索解讀筆記',pages,tabs:tabs.filter(t=>t[1]%2===0)});
+ bk.addEventListener('click',e=>{ const b=e.target.closest('[data-rs]'); if(b){ e.stopPropagation(); anomResearch(b.dataset.rs,bk); } }); return bk; }
 
 /* 漂浮的水晶：沒有視窗，水晶在畫面裡慢慢漂；點一顆放大 */
 function floatField(o){
@@ -4165,7 +4226,7 @@ function globeLand(id,proj){ const [lon0,lat0]=GLOBE_POS[id], [c1,c2,r0,seed]=GL
  const blob=(dl,dp,r,sd)=>{ const pts=[]; let vis=0; for(let a=0;a<360;a+=12){ const t=a*D2R, rr=r*(1+.22*Math.sin(3*t+sd)+.14*Math.cos(5*t+sd*1.7)+.08*Math.sin(9*t+sd*.3));
    const la=lat0+dp+rr*Math.sin(t), lo=lon0+dl+rr*Math.cos(t)/Math.max(.35,Math.cos((lat0+dp)*D2R)); const p=proj(lo,la); if(p[2]>0) vis++; pts.push(p); }
   if(vis<4) return ''; return `<path d="M${pts.map(p=>{ const k=p[2]>0?1:Math.hypot(p[0]-200,p[1]-196)>0?150/Math.hypot(p[0]-200,p[1]-196):1; return (200+(p[0]-200)*Math.min(1,k)).toFixed(1)+' '+(196+(p[1]-196)*Math.min(1,k)).toFixed(1); }).join('L')}Z"/>`; };
- if(st==='fog') return `<g fill="#cfd3ff" opacity=".12" filter="blur(4px)">${blob(0,0,r0*.8,seed)}</g>`;
+ if(st==='fog') return placeSeen(id)?`<g fill="${c1}" opacity=".32" filter="blur(1.6px)">${blob(0,0,r0*.85,seed)}</g>`:`<g fill="#cfd3ff" opacity=".12" filter="blur(4px)">${blob(0,0,r0*.8,seed)}</g>`;
  const parts=id==='starIslands'?[[0,0,r0,seed],[12,8,r0*.7,seed+1],[-10,10,r0*.6,seed+2],[6,-12,r0*.55,seed+3],[-14,-6,r0*.5,seed+4]]:[[0,0,r0,seed],[r0*.6,-r0*.5,r0*.45,seed+2]];
  return `<g fill="${c1}" stroke="${c2}" stroke-width="1.4" opacity="${st==='seen'?.92:.55}">${parts.map(q=>blob(...q)).join('')}</g>`; }
 function orreryPanel(){ const ids=['origin',...LOC_ORDER], R=150, CX=200, CY=196, T=20*D2R; let rot=-10, sel=null, drag=null, last=performance.now();
@@ -4186,10 +4247,12 @@ function orreryPanel(){ const ids=['origin',...LOC_ORDER], R=150, CX=200, CY=196
   for(const la of [-60,-30,0,30,60]){ const a=[]; for(let m=0;m<=360;m+=6) a.push(proj(m,la)); d+=line(a); }
   grid.innerHTML=`<path d="${d}"/>`;
   pins.innerHTML=ids.map(id=>{ const [lon,lat]=GLOBE_POS[id], [x,y,z]=proj(lon,lat); if(z<=0.02) return ''; const s=locStatus(id), L=LOCATIONS[id], o=Math.min(1,z*2.2).toFixed(2), sun=L.realm==='日界';
+   if(s==='fog'&&placeSeen(id)) return `<g class="pin" data-pin="${id}" opacity="${o}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${sel===id?9:6}" fill="none" stroke="#cfd3ff" stroke-width="1.4" stroke-dasharray="2 3"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16" fill="transparent"/><text x="${x.toFixed(1)}" y="${(y-14).toFixed(1)}" text-anchor="middle" font-size="11" fill="#cfd3ff" opacity=".85">${maskName(LOCATIONS[id].name)}</text></g>`;
    if(s==='fog') return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="9" fill="#cfd3ff" opacity="${(o*.25).toFixed(2)}" filter="blur(3px)"/>`;
    return `<g class="pin" data-pin="${id}" opacity="${o}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${sel===id?9:6}" fill="${s==='seen'?(sun?'#ffe08a':'#dfe4ff'):'none'}" stroke="${sun?'#ffcf5a':'#ffffff'}" stroke-width="1.6"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="16" fill="transparent"/><text x="${x.toFixed(1)}" y="${(y-12).toFixed(1)}" text-anchor="middle" font-size="13" fill="#fff" stroke="#14163a" stroke-width="3" paint-order="stroke" font-family="Noto Serif TC,serif">${L.name}${s==='seen'?'':'？'}</text></g>`; }).join(''); };
  const caption=()=>{ if(!sel){ cap.innerHTML=meSay('（輕輕轉動日月儀……七個界域，都在這顆球上。點一個光點看看。）'); return; }
   const L=LOCATIONS[sel], s=locStatus(sel), k=ids.indexOf(sel);
+  if(s==='fog'){ cap.innerHTML=meSay(`<b>${maskName(L.name)}</b>・${L.realm}<br>在星月觀測儀裡看過它的影子：${PLACE_SH[sel].glimpse}<br>霧還沒有完全散開。`); return; }
   cap.innerHTML=meSay(`<b>${L.name}</b>・${L.realm}・${L.domain}<br>${s==='seen'?'我去過這裡。界域地誌裡有我寫的筆記。':'還沒去過。總有一天要去看看。'}`)+(s==='seen'?`<div class="row" style="margin-top:10px"><button class="plink" id="gl-go">翻開界域地誌 ›</button></div>`:'');
   const b=cap.querySelector('#gl-go'); if(b) b.onclick=()=>atlasBook(k); };
  svg.addEventListener('pointerdown',e=>{ const p=e.target.closest('[data-pin]');   /* 光點每一格都會重畫，用按下的瞬間來選 */
