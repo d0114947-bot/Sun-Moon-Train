@@ -1141,7 +1141,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .mote .step i,.pano-turn .step i{font-style:normal;font-size:13px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
 .mote .step,.pano-turn .step{animation:stepbob 1.2s ease-in-out infinite;transform-origin:50% 100%}
 .mote.sprite .step{bottom:auto;top:0}
-.pano-turn .step{bottom:auto;top:-40px;left:auto;right:4px;transform:none}
+.pano-turn .step{bottom:auto;top:calc(100% + 10px);left:auto;right:4px;transform:none}
 /* 對話回看 */
 .dlg .box{position:relative}
 .bl-btn{position:absolute;right:10px;top:8px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(232,201,131,.45);background:rgba(10,14,40,.55);color:#e8c983;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2}
@@ -1247,7 +1247,8 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 <div id="doorfx" aria-hidden="true"><i class="l"></i><i class="r"></i><b></b></div>
 
 <script>
-const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg';
+const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg', OBS_FRONT='assets/observation-front.jpg', OBS_BACK_IMG='assets/observation-back.jpg';
+const vKey=c=>c==='observation'?'oview':'hview';
 /* ================================================================
    日月更迭 — MVP
    模組：LOCATIONS / CARRIAGES / PASSENGERS / EVENTS / COLLECTIBLES / state / nav
@@ -1567,8 +1568,7 @@ const LOC_ORDER = ['dawnForest','starIslands','reverseRealm','boundlessCorridor'
 const CARRIAGES = {
  cab:{name:'火車頭駕駛室',short:'駕駛室',image:null},
  prep:{name:'整備前廊',short:'整備',image:null},  /* 舊存檔相容用；值勤準備已全部移到駕駛室 */
- observation:{name:'星月觀測車廂',short:'觀測',image:'assets/observation-pano.jpg',
-  pano:{image:'assets/observation-pano.jpg',w:1774,h:887}},
+ observation:{name:'星月觀測車廂',short:'觀測',image:'assets/observation-front.jpg',views:[OBS_FRONT,OBS_BACK_IMG]},
  nature:{name:'森羅溫室車廂',short:'溫室',image:'assets/nature-pano.jpg',
   pano:{image:'assets/nature-pano.jpg',w:1634,h:887}},
  habitat:{name:'棲息車廂',short:'棲息',image:'assets/habitat-front.jpg',views:[HAB_FRONT,HAB_BACK_IMG]},
@@ -2345,8 +2345,8 @@ function render(){ TAINT.fx(); if(RUNNING){ keepSync(); actCheck(); gardenSync()
   } else {
   if(c==='cab') CAB.begin();
   if(c==='observatory'&&state.currentPhase==='voyage') h+='<canvas class="streaks" id="streaks"></canvas>';
-  h += C.views? `<img class="bg" src="${C.views[state.hview||0]}" alt="${C.name}">` : C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
-  if(C.views&&!(state.hview||0)) h+=POOL_FX+zonePots();
+  h += C.views? `<img class="bg" src="${C.views[state[vKey(c)]||0]}" alt="${C.name}">` : C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
+  if(c==='habitat'&&!(state.hview||0)) h+=POOL_FX+zonePots();
   if(C.views) h+=`<button class="pano-turn l" data-act="turn:" aria-label="轉身">‹<span>轉身</span></button><button class="pano-turn r" data-act="turn:" aria-label="轉身">›<span>轉身</span></button>`;
   if(c==='observatory'&&state.storyFlags.starLight) h+='<div class="starlight"></div>'+(state.currentPhase==='voyage'&&state.voyage&&state.voyage.light&&state.voyage.progress>.3?'<div class="stray" aria-hidden="true"><i></i></div>':'');
   if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;   /* 星象疊在展望台的天空上 */
@@ -4439,16 +4439,16 @@ const HSDEF=[
  {id:'cab-brief',scene:'cab',name:'星途符牒',at:{x:89.4,y:46.7},layer:3,act:'prep:brief',track:false,show:()=>state.spirit.equipment.tablet,imp:()=>state.currentPhase==='docked'&&!state.duty.briefing,done:()=>!!state.duty.briefing||state.currentPhase==='voyage'},
  {id:'cab-back',scene:'cab',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
  /* 星月觀測車廂 */
- {id:'obs-scope',scene:'observation',name:'星月觀測儀',at:{x:17,y:47},layer:3,track:false,act:()=>scopePanel(),imp:()=>scopeShadows().some(o=>!(state.scopeSeen||[]).includes(o.id))},
- {id:'obs-nav',scene:'observation',name:'月界導航裝置',at:{x:33,y:47},layer:3,act:'obs:nav',track:false},
- {id:'obs-coord',scene:'observation',name:()=>state.currentPhase==='voyage'&&state.voyage?'航行中 → '+LOCATIONS[state.voyage.to].coord:LOCATIONS[state.currentLocation].coord+'・'+String(state.journeyCount*7+5).padStart(3,'0'),readout:true,at:{x:90,y:45},layer:1,track:false},
- {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:76,y:49},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
+ {id:'obs-scope',scene:'observation',name:'星月觀測儀',at:{x:88,y:40},layer:3,track:false,act:()=>scopePanel(),imp:()=>scopeShadows().some(o=>!(state.scopeSeen||[]).includes(o.id))},
+ {id:'obs-nav',scene:'observation',name:'月界導航裝置',at:{x:14,y:50},layer:3,act:'obs:nav',track:false},
+ {id:'obs-coord',scene:'observation',name:()=>state.currentPhase==='voyage'&&state.voyage?'航行中 → '+LOCATIONS[state.voyage.to].coord:LOCATIONS[state.currentLocation].coord+'・'+String(state.journeyCount*7+5).padStart(3,'0'),readout:true,at:{x:50,y:22},layer:1,track:false},
+ {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:80,y:56},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
   imp:()=>anomFound().length>0&&seenOf('obs-anomrec')!==String(anomFound().length)},
- {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:57,y:10},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
- {id:'obs-front',scene:'observation',name:'後方：火車尾展望台',shape:'door',at:{x:50,y:55},act:'go:observatory'},
- {id:'obs-skybook',scene:'observation',name:'觀星紀錄本',at:{x:67,y:56},layer:3,track:false,act:()=>skyBook(),ver:()=>((state.skyLog||[]).length)},
- {id:'obs-const',scene:'observation',name:'星座盤',at:{x:83,y:68},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
- {id:'obs-back',scene:'observation',name:'返回棲息車廂',shape:'back',at:{x:3,y:90},act:'go:habitat'},
+ {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:30,y:14},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
+ {id:'obs-front',scene:'observation',name:'前往火車尾展望台',shape:'door',at:{x:50,y:50},act:'go:observatory'},
+ {id:'obs-skybook',scene:'observation',name:'觀星紀錄本',at:{x:9,y:57},layer:3,track:false,act:()=>skyBook(),ver:()=>((state.skyLog||[]).length)},
+ {id:'obs-const',scene:'observation',name:'星座盤',at:{x:84,y:64},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
+ {id:'obs-back',scene:'observation',name:'返回棲息車廂',shape:'back',at:{x:50,y:52},act:'go:habitat'},
  /* 森羅溫室車廂 */
  {id:'nat-vault',scene:'nature',name:'種子典藏櫃',at:NP(290,430),layer:3,act:'nat:vault',ver:()=>seedTotal()+'/'+(state.seedKnown||[]).length},
  {id:'nat-pod-a',scene:'nature',name:'培育艙・甲',at:NP(645,440),layer:3,act:()=>gardenPanel(0),track:false,imp:()=>podsBloom()},
@@ -4525,8 +4525,8 @@ const PANO_ENTRY={memory:{cab:MP(8,700).yaw,nature:MP(1272,700).yaw},nature:{mem
 const HS_SCENE=()=>state.currentPhase==='outside'?'out:'+state.currentLocation:state.currentCarriage;
 const hsName=h=>typeof h.name==='function'?h.name():h.name;
 const hsVer=h=>h.ver?String(h.ver()):'1';
-const VIEW_BACK=['hab-exit','hab-back'];
-const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views) return true; return (VIEW_BACK.includes(h.id)?1:0)===(state.hview||0); };
+const VIEW_BACK=['hab-exit','hab-back','obs-skybook','obs-anomrec','obs-back'];
+const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views) return true; return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
 function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
 function hsState(h){
  if(h.lock&&h.lock()) return 'locked';
@@ -4611,13 +4611,13 @@ function transition(change,after,door){
 }
 /* 棲息車廂：往前看／往後看 */
 function turnView(){ if(TRANS.busy) return; SFX.tone(740,0,.3,'sine',.02); const sc=$('#scene'); sc.style.transition='opacity .28s'; sc.style.opacity=0;
- setTimeout(()=>{ state.hview=1-(state.hview||0); render(); sc.style.opacity=1; setTimeout(()=>sc.style.transition='',320); },280); }
+ setTimeout(()=>{ { const k=vKey(state.currentCarriage); state[k]=1-(state[k]||0); } render(); sc.style.opacity=1; setTimeout(()=>sc.style.transition='',320); },280); }
 const POOL_FX=`<div class="pool-fx" aria-hidden="true"><svg viewBox="0 0 100 24" preserveAspectRatio="none">${[[30,12,0],[62,10,1.3],[48,15,2.6],[74,13,3.7],[20,11,4.6]].map(([x,y,d])=>`<ellipse cx="${x}" cy="${y}" rx="1" ry=".3" fill="none" stroke="#e8fbff" stroke-width=".25"><animate attributeName="rx" values="1;12" dur="5s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values=".3;3.4" dur="5s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="5s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}</svg><i class="pool-shine"></i></div>`;
 function moveTo(car){
  if(TRANS.busy) return;
  const nb=neighbors(state.currentCarriage); if(car!==nb.fwd&&car!==nb.back) return; // 只能前往相鄰車廂
  const from=state.currentCarriage;
- transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; if(car==='habitat') state.hview=from==='observation'?1:0; },()=>checkCarriageEvents(),true);
+ transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; if(car==='habitat') state.hview=from==='observation'?1:0; if(car==='observation') state.oview=from==='observatory'?1:0; },()=>checkCarriageEvents(),true);
 }
 
 /* 環景載入失敗：提供重試與返回 */
