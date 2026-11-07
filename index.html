@@ -1133,6 +1133,31 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .pool-shine{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(220,250,255,.35) 45%,transparent 60%);background-size:220% 100%;animation:poolshine 7s linear infinite}
 @keyframes poolshine{from{background-position:120% 0}to{background-position:-120% 0}}
 #scene .pano-turn{z-index:6}
+
+/* 新手提示（和值勤準備同款的跳動標記） */
+.hs .step.tip b,.mote .step.tip b,.pano-turn .step.tip b{font-size:12px}
+.mote .step,.pano-turn .step{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);display:flex;align-items:center;gap:6px;white-space:nowrap;pointer-events:none;font-family:var(--f-display);z-index:3}
+.mote .step b,.pano-turn .step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#e8c983;color:#1a1530;font-size:14px;box-shadow:0 0 0 3px rgba(232,201,131,.25);animation:steppulse 1.4s ease-in-out infinite}
+.mote .step i,.pano-turn .step i{font-style:normal;font-size:13px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
+.mote .step,.pano-turn .step{animation:stepbob 1.2s ease-in-out infinite;transform-origin:50% 100%}
+.mote.sprite .step{bottom:auto;top:0}
+.pano-turn .step{bottom:auto;top:-40px;left:auto;right:4px;transform:none}
+/* 對話回看 */
+.dlg .box{position:relative}
+.bl-btn{position:absolute;right:10px;top:8px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(232,201,131,.45);background:rgba(10,14,40,.55);color:#e8c983;display:grid;place-items:center;cursor:pointer;padding:0;z-index:2}
+.bl-btn svg{width:17px;height:17px}.bl-btn:hover{background:rgba(30,36,80,.85)}
+.ov.backlog{z-index:400}
+.ov.backlog .panel{background:linear-gradient(180deg,rgba(18,24,58,.97),rgba(10,14,38,.97));color:#e9ecff;border:1px solid rgba(160,180,255,.25);max-width:640px;width:min(640px,92vw)}
+.ov.backlog h2{color:#f3e2b4}
+.bl-list{list-style:none;margin:12px 0 0;padding:0 6px 0 0;max-height:min(60vh,520px);overflow:auto;display:flex;flex-direction:column;gap:10px}
+.bl-list li{line-height:1.8;font-size:15px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.04)}
+.bl-list li b{display:block;font-size:12px;letter-spacing:.12em;color:#e8c983;font-weight:600}
+.bl-open{margin-top:8px;background:none;border:1px solid rgba(232,201,131,.5);color:#f3e2b4;border-radius:999px;padding:5px 14px;font-size:13px;letter-spacing:.08em;cursor:pointer;pointer-events:auto}
+.bl-open:hover{background:rgba(232,201,131,.15)}
+/* 自動存檔提示 */
+#automark{position:fixed;right:18px;bottom:16px;z-index:60;font-size:12px;letter-spacing:.08em;color:#f3e2b4;background:rgba(10,12,32,.7);border:1px solid rgba(232,201,131,.35);padding:5px 12px;border-radius:999px;opacity:0;pointer-events:none}
+#automark.on{animation:automark 3.4s ease forwards}
+@keyframes automark{0%{opacity:0;transform:translateY(6px)}12%,75%{opacity:1;transform:none}100%{opacity:0}}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -1883,6 +1908,55 @@ function save(){ try{ state.savedAt=Date.now(); localStorage.setItem(SAVE_KEY,JS
 const aboard = id => !!(state.passengers[id]&&state.passengers[id].aboard);
 const done = id => state.completedEvents.includes(id);
 
+
+
+/* ================================================================
+   新手提示：第一次遇到某個功能時，在熱點上方出現和值勤準備一樣的跳動標記；用過一次就不再出現
+   （記在瀏覽器裡，重新開始或二周目也不會再出現）
+   ================================================================ */
+const TIP_KEY='riyue-tips-v1';
+const tipsDone=()=>{ try{ return JSON.parse(localStorage.getItem(TIP_KEY)||'[]'); }catch(e){ return []; } };
+const tipDone=k=>tipsDone().includes(k);
+function tipMark(k){ const a=tipsDone(); if(a.includes(k)) return; a.push(k); try{ localStorage.setItem(TIP_KEY,JSON.stringify(a)); }catch(e){} }
+function tipOnce(k,text){ if(tipDone(k)) return; tipMark(k); toast(text); }
+const careZone=()=>{ const id=Object.keys(PASSENGERS).find(id=>aboard(id)&&!atDeck(id)&&CARE[id]&&!careOk(id)); return id?'hab-'+zoneOf(id):null; };
+const TIPS=[
+ {k:'talk',t:'說說話',m:h=>/^hab-p-/.test(h.id),when:()=>true},
+ {k:'care',t:'調整結界',m:h=>h.id===careZone(),when:()=>!!careZone()},
+ {k:'out',t:'下車看看',m:h=>h.id==='hab-exit',when:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'},
+ {k:'scope',t:'找影子',m:h=>h.id==='obs-scope',when:()=>true},
+ {k:'nav',t:'選航線',m:h=>h.id==='obs-nav',when:()=>state.currentPhase==='docked'&&state.journeyCount>=1},
+ {k:'const',t:'連星座',m:h=>h.id==='obs-const',when:()=>!!skyHere()},
+ {k:'sky',t:'觀賞天象',m:h=>h.id==='ot-sky',when:()=>!!skyNow()},
+ {k:'invite',t:'邀請乘客',m:h=>h.id==='ot-invite',when:()=>true},
+ {k:'engr',t:'拓下刻紋',m:h=>h.id==='ot-floor',when:()=>state.currentPhase==='docked'&&!ENGR_OK(state.currentLocation)},
+ {k:'pod',t:'培育種子',m:h=>h.id==='nat-pod-a',when:()=>!state.culture&&seedsHave().some(id=>COLLECTIBLES[id].bloom)},
+ {k:'vine',t:'休息淨化',m:h=>h.id==='nat-special',when:()=>TAINT.val()>=20},
+ {k:'book',t:'整理筆記',m:h=>h.id==='mem-book',when:()=>Object.keys(state.notes||{}).some(id=>notesOf(id).length)},
+ {k:'mirror',t:'照照鏡子',m:h=>h.id==='mem-mirror',when:()=>state.journeyCount>=1},
+ {k:'save',t:'存檔',m:h=>h.id==='mem-save',when:()=>state.introDone}
+];
+let TIPCUR=null;
+function tipPick(list){ TIPCUR=null; if(!RUNNING||(state.currentCarriage==='cab'&&dutyOn())) return; const done=tipsDone();
+ for(const T of TIPS){ if(done.includes(T.k)) continue; let ok=false; try{ ok=T.when(); }catch(e){} if(!ok) continue; const h=list.find(T.m); if(h){ TIPCUR={k:T.k,id:h.id,t:T.t}; return; } } }
+const tipBadge=h=>TIPCUR&&TIPCUR.id===h.id?`<span class="step cur tip"><b>✦</b><i>${TIPCUR.t}</i></span>`:'';
+function tipHit(id){ TIPS.forEach(T=>{ if(!tipDone(T.k)&&T.m({id})) tipMark(T.k); }); }
+/* 轉身按鈕的提示 */
+function tipTurn(){ const b=document.querySelector('#scene .pano-turn.r'); if(!b||tipDone('turn')||b.querySelector('.step')) return; b.insertAdjacentHTML('afterbegin','<span class="step cur tip"><b>✦</b><i>轉身</i></span>'); }
+document.addEventListener('click',e=>{ if(e.target.closest('.pano-turn')) tipMark('turn'); },true);
+
+/* ================================================================
+   對話回看：最近聽見的話（對話、過場、廣播）
+   ================================================================ */
+const BL={ push(w,t){ if(!RUNNING) return; const x=String(t||'').replace(/<br\s*\/?>/g,' ').replace(/<[^>]+>/g,'').trim(); if(!x||x==='__self__') return;
+  const a=state.backlog=state.backlog||[]; const last=a[a.length-1]; if(last&&last.w===w&&last.t===x) return; a.push({w,t:x}); if(a.length>120) a.splice(0,a.length-120); } };
+function addLogBtn(el){ const box=el.querySelector('.box'); if(!box||box.querySelector('.bl-btn')) return;
+ const b=document.createElement('button'); b.className='bl-btn'; b.type='button'; b.title='回看對話'; b.setAttribute('aria-label','回看對話'); b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14M5 10h14M5 15h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M17 14l3 3-3 3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+ b.onclick=e=>{ e.stopPropagation(); backlogPanel(); }; box.appendChild(b); }
+function backlogPanel(){ const a=(state.backlog||[]).slice(-80);
+ const ov=panel(`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">回憶水晶</div><h2>最近聽見的話</h2>${a.length?`<ol class="bl-list">${a.map(x=>`<li>${x.w?`<b>${esc(x.w)}</b>`:''}<span>${esc(x.t)}</span></li>`).join('')}</ol>`:'<p class="nb-empty">還沒有聽見什麼。</p>'}`,'backlog');
+ const l=ov.querySelector('.bl-list'); if(l) setTimeout(()=>{ l.scrollTop=l.scrollHeight; },30); return ov; }
+
 /* ================================================================
    主線後半與結局：乘客紀念品、古種解封、地點依幕開放、結局判定
    ================================================================ */
@@ -1919,6 +1993,49 @@ function unlockSeed(id,next){ if(seedOpen(id)){ next&&next(); return; } const o=
  state.seedOpen=(state.seedOpen||[]).concat(id); logJ(`森羅溫室種子櫃裡的一枚古種解開了封印：${o.n}。`); save();
  cine(['森羅溫室的方向，傳來很輕的一聲「喀」。','種子櫃裡的一枚古種，封印自己鬆開了。',`它叫作「${o.n}」。`],once1(()=>{ SFX.chime(); toast('古種解封：'+o.n); actCheck(); next&&next(); })); }
 
+
+/* ================================================================
+   乘客的請求：關係到「熟悉」之後，乘客會拜託你一件事
+   kind: sky 在展望台一起看某種天象｜loc 帶牠到某個地點｜out 停靠某地時帶牠一起下車
+   ================================================================ */
+const REQ={
+ felinia:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……我的山谷裡，有一種風，會把我們一整群一起托起來。','聽說展望台有時候看得到流星雨。它們劃過去的樣子，應該很像那種風。','下次有流星雨的時候……可以叫我一起去嗎？'],
+  done:[['felinia','……你看，它們一整群一起落下來。'],['felinia','跟我們滑翔的時候一模一樣。我好像聽到山谷的風了。'],['self','（羽貓獸把翅膀張開了一點點，像在跟著流星一起飛。）']]},
+ leviathaurora:{kind:'sky',sky:'tide',goal:'星河潮汐的時候，邀牠到展望台一起看',ask:['我住的地方很深，很暗，沒有潮汐。','可是我聽說，星河會漲潮。光會一波一波湧過來。','如果遇到星河潮汐……我想上去看看。'],
+  done:[['leviathaurora','……原來，潮汐是這個樣子。'],['leviathaurora','光一直湧過來，又退回去。好像有誰在很遠的地方呼吸。'],['self','（牠身上的螢光，跟著潮水一亮一暗。）']]},
+ cinder:{kind:'out',loc:'dawnForest',goal:'停靠晨曦森林時，帶牠一起下車',ask:['車廂裡的光很暖，可是我的帆想要真正的風。','晨曦森林的晨光很斜，對吧？我想在那裡，把帆完全打開一次。','下次停在晨曦森林，帶我下車好嗎？'],
+  done:[['cinder','（燼風帆獸把兩片帆完全張開。晨光穿過帆面，地上落下兩片琥珀色的影子。）'],['cinder','就是這個。風從帆裡穿過去的感覺。'],['cinder','謝謝你。我會記得這個早晨。']]},
+ aelis:{kind:'sky',sky:'eclipse',goal:'日月交疊的時候，邀牠到展望台一起看',ask:['我聽說，日月交疊的時候，天會暗一下。','在那一瞬間，風會停。……我想知道，風停下來的時候，會不會唱別的歌。','如果遇到日月交疊，帶我去展望台好嗎？'],
+  done:[['aelis','……（艾莉絲的大耳朵慢慢轉向天空。）'],['aelis','風停了。可是我聽到了……光的聲音。很細，很細。'],['aelis','原來安靜的時候，也有歌。']]},
+ pyro:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界）',ask:['車廂的晶石很暖，但不是真正的太陽。','日界的太陽，聽說是一切光的開始。','帶我去日界。我想曬一次真正的太陽。'],
+  done:[['pyro','（燼角巨獸走到車門邊，讓晨光照在牠的岩殼上。裂縫裡的熔岩光，慢慢變成了金色。）'],['pyro','……很暖。不是燙，是暖。'],['pyro','我會記住這個溫度。']]},
+ vandora:{kind:'sky',sky:'aurora',goal:'界壁極光的時候，邀牠到展望台一起看',ask:['我只在夜裡出來。光太亮，我會躲進葉子底下。','可是界壁極光……聽說是很柔的光。柔到連我也不用躲。','如果遇到極光，我想試試看。'],
+  done:[['vandora','……不刺眼。'],['vandora','（翡翠色的鱗甲映著極光，泛出一整片彩虹。）'],['vandora','我不用躲。……原來光也可以是這樣的。']]},
+ frost:{kind:'out',loc:'starIslands',goal:'停靠星河浮島時，帶牠一起下車',ask:['車上很溫暖，我很感謝。可是我有點想念冷。','星河浮島的邊緣，聽說很冷，冷得像我的冰原。','下次停在星河浮島，可以帶我下車走走嗎？'],
+  done:[['frost','（霜脊冰原獸在浮島邊緣趴下，背上的冰甲結起一層新的霜。）'],['frost','……像家。'],['frost','走吧。我已經記住這種冷了，回到車上也不會忘。']]},
+ sirenora:{kind:'sky',sky:'tide',goal:'星河潮汐的時候，邀牠到展望台一起看',ask:['霧會唱歌。只是大部分的時候，沒有人聽得到。','星河漲潮的時候，霧會被光推起來，那時候的歌最清楚。','如果遇到星河潮汐……陪我一起聽，好嗎？'],
+  done:[['sirenora','……你聽到了嗎？'],['sirenora','（霧羽海葵龍的扇翼輕輕擺盪，空氣裡有很細的嗡鳴，像很遠的合唱。）'],['self','（聽到了。很輕，很溫柔。）']]},
+ titan:{kind:'out',loc:'dawnForest',goal:'停靠晨曦森林時，帶牠一起下車',ask:['……車在搖。……我喜歡。','可是……我想念泥土。……真正的、濕的泥土。','……晨曦森林。……帶我下去。……一下下就好。'],
+  done:[['titan','（苔淵巨靈把手掌按進泥土裡。肩上的蕨葉，慢慢舒展開來。）'],['titan','……地脈。……還在。'],['titan','……好。……可以回去了。']]},
+ lynx:{kind:'sky',sky:'aurora',goal:'界壁極光的時候，邀牠到展望台一起看',ask:['……極光。','我出生的那天，天上有極光。之後就再也沒看過。','……如果遇到，叫我。'],
+  done:[['lynx','……（霜晶冰原獸一動也不動地看著天空，很久很久。）'],['lynx','跟那天一樣。'],['lynx','……謝謝。']]},
+ strider:{kind:'loc',loc:'starIslands',goal:'帶牠到星河浮島',ask:['風從四面八方吹來，我都聽得出是從哪裡來的。','可是聽說，星河浮島的風，是從下面往上吹的。','我想去聽聽看。帶我去星河浮島好嗎？'],
+  done:[['strider','（灰角靈犬站在車門口，長角對著浮島下方。）'],['strider','……真的是從下面來的。帶著星河的味道。'],['strider','這個方向的風，我記住了。']]},
+ sola:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['流星可以許願，對吧？','我想許一個很重要的願。可是一定要在真正的流星雨下面許才算數。','下次有流星雨，帶我去展望台！'],
+  done:[['sola','……好了！我許了。不能說出來喔。'],['sola','……好啦，偷偷告訴你。'],['sola','我許的是：「希望大家都找得到回家的路。」']]}
+};
+const reqOf=id=>(state.req||{})[id];
+const reqOn=id=>{ const r=reqOf(id); return !!(r&&r.st==='on'); };
+function reqAsk(id,next){ const s=state.passengers[id], R=REQ[id];
+ dialogue(id,R.ask,[{t:'好，我記下了。',r:'……嗯。謝謝你。'}],()=>{ state.req=state.req||{}; state.req[id]={st:'on',j:state.journeyCount};
+  s.records.push({j:state.journeyCount,t:'拜託你：'+R.goal+'。'}); logJ(`${PASSENGERS[id].name}拜託你：${R.goal}。`,'life'); save(); toast('乘客的請求記進筆記本了'); render(); next&&next(); }); }
+function reqDone(id){ const r=reqOf(id); if(!r||r.st!=='on') return; r.st='done'; r.dj=state.journeyCount; const p=PASSENGERS[id];
+ TAINT.add(-6); state.passengers[id].records.push({j:state.journeyCount,t:'完成了牠的請求：'+REQ[id].goal+'。'}); logJ(`完成了${p.name}的請求。`,'life'); save(); SFX.chime(); setTimeout(()=>toast(`✦ 完成了${p.name}的請求・界染度下降`),300); }
+const reqHere=id=>reqOn(id)&&REQ[id].kind==='out'&&REQ[id].loc===state.currentLocation;
+function reqSection(){ const ids=Object.keys(REQ).filter(id=>reqOf(id)); if(!ids.length) return '';
+ return `<h3 class="jr-h" style="margin-top:22px">乘客的請求</h3><ul class="nb-list">${ids.map(id=>{ const r=reqOf(id);
+  return `<li class="${r.st==='on'?'':'filed'}"><span><b>${PASSENGERS[id].name}</b>：${REQ[id].goal}</span><em>${r.st==='done'?'完成 ✦':r.st==='miss'?'沒能做到':'進行中'}</em></li>`; }).join('')}</ul>`; }
+
 /* 地點一幕一幕開放（地點的場景做好、ready 之後才會真的打開） */
 const ACTS=[
  {locs:['reverseRealm','boundlessCorridor'],need:()=>state.clues.includes('clue_dragon'),say:'航行符號亮了一個，沒有熄滅。日月儀上，同時浮現了兩個新的座標。'},
@@ -1929,7 +2046,8 @@ function actCheck(){ ACTS.forEach(a=>{ if(!a.need()) return; const nw=a.locs.fil
 
 /* 結局判定：界染度＋紀念品數量 */
 const END_KEEPS=8;
-function endingType(){ const t=TAINT.val(), k=keepsHave().length; return t>=70?'night':(t<30&&k>=END_KEEPS?'dawn':'return'); }
+/* 界染度 50 以上不能出發，所以用「出發前往寂滅虛空那一刻」的數值判定：純淨（20 以下）＋紀念品足夠 → 晨曦；35 以上 → 長夜 */
+function endingType(){ const d=state.storyFlags.departTaint, t=typeof d==='number'?d:TAINT.val(), k=keepsHave().length; return t>=35?'night':(t<20&&k>=END_KEEPS?'dawn':'return'); }
 const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩車尾的星光，照亮一小圈。','漂浮的碎片從光圈邊緣經過。每一片，都是一個世界最後的那一刻。','你沒有去修好它們。你只是看著。碎片就一片一片安靜下來。',
  '空白的正中央，有一點很小、很暗的光。它在等。','那是一隻像霧面玻璃做成的小生命。它身體裡的那點光，和你身上的一模一樣。','它帶著你穿過碎片，走到空白的邊緣。',
  '那裡站著一排身影，手按在看不見的牆上。','是渡守。他們還活著。','「你來了。」','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
@@ -2166,7 +2284,7 @@ const PED_IMG='assets/cab-pedestal.webp', COMPASS_IMG='assets/cab-compass.webp',
 /* 畫面中央的廣播：提示換了新內容才播一次，一個字一個字出現；點一下就消失 */
 const ANN={q:null,t:0,iv:0,ready:0};
 function announce(text){ if(!text||!RUNNING) return; const plain=text.replace(/<b>(.*?)<\/b>/,'【$1】').replace(/<[^>]+>/g,'');
- if(state.annSeen===plain) return; state.annSeen=plain; save(); ANN.q=plain; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,700); }
+ if(state.annSeen===plain) return; state.annSeen=plain; BL.push('列車廣播',plain); save(); ANN.q=plain; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,700); }
 function announceNow(t){ ANN.q=t; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,300); }
 function annTry(){ if(!ANN.q) return; if(document.querySelector('#layer .cine,#layer .dlg,#layer .ov,#mainscreen')||TRANS.busy){ ANN.t=setTimeout(annTry,700); return; }
  const t=ANN.q; ANN.q=null; let el=$('#announce'); if(!el){ el=document.createElement('div'); el.id='announce'; el.setAttribute('aria-live','polite'); document.body.appendChild(el); }
@@ -2356,9 +2474,9 @@ const sensesHTML=id=>SENSES[id]?`<span class="senses">${SENSES[id].map((t,k)=>`<
 const VOYAGE_MS=150000; let RUNNING=false;
 function startDeparture(){
  const dest=nextStop(), from=state.currentLocation, fromName=LOCATIONS[from].name;
- state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); TAINT.add(TAINT_GAIN[realmKey(dest)].cross); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
+ state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); state.storyFlags.departTaint=TAINT.val(); TAINT.add(TAINT_GAIN[realmKey(dest)].cross); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
  cine(['領頭曦淵展開雙翼，前方的星光號誌化作一道長長的光軌。列車自行啟動了。',`列車離開${fromName}。`,'車輪下的軌道一節一節亮起，延伸進沒有地面的地方。','日與月的界線，在窗外緩緩翻轉。'],
-  ()=>{ SFX.startDrone(); render(); toast('列車自動航行中・可在車廂間自由走動'); },'assets/voyage.jpg');
+  ()=>{ SFX.startDrone(); render(); tipOnce('t_voy','列車自動航行中・可在車廂間自由走動'); },'assets/voyage.jpg');
 }
 setInterval(()=>{
  if(!RUNNING||state.currentPhase!=='voyage'||!state.voyage) return;
@@ -2429,7 +2547,16 @@ const STREAK={raf:0,parts:[],
 /* ================================================================
    存檔水晶：存檔／讀檔（多欄位、縮圖、重新命名、覆蓋、二次確認刪除）
    ================================================================ */
-const SLOT_KEY='riyue-slots-v1', AUTO_THUMB_KEY='riyue-autothumb', SLOT_MAX=12;
+const SLOT_KEY='riyue-slots-v1', AUTO_THUMB_KEY='riyue-autothumb', SLOT_MAX=20, AUTOS_KEY='riyue-autos-v1', AUTOS_MAX=3;
+function autosGet(){ try{ const a=JSON.parse(localStorage.getItem(AUTOS_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
+/* 每次停靠自動存一格，保留最近三次 */
+function autoSnap(){ if(!state.introDone||state.currentLocation==='origin') return; let t=null; try{ t=localStorage.getItem(AUTO_THUMB_KEY); }catch(e){}
+ const now=Date.now(), loc=LOCATIONS[state.currentLocation].name, x={id:'a'+now.toString(36),name:'自動存檔',auto:true,updated:now,thumb:t,state:clone(state)};
+ let a=autosGet().filter(o=>!(o.state&&o.state.journeyCount===state.journeyCount&&o.state.currentLocation===state.currentLocation)); a.push(x); a=a.slice(-AUTOS_MAX);
+ for(;;){ try{ localStorage.setItem(AUTOS_KEY,JSON.stringify(a)); break; }catch(e){ if(a.length<=1) break; a.shift(); } }
+ autoMark(`已自動存檔・旅程 ${state.journeyCount}・${loc}`); }
+function autoMark(t){ let m=document.querySelector('#automark'); if(!m){ m=document.createElement('div'); m.id='automark'; document.body.appendChild(m); }
+ m.textContent='✓ '+t; m.classList.remove('on'); void m.offsetWidth; m.classList.add('on'); }
 function slotsGet(){ try{ const a=JSON.parse(localStorage.getItem(SLOT_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 function slotsSet(a){ try{ localStorage.setItem(SLOT_KEY,JSON.stringify(a)); return true; }catch(e){ return false; } }
 function fmtTime(t){ const d=new Date(t); return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
@@ -2470,12 +2597,12 @@ function savePanel(mode){   /* mode: 'game' 可封存與喚回；'title' 只能�
  const confirmBox=(text,yesLabel,danger,yes)=>{ const c=pn.querySelector('#sl-cf'); c.innerHTML=`<p class="pmsg">${text}</p><div class="acts"><button class="pbtn ${danger?'warn':'pri'}" id="cf-y">${yesLabel}</button><button class="pbtn" id="cf-n">取消</button></div>`;
   c.querySelector('#cf-y').onclick=yes; c.querySelector('#cf-n').onclick=()=>{ c.innerHTML=''; }; };
  const draw=()=>{
-  const a=autoItem(), list=(a?[a]:[]).concat(slotsGet().sort((x,y)=>y.updated-x.updated)), s=sel&&list.find(x=>x.id===sel);
+  const a=autoItem(), list=(a?[a]:[]).concat(autosGet().reverse(),slotsGet().sort((x,y)=>y.updated-x.updated)), s=sel&&list.find(x=>x.id===sel);
   let h=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">存檔水晶</div><h2>${mode==='title'?'接續旅程':'存檔與讀檔'}</h2>${msg?`<p class="pmsg">${msg}</p>`:''}`;
   if(!s){
    h+=`<p>${mode==='title'?'選擇一段旅程記憶，確認後從那一刻接續。':'把此刻的旅程封存成一段記憶，或喚回過去封存的記憶。'}</p><div class="slots">`;
    if(mode==='game') h+=`<button class="slot new" id="sl-new"><div class="th"><span>＋</span></div><div class="nm">封存目前的旅程</div><div class="mt">建立新的記憶（${slotsGet().length} / ${SLOT_MAX}）</div></button>`;
-   h+=list.map(x=>{ const m=stateSummary(x.state); return `<button class="slot" data-id="${x.id}"><div class="th">${thumbImg(x.thumb)}${x.auto?'<span class="badge">自動紀錄</span>':''}</div><div class="nm">${esc(x.name)}</div><div class="mt">旅程 ${m.journey}・${esc(m.loc)}</div><div class="mt">${fmtTime(x.updated)}</div></button>`; }).join('');
+   h+=list.map(x=>{ const m=stateSummary(x.state); return `<button class="slot" data-id="${x.id}"><div class="th">${thumbImg(x.thumb)}${x.auto?'<span class="badge">自動存檔</span>':''}</div><div class="nm">${esc(x.name)}</div><div class="mt">旅程 ${m.journey}・${esc(m.loc)}</div><div class="mt">${fmtTime(x.updated)}</div></button>`; }).join('');
    if(!list.length&&mode==='title') h+='<p class="empty">目前還沒有任何可接續的旅程。</p>';
    h+='</div>'+(mode==='game'?'<button class="plink" id="sl-home">回到列車主畫面</button>':'');
   } else { const m=stateSummary(s.state);
@@ -2534,9 +2661,11 @@ function rollBoarders(){ if(state.currentLocation==='origin') return [];
   while(x>w[at]){ x-=w[at]; at++; } out.push('board_'+pool.splice(Math.min(at,pool.length-1),1)[0]); }
  return out; }
 function arrivalChecks(){
- const q=[];
+ const q=[]; autoSnap();
  // 乘客離開（固定條件）
  Object.keys(PASSENGERS).forEach(id=>{ const s=state.passengers[id]; if(s&&s.aboard&&state.journeyCount-s.boardedJourney>=PASSENGERS[id].stay&&readyToLeave(id)) q.push(next=>farewell(id,next));   /* 故事、筆記、速寫都完成後才下車 */ });
+ // 乘客的請求：帶牠到某個地點
+ Object.keys(REQ).forEach(id=>{ const r=reqOf(id); if(aboard(id)&&r&&r.st==='on'&&REQ[id].kind==='loc'&&REQ[id].loc===state.currentLocation&&state.journeyCount>r.j) q.push(next=>dialogueScript(REQ[id].done,()=>{ reqDone(id); next(); })); });
  // 停靠事件
  const brd=rollBoarders();
  Object.entries(EVENTS).forEach(([id,e])=>{ if(e.trigger==='arrive'&&!id.startsWith('board_')&&(!e.loc||e.loc===state.currentLocation)&&!done(id)&&(!e.need||e.need())) q.push(next=>e.run(next)); });
@@ -2563,10 +2692,11 @@ function boarding(id,line,next){
 }
 function talk(id,next){
  const p=PASSENGERS[id], s=state.passengers[id];
+ if(REQ[id]&&!reqOf(id)&&s.talks>=2&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') return reqAsk(id,next);
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
  /* 最後、最深的那段故事：要先把牠的棲息環境調到舒適 */
- if(fresh&&idx===p.talks.length-1&&CARE[id]&&!careOk(id)) return dialogue(id,[`（${p.name}看起來不太自在，好像還不想多說。）`,careReact(id)],null,()=>{ toast('點牠所在的區域，幫牠調整一下結界吧'); render(); next&&next(); });
+ if(fresh&&idx===p.talks.length-1&&CARE[id]&&!careOk(id)) return dialogue(id,[`（${p.name}看起來不太自在，好像還不想多說。）`,careReact(id)],null,()=>{ tipOnce('t_care','點牠所在的區域，幫牠調整一下結界吧'); render(); next&&next(); });
  if(!fresh&&NOTES[id]){ const N=NOTES[id], miss=N.secs.filter(k=>filedOf(id)[k]===undefined&&!notesOf(id).some(i=>N.list[i].k===k));
   if(miss.length){ const ni=p.talks.findIndex(t=>t.lines.some(l=>N.list.some(x=>miss.includes(x.k)&&l.includes(x.p))));
    if(ni>=0) return dialogue(id,lines,[{t:'能再跟我說一次之前那些事嗎？',r:'……好。這次聽仔細喔。',go:1},{t:'沒事，只是來看看你。',r:'嗯。'}],c=>{
@@ -2596,7 +2726,8 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  return id==='lumi'? (state.currentLocation==='dawnForest'?'外面是我的森林呢。不過我還想再看看別的地方。':'這裡沒有樹……可是有光。光也不錯。')
   : (state.currentLocation==='starIslands'?'星河的潮汐今天很溫柔。我的島應該也在某處被這樣拍著吧。':'這裡沒有星河，但是有你們。也算是一種潮汐。'); }
 function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id];
- const fl=NOTES[id]&&fullDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
+ let fl=NOTES[id]&&fullDone(id)?p.farewell.slice(0,-1).concat([NOTES[id].thanks,p.farewell[p.farewell.length-1]]):p.farewell;
+ if(reqOn(id)){ fl=['之前拜託你的那件事……沒關係。下次再一起吧。'].concat(fl); state.req[id].st='miss'; }
  dialogue(id,fl,null,()=>{
   s.aboard=false; s.left=true; s.place=undefined; if(s.stage<3){ s.stage=3; }
   const K=KEEPS[id]; if(K) addItem('keep_'+id,true);
@@ -2618,9 +2749,9 @@ function dialogue(id,lines,choices,onEnd){
  $('#layer').appendChild(el);
  if(canSk) el.querySelector('.dsk').onclick=ev=>{ ev.stopPropagation(); el.remove(); render(); setTimeout(()=>sketchPanel(id),200); }; let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
  let picked=null, warned=-1;
- const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML='';
+ const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML=''; BL.push(p?p.name:'',lines[i]); addLogBtn(el);
   if(p&&tx.querySelector('mark.hl')&&!state.storyFlags.noteTip){ state.storyFlags.noteTip=1; save(); toast('🗒️ 發光的字句可以點一下，記進筆記本'); }
-  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; el.querySelector('.nm').textContent=''; tx.innerHTML=''; tx.classList.add('self'); chs.innerHTML=''; typeHTML(tx,escH(c.t),null,26);
+  if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; BL.push('你',c.t); el.querySelector('.nm').textContent=''; tx.innerHTML=''; tx.classList.add('self'); chs.innerHTML=''; typeHTML(tx,escH(c.t),null,26);
     lines=lines.concat(['__self__',c.r]); i++; nx.hidden=false; setTimeout(()=>{ typeFinish(tx); i++; el.querySelector('.nm').textContent=p.name; tx.classList.remove('self'); show(); },Math.max(900,c.t.length*26+600)); }; chs.appendChild(b); }); }
  };
  el.querySelector('.box').addEventListener('click',e=>{ const mk=e.target.closest('mark.hl'); if(mk&&p){ takeNote(id,+mk.dataset.nk,mk); return; }
@@ -2748,7 +2879,7 @@ function notebookPanel(){
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
- return journal({cls:'notebook',title:'筆記本',pages,tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
+ return journal({cls:'notebook',title:'筆記本',pages:()=>{ const P=pages(); P[0]+=reqSection(); return P; },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
   onClick:(e,ov)=>{ const b=e.target.closest('[data-erase]'); if(!b) return; const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); ov.refresh(); }}); }
 /* 圖鑑：未整理的欄位顯示放入筆記的空格 */
 function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
@@ -2775,7 +2906,7 @@ function readyToLeave(id){ const p=PASSENGERS[id], s=state.passengers[id]; if(!s
  const N=NOTES[id]; if(N&&!N.secs.every(k=>filedOf(id)[k]!==undefined||notesOf(id).some(i=>N.list[i].k===k))) return false;
  return true; }
 function sketchArt(id,k){ const p=PASSENGERS[id]; return p.studies?`<img src="${p.studies[k]}" alt="">`:portraitOf(p); }
-function sketchPicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('✍️ 到棲息車廂點乘客，就能觀察速寫');
+function sketchPicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return tipOnce('t_sketch','✍️ 到棲息車廂點乘客，就能觀察速寫');
  const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id));
  if(!ids.length) return toast('棲息車廂目前沒有乘客');
  const ov=panel(`<div class="eyebrow">棲息車廂</div><h2>✍️ 觀察速寫</h2><p>選一位乘客，靜靜觀察牠，在牠做出動作的瞬間落筆。每位乘客可以畫兩張速寫，會收進世界與生命圖鑑。</p>
@@ -2876,7 +3007,7 @@ function askMove(id,z,after){ const p=PASSENGERS[id], m=mismatch(id,z), full=!ca
  dialogueScript([['self',`${p.name}，要不要到${ZONES[z].name}這邊來？`],[id,line]],()=>{
   if(yes){ movePassenger(id,z); SFX.tone(1046,0,.5,'sine',.03); careCheck(); render(); } else SFX.tone(392,0,.3,'sine',.02);
   after&&after(); }); }
-function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return toast('到棲息車廂，點乘客所在的區域就能調整結界');
+function carePicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return tipOnce('t_care2','到棲息車廂，點乘客所在的區域就能調整結界');
  const ids=Object.keys(PASSENGERS).filter(aboard), bad=ids.find(id=>!careOk(id)); zoneInfo(bad?zoneOf(bad):'spring'); }
 
 /* 乘客之間的互動：播放兩位乘客的對話，結束後寫進航行日誌、兩位乘客的紀錄，並凝結成回憶水晶 */
@@ -3014,6 +3145,8 @@ function skyWatch(){ const k=skyNow(); if(!k) return toast('現在的天空很�
   state.skyLog=state.skyLog||[]; state.skyLog.push({k:'sky',type:k.type,j:state.journeyCount+1,with:here.slice()});
   logJ(`在展望台觀賞了${S.name}${here.length?`，和${here.map(id=>PASSENGERS[id].name).join('、')}一起`:''}。`,'find');
   here.forEach(id=>state.passengers[id].records.push({j:state.journeyCount+1,t:`在展望台一起看了${S.name}。`})); save(); SFX.chime(); }
+ const rq=here.filter(id=>reqOn(id)&&REQ[id].kind==='sky'&&REQ[id].sky===k.type);
+ rq.forEach(id=>{ script.push(...REQ[id].done); reqDone(id); });
  dialogueScript(script); }
 /* ---------- 星座連線 ---------- */
 const CONSTS=[
@@ -3126,9 +3259,10 @@ const forageShow=i=>()=>{ const f=forageNow(); return !!(f&&f.spots[i]&&!f.spots
 function exitChooser(go){ const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&state.passengers[id].stage>=2);
  if(!ids.length){ state.companion=null; return go(); }
  const ov=panel(`<div class="eyebrow">車門</div><h2>要邀請誰一起下車嗎？</h2><p>熟悉的乘客可以陪你走走。牠會幫你多找到一個採集點，有些乘客還會帶你去只有牠知道的地方。</p>
-  <div class="zask">${ids.map(id=>`<button class="btn ghost" data-comp="${id}">和${PASSENGERS[id].name}一起${PLACES[id]&&PLACES[id].loc===state.currentLocation?' ✦':''}</button>`).join('')}<button class="btn" data-comp="">自己下車</button></div>`,'care');
+  <div class="zask">${ids.map(id=>`<button class="btn ghost" data-comp="${id}">和${PASSENGERS[id].name}一起${(PLACES[id]&&PLACES[id].loc===state.currentLocation)||reqHere(id)?' ✦':''}</button>`).join('')}<button class="btn" data-comp="">自己下車</button></div>`,'care');
  ov.querySelectorAll('[data-comp]').forEach(b=>b.onclick=()=>{ state.companion=b.dataset.comp||null; if(state.companion&&atDeck(state.companion)) state.passengers[state.companion].place=undefined; closeAll(); go(); }); }
 function compTalk(){ const id=state.companion, p=PASSENGERS[id], s=state.passengers[id], loc=state.currentLocation, key='out_'+loc;
+ if(reqHere(id)) return dialogueScript(REQ[id].done,()=>{ reqDone(id); render(); });
  dialogue(id,[COMP_LINE[id][loc]],null,()=>{ s.outings=s.outings||[]; if(!s.outings.includes(loc)){ s.outings.push(loc); s.records.push({j:state.journeyCount,t:`陪你走了一趟${LOCATIONS[loc].name}。`}); logJ(`和${p.name}一起走了一趟${LOCATIONS[loc].name}。`,'life'); save(); } render(); }); }
 function placeVisit(id){ const P=PLACES[id], first=!(state.places||[]).includes(id);
  panel(`<div class="eyebrow">${LOCATIONS[P.loc].name}・和${PASSENGERS[id].name}一起</div><h2>${P.name}</h2><p>${P.text}</p>${first?`<p class="pur-done">${COLLECTIBLES[P.give]?`取得：${COLLECTIBLES[P.give].name}。`:`取得：${MATS[P.give].name} ×2。`}這一幕凝結成了回憶水晶。</p>`:''}`,'care');
@@ -3161,7 +3295,7 @@ function dialogueScript(script,onEnd){ let i=0; const el=document.createElement(
   const duo=cast.length>1&&who!=='dragon';   /* 兩位乘客的互動：兩位都在畫面上，說話的那位亮起 */
   el.dataset.who=duo?cast.slice(0,2).join(' '):(p&&PASSENGERS[who]?who:''); talkSync();
   el.innerHTML=`${duo?cast.slice(0,2).map(w=>`<div class="who ${w===who?'':'dim'}" style="left:${side(w)}">${portraitOf(charOf(w))}</div>`).join(''):p?`<div class="who" style="left:${side(who)}">${portraitOf(p)}</div>`:''}<div class="box"><div class="nm">${p?p.name:''}</div><div class="tx">${who==='self'?'':t}</div><div class="nx">▼</div></div>`; if(who==='self') typeHTML(el.querySelector('.tx'),t); };
- el.addEventListener('click',()=>{ const tx=el.querySelector('.tx'); if(typing(tx)){ typeFinish(tx); return; } i++; if(i>=script.length){ el.remove(); onEnd&&onEnd(); render(); } else show(); }); show(); }
+ el.addEventListener('click',()=>{ const tx=el.querySelector('.tx'); if(typing(tx)){ typeFinish(tx); return; } i++; if(i>=script.length){ el.remove(); onEnd&&onEnd(); render(); } else { show(); BL.push(script[i][0]==='self'?'你':(charOf(script[i][0])||{}).name||'',script[i][1]); addLogBtn(el); } }); show(); BL.push(script[0][0]==='self'?'你':(charOf(script[0][0])||{}).name||'',script[0][1]); addLogBtn(el); }
 
 /* 正在對話的乘客：場景裡原本的圖藏起來，避免畫面上同時有兩隻 */
 function talkSync(){ const ids=[...document.querySelectorAll('#layer .dlg[data-who]')].flatMap(d=>d.dataset.who.split(' ').filter(Boolean));
@@ -3171,8 +3305,8 @@ new MutationObserver(()=>{ talkSync(); sayType(); if(document.querySelector('#la
 /* 過場演出 */
 function cine(lines,onDone,img,titleCard){ const el=document.createElement('div'); el.className='cine';
  let i=0; const draw=()=>{ el.innerHTML=`${img?`<img src="${img}" alt="">`:'<div class="stars"></div>'}<div class="shade"></div><div class="txt">${lines[i]}</div><div class="tap">輕觸繼續</div>`; if(i>0&&img){ const im=el.querySelector('img'); im.style.animation='none'; im.style.transform='scale(1.05)'; } };
- draw(); $('#layer').appendChild(el);
- el.onclick=()=>{ i++; if(i>=lines.length){ el.style.transition='opacity .5s'; el.style.opacity=0; setTimeout(()=>{ el.remove(); onDone&&onDone(); },450); } else { const t=el.querySelector('.txt'); t.innerHTML=lines[i]; t.style.animation='none'; t.offsetWidth; t.style.animation=''; } };
+ draw(); $('#layer').appendChild(el); if(!titleCard) BL.push('',lines[0]);
+ el.onclick=()=>{ i++; if(i>=lines.length){ el.style.transition='opacity .5s'; el.style.opacity=0; setTimeout(()=>{ el.remove(); onDone&&onDone(); },450); } else { const t=el.querySelector('.txt'); t.innerHTML=lines[i]; if(!titleCard) BL.push('',lines[i]); t.style.animation='none'; t.offsetWidth; t.style.animation=''; } };
 }
 
 
@@ -3624,13 +3758,13 @@ function floatField(o){
  const n=o.items.length, asp=Math.max(.5,Math.min(2.2,innerWidth/innerHeight)), cols=Math.max(3,Math.ceil(Math.sqrt(n*asp*.95))), rows=Math.ceil(n/cols);
  const rnd=k=>{ const x=Math.sin(k*12.9898+78.233)*43758.5453; return x-Math.floor(x); };
  const pos=o.items.map((_,k)=>{ const c=k%cols, r=Math.floor(k/cols); return [((c+.5)/cols*86+7+(rnd(k)-.5)*(50/cols)).toFixed(1),((r+.5)/rows*70+20+(rnd(k+99)-.5)*(36/rows)).toFixed(1)]; });
- const field=()=>{ ov.innerHTML=`<div class="fl-head"><h2>${o.title}</h2><p>${o.sub()}</p></div>${o.items.map((it,k)=>it.have?`<button class="fl ${it.cls||''}" data-k="${k}" ${it.attr||''} style="left:${pos[k][0]}%;top:${pos[k][1]}%;--d:${(-rnd(k+7)*6).toFixed(2)}s;--dur:${(5+rnd(k+3)*3).toFixed(1)}s"><span class="cr">${it.inner}</span><span class="t">${it.label}</span></button>`:`<div class="fl lock ${it.cls||''}" style="left:${pos[k][0]}%;top:${pos[k][1]}%;--d:${(-rnd(k+7)*6).toFixed(2)}s;--dur:${(5+rnd(k+3)*3).toFixed(1)}s"><span class="cr"></span></div>`).join('')}<button class="close" aria-label="關閉">✕</button>`;
-  ov.querySelectorAll('[data-k]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); view(+b.dataset.k); }); };
+ const field=()=>{ ov.innerHTML=`<div class="fl-head"><h2>${o.title}</h2><p>${o.sub()}</p>${o.extra||''}</div>${o.items.map((it,k)=>it.have?`<button class="fl ${it.cls||''}" data-k="${k}" ${it.attr||''} style="left:${pos[k][0]}%;top:${pos[k][1]}%;--d:${(-rnd(k+7)*6).toFixed(2)}s;--dur:${(5+rnd(k+3)*3).toFixed(1)}s"><span class="cr">${it.inner}</span><span class="t">${it.label}</span></button>`:`<div class="fl lock ${it.cls||''}" style="left:${pos[k][0]}%;top:${pos[k][1]}%;--d:${(-rnd(k+7)*6).toFixed(2)}s;--dur:${(5+rnd(k+3)*3).toFixed(1)}s"><span class="cr"></span></div>`).join('')}<button class="close" aria-label="關閉">✕</button>`;
+  ov.querySelectorAll('[data-k]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); view(+b.dataset.k); }); const xb=ov.querySelector('#fl-bl'); if(xb) xb.onclick=e=>{ e.stopPropagation(); backlogPanel(); }; };
  const view=k=>{ SFX.chime(); ov.innerHTML=`<div class="fl-view">${o.view(o.items[k].id)}<button class="plink fl-back">‹ 返回</button></div><button class="close" aria-label="關閉">✕</button>`;
   ov.querySelector('.fl-back').onclick=e=>{ e.stopPropagation(); field(); }; };
  ov.addEventListener('click',e=>{ if(e.target===ov||e.target.classList.contains('fl-view')||e.target.closest('.close')) closeOv(ov); });
  field(); return ov; }
-function memoryPanel(){ return floatField({cls:'mems',title:'回憶水晶',sub:()=>`凝結的片刻 ${memsHave().length} / ${MEMORIES.length}`,
+function memoryPanel(){ return floatField({cls:'mems',title:'回憶水晶',sub:()=>`凝結的片刻 ${memsHave().length} / ${MEMORIES.length}`,extra:'<button class="bl-open" id="fl-bl">最近聽見的話 ›</button>',
   items:MEMORIES.map(m=>({id:m.id,have:m.have(),cls:'shard',attr:`data-m="${m.id}"`,inner:memArt(m),label:m.title})),
   view:id=>{ const m=MEMORIES.find(x=>x.id===id); return `<h2>${m.title}</h2><div class="memview"><div class="cr">${memArt(m)}</div><blockquote>${m.text}</blockquote></div>`; }}); }
 function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item').concat(keepsHave().map(p=>'keep_'+p));
@@ -3953,16 +4087,16 @@ function hsState(h){
  if(seen!==undefined&&(h.shape||'obj')==='obj') return 'done';        // 已閱讀
  return 'normal';
 }
-function hsBtn(h,pano){ const st=hsState(h), sh=h.shape||'obj', nm=esc(hsName(h)), sb=h.scene==='cab'?stepBadge(h.id):'';
+function hsBtn(h,pano){ const st=hsState(h), sh=h.shape||'obj', nm=esc(hsName(h)), sb=h.scene==='cab'?stepBadge(h.id)||tipBadge(h):tipBadge(h);
  const attrs=`data-hs="${h.id}"${pano?` data-hid="${h.id}"`:''} style="${pano?'visibility:hidden':`left:${h.at.x}%;top:${h.at.y}%`}${h.sx||''}"`;
  if(h.readout) return `<div class="hs readout" ${attrs}><span class="ro-k">空間座標</span><span class="ro-v">${nm}</span></div>`;
- if(sh==='npc'&&h.sprite) return `<button class="mote sprite st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}"><span class="spr"><img src="${h.sprite}" alt="" draggable="false"></span><span class="lb">${nm}</span></button>`;
- if(sh==='npc') return `<button class="mote st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}"><span class="orb" style="background:${h.color()}"></span><span class="lb">${nm}</span></button>`;
+ if(sh==='npc'&&h.sprite) return `<button class="mote sprite st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}">${sb}<span class="spr"><img src="${h.sprite}" alt="" draggable="false"></span><span class="lb">${nm}</span></button>`;
+ if(sh==='npc') return `<button class="mote st-${st} ${h.cls||''}" ${attrs} aria-label="${nm}">${sb}<span class="orb" style="background:${h.color()}"></span><span class="lb">${nm}</span></button>`;
  return `<button class="hs st-${st} ${sh==='obj'?'':sh}" ${attrs} aria-label="${nm}${st==='locked'?'（尚未開啟）':''}">${sb}<span class="mk"></span><span class="lb">${nm}</span></button>`;
 }
-function hsRender(scene){ return hsList(scene).map(h=>hsBtn(h,false)).join(''); }
-function hsRefresh(){ document.querySelectorAll('#scene [data-hs]').forEach(el=>{ const h=HSDEF.find(x=>x.id===el.dataset.hs); if(!h) return;
- if(h.scene==='cab'){ const o=el.querySelector('.step'), nb=stepBadge(h.id); if(o) o.remove(); if(nb) el.insertAdjacentHTML('afterbegin',nb); }
+function hsRender(scene){ const L=hsList(scene); tipPick(L); setTimeout(tipTurn,0); return L.map(h=>hsBtn(h,false)).join(''); }
+function hsRefresh(){ tipPick(hsList(HS_SCENE())); tipTurn(); document.querySelectorAll('#scene [data-hs]').forEach(el=>{ const h=HSDEF.find(x=>x.id===el.dataset.hs); if(!h) return;
+ { const o=el.querySelector('.step'), nb=(h.scene==='cab'?stepBadge(h.id):'')||tipBadge(h); if(o) o.remove(); if(nb) el.insertAdjacentHTML('afterbegin',nb); }
  el.classList.remove('st-normal','st-important','st-locked','st-done'); el.classList.add('st-'+hsState(h)); const lb=el.querySelector('.lb'); if(lb&&!lb.querySelector('.whisper')) lb.textContent=hsName(h); }); }
 
 /* 點擊：防連點、光效回饋、依層級開啟內容、記錄已讀 */
@@ -3981,7 +4115,7 @@ function hsClick(id,el){
  const now=performance.now();
  if(now<HSC.until||(HSC.last===id&&now<HSC.lastT+700)||TRANS.busy||document.querySelector('#layer .cine,#layer .dlg,#layer .ov:not(.closing)')) return;
  const h=HSDEF.find(x=>x.id===id); if(!h||h.scene!==HS_SCENE()||(h.show&&!h.show())) return;
- HSC.until=now+260; HSC.last=id; HSC.lastT=now; hsBurst(el);
+ HSC.until=now+260; HSC.last=id; HSC.lastT=now; hsBurst(el); tipHit(id);
  const lk=h.lock&&h.lock();
  if(lk){ SFX.tone(330,0,.3,'sine',.02); if(h.onLocked){ HSC.layer=2; try{ h.onLocked(); }finally{ HSC.layer=0; } return; } return whisper(el,lk,'lock'); }
  SFX.tone(1175,0,.35,'sine',.015);
@@ -4186,7 +4320,7 @@ function intro(){
   /* 開場結束 → 進入小精靈的值勤準備 */
   state.currentCarriage='cab'; render();
   (state.ngPlus?f=>cine(['（這一點光……好像在哪裡見過。）','（你想不起來。可是心裡有一個地方，暖暖的。）'],f):f=>f())(()=>
-  cine(['<span class="big">值勤準備</span><span class="sub">駕駛室・身體量測・裝備領取・資訊核對</span>'],()=>{ toast('點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true));
+  cine(['<span class="big">值勤準備</span><span class="sub">駕駛室・身體量測・裝備領取・資訊核對</span>'],()=>{ tipOnce('t_duty','點擊發光的標記，依序完成值勤準備'); arrivalChecks(); },null,true));
  });
 }
 function boot(){ normalizeState(); render(); showMain(); }
