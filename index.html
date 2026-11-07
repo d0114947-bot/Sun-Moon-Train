@@ -1947,6 +1947,7 @@ const TIPS=[
  {k:'scope',t:'找影子',m:h=>h.id==='obs-scope',when:()=>true},
  {k:'nav',t:'選航線',m:h=>h.id==='obs-nav',when:()=>state.currentPhase==='docked'&&state.journeyCount>=1},
  {k:'const',t:'連星座',m:h=>h.id==='obs-const',when:()=>!!skyHere()},
+ {k:'skylight',t:'打開天窗',m:h=>h.id==='nat-skylight',when:()=>!!skyNow()},
  {k:'sky',t:'觀賞天象',m:h=>h.id==='ot-sky',when:()=>!!skyNow()},
  {k:'invite',t:'邀請乘客',m:h=>h.id==='ot-invite',when:()=>true},
  {k:'engr',t:'拓下刻紋',m:h=>h.id==='ot-floor',when:()=>state.currentPhase==='docked'&&!ENGR_OK(state.currentLocation)},
@@ -3143,7 +3144,8 @@ function skyForecast(dest){ const jc=state.journeyCount, moon=realmKey(dest)==='
 const skyNow=()=>state.currentPhase==='voyage'&&state.voyage&&state.voyage.sky&&state.voyage.sky.started&&!state.voyage.sky.ended?state.voyage.sky:null;
 function skyTick(v){ const k=v.sky; if(!k) return false;
  if(!k.started&&v.progress>=k.at){ k.started=true; const went=skyFansGo();
-  toast(`✦ 星象出現：${SKY[k.type].name}　到火車尾展望台觀賞吧${went.length?`（${went.join('、')}已經跑過去了）`:''}`); SFX.chime(); return true; }
+  toast(`✦ 星象出現：${SKY[k.type].name}　到火車尾展望台觀賞吧${went.length?`（${went.join('、')}已經跑過去了）`:''}`); SFX.chime();
+  const fl=(state.pods||[]).filter(c=>c&&c.st<2&&SKY_BLOOM[k.type].includes(c.p)); if(fl.length) setTimeout(()=>toast(`溫室的${fl.map(c=>PLANTS[c.p].name).join('、')}好像也在等這片天空……打開天窗看看`),3200); return true; }
  if(k.started&&!k.ended&&v.progress>=k.at+SKY_WIN){ k.ended=true; if(!k.watched) toast(`${SKY[k.type].name}結束了`); return true; }
  return false; }
 function skyFansGo(){ const went=[]; SKY_FANS.forEach(id=>{ const s=state.passengers[id]; if(aboard(id)&&!atDeck(id)&&deckList().length<DECK_SLOT.length&&s.stage>=1){ s.place='deck'; went.push(PASSENGERS[id].name); } }); save(); return went; }
@@ -3471,17 +3473,37 @@ const jarDust=c=>`<path d="M16 86 q24 -10 48 0 v4 q0 12 -14 12 h-20 q-14 0 -14 -
    停靠時「陪它一下」，光不對也會長。守望藤可以鑑定新的稀有種子，也能分光給培育艙。
    ================================================================ */
 const PLANTS={
- sunfern:{name:'晨曦蕨',seed:'晨曦蕨種',rare:1,legacy:1,light:'dawn',color:'#ffe7a8',desc:'每一片新葉展開時，都帶著一點晨光的溫度。',touch:'葉子在指尖下面暖暖的，像剛被太陽照過。',vine:'它是晨光的孩子，喜歡最斜的那道光。'},
- dewmoss:{name:'曦露苔花',seed:'晨露苔種',rare:1,legacy:1,light:'dawn',color:'#a6e39a',desc:'晨露苔在列車裡開出的花。每到下一個停靠點，花心就亮一次，像在數早晨。',touch:'苔面上滾著一顆露珠，碰一下，就沿著葉子滑下去了。',vine:'它記得森林的早晨。給它晨光吧。'},
- tidebloom:{name:'潮汐花',seed:'潮汐花種',rare:1,legacy:1,light:'moon',color:'#9fd8ff',desc:'花瓣跟著星河的潮汐開合。在日界，它會一直等待下一次漲潮。',touch:'花苞輕輕一開一闔，像在呼吸。',vine:'它在等潮水。月輝是它的潮水。'},
- starspore:{name:'星汐蕨',seed:'星塵孢子',rare:1,legacy:1,light:'star',color:'#9a8cff',desc:'葉面會映出星河的潮汐。即使在日界也一樣。',touch:'葉面上的星光，跟著你的手指流過去。',vine:'它是從星光裡掉下來的。只有星輝能叫醒它。'},
- bell:{name:'晨鈴花',seed:'晨鈴花種',light:'any',color:'#fff3b0',desc:'花朵像小小的鈴鐺。風一吹，會發出很輕的叮噹聲。',touch:'（叮。）……它響了一下，像在跟你打招呼。',sound:1},
- mossgrass:{name:'絨苔草',seed:'絨苔草籽',light:'any',color:'#9fd08a',desc:'摸起來像毛毯一樣的草。躺在上面，會聞到雨後的味道。',touch:'軟軟的。手放上去會留下一個小手印，過一下又慢慢恢復。'},
- goldreed:{name:'金穗蒲',seed:'金穗蒲籽',light:'any',color:'#f0c96a',desc:'細長的金色穗子，會順著風的方向一起低頭。',touch:'你一碰，整排穗子就朝同一個方向彎下去，像在鞠躬。'},
- stardaisy:{name:'星點菊',seed:'星點菊籽',light:'any',color:'#e8e4ff',desc:'白色的小菊花，花心有一點星光，晚上比白天亮。',touch:'花心的星光閃了一下。……是在眨眼嗎？'},
- shellbloom:{name:'潮音貝花',seed:'潮音貝花籽',light:'any',color:'#bfe9f0',desc:'花瓣捲成貝殼的形狀。靠近耳邊，能聽到很遠的潮聲。',touch:'把耳朵貼近花瓣……嘩——嘩——。是星河的聲音。'},
- glowcap:{name:'微光菇',seed:'微光菇孢',light:'any',color:'#c9b8ff',desc:'長在浮島陰影下的小菇，傘面會發出淡淡的紫光。',touch:'輕輕碰一下，傘面就亮了一點點，又慢慢暗回去。'}
+ sunfern:{lang:'每一天，都從最溫柔的光開始。',name:'晨曦蕨',seed:'晨曦蕨種',rare:1,legacy:1,light:'dawn',color:'#ffe7a8',desc:'每一片新葉展開時，都帶著一點晨光的溫度。',touch:'葉子在指尖下面暖暖的，像剛被太陽照過。',vine:'它是晨光的孩子，喜歡最斜的那道光。'},
+ dewmoss:{lang:'我記得每一個早晨。',name:'曦露苔花',seed:'晨露苔種',rare:1,legacy:1,light:'dawn',color:'#a6e39a',desc:'晨露苔在列車裡開出的花。每到下一個停靠點，花心就亮一次，像在數早晨。',touch:'苔面上滾著一顆露珠，碰一下，就沿著葉子滑下去了。',vine:'它記得森林的早晨。給它晨光吧。'},
+ tidebloom:{lang:'等待，也是一種相信。',name:'潮汐花',seed:'潮汐花種',rare:1,legacy:1,light:'moon',color:'#9fd8ff',desc:'花瓣跟著星河的潮汐開合。在日界，它會一直等待下一次漲潮。',touch:'花苞輕輕一開一闔，像在呼吸。',vine:'它在等潮水。月輝是它的潮水。'},
+ starspore:{lang:'你走過的路，會變成星光。',name:'星汐蕨',seed:'星塵孢子',rare:1,legacy:1,light:'star',color:'#9a8cff',desc:'葉面會映出星河的潮汐。即使在日界也一樣。',touch:'葉面上的星光，跟著你的手指流過去。',vine:'它是從星光裡掉下來的。只有星輝能叫醒它。'},
+ bell:{lang:'有人在想你。',name:'晨鈴花',seed:'晨鈴花種',light:'any',color:'#fff3b0',desc:'花朵像小小的鈴鐺。風一吹，會發出很輕的叮噹聲。',touch:'（叮。）……它響了一下，像在跟你打招呼。',sound:1},
+ mossgrass:{lang:'你可以在這裡休息。',name:'絨苔草',seed:'絨苔草籽',light:'any',color:'#9fd08a',desc:'摸起來像毛毯一樣的草。躺在上面，會聞到雨後的味道。',touch:'軟軟的。手放上去會留下一個小手印，過一下又慢慢恢復。'},
+ goldreed:{lang:'順著風走，就不會迷路。',name:'金穗蒲',seed:'金穗蒲籽',light:'any',color:'#f0c96a',desc:'細長的金色穗子，會順著風的方向一起低頭。',touch:'你一碰，整排穗子就朝同一個方向彎下去，像在鞠躬。'},
+ stardaisy:{lang:'小小的光，也能照亮夜晚。',name:'星點菊',seed:'星點菊籽',light:'any',color:'#e8e4ff',desc:'白色的小菊花，花心有一點星光，晚上比白天亮。',touch:'花心的星光閃了一下。……是在眨眼嗎？'},
+ shellbloom:{lang:'遠方的消息，總會傳到。',name:'潮音貝花',seed:'潮音貝花籽',light:'any',color:'#bfe9f0',desc:'花瓣捲成貝殼的形狀。靠近耳邊，能聽到很遠的潮聲。',touch:'把耳朵貼近花瓣……嘩——嘩——。是星河的聲音。'},
+ glowcap:{lang:'別怕，我在。',name:'微光菇',seed:'微光菇孢',light:'any',color:'#c9b8ff',desc:'長在浮島陰影下的小菇，傘面會發出淡淡的紫光。',touch:'輕輕碰一下，傘面就亮了一點點，又慢慢暗回去。'}
 };
+/* 變種：相鄰兩艙同時開花，收成時有機率結出變種種子 */
+Object.assign(PLANTS,{
+ starbell:{hybrid:1,rare:1,from:['bell','stardaisy'],name:'星鈴花',seed:'星鈴花種',light:'star',color:'#f6f0c8',lang:'在遠方的人，也聽得見你。',desc:'鈴鐺形的花，花心有一點星光。風一吹，叮噹聲裡帶著一點閃爍。',touch:'（叮——）聲音裡，好像有星星掉下來。',sound:1},
+ tidelotus:{hybrid:1,rare:1,from:['tidebloom','shellbloom'],name:'潮聲蓮',seed:'潮聲蓮種',light:'moon',color:'#a8e6f5',lang:'我一直都在這裡等你。',desc:'花瓣捲成貝殼，跟著潮汐一開一闔。開的時候，會傳出整片海的聲音。',touch:'花瓣慢慢打開……嘩——。整片海的聲音，從花心湧出來。'},
+ goldfern:{hybrid:1,rare:1,from:['sunfern','goldreed'],name:'金曦蕨',seed:'金曦蕨種',light:'dawn',color:'#f6d27a',lang:'謝謝你帶來的早晨。',desc:'葉片鑲著一圈金邊。風一吹，整株像在晨光裡鞠躬。',touch:'金邊的葉子朝你彎了彎，像在說早安。'},
+ glowmoss:{hybrid:1,rare:1,from:['mossgrass','glowcap'],name:'螢苔',seed:'螢苔孢',light:'any',color:'#b7e3a8',lang:'黑暗裡，也有溫柔的光。',desc:'軟軟的苔草上，點點紫光像螢火蟲一樣。',touch:'手一放上去，小小的紫光就聚到你的指尖旁邊。'},
+ dustdaisy:{hybrid:1,rare:1,from:['starspore','stardaisy'],name:'星塵菊',seed:'星塵菊籽',light:'star',color:'#c7bdff',lang:'把願望交給我吧。',desc:'花瓣邊緣不斷灑下細小的星塵，一落地就消失。',touch:'星塵落在你的手背上，涼涼的，一下子就不見了。'},
+ dewbell:{hybrid:1,rare:1,from:['dewmoss','bell'],name:'露鈴',seed:'露鈴種',light:'dawn',color:'#c8efb0',lang:'每一個早晨，都是新的。',desc:'每一個小鈴鐺裡都盛著一滴晨露，搖起來是水的聲音。',touch:'（叮咚。）鈴鐺裡的露珠晃了一下，像在笑。',sound:1}
+});
+const HYB={}; Object.entries(PLANTS).forEach(([p,P])=>{ if(P.from) HYB[P.from.slice().sort().join('+')]=p; });
+const pairOf=p=>Object.values(PLANTS).filter(P=>P.from&&P.from.includes(p)).map(P=>P.from.find(x=>x!==p));
+/* 天象催花：星象出現時，打開溫室的天窗，和植物一起看天空 */
+const SKY_BLOOM={tide:['tidebloom','shellbloom','tidelotus'],meteor:['starspore','stardaisy','dustdaisy','starbell'],aurora:['glowcap','glowmoss','starspore'],eclipse:['sunfern','bell','goldfern','dewbell','dewmoss']};
+const skyOf=p=>Object.keys(SKY_BLOOM).filter(k=>SKY_BLOOM[k].includes(p));
+function skylight(){ const k=skyNow(); if(!k) return toast('現在的天空很平靜。'); const S=SKY[k.type];
+ const hit=(state.pods||[]).map((c,i)=>c&&c.st<2&&SKY_BLOOM[k.type].includes(c.p)?i:-1).filter(i=>i>=0), first=!k.flower;
+ const sc=[['self','（拉開天窗的遮光簾。）'],['self',`${S.name}……光從玻璃穹頂灑下來，落在一排培育艙上。`]];
+ if(first&&hit.length){ hit.forEach(i=>{ const c=state.pods[i]; c.st=2; sc.push(['self',`${POD_N[i]}艙的${PLANTS[c.p].name}好像聽見了天空的聲音，一下子開花了！`]); logJ(`${S.name}照進溫室，${PLANTS[c.p].name}提早開花了。`,'grow'); }); SFX.chime(); }
+ else sc.push(['self',hit.length?'植物們抬著頭，靜靜看著天空。':'培育艙裡的植物安靜地看著天空。……不是每一種花，都在等這片天空。']);
+ k.flower=1; save(); dialogueScript(sc,()=>render()); }
 const LIGHT_N={dawn:'晨光',moon:'月輝',star:'星輝',any:'什麼光都可以'};
 const POD_N=['甲','乙','丙','丁'];
 const seedN=p=>((state.seedBag||{})[p])||0;
@@ -3490,7 +3512,7 @@ const seedTotal=()=>Object.values(state.seedBag||{}).reduce((a,b)=>a+b,0);
 const plantN=p=>((state.plantBag||{})[p])||0;
 function plantAdd(p,n){ state.plantBag=state.plantBag||{}; state.plantBag[p]=Math.max(0,plantN(p)+n); save(); }
 const plantsHave=()=>Object.keys(PLANTS).filter(p=>plantN(p)>0);
-const seedKnown=p=>!PLANTS[p].rare||(state.seedKnown||[]).includes(p);
+const seedKnown=p=>!PLANTS[p].rare||PLANTS[p].hybrid||(state.seedKnown||[]).includes(p);
 const podsBloom=()=>(state.pods||[]).some(c=>c&&c.st>=2);
 const stopKey=()=>TAINT.key();
 const lightOk=c=>{ const P=PLANTS[c.p]; return P.light==='any'||P.light===(state.storyFlags.natureLight||'dawn'); };
@@ -3534,6 +3556,7 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
  const ov=panel(`<div class="eyebrow">森羅溫室車廂</div><h2>種子典藏櫃</h2>
  <div class="jar-split"><div class="jar-l"><p class="jar-sub">稀有種子</p><div class="jars">${rare.map(rjar).join('')}</div>
  <p class="jar-sub">常見種子</p><div class="jars">${common.map(cjar).join('')}</div>
+ ${Object.keys(PLANTS).some(p=>PLANTS[p].hybrid&&(seedN(p)>0||(state.grown||[]).includes(p)))?`<p class="jar-sub">變種種子</p><div class="jars">${Object.keys(PLANTS).filter(p=>PLANTS[p].hybrid&&(seedN(p)>0||(state.grown||[]).includes(p))).map(cjar).join('')}</div>`:''}
  <p class="jar-sub">採集材料</p>${mats.length?`<div class="jars">${mats.map(([m,M])=>`<button class="jar" data-mt="${m}">${jarSvg(jarDust(M.color))}<span class="cnt">×${matCount(m)}</span><span class="tag">${M.name}</span></button>`).join('')}</div>`:'<p class="hint1">（還是空的。下車的時候，留意地上閃著微光的東西。）</p>'}
  </div><div class="jar-r" id="sv">${meSay(`一格一格的玻璃瓶裡，收著來自不同世界的種子。`)}</div></div>`,'stage');
  const pick=b=>ov.querySelectorAll('.jar').forEach(x=>x.classList.toggle('on',x===b));
@@ -3543,7 +3566,7 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
    (kn?meSay(`（拿起瓶子，對著光看）這是<b>${c.name}</b>。${c.desc}${c.sealed?'<br>瓶口的封印，一點反應也沒有。':SEED_OPEN[id]?'<br>它好像不想被種在培育艙裡。它在等一個沒有光的地方。':Pl?`<br>它喜歡${LIGHT_N[Pl.light]}。`:''}<br><small style="color:#8a7d9a">${ORIGIN_NOTE[id]||''}・${seedStatus(id)}</small>`)
      :meSay('（拿起瓶子，對著光看）……認不出來是什麼種子。守望藤也許知道。'))+tut(); };
  const showC=p=>{ const P=PLANTS[p]; pick(ov.querySelector(`[data-cs="${p}"]`)); SFX.glass(); sayReset(ov);
-  ov.querySelector('#sv').innerHTML=`<div class="seed3d"><div class="orbit"></div><div class="core" style="--c:${P.color}"></div></div>`+meSay(`<b>${P.seed}</b>，還有 ${seedN(p)} 顆。種下去會長成${P.name}。${P.desc}<br>常見的種子，什麼光都可以，航行一趟就會開花。`)+tut(); };
+  ov.querySelector('#sv').innerHTML=`<div class="seed3d"><div class="orbit"></div><div class="core" style="--c:${P.color}"></div></div>`+meSay(`<b>${P.seed}</b>，還有 ${seedN(p)} 顆。種下去會長成${P.name}。${P.desc}<br>${P.hybrid?`這是${PLANTS[P.from[0]].name}和${PLANTS[P.from[1]].name}結出的變種，喜歡${LIGHT_N[P.light]}，航行兩趟才會開花。`:'常見的種子，什麼光都可以，航行一趟就會開花。'}`)+tut(); };
  ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>show(b.dataset.seed));
  ov.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>showC(b.dataset.cs));
  ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=meSay(`<b>${M.name}</b>，還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
@@ -3573,7 +3596,7 @@ function gardenPanel(focus){ const ov=panel('','stage garden'), pn=ov.querySelec
     :meSay(`${POD_N[sel]}艙是空的，可是典藏櫃裡沒有能種的種子了。下車的時候，留意地上閃著微光的東西。`);
   } else if(c.st>=2){ side+=(say?'':meSay(`${P.name}開花了！`))+`<div class="row"><button class="btn" id="g-harvest">收成</button><button class="btn ghost" id="g-touch">陪它一下</button></div>`;
   } else { const ok=lightOk(c), tended=c.tk===stopKey(), nx=P.rare&&c.st===0?'長出葉子':'開花';
-   if(!say) side+=meSay(`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。它${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了，下一趟還是會長。':'光不對，這樣它不會長……去晶石那邊調一下光，或是陪它一下。'}`);
+   if(!say) side+=meSay(`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。它${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了，下一趟還是會長。':'光不對，這樣它不會長……去晶石那邊調一下光，或是陪它一下。'}${skyOf(c.p).length?`<br><small>聽說航行中遇到${skyOf(c.p).map(k=>SKY[k].name).join('或')}時，打開溫室的天窗，它會一下子開花。</small>`:''}`);
    side+=`<div class="row"><button class="btn ${tended?'ghost':''}" id="g-touch">陪它一下</button>${waterBtns(sel)}</div>`; }
   if(st&&st.g.t==='種下種子') side+=meSay('選一個空的培育艙，把種子放進去。常見的種子航行一趟就會開花；稀有的種子要兩趟，而且要照對光。<br>停靠的時候來陪陪它們，就算光不對也會長。');
   if(st&&st.g.t==='收成') side+=meSay('收成的時候，會拿到植物和新的種子。植物可以送給乘客，也可以擺進棲息車廂。');
@@ -3590,8 +3613,10 @@ function gardenPanel(focus){ const ov=panel('','stage garden'), pn=ov.querySelec
  const harvest=k=>{ const c=state.pods[k], P=PLANTS[c.p], first=!(state.grown||[]).includes(c.p), n=P.rare?1:2;
   plantAdd(c.p,n); seedAdd(c.p,n); state.grown=state.grown||[]; if(first) state.grown.push(c.p); if(P.legacy) addItem('plant_'+c.p,true);
   const pol=!P.rare&&(state.journeyCount+k)%2===0; if(pol){ state.materials=state.materials||{}; state.materials.pollen=matCount('pollen')+1; }
+  let hy=null; [k-1,k+1].forEach(j=>{ const o=state.pods[j]; if(hy||!o||o.st<2) return; const h=HYB[[c.p,o.p].sort().join('+')]; if(!h) return;
+   const seen=(state.hybridSeen||[]).includes(h); if(!seen||Math.random()<.5){ hy={h,o:o.p,j}; state.hybridSeen=state.hybridSeen||[]; if(!seen) state.hybridSeen.push(h); seedAdd(h,1); logJ(`${P.name}和${PLANTS[o.p].name}的花粉混在一起，結出了${PLANTS[h].seed}。`,'grow'); } });
   state.pods[k]=null; state.storyFlags.gt_harvest=1; logJ(`培育艙・${POD_N[k]}的${P.name}收成了。`,'grow'); save(); SFX.chime();
-  say=`收成了 ${n} 株<b>${P.name}</b>，還有 ${n} 顆${P.seed}。${pol?'花心抖下了一點花粉。':''}${first?'<br>植物樣本架上，多了一份新的樣本。':''}`; render(); draw(); };
+  say=`收成了 ${n} 株<b>${P.name}</b>，還有 ${n} 顆${P.seed}。${pol?'花心抖下了一點花粉。':''}${first?'<br>植物樣本架上，多了一份新的樣本。':''}${hy?`<br>……咦？旁邊${POD_N[hy.j]}艙的${PLANTS[hy.o].name}，和它的花粉混在一起了。結出了一顆從沒見過的種子：<b>${PLANTS[hy.h].seed}</b>！`:''}`; render(); draw(); };
  ov.redraw=draw; draw(); return ov; }
 const culturePanel=()=>gardenPanel(0), podB=()=>gardenPanel(1);
 
@@ -3628,13 +3653,29 @@ const LOVE_LINE={
  strider:['（灰角靈犬把長角湊近穗子。風一吹，整排金穗都朝牠低下頭。）','它們聽得見風。跟我一樣。','謝謝你。'],
  sola:['潮汐花！星河的花！','（索拉繞著花轉了好幾圈，光一閃一閃的。）','我要把它帶回我的島。……等我找到的時候。']
 };
+const HOME_NAME={
+ felinia:{goldreed:'山谷的風穗',bell:'小風鈴',stardaisy:'夜裡的眼睛',starbell:'會唱歌的星'},
+ leviathaurora:{shellbloom:'深海的耳朵',tidebloom:'浮上來的月亮',starspore:'水面的星',tidelotus:'潮的心臟'},
+ cinder:{sunfern:'晨帆葉',goldreed:'沙原的穗',bell:'熱風鈴',goldfern:'金色的帆'},
+ aelis:{bell:'暮色的鈴',mossgrass:'軟耳草',sunfern:'早晨的羽毛',starbell:'星星的歌'},
+ pyro:{sunfern:'不會燒的葉子',goldreed:'火山口的金草',goldfern:'太陽的骨頭'},
+ vandora:{mossgrass:'安靜的床',dewmoss:'夜露的家',glowcap:'小燈',glowmoss:'螢火的床'},
+ frost:{stardaisy:'冰原上的星',starspore:'凍住的星河',glowcap:'雪下的燈',dustdaisy:'雪花菊'},
+ sirenora:{tidebloom:'霧的潮汐',shellbloom:'聽霧的貝',bell:'霧中的鈴',tidelotus:'歌唱的蓮'},
+ titan:{dewmoss:'苔的花',mossgrass:'大地的毛',glowcap:'地底的燈',dewbell:'露的聲音'},
+ lynx:{starspore:'極光的碎片',stardaisy:'冰晶花',dustdaisy:'落下來的極光'},
+ strider:{goldreed:'風的指針',bell:'風來了',mossgrass:'旅人的墊子',goldfern:'迎風葉'},
+ sola:{tidebloom:'回家的花',shellbloom:'海的信',stardaisy:'小島的星',dustdaisy:'許願花'}
+};
+Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
 const canGift=id=>plantsHave().length>0&&((state.giftKey||{})[id]!==stopKey());
 function giftPicker(id,next){ const nm=PASSENGERS[id].name;
  const ov=panel(`<div class="eyebrow">送給${nm}</div><h2>要送哪一盆植物？</h2><div class="jars">${plantsHave().map(p=>`<button class="jar" data-gift="${p}">${jarSvg(jarLeaf(PLANTS[p].color))}<span class="cnt">×${plantN(p)}</span><span class="tag">${PLANTS[p].name}</span></button>`).join('')}</div>`,'care');
  ov.querySelectorAll('[data-gift]').forEach(b=>b.onclick=()=>{ closeOv(ov); setTimeout(()=>giveGift(id,b.dataset.gift,next),320); }); }
 function giveGift(id,p,next){ const P=PLANTS[p], s=state.passengers[id], nm=PASSENGERS[id].name, pr=PREF[id]||{love:[],like:[]}, lv=pr.love.includes(p)?2:pr.like.includes(p)?1:0;
  plantAdd(p,-1); state.giftKey=state.giftKey||{}; state.giftKey[id]=stopKey(); state.gifts=state.gifts||{}; (state.gifts[id]=state.gifts[id]||[]).push(p);
- const lines=lv===2?LOVE_LINE[id]:lv===1?[`（${nm}湊近${P.name}，輕輕碰了碰葉子。）`,'……謝謝。我很喜歡。']:[`（${nm}看了看${P.name}，好像不太懂這是什麼。）`,'……不過，謝謝。我收下了。'];
+ let lines=lv===2?LOVE_LINE[id]:lv===1?[`（${nm}湊近${P.name}，輕輕碰了碰葉子。）`,'……謝謝。我很喜歡。']:[`（${nm}看了看${P.name}，好像不太懂這是什麼。）`,'……不過，謝謝。我收下了。'];
+ const hn=(HOME_NAME[id]||{})[p]; if(hn){ lines=lines.slice(0,1).concat([id==='titan'?`……我們那裡……叫它「${hn}」。`:`在我的家鄉，我們叫它「${hn}」。`],lines.slice(1)); state.homeNames=state.homeNames||{}; (state.homeNames[p]=state.homeNames[p]||{})[id]=hn; }
  dialogue(id,lines,null,()=>{ if(lv) TAINT.add(lv===2?-3:-1); s.records.push({j:state.journeyCount,t:`收下了你送的${P.name}${lv===2?'，非常喜歡':''}。`}); logJ(`送給${nm}一盆${P.name}。`,'life'); save();
   toast(lv===2?`✦ ${nm}非常喜歡${P.name}`:lv?`${nm}很喜歡${P.name}`:`${nm}收下了${P.name}`); render(); next&&next(); }); }
 
@@ -3692,13 +3733,15 @@ function envPanel(){ const ov=panel('','small stage envov'), pn=ov.querySelector
 const SPEC_ASH=[
  {id:'ash_fern',name:'灰燼蕨',src:'來源不明・已熄滅的世界',color:'#9c8466',have:()=>true,desc:'來自一個已經熄滅的世界。標本旁的標籤只寫了採集日期，日期的格式不屬於任何已知的曆法。葉脈中仍殘存極微弱的熱度，像是那個世界最後一個午後。'},
 ];
-const specList=()=>SPEC_ASH.concat(Object.entries(PLANTS).map(([p,P])=>({id:p,name:P.name,src:'培育艙・由'+P.seed+'培育',color:P.color,have:()=>(state.grown||[]).includes(p),desc:P.desc})));
+const specList=()=>SPEC_ASH.concat(Object.entries(PLANTS).filter(([p,P])=>!P.hybrid||(state.grown||[]).includes(p)).map(([p,P])=>({id:p,name:P.name,src:'培育艙・由'+P.seed+'培育',color:P.color,have:()=>(state.grown||[]).includes(p),desc:P.desc,extra:()=>specExtra(p)})));
+function specExtra(p){ const P=PLANTS[p], hn=Object.entries((state.homeNames||{})[p]||{}), pr=pairOf(p).filter(o=>(state.grown||[]).includes(o));
+ return `<br>花語：「${P.lang}」${hn.length?`<br>乘客們的叫法：${hn.map(([id,n])=>`${PASSENGERS[id].name}叫它「${n}」`).join('，')}。`:''}${pr.length?`<br><small>聽說它和${pr.map(o=>PLANTS[o].name).join('、')}很合得來。</small>`:''}`; }
 function leafSvg(c){ return `<svg viewBox="0 0 100 120" aria-hidden="true"><path d="M50 114 C 50 82 48 50 52 10" stroke="${c}" stroke-width="3" fill="none"/>${[0,1,2,3,4,5].map(i=>{ const y=98-i*14, l=26-i*3; return `<path d="M50 ${y} q -${l} -6 -${l+4} -${10+i}" stroke="${c}" stroke-width="2.4" fill="none"/><path d="M51 ${y-4} q ${l} -6 ${l+4} -${10+i}" stroke="${c}" stroke-width="2.4" fill="none"/>`; }).join('')}</svg>`; }
 function samplePanel(){ const n=specList().filter(s=>s.have()).length;
  const ov=panel(`<div class="eyebrow">森羅溫室車廂</div><h2>植物樣本架</h2>
  <div class="jar-split"><div class="jar-l"><div class="jars">${specList().map(s=>s.have()?`<button class="jar card" data-sp="${s.id}">${jarSvg(jarLeaf(s.color))}<span class="tag">${s.name}</span></button>`:`<div class="jar card locked">${jarSvg('')}<span class="tag">？</span></div>`).join('')}</div></div><div class="jar-r" id="spd"></div></div>`,'stage');
  const show=id=>{ const s=specList().find(x=>x.id===id); ov.querySelectorAll('[data-sp]').forEach(b=>b.classList.toggle('on',b.dataset.sp===id)); SFX.glass(); sayReset(ov);
-  ov.querySelector('#spd').innerHTML=`<div class="gem3d leaf">${leafSvg(s.color)}</div>`+meSay(`（隔著玻璃看）<b>${s.name}</b>。${s.desc}<br><small style="color:#8a7d9a">${s.src}</small>`); };
+  ov.querySelector('#spd').innerHTML=`<div class="gem3d leaf">${leafSvg(s.color)}</div>`+meSay(`（隔著玻璃看）<b>${s.name}</b>。${s.desc}${s.extra?s.extra():''}<br><small style="color:#8a7d9a">${s.src}</small>`); };
  ov.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>show(b.dataset.sp)); show('ash_fern'); addClue('clue_ash');
  if(growTutOn()&&state.storyFlags.gt_harvest) ov.querySelector('#spd').insertAdjacentHTML('beforeend',meSay('第一次種成功的植物，會在樣本架留下一份樣本。這樣就算送出去了，也記得它的樣子。')); state.storyFlags.gt_sample=1; save(); setTimeout(hsRefresh,0); }
 function natWindow(){ const voy=state.currentPhase==='voyage', L=LOCATIONS[state.currentLocation];
@@ -4186,6 +4229,7 @@ const HSDEF=[
  {id:'nat-crystal',scene:'nature',name:'界域調節晶石',at:NP(887,472),layer:2,act:()=>envPanel(),track:false},
  {id:'nat-samples',scene:'nature',name:'植物樣本架',at:NP(1490,445),layer:3,act:()=>samplePanel(),ver:()=>specList().filter(s=>s.have()).length},
  {id:'nat-special',scene:'nature',name:'守望藤',at:NP(1592,440),layer:2,act:'nat:special',ver:()=>state.clues.includes('clue_ring')?2:1},
+ {id:'nat-skylight',scene:'nature',name:()=>skyNow()?'天窗：'+SKY[skyNow().type].name:'天窗',at:NP(880,70),layer:3,track:false,show:()=>!!skyNow(),imp:()=>!!skyNow()&&!skyNow().flower,act:()=>skylight()},
  {id:'nat-door',scene:'nature',name:'前往棲息車廂',shape:'door',at:NP(1306,470),act:'go:habitat'},
  {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:NP(468,470),act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
