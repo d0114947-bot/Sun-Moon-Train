@@ -1126,6 +1126,13 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 到站的五感 */
 .cine .txt .senses{display:block;margin-top:18px;font-size:clamp(14px,1.6vw,17px);line-height:2;letter-spacing:.08em;text-align:left;max-width:640px;margin-left:auto;margin-right:auto}
 .cine .txt .senses b{color:#e8c983;font-weight:500;margin-right:10px}
+
+/* 棲息車廂：靈泉的水面 */
+.pool-fx{position:absolute;left:34.8%;top:63.1%;width:30.6%;height:7.4%;pointer-events:none;clip-path:ellipse(50% 50% at 50% 50%);mix-blend-mode:screen;z-index:1}
+.pool-fx svg{position:absolute;inset:0;width:100%;height:100%}
+.pool-shine{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(220,250,255,.35) 45%,transparent 60%);background-size:220% 100%;animation:poolshine 7s linear infinite}
+@keyframes poolshine{from{background-position:120% 0}to{background-position:-120% 0}}
+#scene .pano-turn{z-index:6}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -1136,6 +1143,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 <div id="doorfx" aria-hidden="true"><i class="l"></i><i class="r"></i><b></b></div>
 
 <script>
+const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg';
 /* ================================================================
    日月更迭 — MVP
    模組：LOCATIONS / CARRIAGES / PASSENGERS / EVENTS / COLLECTIBLES / state / nav
@@ -1459,8 +1467,7 @@ const CARRIAGES = {
   pano:{image:'assets/observation-pano.jpg',w:1774,h:887}},
  nature:{name:'森羅溫室車廂',short:'溫室',image:'assets/nature-pano.jpg',
   pano:{image:'assets/nature-pano.jpg',w:1634,h:887}},
- habitat:{name:'棲息車廂',short:'棲息',image:'assets/habitat-pano.jpg',
-  pano:{image:'assets/habitat-pano.jpg',w:1774,h:887}},
+ habitat:{name:'棲息車廂',short:'棲息',image:'assets/habitat-front.jpg',views:[HAB_FRONT,HAB_BACK_IMG]},
  memory:{name:'記憶典藏車廂',short:'典藏',image:'assets/memory.jpg',
   pano:{image:'assets/memory-pano.jpg',w:2576,h:1274}},
  observatory:{name:'火車尾展望台',short:'展望台',image:'assets/observatory-deck.jpg'}
@@ -1468,11 +1475,11 @@ const CARRIAGES = {
 const TRAIN = ['cab','memory','nature','habitat','observation','observatory'];  /* 車頭 → 車尾（整備前廊已併入駕駛室，不再是獨立車廂） */
 
 const LIFE_TYPES = {other:'異界生命',domain:'界域生命',mind:'意念生命',lost:'失所生命'};
-const ZONES = {spring:{name:'靈泉水域',x:50,y:77,mx:57,my:60},rings:{name:'懸浮棲息環',x:50,y:21,mx:30,my:24},moss:{name:'自然棲台',x:24,y:57,mx:36,my:59},crystal:{name:'晶石能量平台',x:70,y:61},veil:{name:'靜謐結界',x:88,y:63,mx:85,my:44},rest:{name:'特殊生命休憩區',x:14,y:76}};   /* 座標為棲息車廂原圖的百分比 */
+const ZONES = {spring:{name:'靈泉水域',x:50,y:74},rings:{name:'懸浮棲息環',x:50,y:12},moss:{name:'自然棲台',x:24,y:64},crystal:{name:'晶石能量平台',x:73,y:61},veil:{name:'靜謐結界',x:92,y:56},rest:{name:'特殊生命休憩區',x:12,y:79}};   /* 座標為棲息車廂原圖的百分比 */
 
 const PASSENGERS = {
  
- sola:{name:'索拉',type:'lost',species:'星汐水母',home:'starIslands',zone:'rings',zoneAlt:'spring',color:'radial-gradient(circle,#f5f0ff,#9a8cff)',art:ART.portrait.sola,
+ sola:{name:'索拉',type:'lost',species:'星汐水母',home:'starIslands',zone:'rings',zoneAlt:'spring',spot:{x:31,y:24},color:'radial-gradient(circle,#f5f0ff,#9a8cff)',art:ART.portrait.sola,
   intro:'在星河中漂流的星汐水母。牠原本棲息的浮島在一次潮汐裡漂離星河，至今沒有回來。',
   bio:'星汐水母以星光為食，靠潮汐在浮島之間移動。索拉的浮島失落之後，牠在星河裡漂了很久，練出一身樂觀，以及很多冷笑話。',
   stay:3,
@@ -1484,7 +1491,7 @@ const PASSENGERS = {
   farewell:['我在觀測窗那邊看到一點熟悉的光，好像是我的島留下的潮汐痕跡。','我想跟著那道痕跡漂一陣子。找得到也好，找不到也好。','別擔心，我很會漂流。如果你又在星河看到一團會講冷笑話的光，記得揮揮手。']
  },
  /* 羽貓獸：使用去背後的動態立繪（image）與靜態立繪（still）。資料來自設定稿。 */
- felinia:{name:'羽貓獸',type:'other',species:'Felinia alata',zone:'rings',spot:{x:40,y:27},color:'radial-gradient(circle,#f6eefc,#b9a3c9)',
+ felinia:{name:'羽貓獸',type:'other',species:'Felinia alata',zone:'rings',spot:{x:42,y:30},color:'radial-gradient(circle,#f6eefc,#b9a3c9)',
   image:'assets/felinia.webp',still:'assets/felinia-still.webp',studies:['assets/felinia-s1.webp','assets/felinia-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'高海拔溫帶山區・雲霧高山森林',
   intro:'被航道上的橫風帶進列車的羽貓獸。貓科般的軀幹、貓頭鷹般的頭部，背上一對虹彩羽翼在光下泛出淡淡的粉紫與銀光。',
@@ -1503,7 +1510,7 @@ const PASSENGERS = {
   farewell:['風向變了。我聽得見。','前面有山的味道……很淡，但是我認得。','我要走了。如果哪天你在雲裡看見一道影子，那就是好天氣的意思。']
  },
  /* 淵光巨：去背後的動態立繪。資料來自設定稿。 */
- leviathaurora:{name:'淵光巨',type:'other',species:'Leviathaurora',zone:'spring',spot:{x:52,y:65},spriteH:24,ar:'580/340',color:'radial-gradient(circle,#cfe8ff,#2c5a9e)',
+ leviathaurora:{name:'淵光巨',type:'other',species:'Leviathaurora',zone:'spring',spot:{x:56,y:70},spriteH:24,ar:'580/340',color:'radial-gradient(circle,#cfe8ff,#2c5a9e)',
   image:'assets/leviathaurora.webp',still:'assets/leviathaurora-still.webp',studies:['assets/leviathaurora-s1.webp','assets/leviathaurora-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'深海海溝・海底峽谷・無光層水域',
   intro:'在航向星河浮島的途中，從靈泉深處浮現的淵光巨。墨藍色的修長身軀上，幽藍的螢光沿著肌肉與脊椎的紋理流動，宛如深海中的星圖。',
@@ -1522,7 +1529,7 @@ const PASSENGERS = {
   farewell:['水的味道變了。','前面有很深、很暗的地方，我聽得見它在呼喚。','謝謝這片安靜的水。如果有一天，你在很深的地方看見一片會移動的星光，那就是我。']
  },
  /* 燼風帆獸：去背後的動態立繪。資料來自設定稿。 */
- cinder:{name:'燼風帆獸',type:'other',species:'Cinder-Sail Courser',zone:'crystal',spot:{x:64,y:52},spriteH:34,ar:'1268/697',color:'radial-gradient(circle,#fff1d6,#c79a5e)',
+ cinder:{name:'燼風帆獸',type:'other',species:'Cinder-Sail Courser',zone:'crystal',spot:{x:67,y:58},spriteH:34,ar:'1268/697',color:'radial-gradient(circle,#fff1d6,#c79a5e)',
   image:'assets/cinder.webp',still:'assets/cinder-still.webp',studies:['assets/cinder-s1.webp','assets/cinder-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'烈日沙漠（The Blazing Sands）',
   intro:'在列車駛向日界時，乘著熾熱光線登車的燼風帆獸。修長纖細的沙褐色身軀，背上兩片半透明的帆在光下透出琥珀色。',
@@ -1545,7 +1552,7 @@ const PASSENGERS = {
   farewell:['光的顏色變了。','前面有很亮、很熱的地方。我的帆在發燙。','我要下車了。如果你在熱浪裡看見一道琥珀色的帆影，不用叫住我。我跑得很快，但我會記得你。']
  },
  /* 艾莉絲（暮光耳廓鴞）：去背後的動態立繪。資料來自設定稿。 */
- aelis:{name:'艾莉絲',type:'other',species:'暮光耳廓鴞（Vespertine Fennec-Owl）',zone:'moss',spot:{x:8,y:62},spriteH:24,ar:'410/280',color:'radial-gradient(circle,#fff0dc,#d27a3c)',
+ aelis:{name:'艾莉絲',type:'other',species:'暮光耳廓鴞（Vespertine Fennec-Owl）',zone:'moss',spot:{x:17,y:56},spriteH:24,ar:'410/280',color:'radial-gradient(circle,#fff0dc,#d27a3c)',
   image:'assets/aelis.webp',still:'assets/aelis-still.webp',studies:['assets/aelis-s1.webp','assets/aelis-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'古老森林與沙漠交界的綠洲・乾旱岩石峽谷',
   intro:'在暮色中跳上列車的暮光耳廓鴞，名叫艾莉絲。一對巨大的狐狸耳朵、琥珀色的大眼睛，脖子上掛著刻有藤蔓與星辰圖案的葉形吊墜。',
@@ -1566,7 +1573,7 @@ const PASSENGERS = {
   farewell:['暮色要來了。我聽得見風開始唱歌。','前面有森林的味道，也有沙的味道。那是我的地方。','我會把這列車的事告訴我的朋友。他會花一整個季節，慢慢聽完。']
  },
  /* 燼角巨獸：去背後的動態立繪。資料來自設定稿。 */
- pyro:{name:'燼角巨獸',type:'other',species:'Pyro-Cerasaurus',zone:'crystal',spot:{x:75,y:84},spriteH:28,ar:'498/280',color:'radial-gradient(circle,#ffd7a8,#7a2a14)',
+ pyro:{name:'燼角巨獸',type:'other',species:'Pyro-Cerasaurus',zone:'crystal',spot:{x:81,y:82},spriteH:28,ar:'498/280',color:'radial-gradient(circle,#ffd7a8,#7a2a14)',
   image:'assets/pyro.webp',still:'assets/pyro-still.webp',studies:['assets/pyro-s1.webp','assets/pyro-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'活火山帶・地殼裂隙頻繁的荒漠高原・熔岩峽谷',
   intro:'在赤紅天空下登車的燼角巨獸。漆黑的火山岩外皮佈滿裂縫，熔岩光在裂隙間流動；頭上的巨角像燃燒的木炭，仍散發著高溫。',
@@ -1585,7 +1592,7 @@ const PASSENGERS = {
   farewell:['地底的聲音在叫我。很熱，很深。','那裡才是我的地盤。','……這輛車，我記住了。如果哪天大地為你們震動，那不是我在發怒。']
  },
  /* 翡翠晶甲夜行獸：去背後的動態立繪。資料來自設定稿。 */
- vandora:{name:'翡翠晶甲夜行獸',type:'other',species:'Vandora Prism-Anuran',zone:'moss',spot:{x:30,y:49},spriteH:20,ar:'479/280',color:'radial-gradient(circle,#d8ffe9,#1f6a5a)',
+ vandora:{name:'翡翠晶甲夜行獸',type:'other',species:'Vandora Prism-Anuran',zone:'moss',spot:{x:30,y:57},spriteH:20,ar:'479/280',color:'radial-gradient(circle,#d8ffe9,#1f6a5a)',
   image:'assets/vandora.webp',still:'assets/vandora-still.webp',studies:['assets/vandora-s1.webp','assets/vandora-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'熱帶雨林深處・巨型蕨葉之上・幽暗溪流沼澤邊',
   intro:'在夜色裡無聲登車的翡翠晶甲夜行獸。墨藍與深綠的鱗甲泛著寶石般的虹彩，頭側細長的翠綠觸鬚輕輕顫動，金黃色的雙眼在暗處一眨也不眨。',
@@ -1604,7 +1611,7 @@ const PASSENGERS = {
   farewell:['空氣變濕了。我聞得到樹液和泥土的味道。','天快要黑了。那是我醒來的時間。','我要回葉子上去了。如果哪天你在雨林裡覺得有一片綠色在看你，不用找。那是我在跟你打招呼。']
  },
  /* 霜脊冰原獸：去背後的動態立繪。資料來自設定稿。 */
- frost:{name:'霜脊冰原獸',type:'other',species:'Frost-Ridge Ice-Beast',zone:'crystal',spot:{x:88,y:74},spriteH:22,ar:'570/300',color:'radial-gradient(circle,#f4fbff,#7fb4d8)',
+ frost:{name:'霜脊冰原獸',type:'other',species:'Frost-Ridge Ice-Beast',zone:'crystal',spot:{x:89,y:74},spriteH:22,ar:'570/300',color:'radial-gradient(circle,#f4fbff,#7fb4d8)',
   image:'assets/frost.webp',still:'assets/frost-still.webp',studies:['assets/frost-s1.webp','assets/frost-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'高海拔冰原・極圈冰川裂谷・極寒山脈',
   intro:'在駛向月界的寒氣裡登車的霜脊冰原獸。乳白色的厚重絨毛間，脊背與尾巴上的冰晶硬甲泛著微藍的光暈；一雙冰川般湛藍的眼睛，安靜地打量著車廂。',
@@ -1625,7 +1632,7 @@ const PASSENGERS = {
   farewell:['風裡有雪的味道了。很遠，但是我認得。','冰原在叫我回去。那裡很冷，很安靜。','如果有一天你在風雪裡看見一雙藍色的眼睛，不用怕。那是我在替你看路。']
  },
  /* 霧羽海葵龍：單張立繪（透明背景），以影像變形做成觸鬚擺動與核心光點呼吸的循環動畫。資料來自設定稿。 */
- sirenora:{name:'霧羽海葵龍',type:'mind',species:'Sirenora',zone:'veil',spot:{x:89,y:32},spriteH:19,ar:'883/328',color:'radial-gradient(circle,#fff6fb,#b9a6d6)',
+ sirenora:{name:'霧羽海葵龍',type:'mind',species:'Sirenora',zone:'veil',spot:{x:92,y:40},spriteH:19,ar:'883/328',color:'radial-gradient(circle,#fff6fb,#b9a6d6)',
   image:'assets/sirenora.webp',still:'assets/sirenora-still.webp',studies:['assets/sirenora-s1.webp','assets/sirenora-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'濃霧籠罩的無風峽灣・發光苔蘚的地下暗河・迷霧與潮汐的高山海岬',
   intro:'列車穿過濃霧時，悄悄飄進車廂的霧羽海葵龍。如海葵與發光水母交織的扇狀薄翼透著淡紫與乳白的暈光，中心一點柔和的光，像一盞在霧裡指路的燈。',
@@ -1646,7 +1653,7 @@ const PASSENGERS = {
   ],
   farewell:['霧變濃了。我聽見峽灣在叫我。','那裡有很多還沒被收好的夢，在潮汐裡擺盪。','謝謝你讓我停在這盞燈下。如果你在霧裡看見一抹粉白的光，不要追……只要停下來就好。']
  },
- titan:{name:'苔淵巨靈',type:'other',species:'Mossbound Titan',zone:'moss',spot:{x:19,y:42},spriteH:34,ar:'340/300',color:'radial-gradient(circle,#e3f0c8,#5d7a45)',
+ titan:{name:'苔淵巨靈',type:'other',species:'Mossbound Titan',zone:'moss',spot:{x:22,y:49},spriteH:34,ar:'340/300',color:'radial-gradient(circle,#e3f0c8,#5d7a45)',
   image:'assets/titan.webp',still:'assets/titan-still.webp',studies:['assets/titan-s1.webp','assets/titan-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'深邃而古老的原始紅木森林・霧氣瀰漫的溫帶雨林深處',
   intro:'列車停靠時，森林邊緣一座長滿苔蘚的小山，緩緩動了起來。牠的肩上長著蕨類，鬍鬚像垂下的枯木鬚根，每一次沉重的呼吸，都帶起一陣帶有草木清香的晨霧。',
@@ -1667,7 +1674,7 @@ const PASSENGERS = {
   ],
   farewell:['……地脈在叫我。很慢，很遠。','我該回去，繼續睡了。下一次醒來……也許是一百年以後。','你那時候不在了也沒關係。我走過的地方，會長出新的森林。……那裡面，會有你的味道。']
  },
- lynx:{name:'霜晶冰原獸',type:'other',species:'Frost-Crested Glimmer-Lynx',zone:'rings',spot:{x:57,y:23},spriteH:17,ar:'510/300',color:'radial-gradient(circle,#f6fbff,#9cc6e6)',
+ lynx:{name:'霜晶冰原獸',type:'other',species:'Frost-Crested Glimmer-Lynx',zone:'rings',spot:{x:58,y:24},spriteH:17,ar:'510/300',color:'radial-gradient(circle,#f6fbff,#9cc6e6)',
   image:'assets/lynx.webp',still:'assets/lynx-still.webp',studies:['assets/lynx-s1.webp','assets/lynx-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'終年積雪的高山雪嶺・極地冰原・寒冷的魔法冰川地帶',
   intro:'列車穿過結冰的航道時，沿著結霜的車窗疾走而過的銀白影子。牠走過的地方沒有一點聲音，只留下一串細小的晶塵。',
@@ -1688,7 +1695,7 @@ const PASSENGERS = {
   ],
   farewell:['風雪的味道變了。冰川在叫我回去。','祕境不能沒有人守著太久。','……下次在風雪裡看到一閃一閃的光，別追。那是我在跟你說，我看見你了。']
  },
- strider:{name:'灰角靈犬',type:'other',species:'Apex-Horned Strider',zone:'rest',spot:{x:26,y:70},spriteH:26,ar:'329/300',color:'radial-gradient(circle,#efe9e2,#7d7468)',
+ strider:{name:'灰角靈犬',type:'other',species:'Apex-Horned Strider',zone:'rest',spot:{x:25,y:80},spriteH:26,ar:'329/300',color:'radial-gradient(circle,#efe9e2,#7d7468)',
   image:'assets/strider.webp',still:'assets/strider-still.webp',studies:['assets/strider-s1.webp','assets/strider-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'開闊的乾旱平原・多岩石的丘陵地帶・微風吹拂的半荒漠邊緣',
   intro:'列車駛過乾燥的風帶時，昂首站在棲息車廂裡的灰褐色身影。牠把刀刃般修長的角冠迎向車廂裡流動的風，像在聽著遠方的什麼。',
@@ -1910,7 +1917,9 @@ function render(){ TAINT.fx(); setTimeout(compAuto,0); if(RUNNING) checkReveal()
   } else {
   if(c==='cab') CAB.begin();
   if(c==='observatory'&&state.currentPhase==='voyage') h+='<canvas class="streaks" id="streaks"></canvas>';
-  h += C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
+  h += C.views? `<img class="bg" src="${C.views[state.hview||0]}" alt="${C.name}">` : C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
+  if(C.views&&!(state.hview||0)) h+=POOL_FX;
+  if(C.views) h+=`<button class="pano-turn l" data-act="turn:" aria-label="轉身">‹<span>轉身</span></button><button class="pano-turn r" data-act="turn:" aria-label="轉身">›<span>轉身</span></button>`;
   if(c==='observatory'&&state.storyFlags.starLight) h+='<div class="starlight"></div>';
   if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;   /* 星象疊在展望台的天空上 */
   h += dust();
@@ -1949,6 +1958,7 @@ document.addEventListener('click',e=>{ const b=e.target.closest('[data-act]'); i
 function act(k,v){
  switch(k){
   case 'go': return moveTo(v);
+  case 'turn': return turnView();
   case 'exit': if(state.currentPhase!=='docked') return toast('航行中無法離開列車');
    if(state.currentLocation==='origin') return toast('列車停泊在沉睡之地，這裡無法下車');
    return exitChooser(()=>transition(()=>{ state.currentPhase='outside'; if(TAINT.once('out')) TAINT.add(TAINT_GAIN[realmKey(state.currentLocation)].out); logOnce('outside_'+state.currentLocation+'_'+state.journeyCount,'走出列車，踏上'+LOCATIONS[state.currentLocation].name+'。'); },null,true));
@@ -2724,7 +2734,7 @@ function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.q
    ================================================================ */
 const CARE_DIM={t:{name:'溫度',lv:['寒冷','涼爽','溫暖','炎熱']},l:{name:'光線',lv:['昏暗','柔和','明亮']},h:{name:'濕度',lv:['乾燥','適中','潮濕','濃霧']}};
 const ZONE_ENV0={spring:{t:1,l:1,h:2},rings:{t:1,l:1,h:1},moss:{t:2,l:1,h:2},crystal:{t:2,l:2,h:0},veil:{t:1,l:0,h:3},rest:{t:2,l:1,h:1}};
-const GUEST_SLOT={spring:{x:62,y:80,h:17},rings:{x:58,y:31,h:15},moss:{x:8,y:50,h:16},crystal:{x:79,y:58,h:15},veil:{x:93,y:50,h:16},rest:{x:22,y:84,h:16}};
+const GUEST_SLOT={spring:{x:42,y:71,h:17},rings:{x:63,y:30,h:15},moss:{x:34,y:61,h:16},crystal:{x:63,y:64,h:15},veil:{x:85,y:58,h:16},rest:{x:7,y:84,h:16}};
 const CARE={
  
  sola:{l:0,h:2,auto:true,ok:'暗暗的、濕濕的……我看得見星星了！這是我漂流以來，睡過最舒服的地方。'},
@@ -3794,10 +3804,10 @@ const HSDEF=[
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
  ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
- {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:97,y:56},act:'exit:',
+ {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:61,y:62},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
- {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:47},act:'go:observation'},
- {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:3,y:90},act:'go:nature'},
+ {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:51},act:'go:observation'},
+ {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:50,y:46},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
  {id:'mem-book',scene:'memory',name:'世界與生命圖鑑',at:MP(2140,268),layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
   imp:()=>seenOf('mem-book')===undefined&&state.discoveredLifeforms.length>0},
@@ -3855,7 +3865,9 @@ const PANO_ENTRY={memory:{cab:MP(8,700).yaw,nature:MP(1272,700).yaw},nature:{mem
 const HS_SCENE=()=>state.currentPhase==='outside'?'out:'+state.currentLocation:state.currentCarriage;
 const hsName=h=>typeof h.name==='function'?h.name():h.name;
 const hsVer=h=>h.ver?String(h.ver()):'1';
-function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())); }
+const VIEW_BACK=['hab-exit','hab-back'];
+const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views) return true; return (VIEW_BACK.includes(h.id)?1:0)===(state.hview||0); };
+function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
 function hsState(h){
  if(h.lock&&h.lock()) return 'locked';
  if(h.imp&&h.imp()) return 'important';
@@ -3937,11 +3949,15 @@ function transition(change,after,door){
   setTimeout(()=>{ swap(); setTimeout(()=>fx.classList.remove('shut'),120); fin(480); },340); }
  else { sc.classList.add('out'); setTimeout(()=>{ swap(); requestAnimationFrame(()=>sc.classList.remove('out')); fin(520); },480); }
 }
+/* 棲息車廂：往前看／往後看 */
+function turnView(){ if(TRANS.busy) return; SFX.tone(740,0,.3,'sine',.02); const sc=$('#scene'); sc.style.transition='opacity .28s'; sc.style.opacity=0;
+ setTimeout(()=>{ state.hview=1-(state.hview||0); render(); sc.style.opacity=1; setTimeout(()=>sc.style.transition='',320); },280); }
+const POOL_FX=`<div class="pool-fx" aria-hidden="true"><svg viewBox="0 0 100 24" preserveAspectRatio="none">${[[30,12,0],[62,10,1.3],[48,15,2.6],[74,13,3.7],[20,11,4.6]].map(([x,y,d])=>`<ellipse cx="${x}" cy="${y}" rx="1" ry=".3" fill="none" stroke="#e8fbff" stroke-width=".25"><animate attributeName="rx" values="1;12" dur="5s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values=".3;3.4" dur="5s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="5s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}</svg><i class="pool-shine"></i></div>`;
 function moveTo(car){
  if(TRANS.busy) return;
  const nb=neighbors(state.currentCarriage); if(car!==nb.fwd&&car!==nb.back) return; // 只能前往相鄰車廂
  const from=state.currentCarriage;
- transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; },()=>checkCarriageEvents(),true);
+ transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; if(car==='habitat') state.hview=from==='observation'?1:0; },()=>checkCarriageEvents(),true);
 }
 
 /* 環景載入失敗：提供重試與返回 */
