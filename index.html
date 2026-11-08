@@ -1726,8 +1726,8 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 <div id="doorfx" aria-hidden="true"><i class="l"></i><i class="r"></i><b></b></div>
 
 <script>
-const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg', OBS_FRONT='assets/observation-front.jpg', OBS_BACK_IMG='assets/observation-back.jpg';
-const vKey=c=>c==='observation'?'oview':'hview';
+const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg', OBS_FRONT='assets/observation-front.jpg', OBS_BACK_IMG='assets/observation-back.jpg', MEM_FRONT='assets/memory-front.jpg', MEM_BACK_IMG='assets/memory-back.jpg';
+const vKey=c=>c==='observation'?'oview':c==='memory'?'mview':'hview';
 /* ================================================================
    日月更迭 — MVP
    模組：LOCATIONS / CARRIAGES / PASSENGERS / EVENTS / COLLECTIBLES / state / nav
@@ -2052,8 +2052,7 @@ const CARRIAGES = {
  nature:{name:'森羅溫室車廂',short:'溫室',image:'assets/nature-pano.jpg',
   pano:{image:'assets/nature-pano.jpg',w:1634,h:887}},
  habitat:{name:'棲息車廂',short:'棲息',image:'assets/habitat-front.jpg',views:[HAB_FRONT,HAB_BACK_IMG]},
- memory:{name:'記憶典藏車廂',short:'典藏',image:'assets/memory.jpg',
-  pano:{image:'assets/memory-pano.jpg',w:2576,h:1274}},
+ memory:{name:'記憶典藏車廂',short:'典藏',image:'assets/memory-front.jpg',views:[MEM_FRONT,MEM_BACK_IMG]},
  observatory:{name:'火車尾展望台',short:'展望台',image:'assets/observatory-rail.webp'}
 };
 const TRAIN = ['cab','memory','nature','habitat','observation','observatory'];  /* 車頭 → 車尾（整備前廊已併入駕駛室，不再是獨立車廂） */
@@ -3731,7 +3730,7 @@ const VOY_HAPS={
  h_wind:{car:'observatory',name:'吹來的星風',sense:'（車尾好像吹進了一陣風。）',lines:[['self','車尾吹來一陣風。明明外面什麼都沒有，風裡卻有花的味道。'],['self','……是從下一站吹過來的嗎？']],log:'航行中，車尾吹來一陣帶著花香的星風。'}
 };
 /* 航行中的事出現的位置（每節車廂一個固定的位置，不擋住其他熱點） */
-const HAP_AT={cab:{x:80,y:22},observation:{x:62,y:24},habitat:{x:24,y:30},observatory:{x:40,y:30}};
+const HAP_AT={cab:{x:80,y:22},observation:{x:86,y:24},habitat:{x:24,y:30},observatory:{x:40,y:30}};
 /* 每一站的航行中會遇到幾件事 */
 const VOY_N={dawnForest:2,starIslands:3,reverseRealm:3,boundlessCorridor:3,timeriftSea:3,silentVoid:3};
 const HAP_AT_P=[.16,.4,.64];
@@ -5979,20 +5978,20 @@ const HSDEF=[
  {id:'cab-mirror',scene:'cab',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:{x:17,y:30},layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='cab',act:()=>spiritPanel()},
  {id:'nature-mirror',scene:'nature',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:NP(330,330),layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='nature',act:()=>spiritPanel()},
  {id:'habitat-mirror',scene:'habitat',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:{x:9,y:34},layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='habitat',act:()=>spiritPanel()},
- {id:'observation-mirror',scene:'observation',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:{x:30,y:34},layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='observation',act:()=>spiritPanel()},
+ {id:'observation-mirror',scene:'observation',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:{x:61,y:40},layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='observation',act:()=>spiritPanel()},
  {id:'observatory-mirror',scene:'observatory',name:'映心鏡',shape:'npc',cls:'hungmir',sx:';--sh:9vh',at:{x:10,y:34},layer:3,track:false,sprite:"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 110'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.35'%3E%3Cstop offset='0' stop-color='%23eaf6ff'/%3E%3Cstop offset='.6' stop-color='%239fb8e8'/%3E%3Cstop offset='1' stop-color='%23566aa8'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpath d='M40 4 L40 14' stroke='%23c9bfa9' stroke-width='2'/%3E%3Ccircle cx='40' cy='4' r='3' fill='%23fffdf6'/%3E%3Cellipse cx='40' cy='60' rx='32' ry='44' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='2'/%3E%3Cpath d='M30 18 Q40 6 50 18' fill='%23f6f2ea' stroke='%23c9bfa9' stroke-width='1.5'/%3E%3Cellipse cx='40' cy='60' rx='26' ry='38' fill='url(%23g)'/%3E%3Cpath d='M26 40 Q34 28 46 30' stroke='%23fff' stroke-width='3' fill='none' opacity='.7' stroke-linecap='round'/%3E%3C/svg%3E",show:()=>state.mirrorAt==='observatory',act:()=>spiritPanel()},
  {id:'cab-mic',scene:'cab',name:'車內廣播',shape:'mic',at:{x:38,y:44},layer:3,track:false,act:()=>micDrawer(),imp:()=>state.currentPhase==='docked'&&!state.duty.mic,done:()=>state.currentPhase==='docked'&&!!state.duty.mic},
  {id:'cab-back',scene:'cab',name:'返回記憶典藏車廂',shape:'back',at:{x:7,y:94},act:'go:memory'},
  /* 星月觀測車廂 */
- {id:'obs-scope',scene:'observation',name:'星月觀測儀',at:{x:88,y:40},layer:3,track:false,act:()=>scopePanel(),imp:()=>scopeShadows().some(o=>!(state.scopeSeen||[]).includes(o.id))},
- {id:'obs-nav',scene:'observation',name:'月界導航裝置',at:{x:14,y:50},layer:3,act:'obs:nav',track:false},
+ {id:'obs-scope',scene:'observation',name:'星月觀測儀',at:{x:16.5,y:30},layer:3,track:false,act:()=>scopePanel(),imp:()=>scopeShadows().some(o=>!(state.scopeSeen||[]).includes(o.id))},
+ {id:'obs-nav',scene:'observation',name:'月界導航裝置',at:{x:84.5,y:42},layer:3,act:'obs:nav',track:false},
  {id:'obs-coord',scene:'observation',name:()=>state.currentPhase==='voyage'&&state.voyage?'航行中 → '+LOCATIONS[state.voyage.to].coord:LOCATIONS[state.currentLocation].coord+'・'+String(state.journeyCount*7+5).padStart(3,'0'),readout:true,at:{x:50,y:22},layer:1,track:false},
- {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:80,y:56},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
+ {id:'obs-anomrec',scene:'observation',name:'異象紀錄晶石',at:{x:73.7,y:52},layer:3,act:()=>anomPanel(),ver:()=>anomFound().length,
   imp:()=>anomFound().length>0&&seenOf('obs-anomrec')!==String(anomFound().length)},
- {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:30,y:14},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
+ {id:'obs-anomaly',scene:'observation',name:'異常光點',at:{x:38,y:10},layer:2,act:'obs:anomaly',track:false,show:()=>state.journeyCount>1&&!state.collectibles.includes('anomaly_rift'),imp:()=>true},
  {id:'obs-front',scene:'observation',name:'前往火車尾展望台',shape:'door',at:{x:50,y:50},act:'go:observatory'},
- {id:'obs-skybook',scene:'observation',name:'觀星紀錄本',at:{x:9,y:57},layer:3,track:false,act:()=>skyBook(),ver:()=>((state.skyLog||[]).length)},
- {id:'obs-const',scene:'observation',name:'星座盤',at:{x:84,y:64},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
+ {id:'obs-skybook',scene:'observation',name:'觀星紀錄本',at:{x:6,y:68},layer:3,track:false,act:()=>skyBook(),ver:()=>((state.skyLog||[]).length)},
+ {id:'obs-const',scene:'observation',name:'星座盤',at:{x:77.5,y:64},layer:3,track:false,act:()=>constPanel(),ver:()=>(state.consts||[]).length+'@'+skyHere()},
  {id:'obs-back',scene:'observation',name:'返回棲息車廂',shape:'back',at:{x:50,y:52},act:'go:habitat'},
  /* 森羅溫室車廂 */
  {id:'nat-vault',scene:'nature',name:'種子典藏櫃',at:NP(290,430),layer:3,act:'nat:vault',ver:()=>seedTotal()+'/'+(state.seedKnown||[]).length},
@@ -6013,19 +6012,19 @@ const HSDEF=[
  {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:51},act:'go:observation'},
  {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:50,y:46},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
- {id:'mem-book',scene:'memory',name:'世界與生命圖鑑',at:MP(2140,268),layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
+ {id:'mem-book',scene:'memory',name:'世界與生命圖鑑',at:{x:9.5,y:37.5},layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
   imp:()=>seenOf('mem-book')===undefined&&state.discoveredLifeforms.length>0},
- {id:'mem-crystal',scene:'memory',name:'回憶水晶',at:MP(503,800),layer:3,act:()=>memoryPanel(),ver:()=>memsHave().length},
- {id:'mem-atlas',scene:'memory',name:'界域地誌',at:MP(1617,482),layer:3,act:()=>atlasBook(),ver:()=>state.visitedLocations.length},
- {id:'mem-lore',scene:'memory',name:'月界典籍',at:MP(721,327),layer:3,act:()=>openBook('lore')},
- {id:'mem-items',scene:'memory',name:'收藏櫃',at:MP(2222,835),layer:3,act:'mem:items',ver:()=>itemsHave().length},
- {id:'mem-clues',scene:'memory',name:'線索解讀台',at:MP(1712,720),layer:3,act:'mem:clues',ver:()=>state.clues.length},
- {id:'mem-armillary',scene:'memory',name:'日月儀',at:MP(268,610),layer:3,act:()=>orreryPanel(),ver:()=>state.visitedLocations.length},
- {id:'mem-mirror',scene:'memory',name:'映心鏡',at:MP(615,495),layer:3,track:false,act:()=>spiritPanel(),show:()=>(state.mirrorAt||'memory')==='memory',imp:()=>state.storyFlags.mirrorSeen!==taintLevel(TAINT.val())},
- {id:'mem-save',scene:'memory',name:'存檔水晶',shape:'save',at:MP(1923,782),layer:3,act:'mem:save',track:false},
- {id:'mem-rubbing',scene:'memory',name:'刻紋拓本',at:MP(1288,1110),layer:3,act:()=>rubbingPanel(),ver:()=>(state.engr||[]).length},
- {id:'mem-door',scene:'memory',name:'前往火車頭駕駛室',shape:'door',at:MP(1272,700),act:'go:cab'},
- {id:'mem-rear',scene:'memory',name:'後方連接門：森羅溫室車廂',shape:'door',at:MP(8,700),act:'go:nature'},
+ {id:'mem-crystal',scene:'memory',name:'回憶水晶',at:{x:10,y:69},layer:3,act:()=>memoryPanel(),ver:()=>memsHave().length},
+ {id:'mem-atlas',scene:'memory',name:'界域地誌',at:{x:94,y:56},layer:3,act:()=>atlasBook(),ver:()=>state.visitedLocations.length},
+ {id:'mem-lore',scene:'memory',name:'月界典籍',at:{x:80,y:41},layer:3,act:()=>openBook('lore')},
+ {id:'mem-items',scene:'memory',name:'收藏櫃',at:{x:69.5,y:71},layer:3,act:'mem:items',ver:()=>itemsHave().length},
+ {id:'mem-clues',scene:'memory',name:'線索解讀台',at:{x:30,y:61},layer:3,act:'mem:clues',ver:()=>state.clues.length},
+ {id:'mem-armillary',scene:'memory',name:'日月儀',at:{x:70.5,y:51},layer:3,act:()=>orreryPanel(),ver:()=>state.visitedLocations.length},
+ {id:'mem-mirror',scene:'memory',name:'映心鏡',at:{x:22,y:38},layer:3,track:false,act:()=>spiritPanel(),show:()=>(state.mirrorAt||'memory')==='memory',imp:()=>state.storyFlags.mirrorSeen!==taintLevel(TAINT.val())},
+ {id:'mem-save',scene:'memory',name:'存檔水晶',shape:'save',at:{x:90,y:72},layer:3,act:'mem:save',track:false},
+ {id:'mem-rubbing',scene:'memory',name:'刻紋拓本',at:{x:50,y:84},layer:3,act:()=>rubbingPanel(),ver:()=>(state.engr||[]).length},
+ {id:'mem-door',scene:'memory',name:'前往火車頭駕駛室',shape:'door',at:{x:50,y:52},act:'go:cab'},
+ {id:'mem-rear',scene:'memory',name:'前往森羅溫室車廂',shape:'door',at:{x:50,y:50},act:'go:nature'},
  /* 火車尾展望台 */
  {id:'ot-floor',scene:'observatory',name:()=>state.currentPhase==='voyage'?'地面刻紋':ENGR_OK(state.currentLocation)?'地面刻紋・已拓下':'地面刻紋・'+LOCATIONS[state.currentLocation].name,at:{x:50,y:94},layer:3,track:false,act:()=>engravePanel(),
   imp:()=>state.currentPhase==='docked'&&!ENGR_OK(state.currentLocation),done:()=>state.currentPhase==='docked'&&ENGR_OK(state.currentLocation)},
@@ -6071,8 +6070,8 @@ const PANO_ENTRY={memory:{cab:MP(8,700).yaw,nature:MP(1272,700).yaw},nature:{mem
 const HS_SCENE=()=>state.currentPhase==='outside'?'out:'+state.currentLocation:state.currentCarriage;
 const hsName=h=>typeof h.name==='function'?h.name():h.name;
 const hsVer=h=>h.ver?String(h.ver()):'1';
-const VIEW_BACK=['hab-exit','hab-back','obs-skybook','obs-anomrec','obs-back'];
-const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views) return true; return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
+const VIEW_BACK=['hab-exit','hab-back','obs-front','mem-rear'], VIEW_BOTH=[];
+const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views||VIEW_BOTH.includes(h.id)) return true; return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
 function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
 function hsState(h){
  if(h.lock&&h.lock()) return 'locked';
@@ -6176,7 +6175,7 @@ function moveTo(car){
  if(TRANS.busy) return;
  const nb=neighbors(state.currentCarriage); if(car!==nb.fwd&&car!==nb.back) return; // 只能前往相鄰車廂
  const from=state.currentCarriage;
- transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; if(car==='habitat') state.hview=from==='observation'?1:0; if(car==='observation') state.oview=from==='observatory'?1:0; },()=>checkCarriageEvents(),true);
+ transition(()=>{ ENTRY_FROM=from; state.currentCarriage=car; if(car==='habitat') state.hview=from==='observation'?1:0; if(car==='observation') state.oview=from==='observatory'?1:0; if(car==='memory') state.mview=from==='nature'?1:0; },()=>checkCarriageEvents(),true);
 }
 
 /* 環景載入失敗：提供重試與返回 */
