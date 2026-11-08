@@ -1605,6 +1605,8 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 靜態圖的乘客：緩緩呼吸 */
 #scene [data-hs="hab-p-scythe"] .spr img,.plate img[src*="scythe"],.who img[src*="scythe"],.portrait img[src*="scythe"],#scene [data-hs="ot-p-scythe"] .spr img{transform-origin:50% 90%;animation:statbreath 4.8s ease-in-out infinite}
 @keyframes statbreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,1.03)}}
+
+#scene video.cabvid{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block;pointer-events:none}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -1805,14 +1807,14 @@ ART.dragonGlow=(tx,ty,sc)=>{ const body='M0 0 C 60 -50 130 -40 180 0 S 300 60 36
 
 /* 駕駛室：使用提供的美術（cab-frame 窗戶已挖空）。窗外依停靠地點顯示風景，航行時顯示原圖的星空；
    領頭龍、軌道、號誌仍由程式即時繪製；操控台上的裝備、晶環與聯鎖燈狀態以光效疊加 */
-const CAB_IMG={frame:'assets/cab-frame.webp',space:'assets/cab-space.webp'};
+const CAB_IMG={frame:'assets/cab-frame.webp',space:'assets/cab-space.webp'}, CAB_VID='assets/cab-voyage.mp4';   /* 航行時窗外的星空影片（直式影片裁成橫式、頭尾交疊成無縫循環） */
 ART.car.cab=function(state){
  const voy=state.currentPhase==='voyage', sig=CAB.signalView(), lamp=CAB.doorView(), d=state.duty, eq=state.spirit.equipment;
  const sc={red:'#ff7a7a',amber:'#ffd27a',green:'#7dffb4'}[sig]||'#556';
  let ties=''; for(let i=0;i<8;i++){ const t=Math.pow(i/8,1.5), y=900-520*t, hw=250*(1-t)+4; ties+=`<line x1="${(800-hw).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(800+hw).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#f1d58e" stroke-width="${(3*(1-t)+1).toFixed(1)}" opacity=".5"/>`; }
 
- const view=voy?`<image href="${CAB_IMG.space}" x="0" y="0" width="1600" height="900" preserveAspectRatio="none"/>`:`<svg x="0" y="0" width="1600" height="560" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${LOCATIONS[state.currentLocation].art()}</svg>`;
- return `<rect width="1600" height="900" fill="#ece8f2"/>${view}
+ const view=voy?'':`<svg x="0" y="0" width="1600" height="560" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${LOCATIONS[state.currentLocation].art()}</svg>`;
+ return `${voy?'':'<rect width="1600" height="900" fill="#ece8f2"/>'}${view}
  <svg x="120" y="70" width="1360" height="520" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <path d="M500 900 L 790 380 L 810 380 L 1100 900" fill="#c8a85e" opacity=".12"/><path d="M560 900 L 796 380 M1040 900 L 804 380" stroke="#f1d58e" stroke-width="5" opacity=".85"/>${ties}
   <g transform="translate(1060 360)"><rect x="-10" y="0" width="20" height="320" fill="#d9d2ef"/><circle r="48" fill="#1a1c3a" stroke="#c8a85e" stroke-width="6"/><circle r="31" fill="${sc}"/><circle class="pulse" r="120" fill="${sc}" opacity=".28" filter="url(#fSoft)"/></g>
@@ -3073,6 +3075,7 @@ function render(){ setTimeout(oskyPut,0); TAINT.fx(); if(RUNNING){ keepSync(); a
    h+=`<div id="pano" class="pano"><div class="pano-loading">車廂載入中</div>${dust()}<div class="vignette"></div><div id="phs" class="phs"></div>${state.storyFlags.panoHintDone?'':''}</div>`;
   } else {
   if(c==='cab') CAB.begin();
+  if(c==='cab'&&state.currentPhase==='voyage') h+=`<video class="cabvid" src="${CAB_VID}" autoplay muted loop playsinline preload="auto" poster="${CAB_IMG.space}"></video>`;
   if(c==='observatory') h+=`<div class="osky" id="osky" data-src="${obsSky()}" style="background-image:url('${obsSky()}')"></div>`;   /* 展望台外的風景：依停靠站與航行進度更換，左右拖曳看完整的景色 */
   if(c==='observatory'&&state.currentPhase==='voyage') h+='<canvas class="streaks" id="streaks"></canvas>';
   if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;
@@ -3085,7 +3088,9 @@ function render(){ setTimeout(oskyPut,0); TAINT.fx(); if(RUNNING){ keepSync(); a
   h += hsRender(c);  // 統一熱點：物件＋相鄰車廂入口
   }
  }
- sc.innerHTML=h; if(panoView) panoMount(panoView); else PANO.active=null; if($('#streaks')) STREAK.start(); renderHUD(); save(); if(RUNNING){ scheduleAutoThumb(); SFX.ambient(HS_SCENE()); }
+ { const ov=document.querySelector('#scene video.cabvid'); window._cabvt=ov?ov.currentTime:(window._cabvt||0); }
+ sc.innerHTML=h; { const nv=sc.querySelector('video.cabvid'); if(nv){ nv.currentTime=window._cabvt||0; nv.play&&nv.play().catch(()=>{}); } }
+ if(panoView) panoMount(panoView); else PANO.active=null; if($('#streaks')) STREAK.start(); renderHUD(); save(); if(RUNNING){ scheduleAutoThumb(); SFX.ambient(HS_SCENE()); }
 }
 
 
