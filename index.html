@@ -1588,6 +1588,13 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 翠苞蛙：靜態圖，用「呼吸」做出動態 */
 #scene [data-hs="hab-p-cabbfrog"] .spr img,.plate img[src*="cabbfrog"],.who img[src*="cabbfrog"],.portrait img[src*="cabbfrog"]{transform-origin:50% 92%;animation:frogbreath 3.6s ease-in-out infinite}
 @keyframes frogbreath{0%,100%{transform:scale(1,1)}45%{transform:scale(1.035,.975)}55%{transform:scale(1.04,.97)}}
+
+/* 展望台：全景天空在欄杆後面 */
+#scene .osky{position:absolute;top:0;left:0;height:100%;aspect-ratio:2200/613;background-size:100% 100%;background-repeat:no-repeat;will-change:transform;cursor:grab;touch-action:pan-y}
+#scene .osky.grab{cursor:grabbing}
+#scene .osky+.osky{pointer-events:none}
+#scene .osky~img.bg{touch-action:none;-webkit-user-drag:none;user-select:none}
+#scene .osky~canvas.streaks{background:none!important;mix-blend-mode:screen}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -1925,7 +1932,7 @@ const CARRIAGES = {
  habitat:{name:'棲息車廂',short:'棲息',image:'assets/habitat-front.jpg',views:[HAB_FRONT,HAB_BACK_IMG]},
  memory:{name:'記憶典藏車廂',short:'典藏',image:'assets/memory.jpg',
   pano:{image:'assets/memory-pano.jpg',w:2576,h:1274}},
- observatory:{name:'火車尾展望台',short:'展望台',image:'assets/observatory-deck.jpg'}
+ observatory:{name:'火車尾展望台',short:'展望台',image:'assets/observatory-rail.webp'}
 };
 const TRAIN = ['cab','memory','nature','habitat','observation','observatory'];  /* 車頭 → 車尾（整備前廊已併入駕駛室，不再是獨立車廂） */
 
@@ -2832,7 +2839,7 @@ function dust(n=14){ let o='<div class="dust">'; const r=rnd(n*7); for(let i=0;i
 
 function neighbors(car){ const i=TRAIN.indexOf(car); return {fwd:TRAIN[i-1],back:TRAIN[i+1]}; }
 
-function render(){ TAINT.fx(); if(RUNNING){ keepSync(); actCheck(); gardenSync(); } setTimeout(compAuto,0); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
+function render(){ setTimeout(oskyPut,0); TAINT.fx(); if(RUNNING){ keepSync(); actCheck(); gardenSync(); } setTimeout(compAuto,0); if(RUNNING) checkReveal(); if(RUNNING&&state.currentPhase==='voyage'&&state.voyage&&state.currentCarriage==='habitat'&&!state.voyage.checked) state.voyage.checked=1; if(RUNNING&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') careCheck();
  layout();
  const sc=$('#scene'); let h='', panoView=null;
  if(state.currentPhase==='outside'){ h=renderOutside(); }
@@ -2843,12 +2850,13 @@ function render(){ TAINT.fx(); if(RUNNING){ keepSync(); actCheck(); gardenSync()
    h+=`<div id="pano" class="pano"><div class="pano-loading">車廂載入中</div>${dust()}<div class="vignette"></div><div id="phs" class="phs"></div>${state.storyFlags.panoHintDone?'':''}</div>`;
   } else {
   if(c==='cab') CAB.begin();
+  if(c==='observatory') h+=`<div class="osky" id="osky" data-src="${obsSky()}" style="background-image:url('${obsSky()}')"></div>`;   /* 展望台外的風景：依停靠站與航行進度更換，左右拖曳看完整的景色 */
   if(c==='observatory'&&state.currentPhase==='voyage') h+='<canvas class="streaks" id="streaks"></canvas>';
+  if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;
   h += C.views? `<img class="bg" src="${C.views[state[vKey(c)]||0]}" alt="${C.name}">` : C.image? `<img class="bg" src="${C.image}" alt="${C.name}">` : svgScene(ART.car[c](state));
   if(c==='habitat'&&!(state.hview||0)) h+=POOL_FX+zonePots();
   if(C.views) h+=`<button class="pano-turn l" data-act="turn:" aria-label="轉身">‹<span>轉身</span></button><button class="pano-turn r" data-act="turn:" aria-label="轉身">›<span>轉身</span></button>`;
   if(c==='observatory'&&state.storyFlags.starLight) h+='<div class="starlight"></div>'+(state.currentPhase==='voyage'&&state.voyage&&state.voyage.light&&state.voyage.progress>.3?'<div class="stray" aria-hidden="true"><i></i></div>':'');
-  if(c==='observatory'&&C.image&&skyNow()) h+=`<svg class="skyov" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ART.defs}${skyFx(skyNow().type)}</svg>`;   /* 星象疊在展望台的天空上 */
   h += dust();
   h += '<div class="vignette"></div>';
   h += hsRender(c);  // 統一熱點：物件＋相鄰車廂入口
@@ -2885,6 +2893,21 @@ function obsDecor(back){ const W=[], drape=(x0,x1,y0,y1,k)=>{ const w=x1-x0, h=y
   <path d="M${rx-14} ${ry} L${rx} ${ry-10} L${rx+14} ${ry} L${rx} ${ry+10}Z" fill="#ffe9a8"/>
   <g class="od-door">${leaf(dx0+4,1)}${leaf(dx1-4,-1)}</g>
   ${F.map(f=>drape(...f)).join('')}</svg>`; }
+
+/* ================================================================
+   展望台的風景：上下滿版，左右用滑鼠或手指拖曳，看完整的全景
+   ================================================================ */
+const OSKY_LOC={origin:'assets/sky-origin.jpg',dawnForest:'assets/sky-dawn.jpg',starIslands:'assets/sky-stars.jpg',reverseRealm:'assets/sky-reverse.jpg',boundlessCorridor:'assets/sky-corridor.jpg',silentVoid:'assets/sky-void.jpg',timeriftSea:'assets/sky-tide.jpg'};
+const OSKY_VOY=['assets/sky-voy1.jpg','assets/sky-voy2.jpg','assets/sky-voy3.jpg'];
+const OSKY={f:.5,drag:null};
+function obsSky(){ if(state.currentPhase==='voyage'&&state.voyage){ const p=state.voyage.progress||0; return OSKY_VOY[p<.34?0:p<.67?1:2]; } return OSKY_LOC[state.currentLocation]||'assets/sky-origin.jpg'; }
+function oskyPut(){ const el=document.getElementById('osky'), sc=$('#scene'); if(!el||!sc) return; const W=el.offsetWidth, V=sc.clientWidth, max=Math.max(0,W-V); OSKY.f=Math.max(0,Math.min(1,OSKY.f)); el.style.transform=`translateX(${(-max*OSKY.f).toFixed(1)}px)`; }
+setInterval(()=>{ const el=document.getElementById('osky'); if(!el||!RUNNING) return; const u=obsSky(); if(el.dataset.src!==u){ el.dataset.src=u; const n=el.cloneNode(); n.style.backgroundImage=`url('${u}')`; n.style.opacity=0; n.removeAttribute('id'); el.after(n); requestAnimationFrame(()=>{ n.style.transition='opacity 1.6s'; n.style.opacity=1; }); setTimeout(()=>{ el.style.backgroundImage=`url('${u}')`; n.remove(); },1700); } oskyPut(); },700);
+document.addEventListener('pointerdown',e=>{ const el=document.getElementById('osky'); if(!el||!e.target.closest('#scene')||e.target.closest('[data-hs],.pano-turn,button')) return; e.preventDefault(); OSKY.drag={x:e.clientX,f:OSKY.f,w:Math.max(1,el.offsetWidth-$('#scene').clientWidth),moved:0}; el.classList.add('grab'); });
+document.addEventListener('pointermove',e=>{ const d=OSKY.drag; if(!d) return; const dx=e.clientX-d.x; d.moved=Math.max(d.moved,Math.abs(dx)); OSKY.f=d.f-dx/d.w; oskyPut(); });
+const oskyUp=()=>{ const d=OSKY.drag; if(!d) return; OSKY.drag=null; const el=document.getElementById('osky'); if(el) el.classList.remove('grab'); if(d.moved>6) HSC.until=performance.now()+250; };
+document.addEventListener('pointerup',oskyUp); document.addEventListener('pointercancel',oskyUp);
+addEventListener('resize',oskyPut);
 function renderOutside(){ const L=LOCATIONS[state.currentLocation]; return svgScene(L.art())+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
 
 function renderHUD(){
