@@ -1584,6 +1584,10 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 
 #scene [data-hs="hab-p-yixi"] .spr img,.plate img[src*="yixi"],.who img[src*="yixi"],.portrait img[src*="yixi"]{animation:yixibreath 5.5s ease-in-out infinite}
 @keyframes yixibreath{0%,100%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(120,230,190,.25))}50%{transform:scale(1.035);filter:drop-shadow(0 0 20px rgba(120,230,190,.55))}}
+
+/* 翠苞蛙：靜態圖，用「呼吸」做出動態 */
+#scene [data-hs="hab-p-cabbfrog"] .spr img,.plate img[src*="cabbfrog"],.who img[src*="cabbfrog"],.portrait img[src*="cabbfrog"]{transform-origin:50% 92%;animation:frogbreath 3.6s ease-in-out infinite}
+@keyframes frogbreath{0%,100%{transform:scale(1,1)}45%{transform:scale(1.035,.975)}55%{transform:scale(1.04,.97)}}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -2228,6 +2232,27 @@ const PASSENGERS = {
    {lines:['（羽翼裡漂出一片記憶碎片：一片翠綠的森林，在晨光裡沙沙作響。）','（那就是它的世界。最後一天的早晨。）','（它把碎片推到你面前，又收了回去。）','（……它在告訴你：現在，這裡也是它的家了。）'],choices:[{t:'歡迎回家。',r:'（所有的眼睛同時亮了一下。）'}]}
   ],
   farewell:['（遺曦沒有要下車。它已經等到了。）']
+ },
+ cabbfrog:{name:'翠苞蛙',type:'domain',species:'Brassica Bufo',zone:'moss',spot:{x:34,y:70},spriteH:15,ar:'648/700',color:'radial-gradient(circle,#eef8dc,#6fa64a)',
+  image:'assets/cabbfrog.webp',still:'assets/cabbfrog-still.webp',studies:['assets/cabbfrog-s1.webp','assets/cabbfrog-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'晨曦森林邊緣的老菜園・濕潤的林間空地・清晨露水最多的地方',
+  intro:'列車停靠在晨曦森林時，自然棲台上多了一顆圓滾滾的「甘藍」。你正想湊近看看，葉子底下忽然睜開了一雙圓圓的大眼睛。',
+  bio:'晨曦森林邊緣的老農之間流傳著一個說法：每年菜園裡第一顆長得特別圓的甘藍，很可能是一隻正在睡覺的翠苞蛙。把牠摘回家的人，會被牠瞪上一整晚——可是第二年，那片菜園一定豐收。所以老農們總會在菜園角落留一顆「不摘的菜」，給翠苞蛙睡。',
+  field:{alias:'葉包子、菜園的守門員',
+   cls:'植物共生兩棲類・葉殼蛙',
+   danger:'無',
+   rarity:'少見',
+   looks:'<b>葉殼：</b>圓滾滾的身體裹著一層層甘藍般的葉片，葉脈清晰，表面總是掛著小小的露珠。葉片是牠身體的一部分，會跟著呼吸微微起伏。<br><b>眼睛：</b>一雙又圓又大的眼睛從葉縫裡探出來，虹膜是淡淡的苔綠色。<br><b>花苞：</b>頭頂長著一顆小小的花苞，會隨心情開合；據說只有遇到真心喜歡的人，才會完全開花。<br><b>四肢：</b>短短的四肢帶著細密的顆粒狀皮膚，末端是圓圓的吸盤指。',
+   habitat:'日界晨曦森林邊緣的老菜園、濕潤的林間空地，以及清晨露水最多的地方。',
+   habits:[['作息','白天把葉片捲緊，像一顆甘藍一樣睡覺；傍晚才鬆開葉子出來活動。'],['飲食','清晨喝葉面上的露水，晚上吃葉間的小蟲。'],['性情','很害羞。被嚇到會把葉子一收，縮成一顆完美的球，骨碌碌滾走。']],
+   abilities:[['擬菜','捲起葉片時和真正的甘藍幾乎分不出來，連鳥都騙得過。'],['葉露滋養','葉片上的露水落到泥土裡，周圍的植物會長得特別好。']]},
+  stay:2,
+  talks:[
+   {lines:['（自然棲台上那顆圓圓的「甘藍」動了一下。葉縫裡，一雙大眼睛眨了眨。）','……呱。','你、你剛剛是不是想摘我？','我不是菜。我只是長得像菜。……很像而已。'],choices:[{t:'對不起，你真的很像。',r:'……呱。大家都這麼說。（頭頂的花苞，悄悄合起來了一點。）'},{t:'你看起來很好睡。',r:'是很好睡。葉子捲起來，就像蓋了好幾層被子。'}]},
+   {lines:['（牠伸出舌頭，舔掉葉尖上的一顆露珠。）','早上的露水最好喝。涼涼的，有一點甜。','我住在森林邊緣的老菜園。那裡的老爺爺，每年都會在角落留一顆不摘的菜。','……那是留給我睡的。我知道。'],choices:[{t:'老爺爺人真好。',r:'嗯。所以我每年都讓他的菜園長得很好。……那是我的謝禮。'},{t:'你會想他嗎？',r:'……會。（花苞輕輕抖了一下。）不過，我還會回去的。'}]},
+   {lines:['（你一靠近，牠忽然「啪」地把葉子全部捲起來，縮成一顆完美的圓球，往旁邊滾了兩圈。）','……','（過了一會兒，葉縫裡才慢慢探出一隻眼睛。）','……是你啊。嚇我一跳。','（頭頂的花苞，慢慢地、慢慢地開了一半。）'],choices:[{t:'你的花開了。',r:'……呱！不、不要看。（可是花苞沒有再合起來。）'}]}
+  ],
+  farewell:['菜園的味道，從窗外飄進來了。','老爺爺應該又留了一顆菜給我。我該回去睡了。','……明年你經過的時候，如果看到菜園角落有一顆特別圓的甘藍，不要摘。那是我。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -2361,6 +2386,7 @@ const EVENTS = {
  board_strider:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('strider')&&state.journeyCount>=10,run:n=>boarding('strider','列車停靠的時候，月台上的風忽然轉了向。棲息車廂的休憩區裡，一道灰褐色的身影昂首站著，把刀刃般的長角迎向車廂裡流動的風。',n)},
  board_windkoi:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('windkoi')&&state.journeyCount>=8,run:n=>boarding('windkoi','列車停靠的時候，浮島邊緣湧起一陣溫暖的上升氣流。一道金色的流光順著風游進車窗，在棲息車廂的懸浮棲息環之間，輕輕轉了一圈。',n)},
  board_mnemo:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('mnemo')&&state.journeyCount>=11,run:n=>boarding('mnemo','列車停靠的時候，車窗上忽然結了一層霜。一團冰霧從星河上漂過來，貼著車身滑進了棲息車廂。霧散開之後，靜謐結界裡亮起幾顆藍色的光泡。',n)},
+ board_cabbfrog:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('cabbfrog')&&state.journeyCount>=6,run:n=>boarding('cabbfrog','列車停靠的時候，月台邊滾來一顆圓圓的甘藍，骨碌碌地，一路滾進了棲息車廂。它在自然棲台上停下來——葉縫裡，睜開了一雙大眼睛。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:n=>boarding('sola','列車停靠的時候，一陣潮水般的星光拍上車窗。一團會發光的生命順著光，輕輕滑進了車廂。',n)},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  
@@ -2405,6 +2431,11 @@ const EVENTS = {
    ['mnemo','我會一直收著它。'],['sola','……嗯。那我就放心，繼續往前漂了。'],
    ['self','冰晶的冷光和水母的暖光，靠在一起，亮了很久。']
   ],'霜憶晶絡的光泡裡，收著索拉失落的那座浮島。','收著的島','冰晶的冷光和水母的暖光，靠在一起，亮了很久。')},
+ int_titan_cabbfrog:{trigger:'carriage',car:'habitat',who:['titan','cabbfrog'],need:()=>aboard('titan')&&aboard('cabbfrog'),title:'苔淵巨靈與翠苞蛙',run:()=>interScene('cabbfrog','titan',[
+   ['cabbfrog','（翠苞蛙縮在苔淵巨靈的腳邊，一動也不動。）……呱。這裡好暗，好涼。是樹蔭嗎？'],['titan','……不是樹蔭。……是我。'],['cabbfrog','呱！（啪地捲成一顆球。）'],
+   ['titan','……沒關係。……你可以待著。……我的肩膀上，也有很多葉子。'],['cabbfrog','（葉縫裡探出一隻眼睛。）……那，我可以睡在你肩膀上嗎？'],['titan','……可以。……我不會動。'],
+   ['self','那天之後，苔淵巨靈的肩膀上多了一顆圓圓的「甘藍」。巨靈一整天都沒有動。']
+  ],'翠苞蛙找到了新的睡覺地方：苔淵巨靈的肩膀上。','肩上的甘藍','苔淵巨靈的肩膀上多了一顆圓圓的「甘藍」。巨靈一整天都沒有動。')},
  int_frost_lynx:{trigger:'carriage',car:'habitat',who:['frost','lynx'],need:()=>aboard('frost')&&aboard('lynx'),title:'霜脊冰原獸與霜晶冰原獸',run:()=>interScene('lynx','frost',[
    ['lynx','（懸浮棲息環上傳來一聲低低的嘶聲。）……你身上有冰原的味道。'],['frost','你也是。北邊的雪嶺。'],['lynx','那裡是我的地盤。'],['frost','冰原是我的地盤。……雪嶺，我很少上去。太陡了。'],
    ['lynx','冰原，我很少下去。太平了，沒有地方躲。'],['self','（兩雙冰藍色的眼睛對望了很久。車廂的溫度，好像又降了一點。）'],['frost','……那就跟以前一樣。你在上面，我在下面。'],
@@ -2511,6 +2542,7 @@ const KEEPS={
  strider:['風角尖','#c8b49a','換角時留下的一節角尖。對著它吹氣，會發出很輕的笛聲。'],
  windkoi:['金羽鱗','#ffd98a','一片金色的羽狀鱗片。放開手，它會順著風慢慢往上飄。'],
  mnemo:['憶泡','#9fd0ff','一顆小小的藍色光泡。貼近耳朵，會聽見很遠很遠的笑聲。'],
+ cabbfrog:['翠苞','#a8d08a','頭頂掉下來的一顆小花苞。放在窗邊，第二天早上會沾滿露水。'],
  sola:['一滴星潮','#9fb8ff','一滴裝在晶殼裡的星河潮水，會跟著星河一漲一落。']
 };
 Object.entries(KEEPS).forEach(([p,[n,c,d]])=>{ COLLECTIBLES['keep_'+p]={name:n,kind:'keep',icon:c,desc:d,from:p}; });
@@ -2672,6 +2704,9 @@ const HOME_C={
  mnemo:{name:'守靈座',S:[[200,30],[200,80],[160,120],[240,120],[200,140],[160,170],[240,170],[200,230]],E:[[0,1],[1,2],[1,3],[2,4],[3,4],[4,5],[4,6],[5,7],[6,7]],
   point:'那幾顆排成冰晶形狀的星。渡守們叫它「守靈座」。……他們說，每熄滅一個世界，它就會亮一點。',
   story:['守靈座。你連好了。','它最近又亮了一點。……又有一個世界熄滅了吧。','可是你把它連起來了。這樣，它就不是一個人在守夜了。']},
+ cabbfrog:{name:'圓葉座',S:[[200,60],[150,90],[250,90],[130,150],[270,150],[150,205],[250,205],[200,225]],E:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],
+  point:'那一圈圓圓的星星，看到了嗎？像一顆甘藍。菜園的老爺爺叫它「圓葉座」。它亮的時候，就是該播種的季節了。',
+  story:['圓葉座！你連好了。呱！','老爺爺每次看到它，就會說：「好，明天來播種。」','……原來它一直跟著我。那我在哪裡睡覺，都像在菜園裡了。']},
  sola:{name:'回家座',S:[[120,195],[200,205],[280,195],[200,150],[200,75],[165,110],[235,110]],E:[[0,1],[1,2],[1,3],[3,4],[4,5],[4,6]],
   point:'看到了嗎？那顆星底下，有一座小島！我叫它「回家座」。……是我自己取的名字。',
   story:['回家座！你幫我連起來了！','我每天晚上都在找它。只要看得到它，我就知道我的島還在。','……所以，我一定找得到回家的路。對吧？']}
@@ -2718,6 +2753,8 @@ const REQ={
   done:[['windkoi','（金羽御風鯉貼在展望台的欄杆邊，眼睛跟著每一道流星轉。）'],['windkoi','……牠們都往下掉。只有我們，往上游。'],['windkoi','謝謝你。我會記得，往上。']]},
  mnemo:{kind:'sky',sky:'tide',goal:'星潮的時候，邀牠到展望台一起看',ask:['……聽說星潮的時候，很多記憶碎片會被潮水推上來。','我想去接住它們。','如果遇到星潮，帶我去展望台。'],
   done:[['mnemo','（霜憶晶絡的光泡一顆接一顆亮起，像在接住潮水裡漂來的光。）'],['mnemo','……好多。有歌聲，有雨，有一個人在等誰回家。'],['mnemo','謝謝你。我收好了。']]},
+ cabbfrog:{kind:'out',loc:'dawnForest',goal:'停靠晨曦森林時，帶牠一起下車',ask:['……呱。車上的葉子很好，可是我想念真的泥土。','晨曦森林的早上，露水最多。','下次停在晨曦森林，可以帶我下車喝一口露水嗎？'],
+  done:[['cabbfrog','（翠苞蛙跳進草叢裡，把整個身體埋進沾滿露水的葉子中間。）'],['cabbfrog','……呱。就是這個味道。'],['cabbfrog','（頭頂的花苞，慢慢地開了。）好了。我們回去吧。']]},
  sola:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['流星可以許願，對吧？','我想許一個很重要的願。可是一定要在真正的流星雨下面許才算數。','下次有流星雨，帶我去展望台！'],
   done:[['sola','……好了！我許了。不能說出來喔。'],['sola','……好啦，偷偷告訴你。'],['sola','我許的是：「希望大家都找得到回家的路。」']]}
 };
@@ -3565,6 +3602,7 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  if(id==='strider') return state.currentPhase==='voyage'?'……（牠的長角一直對著車窗，像在替列車聽前面的風。）':'外面的風停了。……停靠的時候，總是這麼安靜。';
  if(id==='windkoi') return state.currentPhase==='voyage'?'……（牠在圓環之間慢慢迴旋，鰭一張一合，像在替列車撥開前面的風。）':'停下來的時候，風也停了。……我在等它再吹起來。';
  if(id==='mnemo') return state.currentPhase==='voyage'?'……（冰晶的光泡一顆一顆亮著。航行的時候，好像有很多記憶從窗外漂過。）':'停下來的時候，好安靜。……我在聽，這個地方的記憶。';
+ if(id==='cabbfrog') return state.currentPhase==='voyage'?'……（葉子捲得緊緊的，只露出一隻眼睛。列車一搖，牠就跟著輕輕晃一下。）':'……呱。停下來了。（牠鬆開一片葉子，伸了個懶腰。）';
  if(id==='sirenora') return state.currentPhase==='voyage'?'……外面有霧的聲音。我在聽。':'這盞燈很溫暖。我再停一下就好。';
  if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
@@ -3726,7 +3764,17 @@ const NOTES={
   {k:'abilities',p:'眼前忽然出現一片陌生的草原',n:'碰到憶泡的人能看見裡面的景象（憶泡共鳴）'},
   {k:'bio',p:'渡守們叫我「守靈者」',n:'渡守稱牠為「世界的守靈者」'},
   {k:'bio',p:'也許建造它的人，見過我們',n:'記憶典藏車廂可能是仿照牠的構造建成的'},
-  {k:null,p:'這裡的暖，我也想記住',n:'想記住車廂裡的溫暖'}]}
+  {k:null,p:'這裡的暖，我也想記住',n:'想記住車廂裡的溫暖'}]},
+ cabbfrog:{secs:['habitat','habits','abilities','bio'],thanks:'……呱。你都記下來了。（頭頂的花苞，啵地一聲，全開了。）',list:[
+  {k:'habitat',p:'我住在森林邊緣的老菜園',n:'住在晨曦森林邊緣的老菜園'},
+  {k:'habits',p:'早上的露水最好喝',n:'清晨喝葉面上的露水'},
+  {k:'habits',p:'葉子捲起來，就像蓋了好幾層被子',n:'白天把葉片捲緊睡覺'},
+  {k:'habits',p:'縮成一顆完美的圓球',n:'受到驚嚇會縮成球滾走'},
+  {k:'abilities',p:'我只是長得像菜',n:'捲起葉片時幾乎和甘藍分不出來（擬菜）'},
+  {k:'abilities',p:'我每年都讓他的菜園長得很好',n:'葉片上的露水能讓植物長得更好（葉露滋養）'},
+  {k:'bio',p:'每年都會在角落留一顆不摘的菜',n:'老農會在菜園角落留一顆「不摘的菜」給牠睡'},
+  {k:'bio',p:'頭頂的花苞，悄悄合起來了一點',n:'頭頂的花苞會隨心情開合'},
+  {k:null,p:'你剛剛是不是想摘我',n:'很怕被當成菜摘走'}]}
 };
 const notesOf=id=>((state.notes||{})[id])||[];
 const filedOf=id=>((state.filed||{})[id])||{};
@@ -3834,6 +3882,7 @@ const CARE={
  strider:{t:2,h:0,ok:'（牠的長角慢慢放鬆下來，垂向背後。）乾的、暖的風。……像午後的荒原。這裡，聽得很清楚。'},
  windkoi:{t:1,l:2,ok:'（牠的鰭完全張開，在明亮的光裡慢慢迴旋。）亮亮的、往上走的風……像山頂的早晨。這裡，我游得很舒服。'},
  mnemo:{t:0,l:0,ok:'（冰晶的光泡一顆一顆靜下來，發出很穩定的藍光。）冷的、暗的、安靜的……像虛空的邊緣。這裡，我可以好好地收著它們。'},
+ cabbfrog:{t:1,h:2,ok:'（牠把葉子鬆開一層，葉面上很快就掛滿了小露珠。）濕濕的、涼涼的……像清晨的菜園。呱。'},
  yixi:{t:1,l:0,ok:'（羽翼慢慢收攏，所有的小眼睛一隻一隻閉上。只剩中央的大眼睛，安穩地亮著。）'}
 };
 const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
@@ -3914,7 +3963,8 @@ const DECK_LINE={
  lynx:['星星的光是冷的。……從這裡看，像冰原上的月光。','這裡夠高。我喜歡高的地方，看得見誰在靠近。'],
  strider:['風從後面追過來……很好的風。我想在這裡多聽一下。','這裡很開闊。像荒原的丘陵頂上。'],
  windkoi:['這裡的風是往上走的。……我可以一直游下去。','好高。比山頂還高。……我喜歡。'],
- mnemo:['好多星星。每一顆，都是一個還沒熄滅的世界。','……我在數。數到的，我都會記得。']
+ mnemo:['好多星星。每一顆，都是一個還沒熄滅的世界。','……我在數。數到的，我都會記得。'],
+ cabbfrog:['……呱。好高。（牠緊緊抓著欄杆。）','風好大，葉子都要被吹開了。……不過，星星很好看。']
 };
 const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
 const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
@@ -4166,7 +4216,8 @@ const COMP_LINE={
  lynx:{dawnForest:'太暖了。樹太多，沒有地方跑。……我跟在你後面就好。',starIslands:'浮島的邊很陡，像冰壁。……我去跑一圈，馬上回來。'},
  strider:{dawnForest:'樹太密，風被切碎了。……我聽得有點吃力。',starIslands:'這裡的風很乾淨。……我想跑一下，可以嗎？'},
  windkoi:{dawnForest:'樹葉把光切碎了。……不過，早上的光很甜。',starIslands:'是浮島的風！……我去轉一圈，馬上回來。'},
- mnemo:{dawnForest:'好暖……冰絲在化。不過，這裡的記憶很新，很亮。',starIslands:'星河上漂著好多記憶碎片。……我去收幾顆，馬上回來。'}
+ mnemo:{dawnForest:'好暖……冰絲在化。不過，這裡的記憶很新，很亮。',starIslands:'星河上漂著好多記憶碎片。……我去收幾顆，馬上回來。'},
+ cabbfrog:{dawnForest:'是森林的味道！……菜園就在那邊。呱。',starIslands:'這裡的土好硬……沒有露水。我、我待在你腳邊就好。'}
 };
 const PLACES={
  
@@ -4225,7 +4276,7 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
 const VOICE={T:[],
  P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
   cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
-  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], cabbfrog:[230,'square',.1,.12], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
  prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
  stop(){ this.T.forEach(clearTimeout); this.T=[]; },
  say(who,text){ this.stop(); if(!who||!SFX.on()) return; const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
@@ -4593,7 +4644,7 @@ const PREF={
  pyro:{love:['sunfern'],like:['goldreed']}, vandora:{love:['mossgrass'],like:['dewmoss','glowcap']},
  frost:{love:['stardaisy'],like:['starspore','glowcap']}, sirenora:{love:['tidebloom'],like:['shellbloom','bell']},
  titan:{love:['dewmoss'],like:['mossgrass','glowcap']}, lynx:{love:['starspore'],like:['stardaisy']},
- strider:{love:['goldreed'],like:['bell','mossgrass']}, windkoi:{love:['starbell'],like:['bell','goldreed']}, mnemo:{love:['starspore'],like:['dustdaisy','glowmoss']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
+ strider:{love:['goldreed'],like:['bell','mossgrass']}, windkoi:{love:['starbell'],like:['bell','goldreed']}, mnemo:{love:['starspore'],like:['dustdaisy','glowmoss']}, cabbfrog:{love:['dewbell'],like:['mossgrass','dewmoss']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
 };
 const LOVE_LINE={
  felinia:['（羽貓獸把臉埋進金穗裡，翅膀輕輕抖了一下。）','……是山谷的味道。風吹過草原的時候，就是這個味道。','謝謝你。我會把它放在我的圓環上。'],
@@ -4609,6 +4660,7 @@ const LOVE_LINE={
  strider:['（灰角靈犬把長角湊近穗子。風一吹，整排金穗都朝牠低下頭。）','它們聽得見風。跟我一樣。','謝謝你。'],
  windkoi:['（金羽御風鯉繞著花轉了一圈，鈴鐺般的花朵叮叮地響了起來。）','……它在唱歌。跟山頂的風一樣。','我會記住這個聲音。'],
  mnemo:['（霜憶晶絡的一顆光泡貼近葉面，把上面流動的星光映了進去。）','……我把它收起來了。','以後在很冷的地方，我會想起它。'],
+ cabbfrog:['（翠苞蛙把整張臉埋進葉子裡，深深吸了一口氣。）','……呱。有露水的味道。','我要把它放在我睡覺的地方。'],
  sola:['潮汐花！星河的花！','（索拉繞著花轉了好幾圈，光一閃一閃的。）','我要把它帶回我的島。……等我找到的時候。']
 };
 const HOME_NAME={
@@ -4625,9 +4677,10 @@ const HOME_NAME={
  strider:{goldreed:'風的指針',bell:'風來了',mossgrass:'旅人的墊子',goldfern:'迎風葉'},
  windkoi:{starbell:'雲端的鈴',bell:'風的信',goldreed:'金色的氣流'},
  mnemo:{starspore:'散開的記憶',dustdaisy:'還沒熄滅的世界',glowmoss:'守夜的燈'},
+ cabbfrog:{dewbell:'早上的鈴鐺',mossgrass:'軟軟的床',dewmoss:'露水的被子'},
  sola:{tidebloom:'回家的花',shellbloom:'海的信',stardaisy:'小島的星',dustdaisy:'許願花'}
 };
-Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',windkoi:'dustdaisy',mnemo:'stardaisy',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
+Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',windkoi:'dustdaisy',mnemo:'stardaisy',cabbfrog:'glowcap',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
 const canGift=id=>plantsHave().length>0&&((state.giftKey||{})[id]!==stopKey());
 function giftPicker(id,next){ const nm=PASSENGERS[id].name;
  const ov=panel(`<div class="eyebrow">送給${nm}</div><h2>要送哪一盆植物？</h2><div class="jars">${plantsHave().map(p=>`<button class="jar" data-gift="${p}">${jarSvg(jarLeaf(PLANTS[p].color))}<span class="cnt">×${plantN(p)}</span><span class="tag">${PLANTS[p].name}</span></button>`).join('')}</div>`,'care');
@@ -4654,7 +4707,7 @@ function zonePots(){ return Object.entries(state.zonePlant||{}).filter(([k])=>ZO
 function zonePlantArrive(){ Object.entries(state.zonePlant||{}).forEach(([k,p])=>{ const ids=zoneHere(k).filter(id=>PREF[id]&&(PREF[id].love.includes(p)||PREF[id].like.includes(p))); if(!ids.length) return;
  TAINT.add(-1); ids.forEach(id=>state.passengers[id].records.push({j:state.journeyCount,t:`在${ZONES[k].name}的${PLANTS[p].name}旁邊，睡得很安穩。`})); }); }
 /* 完成請求時，乘客送的種子 */
-const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],sola:['stardaisy',2]};
+const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],cabbfrog:['dewmoss',2],sola:['stardaisy',2]};
 function reqSeed(id){ const r=REQ_SEED[id]; if(!r) return; const [p,n]=r, P=PLANTS[p];
  if(P.rare){ addItem('seed_'+p,true); state.seedKnown=state.seedKnown||[]; if(!state.seedKnown.includes(p)) state.seedKnown.push(p); gardenSync(); } else seedAdd(p,n); seedIntro();
  setTimeout(()=>toast(`${PASSENGERS[id].name}送你：${P.seed}${P.rare?'':' ×'+n}・收進溫室的種子典藏櫃`),1800); }
@@ -4856,6 +4909,7 @@ const MEMORIES=[
  
  {id:'int_felinia_windkoi',title:'羽與鰭',who:'windkoi',who2:'felinia',have:()=>done('int_felinia_windkoi'),text:'一道虹彩、一道金光，在圓環之間追著繞圈，誰也沒有追上誰。'},
  {id:'int_sola_mnemo',title:'收著的島',who:'mnemo',who2:'sola',have:()=>done('int_sola_mnemo'),text:'冰晶的冷光和水母的暖光，靠在一起，亮了很久。'},
+ {id:'int_titan_cabbfrog',title:'肩上的甘藍',who:'cabbfrog',who2:'titan',have:()=>done('int_titan_cabbfrog'),text:'苔淵巨靈的肩膀上多了一顆圓圓的「甘藍」。巨靈一整天都沒有動。'},
  {id:'int_frost_lynx',title:'上面與下面',who:'lynx',who2:'frost',have:()=>done('int_frost_lynx'),text:'「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。'},
  {id:'int_cinder_strider',title:'同一陣風',who:'strider',who2:'cinder',have:()=>done('int_cinder_strider'),text:'「我們是同一陣風養大的。」一個張帆，一個昂角，約好到了開闊的地方再比一場。'},
  {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
@@ -4880,6 +4934,7 @@ const MEMORIES=[
  {id:'strider',title:'迎風的長角',who:'strider',have:()=>state.discoveredLifeforms.includes('strider'),text:PASSENGERS.strider.intro},
  {id:'windkoi',title:'游進車窗的金光',who:'windkoi',have:()=>state.discoveredLifeforms.includes('windkoi'),text:PASSENGERS.windkoi.intro},
  {id:'mnemo',title:'冰霧裡的光泡',who:'mnemo',have:()=>state.discoveredLifeforms.includes('mnemo'),text:PASSENGERS.mnemo.intro},
+ {id:'cabbfrog',title:'會眨眼的甘藍',who:'cabbfrog',have:()=>state.discoveredLifeforms.includes('cabbfrog'),text:PASSENGERS.cabbfrog.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -5200,6 +5255,7 @@ const CODEX_LIFE=[
  {id:'strider',passenger:'strider'},
  {id:'windkoi',passenger:'windkoi'},
  {id:'mnemo',passenger:'mnemo'},
+ {id:'cabbfrog',passenger:'cabbfrog'},
  {id:'yixi',passenger:'yixi'},
  {id:'reserve-5',type:'domain'}
 ];
@@ -5356,7 +5412,7 @@ const HSDEF=[
  {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:NP(468,470),act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
- ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
+ ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:8,y:50},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
