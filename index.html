@@ -2159,6 +2159,27 @@ const PASSENGERS = {
    {lines:['（牠忽然抬起頭，雙角對準車窗。過了一會兒，列車外才傳來一陣低沉的風聲。）','……我的角，聽得見很遠的震動。風暴要來，掠食者要來，我都會比它們先知道。','知道了，就跑。我跑得很快，石頭再多，也跟平地一樣。','遊牧的人說，跟著我們，就找得到風的方向。','……其實我只是在聽。可是，被當成引路的，好像也不錯。'],choices:[{t:'那你願意幫這輛車聽聽前面的風嗎？',r:'（牠把長角迎向車窗，耳朵輕輕一動。）……前面的風很乾淨。可以走。'}]}
   ],
   farewell:['風變了。荒原那邊，有一陣很熟悉的風在叫我。','我該回去了。同伴們會在丘陵上等我。','以後，如果你在風裡聽見一點點蹄聲，那就是我在跟你說：前面的路，是好的。']
+ },
+ windkoi:{name:'金羽御風鯉',type:'domain',species:'Aureo-Pinnate Windfish',zone:'rings',spot:{x:72,y:20},spriteH:20,ar:'400/235',color:'radial-gradient(circle,#fff8e8,#e8b25a)',
+  image:'assets/windkoi.webp',still:'assets/windkoi-still.webp',studies:['assets/windkoi-s1.webp','assets/windkoi-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'高山之巔與浮空島嶼周邊的強烈對流氣流層・高海拔的純淨冰川湖泊',
+  intro:'列車停靠在星河浮島時，順著上升的氣流游進車廂的金色身影。牠在懸浮棲息環之間迴旋了一圈，羽狀的鰭在燈光下閃著琥珀色的光。',
+  bio:'在古老的山居民族傳說中，金羽御風鯉被視為天空與清風的信使。相傳牠們是天空神明掉落的淚珠所化，當氣流異常、暴風雨即將來臨前夕，往往能看見牠們逆風而上的優美身影。許多雲端上的貿易商隊若能在旅途中遇見金羽御風鯉伴飛，皆會認為這是趟平安順遂的吉兆。',
+  field:{alias:'雲端流光、天際金梭',
+   cls:'天空半水棲幻獸・氣流游魚',
+   danger:'低',
+   rarity:'稀有',
+   looks:'<b>身形與鱗片：</b>身形流暢優雅，軀幹覆蓋著層次分明、散發珍珠般溫潤光澤的細密鱗片。<br><b>羽狀鰭：</b>胸鰭與尾鰭演化為極具質感的羽狀結構，呈半透明的琥珀金與乳白色漸層，邊緣如絲羽般細緻，能在氣流中如同飛鳥般展翅滑翔。<br><b>頭部：</b>頭部線條流線，口部細緻，雙眼呈琥珀金色，透出一種靈動而高傲的氣質。',
+   habitat:'常年環繞高山之巔、浮空島嶼周邊的強烈對流氣流層，偶爾會降落至高海拔的純淨冰川湖泊中產卵。',
+   habits:[['活動時間','日行性，喜愛在晨光與落日時分順著上升氣流群體或獨自迴旋翱翔。'],['飲食','以懸浮在空中的微小光靈元素與高空浮塵為食。'],['社交','個性溫和但極具靈性，對外界干擾保持高度警覺，一旦感受到威脅便會化作一道金色流光迅速遁入雲海。']],
+   abilities:[['御風巡航','能夠透過羽狀的魚鰭捕捉並操縱微弱的氣流，在幾近真空的高空或平流層中自由推進，不受重力束縛。'],['金鱗折光','鱗片能折射陽光，形成短暫的視覺盲區。']]},
+  stay:2,
+  talks:[
+   {lines:['（懸浮棲息環之間，一道金色的影子轉了個圈，停在你頭頂上。羽狀的鰭輕輕扇著，像在踩著看不見的風。）','……你看得見我？','我住在很高的地方。高山的山頂，浮島的旁邊，那裡的風一直往上走，從來不停。','我就在那些風裡游。'],choices:[{t:'在風裡游？不是在水裡？',r:'水也可以。可是風比較寬。……冰川湖泊是生蛋的時候才去的。'},{t:'（抬頭看著牠轉圈）',r:'（牠又轉了一圈，鱗片閃過一道金光。）……喜歡嗎？'}]},
+   {lines:['（牠張開嘴，在空中輕輕咬了幾下，像在吃什麼看不見的東西。）','這裡的空氣裡有光。很小很小的光，還有一點點浮塵。','我吃那些。早上和傍晚最多，所以那時候我最喜歡出來。','（牠甩了甩尾鰭。）……你們的車廂裡，光比山頂少。不過，也夠了。'],choices:[{t:'光好吃嗎？',r:'暖暖的。早上的光比較甜，傍晚的光比較……捨不得。'},{t:'要不要開燈給你？',r:'不用。我不貪心。'}]},
+   {lines:['（你伸手想碰牠，牠忽然一閃——一道金光劃過，你眼前什麼都看不見了。等你回過神，牠已經在另一個圓環上了。）','……對不起。習慣了。','有東西突然靠近，我就會變成光，躲進雲裡。','山上的人說，我們是天空掉下來的眼淚。暴風雨要來之前，我們會逆著風往上游。','商隊看到我們，就說這趟路會平安。……其實我們只是在游。可是能讓他們安心，好像也不錯。'],choices:[{t:'那你願意陪這輛車游一段嗎？',r:'（牠繞著你轉了一圈，在你肩膀旁邊停下來。）……前面的風很順。我陪你。'}]}
+  ],
+  farewell:['山頂的風，換了方向。……是同伴在叫我。','冰川湖的水也變暖了，該回去了。','以後在晨光裡，看到一道金色的流光往上游，那就是我。……代表你的路，會很平安。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -2290,6 +2311,7 @@ const EVENTS = {
  board_titan:{trigger:'arrive',loc:'dawnForest',auto:true,need:()=>state.journeyCount>=7&&!state.discoveredLifeforms.includes('titan'),run:n=>boarding('titan','列車停靠的時候，月台輕輕震了一下，又一下。月台盡頭，一座長滿苔蘚與蕨葉的小山緩緩站起，帶著一陣草木清香的晨霧，一步一步走上了車門。',n)},
  board_lynx:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('lynx')&&state.journeyCount>=9,run:n=>boarding('lynx','列車停靠的時候，車頂傳來幾下輕得幾乎聽不見的腳步。一道銀白的影子沿著結霜的車窗疾走而過，沒有留下任何聲音，只留下一串細小的晶塵——然後鑽進了棲息車廂的懸浮棲息環。',n)},
  board_strider:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('strider')&&state.journeyCount>=10,run:n=>boarding('strider','列車停靠的時候，月台上的風忽然轉了向。棲息車廂的休憩區裡，一道灰褐色的身影昂首站著，把刀刃般的長角迎向車廂裡流動的風。',n)},
+ board_windkoi:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('windkoi')&&state.journeyCount>=8,run:n=>boarding('windkoi','列車停靠的時候，浮島邊緣湧起一陣溫暖的上升氣流。一道金色的流光順著風游進車窗，在棲息車廂的懸浮棲息環之間，輕輕轉了一圈。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:n=>boarding('sola','列車停靠的時候，一陣潮水般的星光拍上車窗。一團會發光的生命順著光，輕輕滑進了車廂。',n)},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  
@@ -2323,6 +2345,11 @@ const EVENTS = {
    ['self','燼角巨獸閉上了赤紅的眼睛。那是牠登車以來，第一次真正地睡著。']
   ],'霧羽海葵龍的共鳴安撫，讓燼角巨獸第一次真正地睡著。','第一次的安睡','「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。',()=>{ const s=state.passengers.pyro; if(s&&s.stage<3){ s.stage=Math.max(s.stage,2); } })},
  
+ int_felinia_windkoi:{trigger:'carriage',car:'habitat',who:['felinia','windkoi'],need:()=>aboard('felinia')&&aboard('windkoi'),title:'羽貓獸與金羽御風鯉',run:()=>interScene('windkoi','felinia',[
+   ['felinia','（羽貓獸的耳朵一豎，盯著頭頂那道金光。）……那是魚？還是鳥？'],['windkoi','都不是。我是在風裡游的。'],['felinia','你的鰭……跟我的翅膀好像。'],
+   ['windkoi','（牠繞著羽貓獸轉了一圈。）你的羽毛是虹彩的。我的，是金色的。'],['felinia','要一起飛一圈嗎？圓環之間的風很好。'],['windkoi','……好。你別抓我。'],['felinia','（尾巴一甩）……我盡量。'],
+   ['self','一道虹彩、一道金光，在懸浮棲息環之間追著繞圈，誰也沒有追上誰。']
+  ],'羽貓獸和金羽御風鯉，在圓環之間追著繞了好幾圈。','羽與鰭','一道虹彩、一道金光，在圓環之間追著繞圈，誰也沒有追上誰。')},
  int_frost_lynx:{trigger:'carriage',car:'habitat',who:['frost','lynx'],need:()=>aboard('frost')&&aboard('lynx'),title:'霜脊冰原獸與霜晶冰原獸',run:()=>interScene('lynx','frost',[
    ['lynx','（懸浮棲息環上傳來一聲低低的嘶聲。）……你身上有冰原的味道。'],['frost','你也是。北邊的雪嶺。'],['lynx','那裡是我的地盤。'],['frost','冰原是我的地盤。……雪嶺，我很少上去。太陡了。'],
    ['lynx','冰原，我很少下去。太平了，沒有地方躲。'],['self','（兩雙冰藍色的眼睛對望了很久。車廂的溫度，好像又降了一點。）'],['frost','……那就跟以前一樣。你在上面，我在下面。'],
@@ -2427,6 +2454,7 @@ const KEEPS={
  titan:['苔石','#8fbf72','一顆長滿苔蘚的小石頭。上面的小蟲，好像也決定留下來。'],
  lynx:['冰晶鬚','#e6f4ff','一根細細的冰晶鬍鬚。它掉下來的時候，一點聲音都沒有。'],
  strider:['風角尖','#c8b49a','換角時留下的一節角尖。對著它吹氣，會發出很輕的笛聲。'],
+ windkoi:['金羽鱗','#ffd98a','一片金色的羽狀鱗片。放開手，它會順著風慢慢往上飄。'],
  sola:['一滴星潮','#9fb8ff','一滴裝在晶殼裡的星河潮水，會跟著星河一漲一落。']
 };
 Object.entries(KEEPS).forEach(([p,[n,c,d]])=>{ COLLECTIBLES['keep_'+p]={name:n,kind:'keep',icon:c,desc:d,from:p}; });
@@ -2582,6 +2610,9 @@ const HOME_C={
  strider:{name:'旅角座',S:[[80,205],[140,175],[200,150],[260,130],[320,110],[250,70],[330,50]],E:[[0,1],[1,2],[2,3],[3,4],[3,5],[4,6]],
   point:'那條彎彎的線，像一支角，也像一條路。我們叫它「旅角座」，所有出發的旅人，都會先找到它。',
   story:['旅角座！你連好了。','我第一次出發的時候，也是先找它。後來就一直走，一直走。','原來它一路都跟著我。……下一次出發，我會記得跟它打招呼。']},
+ windkoi:{name:'御風座',S:[[60,190],[120,160],[180,150],[240,120],[300,110],[340,70],[300,160],[200,90]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[4,6],[2,7]],
+  point:'那條往上彎的線，是一條逆風游的魚。山上的人叫它「御風座」，看見它，就知道暴風雨要來了。',
+  story:['御風座！你連好了。','暴風雨要來的時候，我們會逆著風往上游。……原來天上也有一條。','它一直往上游，從來沒停過。……我也要像它一樣。']},
  sola:{name:'回家座',S:[[120,195],[200,205],[280,195],[200,150],[200,75],[165,110],[235,110]],E:[[0,1],[1,2],[1,3],[3,4],[4,5],[4,6]],
   point:'看到了嗎？那顆星底下，有一座小島！我叫它「回家座」。……是我自己取的名字。',
   story:['回家座！你幫我連起來了！','我每天晚上都在找它。只要看得到它，我就知道我的島還在。','……所以，我一定找得到回家的路。對吧？']}
@@ -2624,6 +2655,8 @@ const REQ={
   done:[['lynx','……（霜晶冰原獸一動也不動地看著天空，很久很久。）'],['lynx','跟那天一樣。'],['lynx','……謝謝。']]},
  strider:{kind:'loc',loc:'starIslands',goal:'帶牠到星河浮島',ask:['風從四面八方吹來，我都聽得出是從哪裡來的。','可是聽說，星河浮島的風，是從下面往上吹的。','我想去聽聽看。帶我去星河浮島好嗎？'],
   done:[['strider','（灰角靈犬站在車門口，長角對著浮島下方。）'],['strider','……真的是從下面來的。帶著星河的味道。'],['strider','這個方向的風，我記住了。']]},
+ windkoi:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……山上的人說，流星是天空掉下來的東西。','跟我們一樣。','如果遇到流星雨，叫我。我想看看，牠們往哪裡游。'],
+  done:[['windkoi','（金羽御風鯉貼在展望台的欄杆邊，眼睛跟著每一道流星轉。）'],['windkoi','……牠們都往下掉。只有我們，往上游。'],['windkoi','謝謝你。我會記得，往上。']]},
  sola:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['流星可以許願，對吧？','我想許一個很重要的願。可是一定要在真正的流星雨下面許才算數。','下次有流星雨，帶我去展望台！'],
   done:[['sola','……好了！我許了。不能說出來喔。'],['sola','……好啦，偷偷告訴你。'],['sola','我許的是：「希望大家都找得到回家的路。」']]}
 };
@@ -3469,6 +3502,7 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  if(id==='titan') return state.currentPhase==='voyage'?'……車在搖。像地脈……在翻身。':'……（牠一動也不動。肩上的蕨葉間，一隻小蟲正在散步。）';
  if(id==='lynx') return state.currentPhase==='voyage'?'……（圓環上空空的。過了一會兒，你才發現牠一直趴在你頭頂上方。）':'外面有雪的味道嗎？……沒有。算了。';
  if(id==='strider') return state.currentPhase==='voyage'?'……（牠的長角一直對著車窗，像在替列車聽前面的風。）':'外面的風停了。……停靠的時候，總是這麼安靜。';
+ if(id==='windkoi') return state.currentPhase==='voyage'?'……（牠在圓環之間慢慢迴旋，鰭一張一合，像在替列車撥開前面的風。）':'停下來的時候，風也停了。……我在等它再吹起來。';
  if(id==='sirenora') return state.currentPhase==='voyage'?'……外面有霧的聲音。我在聽。':'這盞燈很溫暖。我再停一下就好。';
  if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
@@ -3608,7 +3642,18 @@ const NOTES={
   {k:'abilities',p:'我的角，聽得見很遠的震動',n:'長角能感應震動與風向，預知風暴（敏銳感應）'},
   {k:'abilities',p:'石頭再多，也跟平地一樣',n:'在崎嶇地形也能輕盈疾奔（疾風步態）'},
   {k:'bio',p:'跟著我們，就找得到風的方向',n:'遊牧民族視牠為風之方向的引導者'},
-  {k:null,p:'你們的車廂，顏色太亮了',n:'覺得車廂顏色太亮'}]}
+  {k:null,p:'你們的車廂，顏色太亮了',n:'覺得車廂顏色太亮'}]},
+ windkoi:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。像風一樣輕，一片鱗也沒有漏掉。',list:[
+  {k:'habitat',p:'高山的山頂，浮島的旁邊',n:'棲息在高山之巔與浮空島嶼周邊的氣流層'},
+  {k:'habitat',p:'冰川湖泊是生蛋的時候才去的',n:'產卵時會降落到高海拔的冰川湖泊'},
+  {k:'habits',p:'很小很小的光，還有一點點浮塵',n:'以空中的微小光靈元素與高空浮塵為食'},
+  {k:'habits',p:'早上和傍晚最多，所以那時候我最喜歡出來',n:'日行性，晨光與落日時最活躍'},
+  {k:'habits',p:'就會變成光，躲進雲裡',n:'受到威脅會化作金色流光遁入雲海'},
+  {k:'abilities',p:'我就在那些風裡游',n:'以羽狀魚鰭操縱氣流，在高空自由推進（御風巡航）'},
+  {k:'abilities',p:'一道金光劃過，你眼前什麼都看不見了',n:'鱗片折射陽光，形成短暫的視覺盲區'},
+  {k:'bio',p:'我們是天空掉下來的眼淚',n:'山居民族相傳牠們是天空神明的淚珠所化'},
+  {k:'bio',p:'商隊看到我們，就說這趟路會平安',n:'雲端商隊視牠伴飛為平安順遂的吉兆'},
+  {k:null,p:'你們的車廂裡，光比山頂少',n:'覺得車廂的光比山頂少'}]}
 };
 const notesOf=id=>((state.notes||{})[id])||[];
 const filedOf=id=>((state.filed||{})[id])||{};
@@ -3713,7 +3758,8 @@ const CARE={
  sirenora:{l:1,h:3,auto:true,ok:'霧……好濃，好安靜。柔柔的光從霧裡透過來。……我好像回到峽灣了。'},
  titan:{t:1,h:2,ok:'（牠肩上的苔蘚吸飽了水氣，顏色深了一點。）……涼涼的，濕濕的。像紅木森林的霧。……我可以……再睡一下了。'},
  lynx:{t:0,l:0,ok:'（牠的眼睛在昏暗裡亮成兩點冰藍。）寒冷，安靜，看不清楚的夜。……像冰原的晨昏。這裡，我可以睡。'},
- strider:{t:2,h:0,ok:'（牠的長角慢慢放鬆下來，垂向背後。）乾的、暖的風。……像午後的荒原。這裡，聽得很清楚。'}
+ strider:{t:2,h:0,ok:'（牠的長角慢慢放鬆下來，垂向背後。）乾的、暖的風。……像午後的荒原。這裡，聽得很清楚。'},
+ windkoi:{t:1,l:2,ok:'（牠的鰭完全張開，在明亮的光裡慢慢迴旋。）亮亮的、往上走的風……像山頂的早晨。這裡，我游得很舒服。'}
 };
 const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
 const CARE_WHY={t:['那裡太冷了。','那裡太熱了。'],l:['那裡太暗了。','那裡太亮了。'],h:['那裡太乾了。','那裡太潮濕了。']};
@@ -3791,7 +3837,8 @@ const DECK_LINE={
  sirenora:['那些往後退的光……像夢一樣。抓不住，但會記得。','這裡的風很安靜。很適合做夢。'],
  titan:['……星星，走得好快。我一百年……才走一步。','……這裡的風，有森林的味道。我站一下就好。'],
  lynx:['星星的光是冷的。……從這裡看，像冰原上的月光。','這裡夠高。我喜歡高的地方，看得見誰在靠近。'],
- strider:['風從後面追過來……很好的風。我想在這裡多聽一下。','這裡很開闊。像荒原的丘陵頂上。']
+ strider:['風從後面追過來……很好的風。我想在這裡多聽一下。','這裡很開闊。像荒原的丘陵頂上。'],
+ windkoi:['這裡的風是往上走的。……我可以一直游下去。','好高。比山頂還高。……我喜歡。']
 };
 const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
 const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
@@ -4041,7 +4088,8 @@ const COMP_LINE={
  sirenora:{dawnForest:'晨霧……雖然很淡，還是讓我想起峽灣。',starIslands:'這裡有很多被遺忘的夢，在星河裡漂。'},
  titan:{dawnForest:'……這裡的樹，很年輕。（牠走過的地方，冒出了一小片新芽。）',starIslands:'……腳底下，沒有地脈。我……走慢一點。'},
  lynx:{dawnForest:'太暖了。樹太多，沒有地方跑。……我跟在你後面就好。',starIslands:'浮島的邊很陡，像冰壁。……我去跑一圈，馬上回來。'},
- strider:{dawnForest:'樹太密，風被切碎了。……我聽得有點吃力。',starIslands:'這裡的風很乾淨。……我想跑一下，可以嗎？'}
+ strider:{dawnForest:'樹太密，風被切碎了。……我聽得有點吃力。',starIslands:'這裡的風很乾淨。……我想跑一下，可以嗎？'},
+ windkoi:{dawnForest:'樹葉把光切碎了。……不過，早上的光很甜。',starIslands:'是浮島的風！……我去轉一圈，馬上回來。'}
 };
 const PLACES={
  
@@ -4100,7 +4148,7 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
 const VOICE={T:[],
  P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
   cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
-  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], lumi:[980,'sine',.06,.28] },
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], lumi:[980,'sine',.06,.28] },
  prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
  stop(){ this.T.forEach(clearTimeout); this.T=[]; },
  say(who,text){ this.stop(); if(!who||!SFX.on()) return; const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
@@ -4468,7 +4516,7 @@ const PREF={
  pyro:{love:['sunfern'],like:['goldreed']}, vandora:{love:['mossgrass'],like:['dewmoss','glowcap']},
  frost:{love:['stardaisy'],like:['starspore','glowcap']}, sirenora:{love:['tidebloom'],like:['shellbloom','bell']},
  titan:{love:['dewmoss'],like:['mossgrass','glowcap']}, lynx:{love:['starspore'],like:['stardaisy']},
- strider:{love:['goldreed'],like:['bell','mossgrass']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
+ strider:{love:['goldreed'],like:['bell','mossgrass']}, windkoi:{love:['starbell'],like:['bell','goldreed']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
 };
 const LOVE_LINE={
  felinia:['（羽貓獸把臉埋進金穗裡，翅膀輕輕抖了一下。）','……是山谷的味道。風吹過草原的時候，就是這個味道。','謝謝你。我會把它放在我的圓環上。'],
@@ -4482,6 +4530,7 @@ const LOVE_LINE={
  titan:['……（苔淵巨靈把花放在肩上的苔蘚之間。花像是一直都長在那裡。）','……家。','……謝謝。'],
  lynx:['（霜晶冰原獸盯著葉面上流動的星光，看了很久。）','……好看。','我會收著。'],
  strider:['（灰角靈犬把長角湊近穗子。風一吹，整排金穗都朝牠低下頭。）','它們聽得見風。跟我一樣。','謝謝你。'],
+ windkoi:['（金羽御風鯉繞著花轉了一圈，鈴鐺般的花朵叮叮地響了起來。）','……它在唱歌。跟山頂的風一樣。','我會記住這個聲音。'],
  sola:['潮汐花！星河的花！','（索拉繞著花轉了好幾圈，光一閃一閃的。）','我要把它帶回我的島。……等我找到的時候。']
 };
 const HOME_NAME={
@@ -4496,9 +4545,10 @@ const HOME_NAME={
  titan:{dewmoss:'苔的花',mossgrass:'大地的毛',glowcap:'地底的燈',dewbell:'露的聲音'},
  lynx:{starspore:'極光的碎片',stardaisy:'冰晶花',dustdaisy:'落下來的極光'},
  strider:{goldreed:'風的指針',bell:'風來了',mossgrass:'旅人的墊子',goldfern:'迎風葉'},
+ windkoi:{starbell:'雲端的鈴',bell:'風的信',goldreed:'金色的氣流'},
  sola:{tidebloom:'回家的花',shellbloom:'海的信',stardaisy:'小島的星',dustdaisy:'許願花'}
 };
-Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
+Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',windkoi:'dustdaisy',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
 const canGift=id=>plantsHave().length>0&&((state.giftKey||{})[id]!==stopKey());
 function giftPicker(id,next){ const nm=PASSENGERS[id].name;
  const ov=panel(`<div class="eyebrow">送給${nm}</div><h2>要送哪一盆植物？</h2><div class="jars">${plantsHave().map(p=>`<button class="jar" data-gift="${p}">${jarSvg(jarLeaf(PLANTS[p].color))}<span class="cnt">×${plantN(p)}</span><span class="tag">${PLANTS[p].name}</span></button>`).join('')}</div>`,'care');
@@ -4525,7 +4575,7 @@ function zonePots(){ return Object.entries(state.zonePlant||{}).filter(([k])=>ZO
 function zonePlantArrive(){ Object.entries(state.zonePlant||{}).forEach(([k,p])=>{ const ids=zoneHere(k).filter(id=>PREF[id]&&(PREF[id].love.includes(p)||PREF[id].like.includes(p))); if(!ids.length) return;
  TAINT.add(-1); ids.forEach(id=>state.passengers[id].records.push({j:state.journeyCount,t:`在${ZONES[k].name}的${PLANTS[p].name}旁邊，睡得很安穩。`})); }); }
 /* 完成請求時，乘客送的種子 */
-const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],sola:['stardaisy',2]};
+const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],sola:['stardaisy',2]};
 function reqSeed(id){ const r=REQ_SEED[id]; if(!r) return; const [p,n]=r, P=PLANTS[p];
  if(P.rare){ addItem('seed_'+p,true); state.seedKnown=state.seedKnown||[]; if(!state.seedKnown.includes(p)) state.seedKnown.push(p); gardenSync(); } else seedAdd(p,n); seedIntro();
  setTimeout(()=>toast(`${PASSENGERS[id].name}送你：${P.seed}${P.rare?'':' ×'+n}・收進溫室的種子典藏櫃`),1800); }
@@ -4725,6 +4775,7 @@ const MEMORIES=[
  {id:'int_vandora_aelis',title:'夜裡的捉迷藏',who:'vandora',who2:'aelis',have:()=>done('int_vandora_aelis'),text:'一個用耳朵找，一個用觸鬚找。航行的夜裡，兩個夜行者誰也沒有贏，誰也不想停。'},
  {id:'int_sirenora_pyro',title:'第一次的安睡',who:'sirenora',who2:'pyro',have:()=>done('int_sirenora_pyro'),text:'「你可以先不用守著了，這裡有人在看著。」燼角巨獸閉上赤紅的眼睛，第一次真正地睡著。'},
  
+ {id:'int_felinia_windkoi',title:'羽與鰭',who:'windkoi',who2:'felinia',have:()=>done('int_felinia_windkoi'),text:'一道虹彩、一道金光，在圓環之間追著繞圈，誰也沒有追上誰。'},
  {id:'int_frost_lynx',title:'上面與下面',who:'lynx',who2:'frost',have:()=>done('int_frost_lynx'),text:'「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。'},
  {id:'int_cinder_strider',title:'同一陣風',who:'strider',who2:'cinder',have:()=>done('int_cinder_strider'),text:'「我們是同一陣風養大的。」一個張帆，一個昂角，約好到了開闊的地方再比一場。'},
  {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
@@ -4747,6 +4798,7 @@ const MEMORIES=[
  {id:'titan',title:'會走路的小山',who:'titan',have:()=>state.discoveredLifeforms.includes('titan'),text:PASSENGERS.titan.intro},
  {id:'lynx',title:'車窗上的晶塵',who:'lynx',have:()=>state.discoveredLifeforms.includes('lynx'),text:PASSENGERS.lynx.intro},
  {id:'strider',title:'迎風的長角',who:'strider',have:()=>state.discoveredLifeforms.includes('strider'),text:PASSENGERS.strider.intro},
+ {id:'windkoi',title:'游進車窗的金光',who:'windkoi',have:()=>state.discoveredLifeforms.includes('windkoi'),text:PASSENGERS.windkoi.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -5065,6 +5117,7 @@ const CODEX_LIFE=[
  {id:'titan',passenger:'titan'},
  {id:'lynx',passenger:'lynx'},
  {id:'strider',passenger:'strider'},
+ {id:'windkoi',passenger:'windkoi'},
  {id:'reserve-5',type:'domain'}
 ];
 function codexEntry(e){
