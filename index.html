@@ -1581,6 +1581,9 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 霜憶晶絡：靜態的冰晶，用光泡的明暗與漂浮做出動態 */
 #scene [data-hs="hab-p-mnemo"] .spr img,.plate img[src*="mnemo"],.who img[src*="mnemo"],.portrait img[src*="mnemo"]{animation:mnemoglow 4.6s ease-in-out infinite}
 @keyframes mnemoglow{0%,100%{filter:drop-shadow(0 0 6px rgba(150,200,255,.5)) brightness(1)}50%{filter:drop-shadow(0 0 22px rgba(150,210,255,.95)) brightness(1.18)}}
+
+#scene [data-hs="hab-p-yixi"] .spr img,.plate img[src*="yixi"],.who img[src*="yixi"],.portrait img[src*="yixi"]{animation:yixibreath 5.5s ease-in-out infinite}
+@keyframes yixibreath{0%,100%{transform:scale(1);filter:drop-shadow(0 0 6px rgba(120,230,190,.25))}50%{transform:scale(1.035);filter:drop-shadow(0 0 20px rgba(120,230,190,.55))}}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -2205,6 +2208,26 @@ const PASSENGERS = {
    {lines:['（你不小心碰到了一顆光泡——眼前忽然出現一片陌生的草原，有人在笑，風很大。下一秒，你又站在車廂裡了。）','……對不起。那是一個已經沒有的世界，最後一個晴天。','渡守們叫我「守靈者」。他們說，我是替熄滅的世界守夜的。','你們的記憶典藏車廂，跟我長得很像。……也許建造它的人，見過我們。','如果有一天我也化掉了，那些光泡會留下來。……你願意幫我記得嗎？'],choices:[{t:'我會記得。',r:'（核心裡最大的那顆光泡，亮得像一顆小小的月亮。）……嗯。那我就不怕了。'}]}
   ],
   farewell:['冷霧在叫我。虛空的邊緣，又有一個世界要熄滅了。','我得去接住它最後的記憶。','……我收了一顆新的光泡，是這輛車。是你。以後在很冷的地方，它會替我記得溫暖。']
+ },
+ yixi:{name:'遺曦',type:'lost',species:'Lumen Relictum',zone:'rest',spot:{x:14,y:60},spriteH:34,ar:'631/900',stay:9999,color:'radial-gradient(circle,#e9e2ee,#5a4a66)',
+  image:'assets/yixi.webp',still:'assets/yixi-still.webp',studies:['assets/yixi-s1.webp','assets/yixi-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'一個在大熄滅中熄滅的世界・之後，寂滅虛空的正中央',
+  intro:'寂滅虛空的正中央，一個由層層深色羽翼圍成的生命。羽翼中央那隻翠綠的大眼睛，認出了你身上的光。',
+  bio:'遺曦是大熄滅時，一個世界留下的最後一點光。它的世界熄滅那天，渡守趕到時列車已經滿了。最後一位渡守對它說「列車會回來」，它就在虛空裡一直等，一直等。它把漂過身邊的記憶碎片收進羽翼，每收一片，羽翼上就多睜開一隻小小的眼睛。',
+  field:{alias:'最後的晨光、等待的眼',
+   cls:'失落生命・遺光體',
+   danger:'無',
+   rarity:'唯一',
+   looks:'<b>羽翼：</b>六片深紫灰的羽翼上下張開，層層疊疊，羽尖帶著墨色，像被夜色浸過。羽翼之間纏著細細的光絲，散著一點一點藍綠色的微光。<br><b>主眼：</b>羽翼中央是一隻巨大的翠綠眼睛——那是它的世界最後一片森林的顏色。它多半時候閉著，只有認出熟悉的光時才睜開。<br><b>小眼：</b>羽翼上排列著許多小小的眼睛。每一隻，都映著一段它收下的記憶碎片。',
+   habitat:'原本的世界已經熄滅。之後一直待在寂滅虛空的正中央，守著那一點微光。',
+   habits:[['等待','不移動，不睡。在虛空裡等了很久很久，等一列說好會回來的列車。'],['收集','把漂過身邊的記憶碎片收進羽翼裡取暖。'],['語言','不說話。用羽翼上的眼睛一明一暗、一睜一閉來回應。']],
+   abilities:[['認光','能分辨每一道光的來歷。它一眼就認出，精靈身上的光是渡守留下的那一道晨曦。'],['引路','在什麼都沒有的空白裡，它看得見路。']]},
+  talks:[
+   {lines:['（休憩區的角落，那對深色的羽翼輕輕收攏。你走近時，羽翼上的小眼睛一隻一隻睜開，全都看著你。）','（中央那隻翠綠的大眼睛，慢慢眨了一下。）','（……像是在說：你來了。）'],choices:[{t:'嗯，我來了。',r:'（羽翼上的光，一明一暗，亮了很久。）'},{t:'（靜靜地坐在它旁邊）',r:'（一片羽翼輕輕蓋過來，像一條很輕的毯子。）'}]},
+   {lines:['（你問它，等了多久。）','（羽翼上的小眼睛一隻接一隻地閉上，又一隻接一隻地睜開。很多、很多次。）','（……你數不完。它好像也數不完了。）','（可是最後，大眼睛看著車廂的燈，彎了一下。）'],choices:[{t:'現在不用再等了。',r:'（大眼睛閉上了。這一次，它好像睡著了。）'}]},
+   {lines:['（羽翼裡漂出一片記憶碎片：一片翠綠的森林，在晨光裡沙沙作響。）','（那就是它的世界。最後一天的早晨。）','（它把碎片推到你面前，又收了回去。）','（……它在告訴你：現在，這裡也是它的家了。）'],choices:[{t:'歡迎回家。',r:'（所有的眼睛同時亮了一下。）'}]}
+  ],
+  farewell:['（遺曦沒有要下車。它已經等到了。）']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -2723,7 +2746,7 @@ const END_KEEPS=8;
 /* 界染度 50 以上不能出發，所以用「出發前往寂滅虛空那一刻」的數值判定：純淨（20 以下）＋紀念品足夠 → 晨曦；35 以上 → 長夜 */
 function endingType(){ const d=state.storyFlags.departTaint, t=typeof d==='number'?d:TAINT.val(), k=keepsHave().length; return t>=35?'night':(t<20&&k>=END_KEEPS?'dawn':'return'); }
 const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩車尾的星光，照亮一小圈。','漂浮的碎片從光圈邊緣經過。每一片，都是一個世界最後的那一刻。','你沒有去修好它們。你只是看著。碎片就一片一片安靜下來。',
- '空白的正中央，有一點很小、很暗的光。它在等。','那是一隻像霧面玻璃做成的小生命。它身體裡的那點光，和你身上的一模一樣。','它帶著你穿過碎片，走到空白的邊緣。',
+ '空白的正中央，有一點很小、很暗的光。它在等。','光的周圍，是層層疊疊的深色羽翼。羽翼的正中央，一隻翠綠的大眼睛慢慢睜開。','羽翼上的小眼睛，一隻一隻跟著睜開。每一隻裡面，都映著一點光——和你身上的一模一樣。','「列車會回來。」……它等的，就是這一句話。','它展開羽翼，帶著你穿過碎片，走到空白的邊緣。',
  '那裡站著一排身影，手按在看不見的牆上。','是渡守。他們還活著。','「你來了。」','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
 const ENDINGS={
  dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。他們已經替你放了。','樹亮了。界壁穩住了。渡守一個一個放下了手。','空白裡，長出了一片新的晨曦森林。','渡守和遺曦登上列車。車廂第一次像從前那樣熱鬧。','「這次，換你當渡守了。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
@@ -2738,7 +2761,7 @@ function playFinale(next){
   if(type==='night'){ state.storyFlags.finaleTried=(state.storyFlags.finaleTried||0)+1; logJ('在寂滅虛空裡，光還不夠。曦淵把列車拉了回來。'); save(); render(); next&&next(); return; }
   state.ending=type; complete('finale'); logJ(`旅程的終點：${E.title}。`); save();
   cine([`<span class="big">結局・${E.title}</span><span class="sub">${type==='dawn'?'列車會繼續航行':'一點光，落在新的旅程上'}</span>`],once1(()=>{
-   if(type==='dawn'){ render(); next&&next(); return; }
+   if(type==='dawn'){ if(!aboard('yixi')) return boarding('yixi','渡守們一個一個登上列車。最後上車的，是那對深色的羽翼。翠綠的大眼睛看了看車廂裡的燈，慢慢地，彎了一下。',()=>{ render(); next&&next(); }); render(); next&&next(); return; }
    const ov=panel(`<div class="eyebrow">旅程的終點</div><h2>歸光</h2>${meSay('……很久很久以後，有一點光，落在一列沉睡的列車裡。')}<div class="row" style="margin-top:14px"><button class="btn" id="ngp">再一次醒來</button></div>`,'small');
    ov.querySelector('#ngp').onclick=()=>newGamePlus(); }),null,true); }))));
 }
@@ -3810,7 +3833,8 @@ const CARE={
  lynx:{t:0,l:0,ok:'（牠的眼睛在昏暗裡亮成兩點冰藍。）寒冷，安靜，看不清楚的夜。……像冰原的晨昏。這裡，我可以睡。'},
  strider:{t:2,h:0,ok:'（牠的長角慢慢放鬆下來，垂向背後。）乾的、暖的風。……像午後的荒原。這裡，聽得很清楚。'},
  windkoi:{t:1,l:2,ok:'（牠的鰭完全張開，在明亮的光裡慢慢迴旋。）亮亮的、往上走的風……像山頂的早晨。這裡，我游得很舒服。'},
- mnemo:{t:0,l:0,ok:'（冰晶的光泡一顆一顆靜下來，發出很穩定的藍光。）冷的、暗的、安靜的……像虛空的邊緣。這裡，我可以好好地收著它們。'}
+ mnemo:{t:0,l:0,ok:'（冰晶的光泡一顆一顆靜下來，發出很穩定的藍光。）冷的、暗的、安靜的……像虛空的邊緣。這裡，我可以好好地收著它們。'},
+ yixi:{t:1,l:0,ok:'（羽翼慢慢收攏，所有的小眼睛一隻一隻閉上。只剩中央的大眼睛，安穩地亮著。）'}
 };
 const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
 const CARE_WHY={t:['那裡太冷了。','那裡太熱了。'],l:['那裡太暗了。','那裡太亮了。'],h:['那裡太乾了。','那裡太潮濕了。']};
@@ -4201,7 +4225,7 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
 const VOICE={T:[],
  P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
   cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
-  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], lumi:[980,'sine',.06,.28] },
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
  prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
  stop(){ this.T.forEach(clearTimeout); this.T=[]; },
  say(who,text){ this.stop(); if(!who||!SFX.on()) return; const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
@@ -5176,6 +5200,7 @@ const CODEX_LIFE=[
  {id:'strider',passenger:'strider'},
  {id:'windkoi',passenger:'windkoi'},
  {id:'mnemo',passenger:'mnemo'},
+ {id:'yixi',passenger:'yixi'},
  {id:'reserve-5',type:'domain'}
 ];
 function codexEntry(e){
