@@ -2828,8 +2828,8 @@ function sayType(){ document.querySelectorAll('#layer .ov').forEach(ov=>{ const 
   /* 一次只顯示一段：打完字之後點一下，換下一段（對話框大小固定） */
   /* 講完之後：再點一下（或過一會兒）對話框就淡出消失 */
   const fade=()=>{ clearTimeout(box._ft); if(box._q.length||box._busy||!box.isConnected) return; box.classList.add('gone'); setTimeout(()=>{ if(!box._q.length&&!box._busy) box.remove(); },450); };
-  const step=()=>{ clearTimeout(box._ft); box.classList.remove('gone'); if(box._busy||!box._q.length) return; box._busy=true; box.classList.remove('more'); box.innerHTML=''; const p=document.createElement('p'); p.className='ms-l'; box.appendChild(p);
-   typeHTML(p,box._q.shift(),()=>{ box._busy=false; box.classList.toggle('more',box._q.length>0); if(!box._q.length) box._ft=setTimeout(fade,7000); }); };
+  const step=()=>{ clearTimeout(box._ft); box.classList.remove('gone'); if(box._busy||!box._q.length) return; box._busy=true; box.classList.remove('more'); box.innerHTML=''; const p=document.createElement('p'); p.className='ms-l'; box.appendChild(p); const q=box._q.shift(); VOICE.say('self',q);
+   typeHTML(p,q,()=>{ box._busy=false; box.classList.toggle('more',box._q.length>0); if(!box._q.length) box._ft=setTimeout(fade,4000); }); };
   if(!box._busy) step(); box.onclick=()=>{ const p=box.querySelector('.ms-l'); if(box._busy){ typeFinish(p); return; } if(!box._q.length) return fade(); step(); }; });
  document.querySelectorAll('#layer .ov>.mesay.say-box').forEach(b=>{ if(!b._q) b._q=[]; }); }
 function hintOnce(k,t){ state.hints=state.hints||{}; if(state.hints[k]) return ''; state.hints[k]=1; save(); return `<p class="hint1">${t}</p>`; }
@@ -3329,7 +3329,7 @@ function dialogue(id,lines,choices,onEnd){
  $('#layer').appendChild(el);
  if(canSk) el.querySelector('.dsk').onclick=ev=>{ ev.stopPropagation(); el.remove(); render(); setTimeout(()=>sketchPanel(id),200); }; let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
  let picked=null, warned=-1;
- const show=()=>{ tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML=''; BL.push(p?p.name:'',lines[i]); addLogBtn(el);
+ const show=()=>{ if(lines[i]!=='__self__') VOICE.say(id||'self',lines[i]); tx.innerHTML=p?markNotes(id,lines[i]):escH(lines[i]); chs.innerHTML=''; BL.push(p?p.name:'',lines[i]); addLogBtn(el);
   if(p&&tx.querySelector('mark.hl')&&!state.storyFlags.noteTip){ state.storyFlags.noteTip=1; save(); toast('🗒️ 發光的字句可以點一下，記進筆記本'); }
   if(i===lines.length-1&&choices){ nx.hidden=true; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c.t; b.onclick=ev=>{ ev.stopPropagation(); choices=null; picked=c; BL.push('你',c.t); el.querySelector('.nm').textContent=''; tx.innerHTML=''; tx.classList.add('self'); chs.innerHTML=''; typeHTML(tx,escH(c.t),null,26);
     lines=lines.concat(['__self__',c.r]); i++; nx.hidden=false; setTimeout(()=>{ typeFinish(tx); i++; el.querySelector('.nm').textContent=p.name; tx.classList.remove('self'); show(); },Math.max(900,c.t.length*26+600)); }; chs.appendChild(b); }); }
@@ -3903,10 +3903,29 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
  return `要解讀這個座標，還需要：<ul class="checks">${c.map(([t,f])=>`<li class="${f()?'ok':''}">${t}</li>`).join('')}</ul>`; }
 
 /* 多角色腳本對話（乘客互動事件） */
+
+/* ================================================================
+   角色的「說話聲」：不是語音，是每個角色各自的合成咕噥聲（音高、音色、語速都不同）
+   ================================================================ */
+const VOICE={T:[],
+ P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
+  cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], lumi:[980,'sine',.06,.28] },
+ prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
+ stop(){ this.T.forEach(clearTimeout); this.T=[]; },
+ say(who,text){ this.stop(); if(!who||!SFX.on()) return; const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
+  const [f,type,gap,jit]=this.prof(who), n=Math.min(16,Math.ceil(t.length/2)); let h=0; for(const c of t) h=(h*17+c.charCodeAt(0))%997;
+  for(let i=0;i<n;i++){ const r=((Math.sin(h+i*12.9)*43758)%1+1)%1, ff=f*(1+(r-.5)*jit*2)*(i===n-1?.88:1);
+   this.T.push(setTimeout(()=>SFX.blip(ff,type,gap*.85),i*gap*1000)); } } };
+SFX.blip=function(f,type,dur){ if(!this.on()) return; const c=this.init(); if(!c) return; const t=c.currentTime, o=c.createOscillator(), g=c.createGain(), lp=c.createBiquadFilter();
+ lp.type='lowpass'; lp.frequency.value=Math.min(4000,f*4); o.type=type; o.frequency.setValueAtTime(f*1.06,t); o.frequency.exponentialRampToValueAtTime(f*.94,t+dur);
+ g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(type==='sine'?.05:.028,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+ o.connect(lp); lp.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+.03); };
 const charOf=id=>PASSENGERS[id]||NPCS[id];
 function dialogueScript(script,onEnd){ let i=0; const el=document.createElement('div'); el.className='dlg'; $('#layer').appendChild(el);
  const cast=[...new Set(script.map(x=>x[0]).filter(w=>w!=='self'&&w!=='dragon'))], side=w=>w==='dragon'?'50%':cast.length>1?(cast.indexOf(w)===0?'30%':'70%'):w==='lumi'?'32%':'68%';
  const show=()=>{ const [who,t]=script[i], p=charOf(who);
+  VOICE.say(who,t);
   if(who==='self'&&i>0&&script[i-1][0]==='self'&&el.querySelector('.tx')){ const tx=el.querySelector('.tx'); tx.innerHTML=''; typeHTML(tx,t); return; }
   const duo=cast.length>1&&who!=='dragon';   /* 兩位乘客的互動：兩位都在畫面上，說話的那位亮起 */
   el.dataset.who=duo?cast.slice(0,2).join(' '):(p&&PASSENGERS[who]?who:''); talkSync();
