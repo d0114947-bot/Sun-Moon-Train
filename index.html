@@ -1595,6 +1595,12 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 #scene .osky+.osky{pointer-events:none}
 #scene .osky~img.bg{touch-action:none;-webkit-user-drag:none;user-select:none}
 #scene .osky~canvas.streaks{background:none!important;mix-blend-mode:screen}
+
+/* 靜態圖的乘客：緩緩呼吸 */
+#scene [data-hs="hab-p-treeling"] .spr img,.plate img[src*="treeling"],.who img[src*="treeling"],.portrait img[src*="treeling"],#scene [data-hs="ot-p-treeling"] .spr img,#scene [data-hs="hab-p-sandwyrm"] .spr img,.plate img[src*="sandwyrm"],.who img[src*="sandwyrm"],.portrait img[src*="sandwyrm"],#scene [data-hs="ot-p-sandwyrm"] .spr img,#scene [data-hs="hab-p-moonwyrm"] .spr img,.plate img[src*="moonwyrm"],.who img[src*="moonwyrm"],.portrait img[src*="moonwyrm"],#scene [data-hs="ot-p-moonwyrm"] .spr img,#scene [data-hs="hab-p-skyfox"] .spr img,.plate img[src*="skyfox"],.who img[src*="skyfox"],.portrait img[src*="skyfox"],#scene [data-hs="ot-p-skyfox"] .spr img,#scene [data-hs="hab-p-grinfox"] .spr img,.plate img[src*="grinfox"],.who img[src*="grinfox"],.portrait img[src*="grinfox"],#scene [data-hs="ot-p-grinfox"] .spr img,#scene [data-hs="hab-p-dawnsail"] .spr img,.plate img[src*="dawnsail"],.who img[src*="dawnsail"],.portrait img[src*="dawnsail"],#scene [data-hs="ot-p-dawnsail"] .spr img{transform-origin:50% 90%;animation:statbreath 4.8s ease-in-out infinite}
+@keyframes statbreath{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,1.03)}}
+
+#scene [data-hs="hab-p-dawnsail"] .spr img,#scene [data-hs="ot-p-dawnsail"] .spr img{filter:saturate(1.6) contrast(1.15) drop-shadow(0 0 8px rgba(255,190,215,.85))}
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -2281,6 +2287,114 @@ const PASSENGERS = {
    {lines:['（列車輕輕晃了一下。牠的鰭肢一張，整個車廂的空氣都跟著轉了一圈。）','……對不起。我一動，風就會亂。','小小的鳥，小小的船……靠我太近，會被吹走。','所以我，游得很慢。很慢很慢。','島上的人說，看到我們，就會下雨，季節就會變溫和。航海的人，跟著我們，就能避開暴風。','……我只是，在游。可是，如果能讓大家平安……我就，再游慢一點。'],choices:[{t:'那你願意陪這輛車游一段嗎？',r:'（巨大的影子慢慢點了點頭。）……好。我在上面，替你們，擋風。'}]}
   ],
   farewell:['……雲海，在叫我。','季節要換了。家人們，要往南邊游了。我得，跟上。','以後，如果天空忽然暗一下，又下起溫柔的雨……那是我，經過了。']
+ },
+ treeling:{name:'護樹靈精',type:'domain',species:'Grovewarden Sprite',zone:'moss',spot:{x:16,y:47},spriteH:34,ar:'342/760',color:'radial-gradient(circle,#c9d6a0,#6f6a44)',
+  image:'assets/treeling.webp',still:'assets/treeling-still.webp',studies:['assets/treeling-s1.webp','assets/treeling-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'古老神祕的原始森林・大型魔法樹木的冠層與樹洞深處',
+  intro:'列車停靠在晨曦森林時，月台邊一棵長滿苔蘚的「老樹」忽然邁開了腳步。它彎下腰鑽進車門，在自然棲台上把根一樣的腳扎進土裡，瞇著眼睛笑了。',
+  bio:'在森林守護者的傳說中，護樹靈精被視為樹木健康的指標。傳說只要有牠們棲息的樹林，樹木往往能長得無比繁茂且免於病蟲害。森林中的精靈族與德魯伊對牠們極為敬重，常將其視為大自然純粹生命力的象徵。',
+  field:{alias:'綠指木精、藤蔓使者',cls:'森林木靈類・植生幻獸',danger:'低',rarity:'少見',
+   looks:'<b>身軀：</b>由一根根糾結交纏的老樹幹構成，木紋像肌肉一樣層層盤繞，身上斑駁點綴著苔蘚與白色地衣。<br><b>頭部：</b>頭頂長著一叢像樹冠般蓬鬆的黃綠枝葉；臉孔慈祥，總是瞇著眼微笑，下巴垂著樹根般的鬍鬚。<br><b>四肢：</b>手臂細長，手指修長分開，便於攀爬或緊抓樹幹；雙腳末端像樹根一樣向四周展開，能扎進土裡站著休息。',
+   habitat:'古老神祕的原始森林、大型魔法樹木的冠層或樹洞深處。',
+   habits:[['作息','日行性，個性溫和、害羞但充滿好奇心。'],['飲食','主要吸收樹木汁液、露水以及森林中的微量光能維生。'],['社交','通常獨居或小群體生活，極少主動攻擊；遇到危險時會偽裝成一棵樹，靜靜地站著不動。']],
+   abilities:[['木靈共生','能與周遭的植物群落建立微妙的感知連結，輕易解開藤蔓纏繞，並促進幼苗快速生長；修長的手指也能輕巧地撬開樹皮尋找養分。']]},
+  stay:3,
+  talks:[
+   {lines:['（自然棲台上那棵「老樹」動了動，頭頂的枝葉沙沙作響。它慢慢轉過頭，瞇著眼睛看你。）','……呵呵。被你發現了。','我是看著森林長大的。……也許，森林也是看著我長大的。','坐吧，孩子。這裡的土，很好。'],choices:[{t:'你是樹嗎？',r:'……半個是。另外半個，是會走路的那一半。呵呵。'},{t:'（在它腳邊坐下）',r:'（它把一片葉子輕輕放在你頭上。）……這樣，就涼快了。'}]},
+   {lines:['（它把手指輕輕貼在培育艙送來的盆栽上，盆栽的葉子慢慢張開了。）','植物都會說話。只是說得很慢，很慢。','我聽得見。它們渴了，冷了，我就告訴風，告訴雨。','我喝一點樹汁，一點露水，一點陽光。……不用很多。森林夠大，大家分著喝。'],choices:[{t:'它們現在在說什麼？',r:'……它說，謝謝你常常來看它。呵呵，它很喜歡你。'},{t:'可以教我聽嗎？',r:'可以。先學會等。等得夠久，就聽得見了。'}]},
+   {lines:['（你一轉身，它就不見了。仔細一看，棲台邊多了一棵安安靜靜的小樹。）','……呵呵，嚇到你了？','有危險的時候，我就這樣站著。誰也找不到我。','精靈和德魯伊說，有我在的森林，樹就不會生病。……其實我只是，常常摸摸它們。','你們的車上，有很多會長大的東西。……我會幫你看著它們。'],choices:[{t:'謝謝你。',r:'（頭頂的枝葉輕輕晃了一下，掉下一顆小小的嫩芽。）……送你。'}]}
+  ],
+  farewell:['森林在叫我了。……春天要來了，有很多小樹要照顧。','我會把根扎回去，慢慢地，再長一圈。','如果有一天，你在森林裡看到一棵在微笑的樹……那就是我。坐下來，休息一下吧。']
+ },
+ sandwyrm:{name:'砂海鳴蠕',type:'other',species:'Sandsea Chorus Wyrm',zone:'crystal',spot:{x:84,y:58},spriteH:34,ar:'495/760',color:'radial-gradient(circle,#e2b48a,#8a4a2a)',
+  image:'assets/sandwyrm.webp',still:'assets/sandwyrm-still.webp',studies:['assets/sandwyrm-s1.webp','assets/sandwyrm-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'月界某處永不停風的赤砂海・沙丘深處',
+  intro:'列車停靠在星河浮島時，月台邊的星砂忽然往下陷。一條赤褐色的巨大長身從砂裡鑽了出來，張開三瓣的大口——然後，很有禮貌地，把頭低了下來。',
+  bio:'赤砂海的遊牧商隊之間流傳著一句話：「聽見沙在唱歌，就照著歌走。」砂海鳴蠕在沙下的低鳴，會把流沙壓實成一條硬路，商隊沿著那條路走，就不會陷下去。據說砂海上最古老的商路，都是鳴蠕唱出來的。',
+  field:{alias:'沙下的雷聲、砂海之喉',cls:'沙棲巨蠕類・地底巨獸',danger:'中（巨口看起來很可怕，但牠只吃沙裡的礦物；被驚擾時翻起的流沙很危險）',rarity:'稀有',
+   looks:'<b>身軀：</b>赤褐色的分節長身，表面有一圈圈的環紋與深色的氣孔，背脊上一排骨刺像山脊一樣延伸到尾端。<br><b>巨口：</b>頭端張開時會裂成三瓣，內壁是深紫色，佈滿細密的倒刺；口中央伸出一條帶鉤的長舌，兩側還有一對小小的抓肢。<br><b>移動：</b>鑽出沙面時會帶起大片的沙塵，像一陣赤色的風。',
+   habitat:'月界某處永不停風的赤砂海。大半時間潛伏在沙丘深處，只有夜晚才浮上沙面。',
+   habits:[['移動','大半時間潛在沙下，靠感應地面的震動辨別方向。'],['飲食','不吃其他生物，以沙中的礦物、鹽晶和砂海植物的根為食。'],['性情','外表嚇人，其實非常溫和而且有禮貌；夜裡會在沙下低鳴，整片沙丘都跟著共振。']],
+   abilities:[['沙鳴','發出低頻的鳴聲，讓流沙變硬或變軟，沙丘也會因此慢慢移動。'],['掘道','鑽過的隧道會留下光滑的岩壁，旅人常把它們當作地下通道。']]},
+  stay:2,
+  talks:[
+   {lines:['（晶石平台旁的沙堆裡，一條赤褐色的長身慢慢鑽了出來。三瓣的大口張開——你往後退了一步。）','……啊。對不起。嚇到你了。','（大口慢慢合起來，牠把頭低到你面前。）……我的嘴，只是比較大。','我不吃會動的東西。……真的。'],choices:[{t:'那你吃什麼？',r:'沙裡的石頭。鹽。還有植物的根。……脆脆的，很好吃。'},{t:'（摸摸牠的頭）',r:'……（牠的身體輕輕震了一下，發出很低很低的嗡聲。）謝謝。'}]},
+   {lines:['（牠把身體埋回沙裡，只露出一點點頭。地板傳來一陣很輕的震動。）','……你聽到了嗎？那是我在唱歌。','在砂海，風一直吹，沙一直動。我唱歌，沙就會停下來，變成硬硬的路。','商隊的人，會跟著我的歌走。……他們說，最老的路，都是我們唱出來的。'],choices:[{t:'好厲害。',r:'……不厲害。只是，唱久了，就會了。'},{t:'可以唱給我聽嗎？',r:'（整節車廂輕輕地共振起來，像很遠很遠的雷聲。）……這樣，可以嗎？'}]},
+   {lines:['（牠把頭擱在沙堆上，看著車窗外。）','……這裡的地板，很硬。我鑽不下去。','可是，我不討厭。在砂海，我只能看見沙。在這裡，看得見好多東西。','我挖過的洞，會變成光滑的牆。……以後如果你們迷路了，可以走我的洞。'],choices:[{t:'我會記得的。',r:'……嗯。洞口有一圈刺的，就是我挖的。'}]}
+  ],
+  farewell:['……沙在叫我。砂海的風，換方向了。','我得回去唱歌了。不唱，路就會不見。','以後如果你聽見地底下有很低的雷聲……那是我在唱。照著歌走，就不會陷下去。']
+ },
+ moonwyrm:{name:'月珀白龍',type:'other',species:'Moonpearl Wyrm',zone:'veil',spot:{x:85,y:34},spriteH:24,ar:'760/532',color:'radial-gradient(circle,#f4f0f6,#a8a0c4)',
+  image:'assets/moonwyrm.webp',still:'assets/moonwyrm-still.webp',studies:['assets/moonwyrm-s1.webp','assets/moonwyrm-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'月界高寒的雪峰之巔・月光最亮的山口',
+  intro:'列車停靠在星河浮島時，車窗外落下一片月光般的白。一頭珍珠白的巨龍收起薄薄的膜翼，低頭看了看車廂，然後——很優雅地，走了進來。',
+  bio:'傳說在大熄滅之前，月界的龍族與日界的龍一起守著界壁，月界的龍守夜，日界的龍守晝。大熄滅之後，月界的龍族一隻接一隻沉睡，月珀白龍是那時留下來的最後一位長老。雪山的旅人說，迷路的夜裡只要抬頭找月光最亮的地方，就會看見牠的鱗片把月光反射成一道柔和的光幕，替人照出下山的路。',
+  field:{alias:'雪之長老、守夜的龍',cls:'古龍類・月界龍族',danger:'高（從不主動攻擊，但被激怒時的凍息能冰封一整座山谷）',rarity:'極稀有',
+   looks:'<b>鱗片：</b>全身覆蓋珍珠白的細鱗，光線下泛著淡藍與淡金的虹彩，像把月光一片一片鋪在身上。<br><b>頭部：</b>頭後延伸出數根向後彎的長角，頸邊豎著一圈鬃刺。<br><b>翅膀與尾：</b>一對巨大的膜翼薄得透光，邊緣帶著淡淡的藍；長尾末端捲成一個圈。',
+   habitat:'月界高寒的雪峰之巔、月光最亮的山口。一年之中大半時間都在沉睡。',
+   habits:[['作息','夜行，一年只醒來幾次；滿月時會展開翅膀，安靜地吸收月光。'],['飲食','以月光與高山的冰晶為食。'],['性情','高傲而沉靜，說話很慢；會記得每一個對牠說過謊的人，也記得每一個對牠好的人。']],
+   abilities:[['月鱗鏡','鱗片能把月光反射成柔和的光幕，替雪山的旅人照亮夜路。'],['凍息','呼出的氣息能讓空氣中的水氣瞬間結成冰，在山谷之間架起冰橋。']]},
+  stay:3,
+  talks:[
+   {lines:['（靜謐結界的冷霧裡，一頭珍珠白的巨龍緩緩睜開眼睛。牠看了你很久。）','……你身上，有晨曦的味道。','我很久沒有聞過了。上一次，是大熄滅之前。','坐吧，值勤的孩子。……我不會吃你。'],choices:[{t:'您認識曦淵嗎？',r:'……那個日界的孩子。當年牠還很小，總是跟在我們後面飛。……牠現在，長大了吧。'},{t:'（安靜地坐下）',r:'……很好。懂得安靜的人，不多了。'}]},
+   {lines:['（牠張開一邊的翅膀，車廂的燈光透過薄薄的翼膜，在地上灑下一片淡藍。）','以前，月界的龍守夜，日界的龍守晝。我們一起，守著界壁。','大熄滅之後，夥伴們一隻接一隻睡著了。……只剩下我。','所以我睡得很久，醒得很少。醒著的時候，就看看月亮，吃一點冰。'],choices:[{t:'您一個人，不寂寞嗎？',r:'……寂寞。可是月亮每個晚上都會來。……現在，還有這輛車。'},{t:'以後您可以常常醒來。',r:'（牠的眼睛彎了一下。）……也許吧。如果這裡一直這麼吵的話。'}]},
+   {lines:['（牠低頭聞了聞你，呼出的氣息在你肩上結成一層細細的霜花。）','……你沒有對我說謊。我記得每一個說過謊的人。','雪山的旅人迷路時，會抬頭找月光最亮的地方。那裡，通常是我。','我用鱗片把月光折下來，鋪成一條路。……他們就回家了。','你這輛車，也在替很多生命找回家的路。……很好。我陪你走一段。'],choices:[{t:'謝謝您。',r:'（牠把長尾輕輕捲在你身邊，像一圈月光。）……不用謝。這是龍的工作。'}]}
+  ],
+  farewell:['……滿月要來了。雪峰在叫我。','我得回去睡一陣子。……這次，我會睡得比較好。','告訴那個日界的孩子：月界的龍，還有一個醒著。……讓牠，別一個人扛著。']
+ },
+ skyfox:{name:'藍羽雲狐',type:'domain',species:'Azure-plumed Skyfox',zone:'rings',spot:{x:64,y:8},spriteH:17,ar:'760/617',color:'radial-gradient(circle,#f6fbff,#5ab8f0)',
+  image:'assets/skyfox.webp',still:'assets/skyfox-still.webp',studies:['assets/skyfox-s1.webp','assets/skyfox-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'雲層之上晴朗的高空・雲海中的浮島林間',
+  intro:'列車停靠在晨曦森林時，一道雪白的影子從雲裡衝了下來，在車頂上繞了三圈，然後鑽進車窗——藍色的尾巴尖，還在空中留下一道光。',
+  bio:'雲上國度的孩子們相信，看見藍色尾巴劃過天空的那天，一定會放晴。老人們會把撿到的藍羽毛縫進孩子的枕頭裡，說這樣就不會做惡夢。也有人說，藍羽雲狐其實就是晴天本身——牠開心的時候，雲就散開了。',
+  field:{alias:'晴空的使者、藍尾仙',cls:'天狐類・羽翼幻獸',danger:'低',rarity:'稀有',
+   looks:'<b>毛髮：</b>全身覆蓋著蓬鬆的雪白長毛，翅膀尖、胸前的鬃毛、四爪和大尾巴的末端，都漸層成會發光的天藍色。<br><b>頭部：</b>頭上一對向後彎的深灰色小角，眼睛是冰藍色。<br><b>翅膀：</b>一對潔白的大羽翼，羽尖的藍光在飛行時會拖出長長的光痕。',
+   habitat:'雲層之上晴朗的高空，以及雲海中浮島上的樹林。',
+   habits:[['作息','晨昏最活躍，喜歡追著陽光飛。'],['飲食','以朝露和雲裡的光塵為食。'],['性情','好奇、愛乾淨、喜歡惡作劇——常常把旅人的帽子叼走，藏進雲裡。']],
+   abilities:[['晴空羽','拍動翅膀時能吹散烏雲，讓天空放晴。'],['藍焰尾','尾巴末端的藍光是冰涼的火焰，能照亮夜路，卻不會燙傷任何東西。']]},
+  stay:2,
+  talks:[
+   {lines:['（懸浮棲息環上，一團雪白的毛球忽然抬起頭。藍色的尾巴尖晃了晃。）','嘿！你就是開車的那個？','我剛剛在你們車頂上繞了三圈！你有沒有看到？','……沒看到？那我再繞一次！'],choices:[{t:'下次一定看。',r:'說好囉！藍色的光那條，就是我！'},{t:'車頂很危險耶。',r:'才不危險！我有翅膀！……好啦，我小心一點。'}]},
+   {lines:['（牠舔了舔爪子上的露水，尾巴尖的藍光一閃一閃。）','早上的露水最好喝了。還有雲裡亮亮的東西，吃起來像糖。','我最喜歡追太陽！太陽跑到哪，我就飛到哪。','……啊，對了。你的帽子呢？我想藏一下。'],choices:[{t:'我沒有帽子。',r:'……可惜。那我藏你的筆記本？……開玩笑的啦！'},{t:'不、不可以藏！',r:'嘻嘻。我只會藏一下下，然後就還你。'}]},
+   {lines:['（牠拍了拍翅膀，車廂裡吹起一陣涼風，窗外的雲好像散開了一點。）','你看！晴天了！','雲上的小孩說，看到我的尾巴，那天就會放晴。','……其實我只是開心而已。我開心，雲就散開了。','所以，跟你在一起的時候，天氣應該都會很好吧。'],choices:[{t:'那就一直開心吧。',r:'（牠繞著你轉了一圈，藍色的光把你圍起來。）嗯！說好了！'}]}
+  ],
+  farewell:['雲上在叫我了！好像有一片烏雲要我去吹散。','我得走了。……不過，我會常常飛過你們車頂的！','以後如果哪天突然放晴，天上有一道藍光——那就是我在跟你打招呼！']
+ },
+ grinfox:{name:'夜笑影狐',type:'mind',species:'Grinning Shadefox',zone:'rest',spot:{x:7,y:62},spriteH:22,ar:'760/704',color:'radial-gradient(circle,#5a5866,#14141c)',
+  image:'assets/grinfox.webp',still:'assets/grinfox-still.webp',studies:['assets/grinfox-s1.webp','assets/grinfox-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'世界與世界之間的岔路口・夜晚的十字路口・沒有路燈的月台',
+  intro:'列車停靠在晨曦森林的夜裡，月台上沒有燈。一道黑影一直跟在你身後三步遠的地方。你回頭——一張咧著白牙的笑臉，安安靜靜地看著你。',
+  bio:'古老的旅人歌謠這樣唱：「夜裡若有笑臉跟著你，別回頭，別跑——牠是在送你回家。」夜笑影狐以人們的恐懼為食，吃掉一點點，旅人就不那麼怕黑了。牠脖子上的星形墜飾，據說是很久以前一個迷路的孩子，被牠送到家門口之後送給牠的謝禮。牠從來沒有拿下來過。',
+  field:{alias:'笑臉的影子、路口的守望者',cls:'暗影獸類・夜行幻獸',danger:'低（看起來非常危險，其實很膽小）',rarity:'稀有',
+   looks:'<b>身形：</b>漆黑的長毛，細長的身軀，一條異常修長的尾巴，末端炸開成一大把墨色的長毛，幾乎和身體一樣大。<br><b>臉：</b>永遠咧著一排白牙，舌頭常常吐在外面；眼睛是空白的乳白色，看不出在看哪裡。<br><b>項鍊：</b>脖子上掛著一串舊項鍊，墜著一枚星形的金屬墜飾。',
+   habitat:'世界與世界之間的岔路口、夜晚的十字路口，以及沒有路燈的月台。',
+   habits:[['作息','只在夜裡出現，白天躲在影子裡睡覺。'],['飲食','以人們心裡的「害怕」為食。吃掉一點，對方就不那麼怕黑了。'],['性情','外表嚇人，其實非常膽小又溫柔；會跟在迷路的人後面，永遠保持三步的距離。']],
+   abilities:[['吞懼','吃掉身邊的人心裡的恐懼，讓人在黑暗裡也能安心。'],['影隨','能融進任何影子裡，無聲地移動。']]},
+  stay:2,
+  talks:[
+   {lines:['（休憩區最暗的角落裡，一排白牙慢慢浮了出來。你嚇了一跳。）','……嘻。','……對、對不起。我不是故意要笑的。我的臉，一直都是這樣。','你……不要跑，好不好？'],choices:[{t:'我不跑。',r:'（那排白牙好像咧得更開了一點。）……謝謝。你是第一個沒有跑的。'},{t:'你嚇到我了……',r:'……我知道。大家都這樣。（牠把頭埋進長長的尾巴裡。）'}]},
+   {lines:['（牠用長長的尾巴把自己圍成一圈，只露出那張笑臉。）','我吃的是……害怕。','你剛剛被我嚇到的那一點點害怕，我吃掉了。……所以你現在，比較不怕了，對不對？','在路口，常常有人迷路。天很黑，他們很害怕。我就跟在後面，一直吃，一直吃。','吃到他們不怕了，他們就找得到家了。'],choices:[{t:'原來你一直在送人回家。',r:'……嗯。可是他們都不知道。他們只記得，有一張笑臉在後面。'},{t:'害怕好吃嗎？',r:'……苦苦的。可是吃完，大家都會笑。所以，還好。'}]},
+   {lines:['（牠用爪子輕輕碰了碰脖子上的星形墜飾。）','這個……是一個小孩給我的。','她迷路了。我跟了她一整個晚上。到她家門口的時候，她回頭了。','她沒有尖叫。她把這個掛在我脖子上，說「謝謝你送我回家」。','……我一直戴著。你看，到現在還是亮的。'],choices:[{t:'很適合你。',r:'（那排白牙抖了一下。這一次，你分得出來——牠是真的在笑。）'}]}
+  ],
+  farewell:['……天快黑了。岔路口那邊，又有人迷路了。','我得去跟著他們。三步，不多不少。','以後，如果你在很黑的地方，覺得後面有人在笑……不要怕。是我在送你回家。']
+ },
+ dawnsail:{name:'霞帆翼龍',type:'domain',species:'Dawnsail Wyvern',zone:'crystal',spot:{x:66,y:40},spriteH:22,ar:'760/372',color:'radial-gradient(circle,#fbe6ec,#c89aa8)',
+  image:'assets/dawnsail.webp',still:'assets/dawnsail-still.webp',studies:['assets/dawnsail-s1.webp','assets/dawnsail-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'日界與月界交界的霞光帶・晨昏交替時天空中粉色的那一層',
+  intro:'列車停靠在晨曦森林的日出時分，天邊的粉色霞光裡，一頭半透明的翼龍乘著光滑翔下來。背上的鰭帆透著光，牠在晶石平台上收起翅膀，背後浮現一圈淡淡的光紋。',
+  bio:'渡守留下的航行紀錄裡，有這樣一段：「日月交界之時，霞帆翼龍飛在列車之前，找出界壁最薄之處。」在大熄滅之前，霞帆翼龍曾經是列車的領航者。日出與日落的那幾分鐘，天空出現粉色霞光的地方，就是牠們飛過的路。據說看見牠背後光環的人，那一整天心裡都會很平靜。',
+  field:{alias:'粉霞的帆、日出的信差',cls:'翼龍類・霞光幻獸',danger:'低',rarity:'稀有',
+   looks:'<b>頭部：</b>狹長的頭部與尖細的吻，頭頂向後延伸出細長的角。<br><b>鰭帆：</b>背上豎著一排像帆一樣的半透明鰭膜，由細長的骨刺撐開，透著淡粉色的光。<br><b>翼膜：</b>一對巨大的翼膜像晨霞一樣淡粉，薄得能透光。<br><b>光環：</b>背後偶爾會浮現一圈淡淡的光紋，像日出前天邊的光圈。',
+   habitat:'日界與月界交界的霞光帶——晨昏交替時，天空中出現粉色的那一層。',
+   habits:[['作息','只在日出與日落的幾分鐘現身，其他時間化進霞光裡，誰也看不見。'],['飲食','以霞光為食。'],['社交','成對飛行，一生只有一個伴侶；兩隻翼龍會在天空的兩端，一隻迎接日出，一隻送走日落。']],
+   abilities:[['乘霞','在霞光中飛行時，身體會變得透明，和天空融為一體。'],['霞光環','背後的光紋能讓看見的人，一整天都保持平靜。'],['尋薄','能找出界壁最薄的地方，替旅人指出最安全的航道。']]},
+  stay:2,
+  talks:[
+   {lines:['（晶石平台上，一頭粉色的翼龍收起透光的翅膀。背上的鰭帆輕輕顫動。）','……這輛車。我認得。','很久很久以前，我的祖先，飛在它的前面。','我們替它找路。找界壁最薄的地方。'],choices:[{t:'您的祖先是領航者？',r:'……嗯。渡守的紀錄裡，有寫。日月交界的時候，我們飛在列車前面。'},{t:'那你也會找路嗎？',r:'……會。只是，很久沒有用過了。'}]},
+   {lines:['（窗外的天色慢慢轉成粉色。牠的身體忽然變得透明，幾乎和光融在一起。）','……啊。日落了。我一到這個時候，就會變淡。','我吃的，是霞光。只有日出和日落的那幾分鐘，才吃得到。','其他的時候，我就躲在光裡面。……你們，看不見我。'],choices:[{t:'那你很少被人看見吧。',r:'……嗯。看見我的人，都很幸運。所以你，很幸運。'},{t:'你現在好漂亮。',r:'（透明的鰭帆微微泛紅。）……謝謝。'}]},
+   {lines:['（牠背後浮現一圈淡淡的光紋，你忽然覺得心裡很安靜。）','……這個光環，會讓看見的人平靜一整天。','我們一生，只有一個伴侶。牠在天空的另一端，迎接日出。我在這一端，送走日落。','我們每天，只有在天空最粉的時候，才看得見彼此。','……這樣就夠了。'],choices:[{t:'牠一定也在想你。',r:'（光環亮了一下。）……嗯。我知道。'}]}
+  ],
+  farewell:['……天邊的霞光，在叫我了。','我的伴侶，在另一端等我。我們約好，今天的日落要一起看。','以後，如果天空忽然變成很溫柔的粉色……那是我們，飛過去了。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -2416,6 +2530,12 @@ const EVENTS = {
  board_mnemo:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('mnemo')&&state.journeyCount>=11,run:n=>boarding('mnemo','列車停靠的時候，車窗上忽然結了一層霜。一團冰霧從星河上漂過來，貼著車身滑進了棲息車廂。霧散開之後，靜謐結界裡亮起幾顆藍色的光泡。',n)},
  board_cabbfrog:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('cabbfrog')&&state.journeyCount>=6,run:n=>boarding('cabbfrog','列車停靠的時候，月台邊滾來一顆圓圓的甘藍，骨碌碌地，一路滾進了棲息車廂。它在自然棲台上停下來——葉縫裡，睜開了一雙大眼睛。',n)},
  board_skywhale:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('skywhale')&&state.journeyCount>=10,run:n=>boarding('skywhale','列車停靠的時候，整片天空忽然暗了一下。一道巨大的灰色身影從星河下方的雲海裡浮上來，慢慢游過車頂，長長的觸手從車窗外垂過——牠輕輕地，滑進了棲息車廂的上方。',n)},
+ board_treeling:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('treeling')&&state.journeyCount>=9,run:n=>boarding('treeling','列車停靠的時候，月台邊一棵長滿苔蘚的老樹，忽然邁開了根一樣的腳。它彎下腰鑽進車門，在棲息車廂的自然棲台上站定，頭頂的枝葉沙沙作響。',n)},
+ board_sandwyrm:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('sandwyrm')&&state.journeyCount>=12,run:n=>boarding('sandwyrm','列車停靠的時候，月台邊的星砂忽然往下陷。一條赤褐色的巨大長身從砂裡鑽出來，張開三瓣的大口——然後很有禮貌地低下頭，慢慢鑽進了棲息車廂。',n)},
+ board_moonwyrm:{trigger:'arrive',loc:'starIslands',need:()=>!state.discoveredLifeforms.includes('moonwyrm')&&state.journeyCount>=13,run:n=>boarding('moonwyrm','列車停靠的時候，車窗外落下一片月光般的白。一頭珍珠白的巨龍收起薄薄的膜翼，低頭看了看車廂——然後很優雅地，走進了棲息車廂的靜謐結界。',n)},
+ board_skyfox:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('skyfox')&&state.journeyCount>=11,run:n=>boarding('skyfox','列車停靠的時候，一道雪白的影子從雲裡衝下來，在車頂上繞了三圈。藍色的尾巴尖在空中拖出一道光，咻地一聲，鑽進了棲息車廂。',n)},
+ board_grinfox:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('grinfox')&&state.journeyCount>=12,run:n=>boarding('grinfox','列車停靠在一片沒有燈的夜裡。一道黑影一直跟在你身後三步遠的地方，你回頭——一張咧著白牙的笑臉，安安靜靜地看著你。然後牠跟著你，走進了棲息車廂。',n)},
+ board_dawnsail:{trigger:'arrive',loc:'dawnForest',need:()=>!state.discoveredLifeforms.includes('dawnsail')&&state.journeyCount>=13,run:n=>boarding('dawnsail','列車停靠在日出的時候。天邊的粉色霞光裡，一頭半透明的翼龍乘著光滑翔下來。牠繞著列車飛了一圈，像在確認什麼——然後收起透光的翅膀，降落在棲息車廂的晶石平台上。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:n=>boarding('sola','列車停靠的時候，一陣潮水般的星光拍上車窗。一團會發光的生命順著光，輕輕滑進了車廂。',n)},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'assets/voyage.jpg');}},
  
@@ -2470,6 +2590,10 @@ const EVENTS = {
    ['skywhale','……很深，很暗。……我那裡，很高，很亮。'],['leviathaurora','那我們，剛好是相反的。'],['skywhale','……可是，我們都，游得很慢。'],['leviathaurora','（水面上的光輕輕晃了一下，像在笑。）……嗯。一樣慢。'],
    ['self','一道影子在上，一道光在下。兩隻鯨，在同一節車廂裡，用同樣慢的速度，一起游了很久。']
   ],'淵光巨鯨和雲海巨鯨龍，一個在水底、一個在雲上，用同樣慢的速度一起游著。','一上一下','一道影子在上，一道光在下。兩隻鯨用同樣慢的速度，一起游了很久。')},
+ int_cabbfrog_treeling:{trigger:'carriage',car:'habitat',who:['cabbfrog','treeling'],need:()=>aboard('cabbfrog')&&aboard('treeling'),title:'翠苞蛙與護樹靈精',run:()=>interScene('treeling','cabbfrog',[['cabbfrog','（翠苞蛙抬頭看著那叢蓬鬆的枝葉。）……呱。那上面，好像很好睡。'],['treeling','呵呵。想上來嗎？'],['cabbfrog','可、可以嗎？你不會把我當成果子吧？'],['treeling','不會。你是一顆很圓的小甘藍。'],['cabbfrog','……呱！我不是菜！'],['treeling','（它輕輕把翠苞蛙捧起來，放進頭頂的枝葉裡。）……好，你不是。睡吧。'],['self','那天，護樹靈精的頭頂上，多了一顆圓圓的、睡得很熟的「果子」。']],'護樹靈精的頭頂上，多了一顆圓圓的、睡得很熟的「果子」。','樹冠裡的果子','護樹靈精的頭頂上，多了一顆圓圓的、睡得很熟的「果子」。')},
+ int_strider_sandwyrm:{trigger:'carriage',car:'habitat',who:['strider','sandwyrm'],need:()=>aboard('strider')&&aboard('sandwyrm'),title:'灰角靈犬與砂海鳴蠕',run:()=>interScene('sandwyrm','strider',[['strider','（灰角靈犬的長角忽然轉向地板。）……地底下，有歌聲。'],['sandwyrm','（沙堆裡探出一顆大頭。）……你聽得見？'],['strider','我的角，聽得見很遠的震動。……你唱的，是路的歌吧？'],['sandwyrm','……嗯。荒原的人，也走我的路嗎？'],['strider','走。遊牧的人說，跟著地底的雷聲，就不會陷下去。'],['sandwyrm','（整節車廂輕輕震了一下，像是很開心。）'],['self','那天，灰角靈犬一直把長角貼在地板上，聽砂海鳴蠕唱了很久的歌。']],'灰角靈犬把長角貼在地板上，聽砂海鳴蠕唱了很久的歌。','路的歌','灰角靈犬把長角貼在地板上，聽砂海鳴蠕唱了很久的歌。')},
+ int_felinia_skyfox:{trigger:'carriage',car:'habitat',who:['felinia','skyfox'],need:()=>aboard('felinia')&&aboard('skyfox'),title:'羽貓獸與藍羽雲狐',run:()=>interScene('skyfox','felinia',[['skyfox','（藍羽雲狐繞著羽貓獸飛了一圈。）你也有翅膀耶！要不要比賽？'],['felinia','……比什麼？'],['skyfox','比誰先繞完車廂一圈！'],['felinia','（耳朵一豎）……好。輸的人，要把尾巴借對方抱一晚。'],['skyfox','一言為定！'],['self','兩道白影在棲息車廂裡追來追去，最後一起撞進了圓環上的軟墊裡。'],['self','……那天晚上，牠們抱著彼此的尾巴睡著了。誰也沒說到底是誰贏。']],'比賽沒有分出輸贏，兩隻抱著彼此的尾巴睡著了。','尾巴的約定','比賽沒有分出輸贏，兩隻抱著彼此的尾巴睡著了。')},
+ int_windkoi_dawnsail:{trigger:'carriage',car:'habitat',who:['windkoi','dawnsail'],need:()=>aboard('windkoi')&&aboard('dawnsail'),title:'金羽御風鯉與霞帆翼龍',run:()=>interScene('dawnsail','windkoi',[['windkoi','（金羽御風鯉繞著霞帆翼龍轉了一圈。）你的帆，跟我的鰭好像。'],['dawnsail','……你也是乘光的？'],['windkoi','我乘風。早上的風，最甜。'],['dawnsail','我乘霞光。早上的霞光，最粉。'],['windkoi','那我們，都是早上的。'],['dawnsail','……嗯。明天日出，一起飛？'],['self','隔天清晨，一道金光和一道粉光，一起從車頂掠過。']],'一道金光和一道粉光，在日出時一起從車頂掠過。','早上的','一道金光和一道粉光，在日出時一起從車頂掠過。')},
  int_frost_lynx:{trigger:'carriage',car:'habitat',who:['frost','lynx'],need:()=>aboard('frost')&&aboard('lynx'),title:'霜脊冰原獸與霜晶冰原獸',run:()=>interScene('lynx','frost',[
    ['lynx','（懸浮棲息環上傳來一聲低低的嘶聲。）……你身上有冰原的味道。'],['frost','你也是。北邊的雪嶺。'],['lynx','那裡是我的地盤。'],['frost','冰原是我的地盤。……雪嶺，我很少上去。太陡了。'],
    ['lynx','冰原，我很少下去。太平了，沒有地方躲。'],['self','（兩雙冰藍色的眼睛對望了很久。車廂的溫度，好像又降了一點。）'],['frost','……那就跟以前一樣。你在上面，我在下面。'],
@@ -2578,6 +2702,12 @@ const KEEPS={
  mnemo:['憶泡','#9fd0ff','一顆小小的藍色光泡。貼近耳朵，會聽見很遠很遠的笑聲。'],
  cabbfrog:['翠苞','#a8d08a','頭頂掉下來的一顆小花苞。放在窗邊，第二天早上會沾滿露水。'],
  skywhale:['雲鯨鬚','#d8dde2','一根長長的鯨鬚。對著它輕輕吹氣，會飄出一小朵雲。'],
+ dawnsail:['霞帆骨','#f4c4cf','一根撐起鰭帆的細骨。對著日出舉起來，會映出一片小小的粉色霞光。'],
+ grinfox:['星形墜飾的仿品','#c9a978','牠用影子捏出來的一枚小星星，送給你。很黑的時候，它會微微發亮。'],
+ skyfox:['藍羽','#7ccbff','一根末端發著藍光的羽毛。放在枕頭下面，就不會做惡夢。'],
+ moonwyrm:['月珀鱗','#eef0ff','一片珍珠白的龍鱗。夜裡對著月亮，會把月光折成一道細細的光。'],
+ sandwyrm:['鳴砂環','#d99a6a','一圈從牠背脊上脫落的骨環。貼在耳邊，能聽見很低很低的沙之歌。'],
+ treeling:['護樹嫩芽','#b6d38a','頭頂掉下來的一顆小嫩芽。種在盆裡，會長成一棵會微笑的小樹。'],
  sola:['一滴星潮','#9fb8ff','一滴裝在晶殼裡的星河潮水，會跟著星河一漲一落。']
 };
 Object.entries(KEEPS).forEach(([p,[n,c,d]])=>{ COLLECTIBLES['keep_'+p]={name:n,kind:'keep',icon:c,desc:d,from:p}; });
@@ -2745,6 +2875,24 @@ const HOME_C={
  skywhale:{name:'巡雲座',S:[[60,150],[120,130],[190,120],[260,125],[320,140],[350,110],[355,175],[150,175],[230,170]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[4,6],[1,7],[3,8]],
   point:'……那一條，長長的，像我們。空中的航海家，叫它「巡雲座」。……跟著它，就不會遇到暴風。',
   story:['……巡雲座。你連好了。','我們，跟著它游。它，也跟著我們。','……原來，天上的我們，也一直在。'] },
+ dawnsail:{name:'領航座',S:[[60, 180], [130, 150], [200, 130], [270, 150], [340, 180], [200, 80], [200, 40]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6]],
+  point:'那兩邊張開的，是翅膀。中間往上的，是帆。……渡守們叫它「領航座」。列車出發前，都會先找它。',
+  story:['領航座。你連好了。','……渡守們找它，我們飛在它下面。','原來，列車一直都知道怎麼找到我們。']},
+ grinfox:{name:'三步座',S:[[200, 60], [150, 110], [250, 110], [200, 150], [120, 200], [200, 200], [280, 200]],E:[[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [3, 5], [3, 6]],
+  point:'……那一顆，後面跟著三顆小的。旅人叫它「三步座」。……說是一個人走夜路，後面跟著一個影子。',
+  story:['三步座。你連好了。','……原來天上也有影子在送人回家。','（那排白牙咧開了。）……我不是一個人。']},
+ skyfox:{name:'晴尾座',S:[[100, 170], [150, 140], [210, 130], [260, 100], [300, 70], [230, 170], [290, 190]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6]],
+  point:'看！那條長長的、彎彎的，像不像我的尾巴？雲上的小孩叫它「晴尾座」！它亮的那天，一定不會下雨！',
+  story:['晴尾座！你連好了！','嘻嘻，它今天好亮。明天一定是晴天！','……以後我不在的時候，看它就好了。它會替我陪你。']},
+ moonwyrm:{name:'守夜龍座',S:[[80, 150], [140, 110], [200, 90], [260, 100], [320, 80], [200, 150], [250, 190], [320, 200]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6], [6, 7]],
+  point:'那一條，張著翅膀的。那是我們，月界的龍族。……以前的人叫它「守夜龍座」。',
+  story:['守夜龍座。你連好了。','……它還亮著。我以為，它也跟著睡了。','原來，天上的夥伴們，一直都醒著。']},
+ sandwyrm:{name:'鳴沙座',S:[[60, 200], [110, 170], [160, 160], [210, 140], [260, 140], [310, 110], [340, 70]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]],
+  point:'……那一條，彎彎的，從地平線鑽出來。商隊叫它「鳴沙座」。看見它，就知道哪裡的沙是硬的。',
+  story:['鳴沙座。你連好了。','我們在沙下唱歌，它在天上唱。……原來，有人一直在跟我一起唱。','……下次，我唱大聲一點。']},
+ treeling:{name:'老樹座',S:[[200, 40], [160, 80], [240, 80], [200, 110], [200, 170], [150, 215], [250, 215], [200, 230]],E:[[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [4, 5], [4, 6], [4, 7]],
+  point:'那一棵，看到了嗎？像一棵很老、很老的樹。森林守護者叫它「老樹座」。……我小時候，就是看著它長大的。',
+  story:['老樹座。你連好了。呵呵。','它比我老很多，很多。每一年，它都還在那裡。','……原來我們，都是慢慢長大的。']},
  sola:{name:'回家座',S:[[120,195],[200,205],[280,195],[200,150],[200,75],[165,110],[235,110]],E:[[0,1],[1,2],[1,3],[3,4],[4,5],[4,6]],
   point:'看到了嗎？那顆星底下，有一座小島！我叫它「回家座」。……是我自己取的名字。',
   story:['回家座！你幫我連起來了！','我每天晚上都在找它。只要看得到它，我就知道我的島還在。','……所以，我一定找得到回家的路。對吧？']}
@@ -2795,6 +2943,18 @@ const REQ={
   done:[['cabbfrog','（翠苞蛙跳進草叢裡，把整個身體埋進沾滿露水的葉子中間。）'],['cabbfrog','……呱。就是這個味道。'],['cabbfrog','（頭頂的花苞，慢慢地開了。）好了。我們回去吧。']]},
  skywhale:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界）',ask:['……聽說，日界的雲，是從森林裡長出來的。','早上，樹會呼吸，霧就飄上去，變成雲。','……我想，看看雲出生的地方。帶我去晨曦森林，好嗎？'],
   done:[['skywhale','（雲海巨鯨龍浮在車頂，看著森林上方的晨霧一縷一縷升起來。）'],['skywhale','……真的。雲，是從這裡，出生的。'],['skywhale','我記住了。……以後下雨的時候，我會，把雨還給它們。']]},
+ dawnsail:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……流星雨的時候，天空會一直亮。','亮的時候，也許，我看得見另一端的伴侶。','如果遇到流星雨，帶我去展望台。我想試試看。'],
+  done:[['dawnsail','（霞帆翼龍站在展望台上，看著流星一道一道劃過天空的另一端。）'],['dawnsail','……看見了。那道粉色的光。是牠。'],['dawnsail','（牠背後的光環亮得像日出一樣。）……謝謝你。']]},
+ grinfox:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界）',ask:['……我只在晚上出來。我從來沒有看過，天亮。','聽說，晨曦森林的天亮，是最溫柔的。','……如果是溫柔的天亮，我應該，不會怕吧。帶我去看看，好嗎？'],
+  done:[['grinfox','（夜笑影狐躲在你的影子裡，看著第一道晨光照進森林。）'],['grinfox','……亮了。可是，不刺眼。'],['grinfox','（牠把一點點尾巴伸出影子，讓晨光照在上面。）……原來天亮，是這個樣子。']]},
+ skyfox:{kind:'sky',sky:'aurora',goal:'界壁極光的時候，邀牠到展望台一起看',ask:['聽說界壁會發光！藍藍綠綠的，像我的尾巴！','我想看看，到底是極光比較漂亮，還是我的尾巴比較漂亮！','如果遇到極光，一定要叫我喔！'],
+  done:[['skyfox','（藍羽雲狐站在欄杆上，尾巴的藍光和天上的極光連成一片。）'],['skyfox','……哇。好漂亮。'],['skyfox','……好啦，極光贏了。不過只贏一點點！']]},
+ moonwyrm:{kind:'sky',sky:'eclipse',goal:'日月交疊的時候，邀牠到展望台一起看',ask:['……日月交疊的時候，太陽和月亮會在天上碰面。','以前，那是月界的龍和日界的龍見面的時候。','如果遇到日月交疊……帶我去展望台。我想再看一次。'],
+  done:[['moonwyrm','（月珀白龍站在展望台上，看著太陽和月亮慢慢交疊。牠的鱗片亮了起來。）'],['moonwyrm','……就是這個。白天和夜晚，碰在一起的那一瞬間。'],['moonwyrm','謝謝你，孩子。……我覺得，我又能多醒一會兒了。']]},
+ sandwyrm:{kind:'out',loc:'starIslands',goal:'停靠星河浮島時，帶牠一起下車',ask:['……星河浮島的邊緣，有一片星砂。','我想鑽進去看看。星星做的沙，是什麼味道。','下次停在星河浮島，帶我下車，好嗎？'],
+  done:[['sandwyrm','（砂海鳴蠕整個鑽進星砂裡，只露出一點點頭。星砂在牠身邊閃閃發亮。）'],['sandwyrm','……軟軟的，涼涼的。有一點點甜。'],['sandwyrm','（地底下傳來一陣很輕的、像在笑的嗡聲。）謝謝你。']]},
+ treeling:{kind:'out',loc:'dawnForest',goal:'停靠晨曦森林時，帶牠一起下車',ask:['車上的土很好。可是……我想念真正的森林。','晨曦森林的老樹們，應該在等我打招呼。','下次停在晨曦森林，帶我下車，好嗎？'],
+  done:[['self','（護樹靈精走到森林邊，把手掌貼在一棵老樹的樹幹上。）'],['self','（整片樹林沙沙地響了起來，像是在回答它。）'],['self','……它們說，歡迎回來。']]},
  sola:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['流星可以許願，對吧？','我想許一個很重要的願。可是一定要在真正的流星雨下面許才算數。','下次有流星雨，帶我去展望台！'],
   done:[['sola','……好了！我許了。不能說出來喔。'],['sola','……好啦，偷偷告訴你。'],['sola','我許的是：「希望大家都找得到回家的路。」']]}
 };
@@ -3660,6 +3820,12 @@ function idleLine(id){ const L=LOCATIONS[state.currentLocation].name;
  if(id==='mnemo') return state.currentPhase==='voyage'?'……（冰晶的光泡一顆一顆亮著。航行的時候，好像有很多記憶從窗外漂過。）':'停下來的時候，好安靜。……我在聽，這個地方的記憶。';
  if(id==='cabbfrog') return state.currentPhase==='voyage'?'……（葉子捲得緊緊的，只露出一隻眼睛。列車一搖，牠就跟著輕輕晃一下。）':'……呱。停下來了。（牠鬆開一片葉子，伸了個懶腰。）';
  if(id==='skywhale') return state.currentPhase==='voyage'?'……（牠的鰭肢慢慢張開，像在替列車擋住窗外的風。車廂幾乎一點也不晃。）':'……停下來了。我在上面，睡一下。';
+ if(id==='treeling') return state.currentPhase==='voyage'?'……（它站得直直的，像一棵在車廂裡旅行的樹。列車一晃，頭頂的枝葉就沙沙地響。）':'停下來了。……我去看看那些盆栽。';
+ if(id==='sandwyrm') return state.currentPhase==='voyage'?'……（牠把身體盤在沙堆裡，隨著列車的晃動，輕輕發出低低的鳴聲。）':'停下來了。……地板不震了，我有點不習慣。';
+ if(id==='moonwyrm') return state.currentPhase==='voyage'?'……（巨龍半閉著眼，在冷霧裡安靜地呼吸。每一次呼氣，車窗上就結一層薄霜。）':'停下來了。……我再睡一下。';
+ if(id==='skyfox') return state.currentPhase==='voyage'?'……（牠趴在圓環上，尾巴尖的藍光隨著列車的晃動，在車廂裡畫出一圈一圈的光。）':'停下來了！我可以去外面玩嗎？';
+ if(id==='grinfox') return state.currentPhase==='voyage'?'……（休憩區的角落裡，一排白牙安安靜靜地浮在黑暗中。偶爾，星形墜飾閃一下。）':'停下來了……外面黑嗎？我去看看有沒有人迷路。';
+ if(id==='dawnsail') return state.currentPhase==='voyage'?'……（牠收著翅膀站在晶石平台上，背上的鰭帆隨著列車的方向輕輕轉動，像在替列車看路。）':'停下來了。……現在，是日出還是日落？';
  if(id==='sirenora') return state.currentPhase==='voyage'?'……外面有霧的聲音。我在聽。':'這盞燈很溫暖。我再停一下就好。';
  if(id==='frost') return state.currentPhase==='voyage'?'……航道外面很冷。很像家。':'這裡的地板有點涼，是我。抱歉。';
  if(id==='vandora') return state.currentPhase==='voyage'?'……別出聲。我在聽車廂外面的風。':'這裡太亮了。我在葉子底下待著。';
@@ -3841,7 +4007,63 @@ const NOTES={
   {k:'abilities',p:'風吹不動我',n:'以體內氣囊與鰭肢操控浮力，在高空懸浮前行（御空浮游）'},
   {k:'bio',p:'看到我們，就會下雨，季節就會變溫和',n:'被視為帶來雨水與溫和季節的和平象徵'},
   {k:'bio',p:'航海的人，跟著我們，就能避開暴風',n:'空中航海家跟著牠們的路線避開暴風圈'},
-  {k:null,p:'這艘船，很穩。我喜歡',n:'喜歡列車很穩'}]}
+  {k:null,p:'這艘船，很穩。我喜歡',n:'喜歡列車很穩'}]},
+ dawnsail:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（背後的光環輕輕亮了一下。）……我會告訴我的伴侶。',list:[
+  {k:'habitat',p:'日落了。我一到這個時候，就會變淡',n:'住在日界與月界交界的霞光帶'},
+  {k:'habits',p:'我吃的，是霞光',n:'以霞光為食'},
+  {k:'habits',p:'只有日出和日落的那幾分鐘',n:'只在晨昏的幾分鐘現身'},
+  {k:'habits',p:'我們一生，只有一個伴侶',n:'成對飛行，一生只有一個伴侶'},
+  {k:'abilities',p:'幾乎和光融在一起',n:'在霞光中身體會變透明（乘霞）'},
+  {k:'abilities',p:'你忽然覺得心裡很安靜',n:'光環能讓人平靜（霞光環）'},
+  {k:'abilities',p:'找界壁最薄的地方',n:'能找出界壁最薄的航道（尋薄）'},
+  {k:'bio',p:'我的祖先，飛在它的前面',n:'曾經是列車的領航者'}]},
+ grinfox:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（星形墜飾輕輕晃了一下。）……我第一次，被這麼仔細地記住。',list:[
+  {k:'habitat',p:'在路口，常常有人迷路',n:'住在世界之間的岔路口'},
+  {k:'habits',p:'我吃的是……害怕',n:'以人心裡的恐懼為食'},
+  {k:'habits',p:'我就跟在後面',n:'跟在迷路的人後面，保持三步的距離'},
+  {k:'habits',p:'你……不要跑，好不好？',n:'外表嚇人，其實很膽小'},
+  {k:'abilities',p:'你現在，比較不怕了，對不對？',n:'吃掉恐懼，讓人安心（吞懼）'},
+  {k:'abilities',p:'休憩區最暗的角落裡',n:'能融進影子裡移動（影隨）'},
+  {k:'bio',p:'她把這個掛在我脖子上',n:'星形墜飾是迷路的孩子送的謝禮'},
+  {k:null,p:'我的臉，一直都是這樣',n:'笑臉是天生的'}]},
+ skyfox:{secs:['habitat','habits','abilities','bio'],thanks:'哇！你都記下來了！（尾巴的藍光亮得像小太陽。）那我也要記住你！',list:[
+  {k:'habitat',p:'我剛剛在你們車頂上繞了三圈',n:'住在雲層之上的晴朗高空'},
+  {k:'habits',p:'早上的露水最好喝了',n:'以朝露與雲中的光塵為食'},
+  {k:'habits',p:'我最喜歡追太陽',n:'晨昏最活躍，喜歡追著陽光飛'},
+  {k:'habits',p:'你的帽子呢？我想藏一下',n:'喜歡把旅人的帽子藏進雲裡'},
+  {k:'abilities',p:'窗外的雲好像散開了一點',n:'拍動翅膀能吹散烏雲（晴空羽）'},
+  {k:'abilities',p:'藍色的光那條，就是我',n:'尾巴的藍光是冰涼的火焰（藍焰尾）'},
+  {k:'bio',p:'看到我的尾巴，那天就會放晴',n:'被視為晴天的使者'},
+  {k:null,p:'我開心，雲就散開了',n:'開心的時候會放晴'}]},
+ moonwyrm:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了，一字不漏。（牠的眼睛彎了一下。）……很好。',list:[
+  {k:'habitat',p:'上一次，是大熄滅之前',n:'來自月界高寒的雪峰'},
+  {k:'habits',p:'醒著的時候，就看看月亮，吃一點冰',n:'以月光與冰晶為食'},
+  {k:'habits',p:'所以我睡得很久，醒得很少',n:'一年只醒來幾次'},
+  {k:'habits',p:'我記得每一個說過謊的人',n:'高傲沉靜，記得每個說謊的人'},
+  {k:'abilities',p:'我用鱗片把月光折下來',n:'鱗片能把月光反射成光幕（月鱗鏡）'},
+  {k:'abilities',p:'呼出的氣息在你肩上結成一層細細的霜花',n:'氣息能讓水氣結冰（凍息）'},
+  {k:'bio',p:'月界的龍守夜，日界的龍守晝',n:'月界龍族曾與日界的龍一起守護界壁'},
+  {k:'bio',p:'只剩下我',n:'大熄滅後留下的最後一位長老'},
+  {k:null,p:'那個日界的孩子',n:'認識小時候的曦淵'}]},
+ sandwyrm:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（整節車廂輕輕震了一下。）……我很高興。',list:[
+  {k:'habitat',p:'在砂海，風一直吹，沙一直動',n:'來自永不停風的赤砂海'},
+  {k:'habits',p:'沙裡的石頭。鹽。還有植物的根',n:'以沙中的礦物與植物根為食'},
+  {k:'habits',p:'我不吃會動的東西',n:'外表嚇人但很溫和'},
+  {k:'habits',p:'只露出一點點頭',n:'大半時間潛在沙下'},
+  {k:'abilities',p:'我唱歌，沙就會停下來',n:'以低鳴讓流沙變硬（沙鳴）'},
+  {k:'abilities',p:'我挖過的洞，會變成光滑的牆',n:'鑽過的隧道會留下光滑的岩壁（掘道）'},
+  {k:'bio',p:'最老的路，都是我們唱出來的',n:'商隊跟著牠的歌找路'},
+  {k:null,p:'這裡的地板，很硬',n:'覺得車廂地板太硬'}]},
+ treeling:{secs:['habitat','habits','abilities','bio'],thanks:'……呵呵，你都記下來了。慢慢地、一筆一筆的。……你也學會等了。',list:[
+  {k:'habitat',p:'森林也是看著我長大的',n:'住在古老的原始森林'},
+  {k:'habits',p:'我喝一點樹汁，一點露水，一點陽光',n:'以樹汁、露水與微量光能維生'},
+  {k:'habits',p:'有危險的時候，我就這樣站著',n:'遇到危險會偽裝成樹'},
+  {k:'habits',p:'坐吧，孩子',n:'個性溫和、充滿好奇'},
+  {k:'abilities',p:'植物都會說話',n:'能和植物建立感知連結（木靈共生）'},
+  {k:'abilities',p:'盆栽的葉子慢慢張開了',n:'能讓幼苗快速生長'},
+  {k:'bio',p:'有我在的森林，樹就不會生病',n:'有牠棲息的樹林不生病蟲害'},
+  {k:'bio',p:'精靈和德魯伊說',n:'受到精靈與德魯伊敬重'},
+  {k:null,p:'這裡的土，很好',n:'喜歡車上的土'}]}
 };
 const notesOf=id=>((state.notes||{})[id])||[];
 const filedOf=id=>((state.filed||{})[id])||{};
@@ -3951,6 +4173,12 @@ const CARE={
  mnemo:{t:0,l:0,ok:'（冰晶的光泡一顆一顆靜下來，發出很穩定的藍光。）冷的、暗的、安靜的……像虛空的邊緣。這裡，我可以好好地收著它們。'},
  cabbfrog:{t:1,h:2,ok:'（牠把葉子鬆開一層，葉面上很快就掛滿了小露珠。）濕濕的、涼涼的……像清晨的菜園。呱。'},
  skywhale:{t:0,h:2,ok:'（巨大的身影慢慢放鬆下來，觸鬚在濕潤的空氣裡輕輕飄著。）……涼涼的，有水氣。像雲的裡面。'},
+ dawnsail:{t:1,h:1,ok:'（牠在溫暖柔和的光裡展開翅膀，翼膜透出淡淡的粉色。）……像日出前的那幾分鐘。這裡，很舒服。'},
+ grinfox:{t:0,h:0,ok:'（牠鑽進最暗的角落，長尾巴把自己整個裹起來，只露出那排白牙。）……暗暗的、安靜的。這樣，就不會嚇到別人了。'},
+ skyfox:{t:1,h:0,ok:'（牠在明亮的光裡打了個滾，翅膀和尾巴都張得開開的。）亮亮的、乾乾的！像晴天的雲上面！'},
+ moonwyrm:{t:0,h:0,ok:'（巨龍把翅膀收攏，閉上眼睛。冷霧在牠的鱗片上結成細細的霜。）……寒冷，安靜。像雪峰的夜。'},
+ sandwyrm:{t:2,h:0,ok:'（牠把整個身體埋進溫熱的沙堆裡，只露出頭頂。）……熱熱的、乾乾的。像砂海的下午。'},
+ treeling:{t:1,h:2,ok:'（它把根一樣的腳深深扎進棲台的土裡，頭頂的枝葉舒服地張開。）……濕濕的、暖暖的土。像森林的早晨。'},
  yixi:{t:1,l:0,ok:'（羽翼慢慢收攏，所有的小眼睛一隻一隻閉上。只剩中央的大眼睛，安穩地亮著。）'}
 };
 const CARE_REACT={t:['（牠縮成一團，好像有點冷。）','（牠喘著氣，看起來太熱了。）'],l:['（牠四處張望，好像太暗了。）','（牠瞇起眼睛，光線好像太刺眼了。）'],h:['（牠看起來有點乾燥，不太自在。）','（牠甩了甩身上的水氣，好像太潮濕了。）']};
@@ -4033,7 +4261,13 @@ const DECK_LINE={
  windkoi:['這裡的風是往上走的。……我可以一直游下去。','好高。比山頂還高。……我喜歡。'],
  mnemo:['好多星星。每一顆，都是一個還沒熄滅的世界。','……我在數。數到的，我都會記得。'],
  cabbfrog:['……呱。好高。（牠緊緊抓著欄杆。）','風好大，葉子都要被吹開了。……不過，星星很好看。'],
- skywhale:['……這裡，看得到雲海。我的家人，就在那下面。','好寬。……我可以，把鰭張開嗎？']
+ skywhale:['……這裡，看得到雲海。我的家人，就在那下面。','好寬。……我可以，把鰭張開嗎？'],
+ dawnsail:['……從這裡，看得見界壁。我可以告訴你，哪裡最薄。','風的方向很好。……我想飛一下。'],
+ grinfox:['……好多星星。天上的人，應該都不會迷路吧。','（牠躲在你的影子裡，只露出一點點尾巴。）……這裡好亮。'],
+ skyfox:['好高好高！這裡的風，跟雲上面一樣！','我可以飛出去一下嗎？……一下下就好！'],
+ moonwyrm:['……月亮。從這裡看，比雪峰上更近一點。','風很好。……我年輕的時候，常常這樣站著。'],
+ sandwyrm:['好空曠……像砂海的晚上。只是，沒有沙。','風很大。……我把頭低一點，就不會被吹走。'],
+ treeling:['好高……這麼高的地方，我只在最老的樹梢上看過。','風很大。……不過，我的根抓得很牢。']
 };
 const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
 const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
@@ -4287,7 +4521,13 @@ const COMP_LINE={
  windkoi:{dawnForest:'樹葉把光切碎了。……不過，早上的光很甜。',starIslands:'是浮島的風！……我去轉一圈，馬上回來。'},
  mnemo:{dawnForest:'好暖……冰絲在化。不過，這裡的記憶很新，很亮。',starIslands:'星河上漂著好多記憶碎片。……我去收幾顆，馬上回來。'},
  cabbfrog:{dawnForest:'是森林的味道！……菜園就在那邊。呱。',starIslands:'這裡的土好硬……沒有露水。我、我待在你腳邊就好。'},
- skywhale:{dawnForest:'……日界的雲，比較低。也比較，軟。',starIslands:'是雲海的味道。……我在上面，等你。'}
+ skywhale:{dawnForest:'……日界的雲，比較低。也比較，軟。',starIslands:'是雲海的味道。……我在上面，等你。'},
+ dawnsail:{dawnForest:'日界的早晨。……天邊的粉色，是我的家。',starIslands:'這裡沒有日出，也沒有日落。……我有一點，睡不著。'},
+ grinfox:{dawnForest:'……早上的森林，好亮。我、我在你影子裡就好。',starIslands:'星星好多……可是這裡，好像有人迷路了。我去看一下。'},
+ skyfox:{dawnForest:'是早上的森林！露水好多！我去喝一口！',starIslands:'星星好近！……我可以去追那顆最亮的嗎？'},
+ moonwyrm:{dawnForest:'……日界的光，太亮了。不過，很溫暖。',starIslands:'星河的光，很像月光。……我喜歡這裡。'},
+ sandwyrm:{dawnForest:'……這裡的土，好軟，好濕。我、我不敢鑽。',starIslands:'星砂！……我可以下去一下嗎？一下就好。'},
+ treeling:{dawnForest:'是森林！……樹們在跟我打招呼呢。呵呵。',starIslands:'這裡沒有樹。……沒關係，我帶了一點土。'}
 };
 const PLACES={
  
@@ -4346,7 +4586,7 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
 const VOICE={T:[],
  P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
   cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
-  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], cabbfrog:[230,'square',.1,.12], skywhale:[120,'sine',.17,.05], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], cabbfrog:[230,'square',.1,.12], skywhale:[120,'sine',.17,.05], dawnsail:[540,'sine',0.1,0.14], grinfox:[300,'triangle',0.08,0.3], skyfox:[820,'sine',0.07,0.24], moonwyrm:[160,'triangle',0.16,0.06], sandwyrm:[90,'sawtooth',0.18,0.05], treeling:[200,'triangle',0.15,0.06], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
  prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
  stop(){ this.T.forEach(clearTimeout); this.T=[]; },
  say(who,text){ this.stop(); if(!who||!SFX.on()) return; const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
@@ -4714,7 +4954,7 @@ const PREF={
  pyro:{love:['sunfern'],like:['goldreed']}, vandora:{love:['mossgrass'],like:['dewmoss','glowcap']},
  frost:{love:['stardaisy'],like:['starspore','glowcap']}, sirenora:{love:['tidebloom'],like:['shellbloom','bell']},
  titan:{love:['dewmoss'],like:['mossgrass','glowcap']}, lynx:{love:['starspore'],like:['stardaisy']},
- strider:{love:['goldreed'],like:['bell','mossgrass']}, windkoi:{love:['starbell'],like:['bell','goldreed']}, mnemo:{love:['starspore'],like:['dustdaisy','glowmoss']}, cabbfrog:{love:['dewbell'],like:['mossgrass','dewmoss']}, skywhale:{love:['dustdaisy'],like:['starspore','bell']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
+ strider:{love:['goldreed'],like:['bell','mossgrass']}, windkoi:{love:['starbell'],like:['bell','goldreed']}, mnemo:{love:['starspore'],like:['dustdaisy','glowmoss']}, cabbfrog:{love:['dewbell'],like:['mossgrass','dewmoss']}, skywhale:{love:['dustdaisy'],like:['starspore','bell']}, dawnsail:{love:['tidelotus'],like:['shellbloom','starbell']}, grinfox:{love:['glowcap'],like:['glowmoss','tidelotus']}, skyfox:{love:['starbell'],like:['bell','dustdaisy']}, moonwyrm:{love:['stardaisy'],like:['starspore','dustdaisy']}, sandwyrm:{love:['goldreed'],like:['sunfern','goldfern']}, treeling:{love:['dewmoss'],like:['mossgrass','glowmoss']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
 };
 const LOVE_LINE={
  felinia:['（羽貓獸把臉埋進金穗裡，翅膀輕輕抖了一下。）','……是山谷的味道。風吹過草原的時候，就是這個味道。','謝謝你。我會把它放在我的圓環上。'],
@@ -4732,6 +4972,12 @@ const LOVE_LINE={
  mnemo:['（霜憶晶絡的一顆光泡貼近葉面，把上面流動的星光映了進去。）','……我把它收起來了。','以後在很冷的地方，我會想起它。'],
  cabbfrog:['（翠苞蛙把整張臉埋進葉子裡，深深吸了一口氣。）','……呱。有露水的味道。','我要把它放在我睡覺的地方。'],
  skywhale:['（雲海巨鯨龍用長長的觸鬚，輕輕捲住了那朵花。）','……好小。好香。','我會，小心地，收著。'],
+ dawnsail:['（霞帆翼龍低頭看著那朵花，花瓣在牠透光的翼膜下，染上了一層淡淡的粉。）','……很漂亮。像日出。','我會把它，帶給我的伴侶看。'],
+ grinfox:['（夜笑影狐用尾巴把那株植物小心地圍起來。）','……會發光的。這樣，晚上就不怕了。','……謝謝。我會放在最暗的地方。'],
+ skyfox:['（藍羽雲狐把鼻子湊近花朵，打了一個小小的噴嚏。花瓣上沾了一點藍光。）','……嘻嘻，它變成藍色的了！','謝謝你！我會把它藏在最好的地方！'],
+ moonwyrm:['（月珀白龍低頭看著那株植物，呼出一口氣。葉面上結了一層薄薄的、亮晶晶的霜。）','……這樣，它就不會凋謝了。','謝謝你。我會收著。'],
+ sandwyrm:['（砂海鳴蠕慢慢張開大口，很小心地把那株植物含進去——又放了回來。）','……對不起。習慣了。','我會好好收著，不會吃掉的。'],
+ treeling:['（護樹靈精把手指輕輕貼在葉子上，葉片慢慢地舒展開來。）','……它說，它很高興來這裡。','我會好好照顧它的。'],
  sola:['潮汐花！星河的花！','（索拉繞著花轉了好幾圈，光一閃一閃的。）','我要把它帶回我的島。……等我找到的時候。']
 };
 const HOME_NAME={
@@ -4750,9 +4996,15 @@ const HOME_NAME={
  mnemo:{starspore:'散開的記憶',dustdaisy:'還沒熄滅的世界',glowmoss:'守夜的燈'},
  cabbfrog:{dewbell:'早上的鈴鐺',mossgrass:'軟軟的床',dewmoss:'露水的被子'},
  skywhale:{dustdaisy:'掉下來的雲',starspore:'雲裡的小東西',bell:'下雨的聲音'},
+ dawnsail:{tidelotus:'霞光的蓮',shellbloom:'日出的貝',starbell:'黃昏的鈴'},
+ grinfox:{glowcap:'口袋裡的燈',glowmoss:'回家的路標',tidelotus:'夜裡的月亮'},
+ skyfox:{starbell:'會唱歌的星星',bell:'晴天的鈴鐺',dustdaisy:'雲上的花'},
+ moonwyrm:{stardaisy:'月下的花',starspore:'散開的月光',dustdaisy:'雪峰的星'},
+ sandwyrm:{goldreed:'沙丘上的路標',sunfern:'太陽的影子',goldfern:'砂海的扇子'},
+ treeling:{dewmoss:'早晨的被子',mossgrass:'森林的地毯',glowmoss:'樹洞裡的燈'},
  sola:{tidebloom:'回家的花',shellbloom:'海的信',stardaisy:'小島的星',dustdaisy:'許願花'}
 };
-Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',windkoi:'dustdaisy',mnemo:'stardaisy',cabbfrog:'glowcap',skywhale:'tidelotus',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
+Object.entries({felinia:'starbell',leviathaurora:'tidelotus',cinder:'goldfern',aelis:'starbell',pyro:'goldfern',vandora:'glowmoss',frost:'dustdaisy',sirenora:'tidelotus',titan:'dewbell',lynx:'dustdaisy',strider:'goldfern',windkoi:'dustdaisy',mnemo:'stardaisy',cabbfrog:'glowcap',skywhale:'tidelotus',treeling:'sunfern',sola:'dustdaisy'}).forEach(([id,p])=>PREF[id].like.push(p));
 const canGift=id=>plantsHave().length>0&&((state.giftKey||{})[id]!==stopKey());
 function giftPicker(id,next){ const nm=PASSENGERS[id].name;
  const ov=panel(`<div class="eyebrow">送給${nm}</div><h2>要送哪一盆植物？</h2><div class="jars">${plantsHave().map(p=>`<button class="jar" data-gift="${p}">${jarSvg(jarLeaf(PLANTS[p].color))}<span class="cnt">×${plantN(p)}</span><span class="tag">${PLANTS[p].name}</span></button>`).join('')}</div>`,'care');
@@ -4779,7 +5031,7 @@ function zonePots(){ return Object.entries(state.zonePlant||{}).filter(([k])=>ZO
 function zonePlantArrive(){ Object.entries(state.zonePlant||{}).forEach(([k,p])=>{ const ids=zoneHere(k).filter(id=>PREF[id]&&(PREF[id].love.includes(p)||PREF[id].like.includes(p))); if(!ids.length) return;
  TAINT.add(-1); ids.forEach(id=>state.passengers[id].records.push({j:state.journeyCount,t:`在${ZONES[k].name}的${PLANTS[p].name}旁邊，睡得很安穩。`})); }); }
 /* 完成請求時，乘客送的種子 */
-const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],cabbfrog:['dewmoss',2],skywhale:['stardaisy',2],sola:['stardaisy',2]};
+const REQ_SEED={titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],cabbfrog:['dewmoss',2],skywhale:['stardaisy',2],treeling:['sunfern',2],sola:['stardaisy',2]};
 function reqSeed(id){ const r=REQ_SEED[id]; if(!r) return; const [p,n]=r, P=PLANTS[p];
  if(P.rare){ addItem('seed_'+p,true); state.seedKnown=state.seedKnown||[]; if(!state.seedKnown.includes(p)) state.seedKnown.push(p); gardenSync(); } else seedAdd(p,n); seedIntro();
  setTimeout(()=>toast(`${PASSENGERS[id].name}送你：${P.seed}${P.rare?'':' ×'+n}・收進溫室的種子典藏櫃`),1800); }
@@ -4983,6 +5235,10 @@ const MEMORIES=[
  {id:'int_sola_mnemo',title:'收著的島',who:'mnemo',who2:'sola',have:()=>done('int_sola_mnemo'),text:'冰晶的冷光和水母的暖光，靠在一起，亮了很久。'},
  {id:'int_titan_cabbfrog',title:'肩上的甘藍',who:'cabbfrog',who2:'titan',have:()=>done('int_titan_cabbfrog'),text:'苔淵巨靈的肩膀上多了一顆圓圓的「甘藍」。巨靈一整天都沒有動。'},
  {id:'int_levi_skywhale',title:'一上一下',who:'skywhale',who2:'leviathaurora',have:()=>done('int_levi_skywhale'),text:'一道影子在上，一道光在下。兩隻鯨用同樣慢的速度，一起游了很久。'},
+ {id:'int_cabbfrog_treeling',title:'樹冠裡的果子',who:'treeling',who2:'cabbfrog',have:()=>done('int_cabbfrog_treeling'),text:'護樹靈精的頭頂上，多了一顆圓圓的、睡得很熟的「果子」。'},
+ {id:'int_strider_sandwyrm',title:'路的歌',who:'sandwyrm',who2:'strider',have:()=>done('int_strider_sandwyrm'),text:'灰角靈犬把長角貼在地板上，聽砂海鳴蠕唱了很久的歌。'},
+ {id:'int_felinia_skyfox',title:'尾巴的約定',who:'skyfox',who2:'felinia',have:()=>done('int_felinia_skyfox'),text:'比賽沒有分出輸贏，兩隻抱著彼此的尾巴睡著了。'},
+ {id:'int_windkoi_dawnsail',title:'早上的',who:'dawnsail',who2:'windkoi',have:()=>done('int_windkoi_dawnsail'),text:'一道金光和一道粉光，在日出時一起從車頂掠過。'},
  {id:'int_frost_lynx',title:'上面與下面',who:'lynx',who2:'frost',have:()=>done('int_frost_lynx'),text:'「你在上面，我在下面。」雪嶺的靈貓和冰原的巨獸，把冷的地方分成了兩半。'},
  {id:'int_cinder_strider',title:'同一陣風',who:'strider',who2:'cinder',have:()=>done('int_cinder_strider'),text:'「我們是同一陣風養大的。」一個張帆，一個昂角，約好到了開闊的地方再比一場。'},
  {id:'int_sirenora_levi',title:'夢裡的藍光',who:'sirenora',who2:'leviathaurora',have:()=>done('int_sirenora_levi'),text:'「原來那些夢裡的光，是你。」霧從上方垂下，藍光從水底浮起，在車廂中間輕輕碰在了一起。'},
@@ -5009,6 +5265,12 @@ const MEMORIES=[
  {id:'mnemo',title:'冰霧裡的光泡',who:'mnemo',have:()=>state.discoveredLifeforms.includes('mnemo'),text:PASSENGERS.mnemo.intro},
  {id:'cabbfrog',title:'會眨眼的甘藍',who:'cabbfrog',have:()=>state.discoveredLifeforms.includes('cabbfrog'),text:PASSENGERS.cabbfrog.intro},
  {id:'skywhale',title:'游過車頂的影子',who:'skywhale',have:()=>state.discoveredLifeforms.includes('skywhale'),text:PASSENGERS.skywhale.intro},
+ {id:'treeling',title:'護樹靈精登車',who:'treeling',have:()=>state.discoveredLifeforms.includes('treeling'),text:PASSENGERS.treeling.intro},
+ {id:'sandwyrm',title:'砂海鳴蠕登車',who:'sandwyrm',have:()=>state.discoveredLifeforms.includes('sandwyrm'),text:PASSENGERS.sandwyrm.intro},
+ {id:'moonwyrm',title:'月珀白龍登車',who:'moonwyrm',have:()=>state.discoveredLifeforms.includes('moonwyrm'),text:PASSENGERS.moonwyrm.intro},
+ {id:'skyfox',title:'藍羽雲狐登車',who:'skyfox',have:()=>state.discoveredLifeforms.includes('skyfox'),text:PASSENGERS.skyfox.intro},
+ {id:'grinfox',title:'夜笑影狐登車',who:'grinfox',have:()=>state.discoveredLifeforms.includes('grinfox'),text:PASSENGERS.grinfox.intro},
+ {id:'dawnsail',title:'霞帆翼龍登車',who:'dawnsail',have:()=>state.discoveredLifeforms.includes('dawnsail'),text:PASSENGERS.dawnsail.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
 const memsHave=()=>MEMORIES.filter(m=>m.have());
@@ -5331,6 +5593,12 @@ const CODEX_LIFE=[
  {id:'mnemo',passenger:'mnemo'},
  {id:'cabbfrog',passenger:'cabbfrog'},
  {id:'skywhale',passenger:'skywhale'},
+ {id:'dawnsail',passenger:'dawnsail'},
+ {id:'grinfox',passenger:'grinfox'},
+ {id:'skyfox',passenger:'skyfox'},
+ {id:'moonwyrm',passenger:'moonwyrm'},
+ {id:'sandwyrm',passenger:'sandwyrm'},
+ {id:'treeling',passenger:'treeling'},
  {id:'yixi',passenger:'yixi'},
  {id:'reserve-5',type:'domain'}
 ];
@@ -5487,7 +5755,7 @@ const HSDEF=[
  {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:NP(468,470),act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
- ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
+ ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'||id==='treeling'||id==='sandwyrm'||id==='grinfox'||id==='moonwyrm'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!atDeck(id),imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:8,y:50},act:'exit:',
   lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
