@@ -1840,6 +1840,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .rail-p{text-align:center;margin:6px 0 10px}
 .prep-h{margin:12px 0 2px;font-size:15px;letter-spacing:.14em;color:#f3e2b4}.prep-b{line-height:1.8;font-size:15px}
 .ov.prepov,.ov.whoov{align-items:center}.ov.prepov .panel,.ov.whoov .panel{width:min(560px,94vw);max-height:calc(100vh - 220px);overflow:auto;margin:60px 0 120px}.ov.railov,.ov.lifeov{padding-top:90px}
+.zask .sk{font-size:.82em;opacity:.75;margin-left:2px}.jr-finds{margin-top:10px}.jr-hid{list-style:none;padding:0;margin:2px 0 6px}.jr-hid li{line-height:1.8}.jr-hid span{opacity:.7;font-size:.9em}
 .who-list{list-style:none;padding:0;margin:8px 0 0}.who-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(232,201,131,.18)}.who-list b{font-weight:500;color:#f3e2b4}.who-list span{text-align:right;font-size:14px}
 </style>
 
@@ -3498,9 +3499,7 @@ function wishRoll(){ if(state.wish&&aboard(state.wish.id)) return; const ids=Obj
 function wishHarvest(p){ const w=state.wish; if(!w||w.p!==p||!aboard(w.id)) return; state.wish=null; TAINT.add(-3); state.passengers[w.id].records.push({j:state.journeyCount,t:`你種出了牠想要的${PLANTS[p].name}。`}); logJ(`種出了${PASSENGERS[w.id].name}想要的${PLANTS[p].name}。`,'life'); save();
  tellLater(w.id,[[w.id,`……${PLANTS[p].name}，開花了嗎？`],['self','嗯，開了。放在溫室，隨時都可以去看。'],[w.id,'……謝謝你。真的，謝謝你。']]); toast(`✦ 去告訴${PASSENGERS[w.id].name}吧：${PLANTS[p].name}開花了`); }
 /* 一起下車的乘客：牠會帶你找到不一樣的東西 */
-const FORAGE_FLY=['windkoi','skywhale','skyfox','dawnsail','felinia','sola','leviathaurora','moonwyrm'], FORAGE_NIGHT=['vandora','aelis','grinfox','mnemo','frost','lynx','scythe','yixi'];
-function compFind(id,m){ const loc=state.currentLocation; if(FORAGE_FLY.includes(id)) return [loc==='starIslands'?'stardust':'dew',`${PASSENGERS[id].name}飛到高處，帶回來的：`];
- if(FORAGE_NIGHT.includes(id)){ const L=['sd:veilseed','sd:nightcap','sd:inkseed','sd:memnut'].filter(x=>PLANTS[x.slice(3)]); return [L[(state.journeyCount+id.length)%L.length],`${PASSENGERS[id].name}在暗處找到的：`]; } return [m,'']; }
+function compFind(id,m){ const loc=state.currentLocation, k=skillOf(id), F=k&&SKILL_FIND[k]&&SKILL_FIND[k][loc]; return F?[F[0],`${PASSENGERS[id].name}${F[1]}：`]:[m,'']; }
 /* 被動效果的計時：晨光系淨化、會吸收界染的乘客、共鳴系讓乘客湊在一起、心願 */
 setInterval(()=>{ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STORY_TEST) return; const T=state.spirit; T.tk=T.tk||{}; const t=Date.now(); const due=(k,ms)=>{ if(!T.tk[k]) T.tk[k]=t; if(t-T.tk[k]>=ms){ T.tk[k]=t; return true; } return false; };
  const n=traitN('dawn'); if(n&&due('dawnp',Math.max(25000,70000/n))&&TAINT.val()>0){ TAINT.add(-1); save(); if(state.currentCarriage==='nature'&&state.currentPhase!=='outside'){ (state.pods||[]).forEach((c,k)=>{ if(c&&c.st>=2&&traitOf(c.p)==='dawn') fxBurst(fxPodPt(k),'#ffe7a8',10); }); } }
@@ -3615,14 +3614,14 @@ function arriveReact(v){ const dest=v.to, L=LOCATIONS[dest], H=hereList(); if(!H
  const id=H[Math.floor(Math.random()*H.length)]; return Math.random()<.5?[[id,ARRIVE_CHAT[Math.floor(Math.random()*ARRIVE_CHAT.length)]]]:null; }
 function prepPanel(){ const v=state.voyage, dest=v?v.to:nextStop(), L=LOCATIONS[dest], F=FORAGE[dest], ri=ROUTE_INFO[dest]||{}, rk=realmKey(dest);
  const mats=F?[...new Set(F.pool.map(([m])=>m.startsWith('sd:')?PLANTS[m.slice(3)].seed:COLLECTIBLES[m]?'稀有種子':MATS[m]?MATS[m].name:null).filter(Boolean))].slice(0,6):[];
- const ab=Object.keys(PASSENGERS).filter(aboard), comp=ab.filter(id=>(state.passengers[id].stage||0)>=2&&(FORAGE_FLY.includes(id)||FORAGE_NIGHT.includes(id)||PASSENGERS[id].home===dest));
+ const ab=Object.keys(PASSENGERS).filter(aboard), comp=ab.filter(id=>(state.passengers[id].stage||0)>=2&&(skillOf(id)||PASSENGERS[id].home===dest));
  const leave=ab.filter(leavingNext);
  const sec=(t,b)=>`<h3 class="prep-h">${t}</h3><div class="prep-b">${b}</div>`;
  panel(`<div class="eyebrow">${v?'快到站了':'下一站'}</div><h2>到站準備・${L.name}</h2>
   ${sec('環境',`${L.realm}・${L.domain}。${L.desc}<br>${rk==='moon'?'月界：下車時界染度會上升得比較快。':'日界：抵達時晨光會沖淡身上的界染。'}`)}
   ${sec('可能採集到',F?mats.join('、'):'這一站不能下車採集。')}
   ${sec('提醒',[ri.warn&&ri.warn!=='無'?ri.warn:'',state.duty.obs&&state.duty.obs.to===dest?`前方界壁：${state.duty.obs.lv}`:'',v&&v.sky&&!v.sky.watched?`航道上有${SKY[v.sky.type].name}`:''].filter(Boolean).join('<br>')||'沒有特別的提醒。')}
-  ${sec('可以一起下車的乘客',comp.length?comp.map(id=>`${PASSENGERS[id].name}${FORAGE_FLY.includes(id)?'（會飛到高處找材料）':FORAGE_NIGHT.includes(id)?'（會在暗處找月界的種子）':PASSENGERS[id].home===dest?'（這裡是牠的家鄉）':''}`).join('<br>'):'還沒有熟悉到願意一起下車的乘客。')}
+  ${sec('可以一起下車的乘客',comp.length?comp.map(id=>{ const k=skillOf(id); return `${PASSENGERS[id].name}（${[k?`${FORAGE_SKILL[k].name}：${FORAGE_SKILL[k].tip}`:'',PASSENGERS[id].home===dest?'這裡是牠的家鄉':''].filter(Boolean).join('；')}）${hidFor(id,dest)?' ✦':''}`; }).join('<br>'):'還沒有熟悉到願意一起下車的乘客。')}
   ${sec('準備下車的乘客',leave.length?leave.map(id=>`${PASSENGERS[id].name}・${state.passengers[id].packing?'已經在整理東西了':'旅程快到終點了'}`).join('<br>'):'這一站沒有乘客要下車。')}`,'small prepov'); }
 /* 乘客現在在哪裡 */
 function whoPanel(){ const ab=Object.keys(PASSENGERS).filter(aboard); const v=state.voyage;
@@ -5064,7 +5063,7 @@ function skyWatch(){ const k=skyNow(); if(!k) return toast('現在的天空很�
  const S=SKY[k.type], here=deckList(), first=!(state.skySeen||[]).includes(k.type), was=k.watched;
  const script=[['self',`${S.name}……${S.desc}`]].concat(here.map(id=>[id,(SKY_LINE[k.type]||{})[id]||`（${PASSENGERS[id].name}抬頭看著天空，看得出神了。）`]));
  if(!was) script.push(['self',`星光落在身上，好輕。${first?'這一幕，會凝結成回憶水晶吧。':''}`]);
- if(!was){ k.watched=true; TAINT.add(voyBless()==='wing'?-10:-5); if(k.type==='aurora') addClue('clue_wall'); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
+ if(!was){ k.watched=true; state.skyAt={j:state.journeyCount+1,type:k.type}; TAINT.add(voyBless()==='wing'?-10:-5); if(k.type==='aurora') addClue('clue_wall'); state.skySeen=state.skySeen||[]; if(first) state.skySeen.push(k.type);
   state.skyLog=state.skyLog||[]; state.skyLog.push({k:'sky',type:k.type,j:state.journeyCount+1,with:here.slice()});
   logJ(`在展望台觀賞了${S.name}${here.length?`，和${here.map(id=>PASSENGERS[id].name).join('、')}一起`:''}。`,'find');
   here.forEach(id=>state.passengers[id].records.push({j:state.journeyCount+1,t:`在展望台一起看了${S.name}。`})); save(); SFX.chime(); }
@@ -5234,23 +5233,116 @@ const PLACES={
 /* 每次停靠產生的採集點（同一次停靠固定不變） */
 function seeded(n){ let t=n>>>0; return ()=>{ t+=0x6D2B79F5; let r=Math.imul(t^t>>>15,1|t); r^=r+Math.imul(r^r>>>7,61|r); return ((r^r>>>14)>>>0)/4294967296; }; }
 function forageNow(){ const loc=state.currentLocation, F=FORAGE[loc]; if(!F) return null; const key=state.journeyCount+'@'+loc;
- const f0=state.forage, refill=f0&&f0.key===key&&f0.doneAt&&Date.now()-f0.doneAt>120000;   /* 採完之後過一陣子，又會長出新的東西 */
- if(!state.forage||state.forage.key!==key||refill){ const n=refill?(f0.n||0)+1:0, R=seeded(state.journeyCount*131+loc.length*17+n*977), tot=F.pool.reduce((a,[,w])=>a+w,0);
+ const f0=state.forage, refill=f0&&f0.key===key&&f0.doneAt&&(f0.n||0)<2&&Date.now()-f0.doneAt>120000;   /* 採完之後過一陣子，只會再長出一點常見的材料 */
+ if(refill){ const n=(f0.n||0)+1, R=seeded(state.journeyCount*131+loc.length*17+n*977), com=F.pool.filter(([m])=>MATS[m]), tot=com.reduce((a,[,w])=>a+w,0); let r=R()*tot, m=com[0][0]; for(const [x,w] of com){ if((r-=w)<0){ m=x; break; } }
+  const i=(n-1)%3, [x,y]=F.spots[i]; f0.n=n; f0.doneAt=null; f0.spots.forEach(sp=>sp.taken=true); f0.spots[i]={x:Math.max(6,Math.min(94,x+(R()-.5)*14)),y,m,taken:false,re:1}; save(); return f0; }
+ if(!state.forage||state.forage.key!==key){ const n=refill?(f0.n||0)+1:0, R=seeded(state.journeyCount*131+loc.length*17+n*977), tot=F.pool.reduce((a,[,w])=>a+w,0);
   const pick=()=>{ let r=R()*tot; for(const [m,w] of F.pool){ if((r-=w)<0) return COLLECTIBLES[m]&&state.collectibles.includes(m)?F.pool[0][0]:m; } return F.pool[0][0]; };
   state.forage={key,n,spots:F.spots.map(([x,y])=>({x:Math.max(6,Math.min(94,x+(n?(R()-.5)*14:0))),y,m:pick(),taken:false}))}; }
  return state.forage; }
 const matCount=m=>((state.materials||{})[m])||0;
-function forageTake(i){ const f=forageNow(), sp=f&&f.spots[i]; if(!sp||sp.taken) return; if(i===3&&state.companion){ const [m,pre]=compFind(state.companion,sp.m); sp.m=m; if(pre) setTimeout(()=>sense(pre.replace(/：$/,'。')),300); } sp.taken=true; if(f.spots.every(x=>x.taken)) f.doneAt=Date.now();
+function forageTake(i){ const f=forageNow(), sp=f&&f.spots[i]; if(!sp||sp.taken) return; if(i===3&&state.companion){ const [m,pre]=compFind(state.companion,sp.m); sp.m=m; if(pre) setTimeout(()=>sense(pre.replace(/：$/,'。')),300); } sp.taken=true; if(f.spots.every(x=>x.taken)) f.doneAt=Date.now(); forageLogAdd(sp.m);
  if(sp.m.startsWith('sd:')){ const pid=sp.m.slice(3); seedAdd(pid,1); toast(`採集到種子：${PLANTS[pid].seed}（共 ${seedN(pid)}）`); seedIntro(); }
  else if(COLLECTIBLES[sp.m]){ const got=addItem(sp.m,true); if(got){ logJ(`在${LOCATIONS[state.currentLocation].name}找到了${COLLECTIBLES[sp.m].name}。`,'find'); toast(`✦ 找到稀有種子：${COLLECTIBLES[sp.m].name}`); } }
  else { state.materials=state.materials||{}; state.materials[sp.m]=matCount(sp.m)+1; toast(`採集到：${MATS[sp.m].name}（共 ${matCount(sp.m)}）`); }
  SFX.tone(1318,0,.35,'triangle',.025); save(); render(); }
-const forageShow=i=>()=>{ const f=forageNow(); return !!(f&&f.spots[i]&&!f.spots[i].taken&&(i<3||!!state.companion)); };
+/* ================================================================
+   採集：探索發現優先，資源收集其次
+   A 固定採集點（每次停靠固定 3 個＋同行乘客 1 個，不會整組重生）
+   B 隱藏採集點（要特定乘客、星象、界染、線索、望遠鏡或地點互動才看得見；每個地方一生只發現一次）
+   C 少量再生（採完後過一陣子，只會再長出 1 個常見材料，一次停靠最多 2 次，不出稀有種子）
+   ================================================================ */
+/* 乘客的探索專長：依每位乘客的實際設定分配，每位只有一種 */
+const FORAGE_SKILL={
+ fly:{name:'飛行',tip:'會飛到高處找材料和植物',ids:['felinia','windkoi','skywhale','skyfox','dawnsail','moonwyrm']},
+ night:{name:'夜行',tip:'看得見暗處的種子',ids:['vandora','lynx','frost','grinfox']},
+ water:{name:'水生',tip:'找得到藏起來的水域',ids:['sola','leviathaurora','sirenora']},
+ sense:{name:'感知',tip:'感應得到藏著的生命和光',ids:['aelis','strider','mnemo','cinder']},
+ plant:{name:'植物',tip:'認得出特別的花和芽',ids:['cabbfrog','treeling']},
+ ancient:{name:'古老',tip:'讀得懂遺跡和地面的刻紋',ids:['titan','scythe','yixi','pyro','sandwyrm']}
+};
+const skillOf=id=>Object.keys(FORAGE_SKILL).find(k=>FORAGE_SKILL[k].ids.includes(id))||null;
+/* 隱藏採集點：need 是同行乘客的專長；cond 是其他條件。give：[材料或種子, 數量]；每個只會發現一次 */
+const HIDDEN={
+ dawnForest:[
+  {id:'df_hollow',need:'night',name:'樹洞裡的種子',at:{x:22,y:60},text:'{who}在一棵老樹的根部停下來，用鼻尖頂開一團枯葉。樹洞裡，躺著幾顆只有在暗處才看得見的種子。',give:[['sd:duskchest',1],['sd:nightcap',1]]},
+  {id:'df_carving',need:'ancient',name:'樹幹上的古代刻紋',at:{x:78,y:46},carve:1,text:'{who}把前掌貼在一棵巨樹上，慢慢撥開苔蘚。底下是一圈一圈的古老刻紋——跟列車門框上的圓環，是同一種筆法。',more:'光苔的光沿著刻痕流過去。圓環的外面，還刻著一列很小的字：「晨光最先落下的地方，渡口最後關上。」',give:[['sd:fuzzhusk',1]]},
+  {id:'df_canopy',need:'fly',name:'樹冠上的花',at:{x:56,y:30},text:'{who}飛上樹冠，叼回一枝只開在最高處的花。花心一抖，落下一陣金色的花粉。',give:[['sd:emberkern',1],['pollen',2]]},
+  {id:'df_bloom',need:'plant',name:'光最斜時才開的花',at:{x:40,y:70},text:'{who}忽然停住，指著腳邊。一朵很小的花正好在晨光最斜的那一刻打開，裡面藏著一顆種子。',give:[['sd:hearthnut',1],['pollen',1]]},
+  {id:'df_spring',need:'water',name:'林間的隱泉',at:{x:66,y:72},text:'{who}聽見了水聲。撥開蕨葉，樹根之間藏著一口很小的泉，泉底沉著一顆被泡得發亮的種子。',give:[['sd:deeproot',1],['dew',3]]},
+  {id:'df_glow',need:'sense',name:'樹叢裡的小光',at:{x:30,y:44},text:'{who}的耳朵（或是觸鬚、或是別的什麼）動了一下。樹叢裡，一群很小的光生命正在睡覺。牠們醒來看了你一眼，留下一點星塵，就散開了。',give:[['stardust',2],['sd:spirepod',1]]},
+  {id:'df_ring',cond:()=>state.clues.includes('clue_ring'),hint:'已解讀「相同的圓環」',name:'圓環刻紋下的根路',at:{x:84,y:62},text:'知道了古樹上的圓環之後，再看這片森林，樹根的走向好像也排成了一個圓。順著根走，盡頭是一顆被根抱住的種子。',give:[['sd:owlbur',1],['mosslight',2]]},
+  {id:'df_shadow',cond:()=>TAINT.val()>=40,hint:'界染度 40 以上',name:'影子裡的小徑',at:{x:12,y:52},text:'身上的界染讓眼睛有點花……可是也因為這樣，看見了樹影裡一條平常看不見的小徑。小徑的盡頭，長著一株月界的植物。',give:[['sd:nightcap',1]]},
+  {id:'df_scope',cond:()=>state.scopeAt===stopKey(),hint:'這次停靠用望遠鏡看過',name:'望遠鏡裡看見的林間光',at:{x:48,y:40},text:'剛才在望遠鏡裡看見的那點光，就在這裡。是一顆掛在蜘蛛絲上的種子，在晨光裡轉啊轉。',give:[['sd:pearlgrain',1]]}
+ ],
+ starIslands:[
+  {id:'si_pool',need:'water',name:'隱藏的潮池',at:{x:62,y:72},text:'{who}往浮島的邊緣游過去。岩縫底下藏著一個小小的潮池，池底的晶砂跟著星河的潮汐一明一暗。',give:[['seed_tidebloom',1],['sand',3]]},
+  {id:'si_ridge',need:'fly',name:'浮島最高的稜線',at:{x:44,y:24},text:'{who}飛到浮島最高的稜線上。那裡的星光沒有被任何東西擋住，積了厚厚一層星塵，中間長著一株小小的三色花。',give:[['sd:trilight',1],['stardust',2]]},
+  {id:'si_back',need:'night',name:'晶體的背光面',at:{x:80,y:40},text:'{who}繞到晶體背後，那裡是浮島上唯一照不到光的地方。陰影裡，躺著一顆像墨水滴一樣的種子。',give:[['sd:inkseed',1]]},
+  {id:'si_ruin',need:'ancient',name:'星砂下的刻紋',at:{x:26,y:66},carve:1,text:'{who}用腳撥開一層星砂。底下的岩石上，刻著一圈一圈的紋路——跟晨曦森林古樹上的圓環，是同一種筆法。',more:'光苔的光照進刻痕裡。圓環的旁邊，畫著一列小小的車，正從一座島開往另一座島。',give:[['sd:memnut',1]]},
+  {id:'si_sprout',need:'plant',name:'晶體縫裡的芽',at:{x:70,y:56},text:'{who}趴在晶體旁邊，看得好專心。晶體的縫裡，竟然冒出了一株小小的芽，芽尖掛著一盞小燈。',give:[['sd:lantern',1]]},
+  {id:'si_song',need:'sense',name:'會唱歌的晶體',at:{x:36,y:40},text:'{who}安靜下來，像在聽什麼。……是晶體在唱歌。歌聲最清楚的地方，落著一顆種子。',give:[['sd:starbean',1],['stardust',1]]},
+  {id:'si_tide',cond:()=>!!(state.skyAt&&state.skyAt.j===state.journeyCount&&['tide','meteor'].includes(state.skyAt.type)),hint:'來的路上看過星河潮汐或流星雨',name:'潮水退去的沙洲',at:{x:16,y:56},text:'路上那場星象，把星河的潮水推得好遠。退潮之後，浮島邊露出了一片平常看不見的沙洲，上面停著一隻像蛾一樣的種子。',give:[['sd:mothwing',1],['sand',2]]},
+  {id:'si_scope',cond:()=>state.scopeAt===stopKey(),hint:'這次停靠用望遠鏡看過',name:'望遠鏡裡看見的海膽',at:{x:58,y:38},text:'剛才在望遠鏡裡看見、浮島邊緣那一點刺刺的光，原來是一顆種子。',give:[['sd:urchin',1]]},
+  {id:'si_dim',cond:()=>TAINT.val()>=40,hint:'界染度 40 以上',name:'晶光暗下來的地方',at:{x:88,y:64},text:'界染讓晶體的光在眼裡暗了一點……暗下來的地方，反而看見了一株平常被光蓋住的植物。',give:[['sd:veilseed',1]]},
+  {id:'si_crystal',cond:()=>state.collectibles.includes('crystal_echo'),hint:'取得過浮島晶體碎片',name:'碎片原本的位置',at:{x:50,y:58},text:'晶體碎片在口袋裡輕輕響了一下。順著聲音走，找到了它原本剝落的地方——那裡長出了一圈新的晶砂。',give:[['sand',2],['stardust',1]]}
+ ]
+};
+const HID_ALL=Object.values(HIDDEN).flat();
+const hidFound=id=>!!(state.hiddenFound&&state.hiddenFound[id]);
+const hidOK=h=>(!hidFound(h.id)||(h.carve&&!state.hiddenFound[h.id].lit&&matCount('mosslight')>0))&&(h.need?(state.companion&&skillOf(state.companion)===h.need):h.cond());
+/* 畫面上一次只亮一個隱藏點 */
+function hiddenNow(){ if(state.currentPhase!=='outside') return null; return (HIDDEN[state.currentLocation]||[]).find(hidOK)||null; }
+const giveName=([m,n])=>m.startsWith('sd:')?`${PLANTS[m.slice(3)].seed} ×${n}`:COLLECTIBLES[m]?COLLECTIBLES[m].name:`${MATS[m].name} ×${n}`;
+function giveOne([m,n]){ if(m.startsWith('sd:')){ seedAdd(m.slice(3),n); return giveName([m,n]); }
+ if(COLLECTIBLES[m]){ if(state.collectibles.includes(m)){ state.materials=state.materials||{}; const alt=realmKey(state.currentLocation)==='sun'?'dew':'sand'; state.materials[alt]=matCount(alt)+2; return `${MATS[alt].name} ×2`; } addItem(m,true); return `✦ ${COLLECTIBLES[m].name}`; }
+ state.materials=state.materials||{}; state.materials[m]=matCount(m)+n; return giveName([m,n]); }
+function hiddenOpen(){ const h=hiddenNow(); if(!h) return; const who=h.need?state.companion:null, nm=who?PASSENGERS[who].name:'', loc=state.currentLocation;
+ const finish=(lit)=>{ state.hiddenFound=state.hiddenFound||{}; const F0=state.hiddenFound[h.id];
+  if(F0){ if(lit&&!F0.lit){ F0.lit=1; TAINT.add(-3); logJ(`用光苔片照亮了「${h.name}」，讀完了上面的字。`,'find'); save(); render(); } return []; }
+  state.hiddenFound[h.id]={j:state.journeyCount,loc,who:who||null,lit:lit?1:0};
+  const got=h.give.map(giveOne); if(lit) TAINT.add(-3);
+  logJ(`${who?`${nm}帶你在`:'在'}${LOCATIONS[loc].name}發現了「${h.name}」。`,'find');
+  if(who){ const s=state.passengers[who]; s.records.push({j:state.journeyCount,t:`帶你在${LOCATIONS[loc].name}找到了「${h.name}」。`}); s.finds=(s.finds||0)+1; }
+  save(); SFX.chime(); render(); return got; };
+ const txt=h.text.replace('{who}',nm);
+ if(h.carve){ const has=matCount('mosslight')>0;
+  const ov=panel(`<div class="eyebrow">${LOCATIONS[loc].name}・和${nm}一起</div><h2>${h.name}</h2><p>${txt}</p><p class="carve-q">刻痕很深，可是苔蘚的影子蓋住了一半。</p><div class="zask">${has?`<button class="btn" data-carve="1">用光苔片照亮刻紋（剩 ${matCount('mosslight')}）</button>`:''}<button class="btn ghost" data-carve="0">${has?'就這樣看':'就這樣看（沒有光苔片）'}</button></div>`,'care');
+  ov.querySelectorAll('[data-carve]').forEach(b=>b.onclick=()=>{ const lit=b.dataset.carve==='1'; if(lit){ state.materials.mosslight=matCount('mosslight')-1; } const got=finish(lit)||[];
+   const q=ov.querySelector('.carve-q'), z=ov.querySelector('.zask'); if(z) z.remove();
+   if(q) q.outerHTML=`${lit?`<p>${h.more}</p>`:'<p>看得出是圓環，其他的就看不清楚了。……下次帶著光苔片來，也許就讀得懂。</p>'}<p class="pur-done">${got.length?`取得：${got.join('、')}。`:''}${lit?'界染度也淡了一些。':''}這一幕凝結成了回憶水晶，也寫進了界域地誌。</p>`; });
+  return; }
+ const got=finish(false);
+ panel(`<div class="eyebrow">${LOCATIONS[loc].name}・${who?`和${nm}一起`:'隱藏的地方'}</div><h2>${h.name}</h2><p>${txt}</p><p class="pur-done">取得：${got.join('、')}。${who?'這一幕凝結成了回憶水晶，也寫進了界域地誌。':'這個地方寫進了界域地誌。'}</p>`,'care'); }
+/* 每個地方的採集紀錄：去過幾次、採過哪些東西（寫進界域地誌） */
+function forageLogAdd(m){ const loc=state.currentLocation; state.forageLog=state.forageLog||{}; const L=state.forageLog[loc]||(state.forageLog[loc]={stops:[],found:[]});
+ const k=stopKey(); if(!L.stops.includes(k)){ L.stops.push(k); if(L.stops.length>12) L.stops.shift(); } const first=!L.found.includes(m); if(first) L.found.push(m);
+ if(first&&L.found.length===1) logJ(`第一次在${LOCATIONS[loc].name}採集。界域地誌多了一行字。`,'find'); }
+const foundName=m=>m.startsWith('sd:')?PLANTS[m.slice(3)].seed:COLLECTIBLES[m]?COLLECTIBLES[m].name:MATS[m]?MATS[m].name:m;
+/* 帶回來的東西依同行乘客的專長而不同（第四個採集點） */
+const SKILL_FIND={
+ fly:{dawnForest:['pollen','飛到樹冠上，抖下了一點花粉'],starIslands:['stardust','飛到浮島高處，掃回一把星塵']},
+ night:{dawnForest:['sd:nightcap','在暗處找到了一顆月界的種子'],starIslands:['sd:veilseed','在晶體的影子裡找到了一顆種子']},
+ water:{dawnForest:['dew','從葉子底下收了一捧晨露'],starIslands:['sand','從潮水邊撈起了一把潮汐晶砂']},
+ sense:{dawnForest:['mosslight','感應到苔蘚裡的光，撿回一片光苔'],starIslands:['stardust','感應到星光沉下來的地方，撿回一點星塵']},
+ plant:{dawnForest:['sd:bell','認出了一株小鈴花，留下了種子'],starIslands:['sd:stardaisy','認出了一株星點菊，留下了種子']},
+ ancient:{dawnForest:['sd:mossgrass','從古老的樹根旁撿起一顆苔草種子'],starIslands:['sd:glowcap','從星砂底下挖出一顆微光菇的孢子']}
+};
+/* 回憶水晶：乘客帶你找到的隱藏地點 */
+function hiddenMems(){ return HID_ALL.filter(h=>h.need).map(h=>({id:'hid_'+h.id,title:h.name,get scene(){ return Object.keys(HIDDEN).find(k=>HIDDEN[k].includes(h)); },have:()=>!!(hidFound(h.id)&&state.hiddenFound[h.id].who),
+ get text(){ const f=state.hiddenFound&&state.hiddenFound[h.id], nm=f&&f.who&&PASSENGERS[f.who]?PASSENGERS[f.who].name:'牠'; return h.text.replace('{who}',nm); }})); }
+/* 界域地誌：這個地方的採集與發現 */
+function atlasFinds(id){ const L=(state.forageLog||{})[id], H=(HIDDEN[id]||[]).filter(h=>hidFound(h.id)); if(!L&&!H.length) return '';
+ return `<div class="jr-finds">${L&&L.found.length?`<p class="jr-p"><b>採集過：</b>${L.found.map(foundName).join('、')}</p>`:''}${H.length?`<p class="jr-p"><b>隱藏的地方：</b></p><ul class="jr-hid">${H.map(h=>{ const f=state.hiddenFound[h.id]; return `<li>✦ ${h.name}${f.who&&PASSENGERS[f.who]?`<span>（和${PASSENGERS[f.who].name}）</span>`:''}</li>`; }).join('')}</ul>`:''}${HIDDEN[id]&&H.length<HIDDEN[id].length?`<p class="jr-me">這裡應該還有 ${HIDDEN[id].length-H.length} 個我沒發現的地方。</p>`:''}</div>`; }
+/* 下車邀請：同行乘客能在這裡找到隱藏地點時，按鈕上會有一顆小星星 */
+const hidFor=(id,loc)=>(HIDDEN[loc]||[]).some(h=>h.need&&h.need===skillOf(id)&&(!hidFound(h.id)||(h.carve&&!state.hiddenFound[h.id].lit&&matCount('mosslight')>0)));
+
+const forageShow=i=>()=>{ const f=forageNow(); if(f&&i===3&&!state.companion&&f.spots[3]&&!f.spots[3].taken&&f.spots.slice(0,3).every(x=>x.taken)){ f.spots[3].taken=true; f.doneAt=Date.now(); } return !!(f&&f.spots[i]&&!f.spots[i].taken&&(i<3||!!state.companion)); };
 /* 下車：可以邀請熟悉的乘客同行 */
 function exitChooser(go){ const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&state.passengers[id].stage>=2);
  if(!ids.length){ state.companion=null; return go(); }
- const ov=panel(`<div class="eyebrow">車門</div><h2>要邀請誰一起下車嗎？</h2><p>熟悉的乘客可以陪你走走。牠會幫你多找到一個採集點，有些乘客還會帶你去只有牠知道的地方。</p>
-  <div class="zask">${ids.map(id=>`<button class="btn ghost" data-comp="${id}">和${PASSENGERS[id].name}一起${(PLACES[id]&&PLACES[id].loc===state.currentLocation)||reqHere(id)?' ✦':''}</button>`).join('')}<button class="btn" data-comp="">自己下車</button></div>`,'care');
+ const ov=panel(`<div class="eyebrow">車門</div><h2>要邀請誰一起下車嗎？</h2><p>熟悉的乘客可以陪你走走。每一位擅長的事情不一樣，會找到不一樣的東西；有些還會帶你去只有牠看得見的地方。</p>
+  <div class="zask">${ids.map(id=>{ const k=skillOf(id); return `<button class="btn ghost" data-comp="${id}">和${PASSENGERS[id].name}一起${k?`<small class="sk">・${FORAGE_SKILL[k].name}</small>`:''}${(PLACES[id]&&PLACES[id].loc===state.currentLocation)||reqHere(id)||hidFor(id,state.currentLocation)?' ✦':''}</button>`; }).join('')}<button class="btn" data-comp="">自己下車</button></div>`,'care');
  ov.querySelectorAll('[data-comp]').forEach(b=>b.onclick=()=>{ state.companion=b.dataset.comp||null; if(state.companion&&atDeck(state.companion)) state.passengers[state.companion].place=undefined; closeAll(); go(); }); }
 function compTalk(){ const id=state.companion, p=PASSENGERS[id], s=state.passengers[id], loc=state.currentLocation, key='out_'+loc;
  if(reqHere(id)) return dialogueScript(REQ[id].done,()=>{ reqDone(id); render(); });
@@ -5862,7 +5954,7 @@ function starMap(){
 function scopeShadows(){ const pool=Object.keys(PASSENGERS).filter(id=>!state.discoveredLifeforms.includes(id)&&EVENTS['board_'+id]&&!done('board_'+id)&&PASSENGERS[id].still);
  const seed=state.journeyCount*7+(state.currentPhase==='voyage'?3:0), r=rnd(seed+11), out=[]; const p=pool.slice();
  for(let k=0;k<Math.min(2,p.length);k++){ const j=Math.floor(r()*p.length); out.push({id:p.splice(j,1)[0],x:14+r()*72,y:18+r()*64}); } const pl=placeShadow(); if(pl) out.push(pl); return out; }
-function scopePanel(){ setTimeout(()=>{ const o=[...document.querySelectorAll('#layer .ov')].pop(); if(o&&traitN('moon')){ o.classList.add('moonaid'); if(!state.storyFlags.moonAidTold){ state.storyFlags.moonAidTold=1; save(); o.insertAdjacentHTML('beforeend',meSay('溫室的月輝植物開著……鏡頭裡的影子，看得好清楚。')); } } },60); const voy=state.currentPhase==='voyage', loc=voy?state.voyage.to:state.currentLocation, sh=scopeShadows(); state.scopeSeen=state.scopeSeen||[];
+function scopePanel(){ setTimeout(()=>{ const o=[...document.querySelectorAll('#layer .ov')].pop(); if(o&&traitN('moon')){ o.classList.add('moonaid'); if(!state.storyFlags.moonAidTold){ state.storyFlags.moonAidTold=1; save(); o.insertAdjacentHTML('beforeend',meSay('溫室的月輝植物開著……鏡頭裡的影子，看得好清楚。')); } } },60); const voy=state.currentPhase==='voyage', loc=voy?state.voyage.to:state.currentLocation, sh=scopeShadows(); state.scopeSeen=state.scopeSeen||[]; if(!voy){ state.scopeAt=stopKey(); save(); }
  const ov=panel(`<div class="eyebrow">星月觀測車廂</div><h2>星月望遠鏡</h2>
   <div class="scope-wrap"><div class="scope-sky"><svg viewBox="0 0 1600 900" preserveAspectRatio="none"><defs><radialGradient id="scn1"><stop offset="0" stop-color="${LOCATIONS[loc].realm==='日界'?'#ffcf8a':'#9a8cff'}" stop-opacity=".45"/><stop offset="1" stop-color="#0b0d26" stop-opacity="0"/></radialGradient><radialGradient id="scn2"><stop offset="0" stop-color="#6fd0e0" stop-opacity=".3"/><stop offset="1" stop-color="#0b0d26" stop-opacity="0"/></radialGradient></defs>
    <rect width="1600" height="900" fill="#080a1f"/><ellipse cx="420" cy="300" rx="520" ry="240" fill="url(#scn1)" transform="rotate(-18 420 300)"/><ellipse cx="1180" cy="620" rx="460" ry="200" fill="url(#scn2)" transform="rotate(12 1180 620)"/>${stars(520,state.journeyCount+5,0,0,1600,900)}</svg>
@@ -6025,6 +6117,7 @@ const MEMORIES=[
  {id:'scythe',title:'白晷鐮使登車',who:'scythe',have:()=>state.discoveredLifeforms.includes('scythe'),text:PASSENGERS.scythe.intro},
  {id:'bye_sola',title:'告別・索拉',who:'sola',have:()=>!!(state.passengers.sola&&state.passengers.sola.left),text:PASSENGERS.sola.farewell[2]}
 ];
+MEMORIES.push(...hiddenMems());
 const memsHave=()=>MEMORIES.filter(m=>m.have());
 function memArt(m){ if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
  return `<span class="portrait-wash">${portraitOf(charOf(m.who))}${m.who2?portraitOf(charOf(m.who2)):''}</span>`; }
@@ -6112,7 +6205,7 @@ function atlasPages(){ const ids=['origin',...LOC_ORDER], R=[-4,3,-2,5,-3,2,-5];
   const seen=s==='seen';
   return [`<p class="jr-no">界域地誌・${k+1}</p><h3 class="jr-h">${L.name}</h3><p class="jr-sub">${L.realm}・${L.domain}${L.coord&&L.coord!=='？'?'　'+L.coord:''}</p>
    <figure class="jr-photo big" style="--r:${R[k]}deg"><div class="ph">${locSvg(id)}</div><figcaption>${seen?L.name:'星圖上看到的樣子'}</figcaption></figure>`,
-   `<p class="jr-p">${L.desc}</p>${LOC_LORE[id]?`<p class="jr-p jr-lore">聽來的事：${LOC_LORE[id]}</p>`:''}${seen?penNote('jr-me',ATLAS_ME[id]):'<p class="jr-me">還沒去過。總有一天，要親眼去看看。</p>'}`]; }).flat(); }
+   `<p class="jr-p">${L.desc}</p>${LOC_LORE[id]?`<p class="jr-p jr-lore">聽來的事：${LOC_LORE[id]}</p>`:''}${seen?penNote('jr-me',ATLAS_ME[id]):'<p class="jr-me">還沒去過。總有一天，要親眼去看看。</p>'}${seen?atlasFinds(id):''}`]; }).flat(); }
 function atlasBook(page){ const ids=['origin',...LOC_ORDER];
  return journal({cls:'atlas',title:'界域地誌',pages:atlasPages(),page:(page||0)*2,tabs:ids.map((id,k)=>[locStatus(id)==='fog'?'？':LOCATIONS[id].name,k*2])}); }
 
@@ -6578,6 +6671,7 @@ const HSDEF=[
  {id:'out-ring',scene:'out:dawnForest',name:'古樹上的圓環',at:{x:50,y:62},layer:2,act:'out:ring',imp:()=>!state.collectibles.includes('relic_ring')},
  {id:'out-moss',scene:'out:dawnForest',name:'林間光苔',at:{x:20,y:88},layer:1,hint:'只在晨光最斜的時候發亮的苔蘚。人類經過時，它們會在同一瞬間熄滅。'},
  
+ {id:'out-hid-df',scene:'out:dawnForest',get name(){ const h=hiddenNow(); return h?h.name:''; },get at(){ const h=hiddenNow(); return h?h.at:{x:-50,y:-50}; },layer:3,track:false,show:()=>!!hiddenNow(),imp:()=>true,act:()=>hiddenOpen()},
  {id:'out-f0-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[0]?{x:f.spots[0].x,y:f.spots[0].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(0),act:()=>forageTake(0)},
  {id:'out-f1-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[1]?{x:f.spots[1].x,y:f.spots[1].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(1),act:()=>forageTake(1)},
  {id:'out-f2-df',scene:'out:dawnForest',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
@@ -6590,6 +6684,7 @@ const HSDEF=[
  {id:'out-river',scene:'out:starIslands',name:'星河',at:{x:79,y:20},layer:1,hint:'不是水，是大量緩慢移動的光。浮島在上面漂流，偶爾有一座島被潮汐帶離河道。'},
  {id:'out-sola',scene:'out:starIslands',name:'會講冷笑話的光',shape:'npc',cls:'idle-drift',color:()=>PASSENGERS.sola.color,at:{x:70,y:72},layer:4,track:false,imp:()=>true,
   show:()=>{ const s=state.passengers.sola; return !!(s&&!s.aboard&&s.left&&!done('reunion_sola_'+state.journeyCount)); },act:()=>reunion('sola')},
+ {id:'out-hid-si',scene:'out:starIslands',get name(){ const h=hiddenNow(); return h?h.name:''; },get at(){ const h=hiddenNow(); return h?h.at:{x:-50,y:-50}; },layer:3,track:false,show:()=>!!hiddenNow(),imp:()=>true,act:()=>hiddenOpen()},
  {id:'out-f0-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[0]?{x:f.spots[0].x,y:f.spots[0].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(0),act:()=>forageTake(0)},
  {id:'out-f1-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[1]?{x:f.spots[1].x,y:f.spots[1].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(1),act:()=>forageTake(1)},
  {id:'out-f2-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
