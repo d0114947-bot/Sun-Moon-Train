@@ -1903,6 +1903,12 @@ body.old-echo #scene{animation:oldflick 2.2s ease-in-out 2}body.old-echo .evo-gl
 .keep-row{margin-top:8px;font-size:13.5px;line-height:1.8}.keep-row b{color:#f3e2b4;font-weight:500;margin:0 6px 0 10px}.keep-row b:first-child{margin-left:0}.keep-row small{display:block;opacity:.75}.vit{padding:1px 8px;border-radius:999px;border:1px solid}.vit.v3{color:#b8f0a0}.vit.v2{color:#e8e0c0}.vit.v1{color:#ffb8a0}
 .vine-topics{flex-wrap:wrap;gap:6px}.vine-topics .btn{font-size:12.5px;padding:4px 10px}.vine-say{margin-top:8px;font-size:13.5px;line-height:1.75}
 .cdx-r{margin:1px 0;line-height:1.5;font-size:13px}.cdx-r b{display:inline-block;min-width:6em;color:#6b5434}.cdx-r.lock{opacity:.45}.cdx-pic{height:64px;display:flex;align-items:center;justify-content:center;margin:2px 0}.cdx-pic img{max-height:64px}.plantcodex .jr-sub{margin-bottom:2px}.ov.plantcodex p.cdx-r{font-size:12.5px!important;line-height:1.45!important;margin:0 0 1px!important}.ov.plantcodex .jr-h{margin-bottom:0!important}.cdx-pic.unk{opacity:.5;font-size:13px}.endg{font-size:12px;color:#b04a3a;border:1px solid;border-radius:4px;padding:0 4px}
+/* 危機 */
+body.cr-alert #scene::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;box-shadow:inset 0 0 90px rgba(255,150,80,.35);animation:cralert 2.4s ease-in-out infinite}@keyframes cralert{50%{box-shadow:inset 0 0 40px rgba(255,150,80,.12)}}
+body.cr-disaster #scene::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;box-shadow:inset 0 0 140px rgba(200,40,60,.5);animation:cralert 1.8s ease-in-out infinite}
+.cr-hs .mk{border-color:rgba(255,190,120,.9)!important;background:radial-gradient(circle,rgba(255,200,140,.75),rgba(255,160,90,.1) 65%,transparent 72%)!important}
+.cr-acts{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}.cr-acts .btn{font-size:13.5px;padding:6px 12px}.cr-acts .btn small{opacity:.7;font-size:11.5px}.cr-acts .btn.dis{opacity:.45;cursor:not-allowed}
+.cr-msg{min-height:1.4em;color:#ffe2b0;font-size:14px}.ov.crov .panel{width:min(620px,94vw);max-height:calc(100vh - 140px);overflow:auto}.ov.crov{align-items:center}.prep-h small{font-weight:400;opacity:.75;font-size:12px}
 .who-list{list-style:none;padding:0;margin:8px 0 0}.who-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(232,201,131,.18)}.who-list b{font-weight:500;color:#f3e2b4}.who-list span{text-align:right;font-size:14px}
 </style>
 
@@ -4152,6 +4158,7 @@ function meetHere(){ if(document.querySelector('#layer .dlg,#layer .cine,#layer 
  for(const id of H){ const s=state.passengers[id]; if(byeOn(id)&&s.bye.starsAsk&&!s.bye.stars&&s.place==='deck'&&state.currentCarriage==='observatory') return byeStars(id); }
  for(const id of H) if(pairByeTry(id)||packTry(id)||omenTry(id)) return true;
  if(echoFriend(H)) return true;
+ if(crPaxReport(H)) return true;
  if(giftHandTry(H)) return true;
  if(bankHomeTry(H)) return true;
  if(envReact(H)) return true;
@@ -4397,7 +4404,7 @@ function boardTrain(){ SFX.tone(660,0,.5,'sine',.03); transition(()=>{ state.cur
 function startDeparture(){
  const dest=nextStop(), from=state.currentLocation, fromName=LOCATIONS[from].name, away=dragonAway();
  state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); state.storyFlags.departTaint=TAINT.val(); state.storyFlags.voyBless=state.blessNext||null; state.blessNext=null; { const o=state.duty.obs, sv=o&&o.to===dest&&o.told?WALL_SAVE[o.lv]:0, base=voyBless()==='deer'?Math.round(TAINT_GAIN[realmKey(dest)].cross/2):TAINT_GAIN[realmKey(dest)].cross; const BC=CONSTS.find(x=>x.id===voyBless()), miss=BC&&BC.sky!==realmKey(dest)?4:0; TAINT.add(Math.max(0,base-sv-(miss?0:((BLESS[voyBless()]||{}).calm||0)))+miss); if(miss){ logJ(`${BC.name}的祝福和往${LOCATIONS[dest].name}的航道不合，穿過界壁時身上更沉重了。`); setTimeout(()=>sense(`（……${BC.name}的光，和這條航道不太合。身上有一點沉重。）`),6000); } state.voyage.light=state.storyFlags.starLight?1:0; } { const m=state.voyage.mods=voyMods(state.voyage); constRecAdd(voyBless(),'use'); if(m.syn){ constRecAdd(voyBless(),'syn'); setTimeout(()=>sense(`（觀測到的航程，和${CONSTS.find(c=>c.id===voyBless()).name}的傾向很合。）`),7000); } if(m.calm) TAINT.add(-m.calm); const tp=trainStage('repair'); if(tp>=3){ TAINT.add(-(tp-2)); setTimeout(()=>sense('（穿過界壁的時候，列車替我擋下了一點界染。）'),9000); } }
- try{ livingDepart(); }catch(e){}
+ try{ livingDepart(); }catch(e){} try{ crNode('depart'); }catch(e){}
  if(voyBless()) setTimeout(()=>toast(`✦ 這一趟受到${CONSTS.find(c=>c.id===voyBless()).name}的護佑・${BTYPE[BLESS_TYPE[voyBless()]][0]}`),1800); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
  /* 不切到過場畫面：駕駛室窗外的風景一邊改變，一邊用文字說出啟程 */
  state.storyFlags.dutyLearned=1; state.storyFlags.voyNoDragon=away?1:0; save(); SFX.startDrone(); render(); const sc=$('#scene'); if(sc){ sc.classList.remove('departing'); void sc.offsetWidth; sc.classList.add('departing'); }
@@ -4726,13 +4733,13 @@ function senseShow(t){ let el=$('#sense'); if(!el){ el=document.createElement('d
 /* 航行中的背景廣播：只是車上的聲音，說說路上遇到的狀況 */
 const VOY_ANN=['各位旅客，列車正通過一段星塵帶，車身可能會輕微晃動，請扶好扶手。','各位旅客，前方的光軌有些微弱，列車將稍微減速慢行。','各位旅客，窗外可以看見一片發光的星雲，想看的旅客可以到星月觀測車廂。','各位旅客，列車正經過界壁比較薄的地方，耳朵可能會有一點悶悶的感覺。','各位旅客，車廂的溫度稍微降低了，需要毯子的旅客，棲息車廂有準備。','各位旅客，剛才的晃動是光軌的接縫，請不用擔心。','各位旅客，列車已經回到平穩的航道，謝謝大家的耐心。'];
 const VOY_ANN_P=[.28,.52,.78];
-function voyTasksLeft(v){ const haps=(v.haps||[]).some(h=>!h.done), k=v.sky, sky=!!(k&&!k.watched&&!k.ended), timed=Object.entries(EVENTS).some(([id,e])=>e.trigger==='voyage'&&e.at&&!done(id)&&(!e.need||e.need())); return haps||sky||timed; }
+function voyTasksLeft(v){ const haps=(v.haps||[]).some(h=>!h.done), k=v.sky, sky=!!(k&&!k.watched&&!k.ended), timed=Object.entries(EVENTS).some(([id,e])=>e.trigger==='voyage'&&e.at&&!done(id)&&(!e.need||e.need())); return haps||sky||timed||!!(state.crisis&&state.crisis.burst&&!state.crisis.done); }
 setInterval(()=>{
  if(!RUNNING||state.currentPhase!=='voyage'||!state.voyage) return;
  if(document.hidden||document.querySelector('#layer .cine,#layer .board,#layer .dlg,#layer .dustgame')) return;  /* 過場演出、接星塵時暫停，避免事件重疊 */
  const v=state.voyage, k=v.sky; voyPlan(v);
  let np;
- if(v.fin==null){ np=Math.min(.9,v.progress+250/VOYAGE_MS);
+ if(v.fin==null){ np=Math.min(.9,v.progress+250/VOYAGE_MS*(state.trainSt&&state.trainSt.slow?.75:1));   /* 減速：危機留下的影響 */
   if(k&&!k.watched) np=Math.min(np,k.at+SKY_WIN-.005);   /* 星象還沒看，列車就在星象裡慢慢走 */
   if(!voyTasksLeft(v)&&v.progress>=Math.max(...(v.haps||[]).map(h=>h.at),.3)){ v.fin=0; v.p0=v.progress; save(); } }
  else { v.fin+=250; np=v.p0+(1-v.p0)*Math.min(1,v.fin/70000);
@@ -4741,6 +4748,7 @@ setInterval(()=>{
  v.progress=Math.max(v.progress,np);
  const bar=$('#vprog'); if(bar) bar.style.width=(v.progress*100).toFixed(1)+'%';
  /* 航行中的事：到了就出現，精靈先感覺到 */
+ try{ crVoyTick(v); }catch(e){}
  (v.haps||[]).forEach(h=>{ if(!h.on&&v.progress>=h.at&&v.fin==null){ h.on=true; save(); sense(VOY_HAPS[h.id].sense); if(state.currentCarriage===VOY_HAPS[h.id].car) render(); else hsRefresh(); } });
  /* 背景廣播 */
  v.annK=v.annK||0; if(v.fin==null&&v.annK<VOY_ANN_P.length&&v.progress>=VOY_ANN_P[v.annK]){ const t=VOY_ANN[((state.journeyCount||0)*3+v.annK)%VOY_ANN.length]; v.annK++; save(); announceNow(t); }
@@ -4767,7 +4775,7 @@ function voyageArrive(){
  /* 界染度：失所生命同車的殘響；抵達日界時晨光沖刷 */
  const lost=Object.keys(PASSENGERS).filter(id=>aboard(id)&&PASSENGERS[id].type==='lost').length; if(lost) TAINT.add(TAINT_GAIN.lost*lost);
  deckWander();
- try{ trainArrive(dest); }catch(e){} try{ livingArrive(); }catch(e){}
+ try{ trainArrive(dest); }catch(e){} try{ livingArrive(); }catch(e){} try{ crNode('arrive'); }catch(e){}
  if(realmKey(dest)==='sun'){ TAINT.add(-8); logJ('抵達日界，晨光沖刷了身上的異界殘留，界染度下降。'); setTimeout(()=>sense(PUR_NARR.sun[0]),9000); }
  SFX.stopDrone(); SFX.arrive(); render();
  /* 抵達：稍等一下再出現站名；五感用對話框，一句一句說 */
@@ -5306,7 +5314,7 @@ function notebookPanel(){
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
- return journal({cls:'notebook',title:'筆記本',pages:()=>{ const P=pages(); P[0]+=reqSection()+bankNoteSection(); return P; },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
+ return journal({cls:'notebook',title:'筆記本',pages:()=>{ const P=pages(); P[0]+=reqSection()+bankNoteSection()+crNoteSection(); return P; },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
   onClick:(e,ov)=>{ const b=e.target.closest('[data-erase]'); if(!b) return; const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); ov.refresh(); }}); }
 /* 圖鑑：未整理的欄位顯示放入筆記的空格 */
 function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
@@ -6970,7 +6978,7 @@ function discPanel(){ const voy=state.currentPhase==='voyage', d=state.duty, c=s
   sv.addEventListener('pointerdown',e=>{ if(e.target.closest('#dgo')) return; { const r=sv.getBoundingClientRect(), q=Math.hypot(e.clientX-(r.left+r.width/2),e.clientY-(r.top+r.height/2))/(Math.min(r.width,r.height)/2); if(q<.52||q>1.02) return; } /* 只有外圈可以轉，中間的晶石不會 */ a0=ang(e); r0=state.storyFlags.discRot||0; moved=0; sv.setPointerCapture(e.pointerId); });
   sv.addEventListener('pointermove',e=>{ if(a0===null) return; const d=ang(e)-a0; moved=Math.max(moved,Math.abs(d)); const r=r0+d; state.storyFlags.discRot=r; rot.style.transform=`rotate(${r}deg)`; if(moved>4&&Math.random()<.15) SFX.tone(300+Math.random()*80,0,.05,'triangle',.008); });
   const up=()=>{ if(a0!==null){ a0=null; save(); } }; sv.addEventListener('pointerup',up); sv.addEventListener('pointercancel',up); }
- const g=ov.querySelector('#dgo'); if(g) g.onclick=()=>{ g.remove(); discIgnite(ov); }; }
+ const g=ov.querySelector('#dgo'); if(g) g.onclick=()=>{ const b=(typeof crBlockDepart==='function')&&crBlockDepart(); if(b){ const d=ov.querySelector('#dsay'); if(d) d.textContent=b; return; } g.remove(); discIgnite(ov); }; }
 /* 觸碰水晶：晶盤一圈一圈亮起來，再出發 */
 function discIgnite(ov){ const segs=[...ov.querySelectorAll('.dsc-seg')], say=ov.querySelector('#dsay'), core=ov.querySelector('.dsc-core'), close=ov.querySelector('.close'); if(close) close.style.visibility='hidden';
  ov.classList.add('igniting'); const lines=['把手放上控制晶盤。','水晶一圈一圈亮起來——']; segs.forEach(p=>{ p.setAttribute('fill','rgba(60,60,110,.35)'); p.classList.remove('lit'); }); ov.querySelectorAll('.disc-ring text:not(.dsc-txt)').forEach(t=>t.setAttribute('fill','#7f84b8'));
@@ -7740,6 +7748,313 @@ HSDEF.forEach(h=>{ const r=Object.keys(RCV).find(k=>RCV[k].hs===h.id); if(!r) re
  h.act=el=>{ if(rcvAct(r)) return; if(typeof oa==='function') return oa(el); if(oa) return runAct(oa); whisper(el,typeof h.hint==='function'?h.hint():h.hint); };
  Object.defineProperty(h,'layer',{get(){ return bankOn(3)?2:ol; },configurable:true});
  h.imp=()=>{ const c=commOn(r); return (c&&canGive(c.p))||(bankOn(3)&&!commOn(r)&&!!rcvWant(r)&&!bank().comm.some(x=>x.rcv===r&&x.st==='on'))||(oimp?oimp():false); }; });
+
+/* ================================================================
+   危機系統（v1.0）：徵兆 → 調查 → 判斷 → 預防 → 爆發 → 應變 → 結果 → 善後 → 回到日常
+   時間單位：「節點」＝每一次出發、每一次到站（沿用既有的旅程，不另建時鐘）
+   全局界染＝列車界染（state.trainTaint，和精靈自己的界染分開）；各車廂另有局部污染（state.carPol）
+   精靈不戰鬥：觀察、判斷、操作列車、封鎖、淨化、照護、請乘客或曦淵幫忙
+   ================================================================ */
+const CR_SEV={S1:'輕微異常',S2:'中度危機',S3:'重大危機',S4:'災變級危機'}, CR_W={W1:'細微徵兆',W2:'危險徵兆',W3:'危機迫近',W4:'危機爆發'};
+const CR_PREV={P1:'可完全避免',P2:'可降低損失',P3:'部分不可預測',P4:'不可預防'};
+const CR_CAT={A:'星際與界域意外',B:'異界生物襲擊',C:'列車自身故障',D:'界染與污染'};
+const CR_TIER=[[0,'正常'],[20,'輕微界染'],[40,'中度界染'],[60,'高度界染'],[80,'危險界染'],[100,'界染失控']];
+const crTier=v=>{ v=v==null?trainT():v; let i=0; CR_TIER.forEach((t,k)=>{ if(v>=t[0]) i=k; }); return i; };
+const CAR_N=id=>CARRIAGES[id]?CARRIAGES[id].name:id;
+/* ---------- 精靈能做的事（每一種都有使用條件與成本；不適用的會標示原因） ---------- */
+/* eff 在每個事件裡定義：avoid 完全避免（P1）、reduce 降低一級、score 應變分數 */
+const CR_ACT={
+ observe:{n:'觀察',d:'仔細看、仔細聽。不花任何東西。',cost:{}},
+ ask:{n:'詢問乘客',d:'請熟悉這種情況的乘客說說看。',cost:{},need:()=>crHelpers(['sense','know','realm']).length?null:'車上沒有適合詢問的乘客'},
+ askXi:{n:'詢問曦淵',d:'曦淵看得比較遠，但牠不一定每次都知道。',cost:{},need:()=>dragonAway()?'曦淵不在駕駛室':state.crisis&&state.crisis.askedXi?'這次已經問過了':null},
+ route:{n:'改變航線／繞行',d:'繞開危險的區域。航程會慢一點。',cost:{energy:15},need:()=>state.currentPhase==='voyage'||state.duty&&!state.duty.reported?null:'已經跟曦淵說好要出發了，來不及改'},
+ pause:{n:'暫停前進',d:'停下來等一下，爭取觀察的時間。',cost:{energy:5}},
+ lowpower:{n:'降低能源輸出',d:'把非必要的光都關掉，讓列車變得不顯眼。',cost:{}},
+ shield:{n:'檢查並加強防護結界',d:'用星塵補強結界的薄弱處。',cost:{energy:10,stardust:1}},
+ core:{n:'檢查能源核心',d:'到駕駛室的核心水晶，找出不穩的地方。',cost:{mosslight:1}},
+ calib:{n:'重新校準導航',d:'用觀測車廂的導航裝置，交叉比對航線。',cost:{energy:5}},
+ couple:{n:'檢查車廂連接',d:'一節一節檢查車廂之間的門。',cost:{energy:5}},
+ regulate:{n:'調整自然調節',d:'用溫室的界域調節晶石，讓環境穩定下來。',cost:{dew:1}},
+ inspect:{n:'檢查可疑的東西',d:'仔細檢查車體外側或可疑的物品。',cost:{energy:5}},
+ isolate:{n:'封鎖受影響的車廂',d:'暫時關上那節車廂。裡面的功能會暫停。',cost:{}},
+ purify:{n:'淨化',d:'用光苔片、花粉或星塵的光淨化。',cost:{purify:1}},
+ calm:{n:'安撫',d:'慢慢靠近，讓牠知道沒有人要傷害牠。',cost:{}},
+ evacuate:{n:'安排乘客避難',d:'請大家先到棲息車廂。可以避免乘客受傷。',cost:{}},
+ repair:{n:'緊急修復',d:'用身上的材料先把壞掉的地方補起來。',cost:{dew:1,sand:1}},
+ xiyuan:{n:'請曦淵介入',d:'重大危機時，曦淵可以出手幫忙。牠也會累。',cost:{},need:()=>dragonAway()?'曦淵不在':(state.crXiJ!=null&&state.journeyCount-state.crXiJ<3)?'曦淵上次出手後還在恢復':state.crisis&&state.crisis.sevN<2?'這種程度，還不用麻煩曦淵':null}};
+/* ---------- 乘客的危機能力：依既有設定分配；每位只有一兩種 ---------- */
+const CR_ABIL={sola:['care','realm'],felinia:['sense','realm'],leviathaurora:['defend','realm'],cinder:['combat','sense'],aelis:['sense','know'],pyro:['combat','defend'],vandora:['sense','know'],frost:['defend','combat'],
+ sirenora:['care','nature'],titan:['defend','nature'],lynx:['combat','sense'],strider:['sense','realm'],windkoi:['realm','sense'],mnemo:['know','nature'],yixi:['know','realm'],cabbfrog:['nature','care'],
+ skywhale:['defend','care'],treeling:['nature','repair'],sandwyrm:['repair','know'],moonwyrm:['combat','realm'],skyfox:['sense','care'],grinfox:['sense','know'],dawnsail:['defend','realm'],scythe:['realm','know']};
+const ABIL_N={combat:'戰鬥',defend:'防禦',sense:'感知',realm:'界域',nature:'自然',know:'知識',repair:'修復',care:'照護'};
+const paxSt=id=>(state.passengers[id]||{}).crSt||'ok';
+const PAX_ST_N={ok:'正常',scared:'驚嚇',hurt:'受傷',care:'需要照護',polluted:'受到污染',recover:'已恢復'};
+const crHelpers=tags=>Object.keys(PASSENGERS).filter(id=>aboard(id)&&(CR_ABIL[id]||[]).some(t=>tags.includes(t)));
+/* 乘客的意願：信任、能力、熟悉、害怕、受傷、自己的目標、要保護別人 */
+function paxWill(id,E){ const s=state.passengers[id], st=s.stage||0, ab=CR_ABIL[id]||[], p=PERS[id]||'gentle', fit=ab.filter(t=>(E.pax||[]).includes(t));
+ if(!fit.length) return {k:'none',t:'這件事，牠幫不上忙。'};
+ if(paxSt(id)==='hurt'||paxSt(id)==='polluted') return {k:'info',t:'牠受傷了，只能告訴你牠知道的事。',v:fit.includes('sense')||fit.includes('know')?1:0};
+ const scary=E.cat==='B'&&(fit.includes('combat')||fit.includes('defend'));
+ if(scary&&(p==='shy'||p==='quiet')&&st<3) return {k:'refuse',t:'牠縮在角落，搖了搖頭。……牠很害怕。'};
+ if(byeOn(id)&&st<3&&E.sevN>=2) return {k:'info',t:'牠說，牠只想平安回家。可是，牠把知道的都告訴你了。',v:1};
+ if(st>=3||(st>=2&&(p==='proud'||p==='guard'))) return {k:'active',t:'牠已經站到你前面了。',v:2};
+ if(st>=2) return {k:'agree',t:'牠點點頭：「好。」',v:2};
+ if(st>=1) return {k:p==='shy'?'calm':'agree',t:p==='shy'?'牠有點發抖……你陪了牠一下，牠才點頭。':'牠想了一下，說：「……我試試看。」',v:1};
+ return {k:'refuse',t:'牠還不太認識你，沒有回應。',v:0}; }
+/* ---------- 事件資料庫：20 個核心事件，同一種格式 ---------- */
+/* lead：預警的節點數（0 = 無預警）；at：爆發時機（voyage 航行中／any 任何時候）；where：徵兆出現的車廂
+   signs：[階段, 文字, 可靠度 high/mid/low/false]；eff：精靈行動的效果；pax：需要的乘客能力
+   out：成功／部分成功／失敗的列車界染變化；dmg：受損（stop 停駛、slow 減速、shield 防護、seal 封鎖、hurt 乘客受傷、pol 局部污染） */
+const CRISES={
+ A01:{n:'星際風暴',cat:'A',sev:[2,3],prev:'P1',lead:3,at:'voyage',where:'observation',w:3,cond:()=>state.currentPhase!=='outside',
+  signs:[['W1','（觀測車廂的儀器，指針輕輕跳了一下。）','low'],['W2','（窗外的星雲流動的方向，有一點不自然。）','mid'],['W3','（遠方的星光，開始規律地閃爍。……能量正在聚集。）','high']],
+  inv:'觀測儀器出現異常能量讀數，星雲的流向不自然。是正在形成的星際風暴，方向朝著航道。',
+  eff:{route:'avoid',shield:'reduce',ask:'intel',askXi:'intel',calib:'intel',pause:'delay',xiyuan:3,evacuate:1,repair:1},pax:['realm','sense','defend'],
+  out:{s:[0,0],p:[2,5],f:[6,12]},dmg:{p:['slow','light'],f:['stop','shield','scared']},chain:{f:['C02','C01'],p:['A02']},cd:6,after:['重新校準防護結界','檢查列車外部']},
+ A02:{n:'空間亂流',cat:'A',sev:[2,3],prev:'P2',lead:2,at:'voyage',where:'observation',w:3,cond:()=>!!(state.duty.obs&&state.duty.obs.lv!=='平穩')||crTier()>=2,
+  signs:[['W2','（窗外的景色，好像重複了一次。）','mid'],['W3','（列車開始不規律地震動。有乘客說，頭有點暈。）','high']],
+  inv:'觀測讀數前後不一致，景象重複。前方的空間正在扭曲，是亂流。',
+  eff:{calib:'reduce',route:'reduce',pause:'reduce',ask:'intel',askXi:'intel',isolate:1,xiyuan:2,evacuate:1,repair:1},pax:['realm','sense'],
+  out:{s:[0,0],p:[3,7],f:[8,15]},dmg:{p:['slow','offroute'],f:['stop','seal','scared']},chain:{f:['A03','C04','C03']},cd:5,after:['重新確認列車位置','修復受損設備']},
+ A03:{n:'時空裂縫',cat:'A',sev:[3,4],prev:'P3',lead:1,at:'voyage',where:'observation',w:1,cond:()=>crTier()>=3||crChainOf('A03'),
+  signs:[['W2','（窗外的一顆星，消失了，又在旁邊出現。）','mid'],['W3','（同一個聲音，在車廂裡響了兩次。）','high']],
+  inv:'儀器上的時間讀數彼此不一致，星體重複出現。前方有一道時空裂縫。',
+  eff:{route:'avoid',pause:'reduce',ask:'intel',askXi:'intel',calib:1,isolate:1,xiyuan:3,evacuate:1},pax:['realm','know','sense'],
+  out:{s:[0,0],p:[5,10],f:[10,18]},dmg:{p:['slow','memory'],f:['stop','seal','memory']},chain:{f:['A02','C03']},cd:12,after:['穩定空間','確認乘客的時間感']},
+ A04:{n:'隕石與碎片群',cat:'A',sev:[1,3],prev:'P1',lead:1,at:'voyage',where:'observatory',w:4,cond:()=>true,
+  signs:[['W2','（車尾後方的遠處，有很多一閃一閃的反光。）','mid'],['W3','（觀測儀器偵測到很多不規則移動的東西。）','high']],
+  inv:'前方有大量漂浮的碎片，正朝航道漂過來。',
+  eff:{route:'avoid',shield:'avoid',pause:'reduce',ask:'intel',xiyuan:2,repair:1},pax:['sense','defend'],
+  out:{s:[0,0],p:[2,5],f:[5,10]},dmg:{p:['light'],f:['shield','scared']},chain:{f:['C02','D05']},cd:4,after:['檢查車體','清除附著物']},
+ A05:{n:'界域碰撞',cat:'A',sev:[2,4],prev:'P3',lead:2,at:'voyage',where:'observation',w:2,cond:()=>!!state.voyage&&realmKey(state.voyage.to)!==realmKey(state.voyage.from),
+  signs:[['W1','（窗外的天空，一半是晨光的顏色，一半是夜色。）','false'],['W2','（兩種天空開始重疊在一起，邊緣在發抖。）','mid'],['W3','（溫室的調節晶石，自己閃了一下。）','high']],
+  inv:'日界和月界的交界正在不穩定地碰撞。不是一般的景色變化。',
+  eff:{route:'avoid',pause:'reduce',regulate:'reduce',ask:'intel',askXi:'intel',isolate:1,xiyuan:2,evacuate:1},pax:['realm','know','nature'],
+  out:{s:[0,0],p:[3,8],f:[8,16]},dmg:{p:['pol:nature'],f:['stop','pol:nature','scared']},chain:{f:['C05','D01']},cd:8,after:['恢復車廂環境','重新校準調節晶石']},
+ B01:{n:'巨型界域掠食者',cat:'B',sev:[3,4],prev:'P1',lead:3,at:'voyage',where:'observatory',w:2,cond:()=>state.journeyCount>=4,
+  signs:[['W1','（星空裡，好像有什麼很大的東西，慢慢移動。……也可能只是雲。）','low'],['W2','（觀測儀器偵測到一個一直跟著列車的訊號。）','mid'],['W3','（有乘客豎起了耳朵，一直盯著車尾。）','high']],
+  inv:'一隻很大的界域掠食者，正循著列車的光跟過來。牠追的是光和能源。',
+  eff:{lowpower:'avoid',route:'avoid',shield:'reduce',ask:'intel',askXi:'intel',xiyuan:4,evacuate:2,pax:1},pax:['combat','defend','sense','know'],
+  out:{s:[0,0],p:[5,10],f:[10,20]},dmg:{p:['shield','slow'],f:['stop','shield','hurt','seal']},chain:{f:['B02','C02'],p:['B02']},cd:12,after:['修復防護結界','確認乘客安全','記錄掠食者的活動區域']},
+ B02:{n:'寄生型生物附著',cat:'B',sev:[2,3],prev:'P2',lead:3,at:'any',where:'cab',w:2,cond:()=>true,
+  signs:[['W1','（能源好像比平常用得快一點點。）','low'],['W2','（車體外側，有一塊影子不會跟著光移動。）','mid'],['W3','（車廂裡傳來很輕的刮擦聲。）','high']],
+  inv:'有生物附著在車體外側，正在慢慢吸收能源。',
+  eff:{inspect:'avoid',isolate:'reduce',ask:'intel',purify:1,xiyuan:2,pax:1},pax:['sense','know','combat'],
+  out:{s:[0,0],p:[3,8],f:[8,15]},dmg:{p:['energy'],f:['seal','energy']},chain:{f:['B03','C01']},cd:6,after:['確認寄生源已清除','修復設備']},
+ B03:{n:'潛伏型生物入侵',cat:'B',sev:[2,3],prev:'P2',lead:1,at:'any',where:'habitat',w:1,cond:()=>crChainOf('B03')||trainStatus().shield,
+  signs:[['W2','（棲息車廂的東西，好像被移動過。）','mid'],['W3','（有乘客說，角落裡有東西在看牠。）','high']],
+  inv:'有一隻隱蔽的生物躲進了車廂，正在找藏身的地方。',
+  eff:{isolate:'reduce',evacuate:'reduce',ask:'intel',inspect:1,xiyuan:2,pax:2},pax:['sense','combat','defend'],
+  out:{s:[0,0],p:[5,10],f:[10,20]},dmg:{p:['seal'],f:['seal','hurt']},chain:{f:['D03','B04']},cd:8,after:['搜查相關區域','確認沒有其他潛伏個體']},
+ B04:{n:'受污染的生命暴走',cat:'B',sev:[2,4],prev:'P2',lead:1,at:'any',where:'observatory',w:1,cond:()=>crTier()>=2,
+  signs:[['W2','（展望台外，一隻熟悉的小光生命，行為和平常不一樣。）','mid'],['W3','（牠身上的光，變成了很混濁的顏色。）','high']],
+  inv:'一隻小生命長期接觸界染，開始失控。牠不是敵人。',
+  eff:{calm:'reduce',purify:'reduce',isolate:1,ask:'intel',xiyuan:2,pax:2},pax:['nature','care','know'],
+  out:{s:[-3,-1],p:[2,5],f:[8,15]},dmg:{p:['pol:observatory'],f:['pol:observatory','hurt']},chain:{f:['D01']},cd:8,after:['確認那隻生命的狀態','清除污染'],special:'那隻小生命恢復之後，偶爾會跟著列車飛一段。'},
+ B05:{n:'敵對生物襲擊',cat:'B',sev:[3,4],prev:'P4',lead:0,at:'voyage',where:'observatory',w:1,cond:()=>state.journeyCount>=6&&(crTier()>=3||trainStatus().shield),
+  signs:[],inv:'沒有任何預兆，一群帶著敵意的生命撲向列車。',
+  eff:{shield:2,route:1,evacuate:2,isolate:1,xiyuan:4,pax:2},pax:['combat','defend','sense','care'],
+  out:{s:[0,0],p:[5,12],f:[12,20]},dmg:{p:['shield','slow'],f:['stop','shield','hurt','seal']},chain:{f:['C02','B02']},cd:15,after:['救助乘客','修復結界','確認敵人真的離開']},
+ C01:{n:'能源核心異常',cat:'C',sev:[2,4],prev:'P1',lead:3,at:'any',where:'cab',w:3,cond:()=>true,
+  signs:[['W1','（駕駛室的燈，閃了一下。）','low'],['W2','（核心水晶運轉的聲音，比平常沉。）','mid'],['W3','（有些車廂的光，變得忽明忽暗。）','high']],
+  inv:'能源核心的負載過高，有一處正在發熱。',
+  eff:{core:'avoid',lowpower:'reduce',ask:'intel',askXi:'intel',repair:2,xiyuan:2},pax:['know','repair'],
+  out:{s:[0,0],p:[2,6],f:[6,12]},dmg:{p:['slow','energy'],f:['stop','energy']},chain:{f:['C02']},cd:6,after:['修復核心','重新分配能源']},
+ C02:{n:'防護結界失效',cat:'C',sev:[2,4],prev:'P1',lead:2,at:'any',where:'cab',w:2,cond:()=>crChainOf('C02')||crTier()>=2||(state.energy||80)<30,
+  signs:[['W2','（車窗外的結界光，有一處在閃爍。）','mid'],['W3','（外面的寒氣，好像透進來了一點。）','high']],
+  inv:'防護結界有一處變薄了，正在慢慢擴大。',
+  eff:{shield:'avoid',route:'reduce',lowpower:1,ask:'intel',repair:2,xiyuan:2,pax:1},pax:['defend','realm','sense'],
+  out:{s:[0,0],p:[4,8],f:[8,15]},dmg:{p:['shield'],f:['stop','shield','seal']},chain:{f:['D01','B02']},cd:6,after:['完整修復結界','確認污染沒有進來']},
+ C03:{n:'導航系統異常',cat:'C',sev:[1,3],prev:'P1',lead:2,at:'voyage',where:'observation',w:3,cond:()=>true,
+  signs:[['W1','（窗外的景色，和上次經過時好像一樣。）','false'],['W2','（觀測的結果和導航的路線，對不起來。）','mid']],
+  inv:'導航的資料出現偏差，列車正在偏離航道。',
+  eff:{calib:'avoid',pause:'reduce',ask:'intel',askXi:'intel',route:1},pax:['realm','sense','know'],
+  out:{s:[0,0],p:[2,5],f:[5,10]},dmg:{p:['offroute'],f:['stop','offroute']},chain:{f:['A02']},cd:4,after:['重新校準導航','更新航線紀錄']},
+ C04:{n:'車廂連接異常',cat:'C',sev:[2,3],prev:'P2',lead:1,at:'any',where:'habitat',w:1,cond:()=>crChainOf('C04')||trainStatus().slow,
+  signs:[['W3','（車廂之間的門，開的時候卡了一下。）','high']],
+  inv:'車廂之間的連接鬆動了。',
+  eff:{couple:'avoid',evacuate:'reduce',isolate:1,repair:2,xiyuan:1},pax:['repair','care'],
+  out:{s:[0,0],p:[2,6],f:[6,12]},dmg:{p:['seal'],f:['stop','seal']},chain:{},cd:6,after:['修復連接','確認每一位乘客的位置']},
+ C05:{n:'自然調節失控',cat:'C',sev:[2,3],prev:'P2',lead:2,at:'any',where:'nature',w:2,cond:()=>true,
+  signs:[['W1','（溫室的光，好像比平常暗一點。）','low'],['W2','（培育艙裡的植物，突然長得很快，又停下來。）','mid']],
+  inv:'溫室的自然調節不穩，能量分布亂掉了。',
+  eff:{regulate:'avoid',isolate:'reduce',purify:1,ask:'intel',xiyuan:1,pax:1},pax:['nature','know'],
+  out:{s:[0,0],p:[3,7],f:[7,15]},dmg:{p:['pol:nature','plant'],f:['pol:nature','plant','seal']},chain:{f:['D02']},cd:6,after:['恢復自然調節','檢查植物']},
+ D01:{n:'外部界染侵入',cat:'D',sev:[2,4],prev:'P2',lead:2,at:'any',where:'observation',w:2,cond:()=>crTier()>=2||trainStatus().shield||crChainOf('D01'),
+  signs:[['W2','（觀測車廂的玻璃上，有一層不自然的光影。）','mid'],['W3','（儀器出現了污染的訊號。）','high']],
+  inv:'外面的界染，正從結界的薄弱處滲進來。',
+  eff:{shield:'reduce',isolate:'reduce',purify:'reduce',route:1,ask:'intel',xiyuan:2,pax:1},pax:['nature','sense','defend'],
+  out:{s:[0,0],p:[5,10],f:[10,18]},dmg:{p:['pol:observation'],f:['pol:observation','pol:habitat','seal']},chain:{f:['D04','D02']},cd:6,after:['清除污染源','修復防護結界']},
+ D02:{n:'植物異變',cat:'D',sev:[2,3],prev:'P1',lead:3,at:'any',where:'nature',w:2,cond:()=>(state.pods||[]).some(Boolean),
+  signs:[['W1','（培育艙的葉片上，出現了奇怪的紋路。……也許只是在長大。）','false'],['W2','（有一株植物，發出了混濁的光。）','mid'],['W3','（附近的植物也開始出現一樣的紋路。）','high']],
+  inv:'有一株植物受到了界染，異變正在擴散到旁邊。',
+  eff:{isolate:'avoid',purify:'avoid',regulate:'reduce',ask:'intel',xiyuan:1,pax:1},pax:['nature','know','care'],
+  out:{s:[0,0],p:[3,8],f:[8,15]},dmg:{p:['plant','pol:nature'],f:['plant','pol:nature','seal']},chain:{f:['C05','D04']},cd:6,after:['隔離及淨化','保留救得回來的植物']},
+ D03:{n:'乘客或攜帶物污染',cat:'D',sev:[2,3],prev:'P2',lead:2,at:'any',where:'habitat',w:1,cond:()=>Object.keys(PASSENGERS).some(aboard),
+  signs:[['W1','（有一位乘客，看起來特別累。……也可能只是想家。）','low'],['W2','（牠帶上車的東西，表面出現了奇怪的變化。）','mid']],
+  inv:'有一位乘客上車時帶著的東西，附著了界染。不是牠的錯。',
+  eff:{calm:'reduce',purify:'avoid',inspect:'reduce',ask:'intel',xiyuan:1,pax:1},pax:['nature','care','sense'],
+  out:{s:[0,0],p:[3,8],f:[8,16]},dmg:{p:['pol:habitat','paxpol'],f:['pol:habitat','paxpol','seal']},chain:{f:['D04']},cd:8,after:['確認乘客的狀態','淨化相關區域']},
+ D04:{n:'界染擴散',cat:'D',sev:[3,4],prev:'P2',lead:2,at:'any',where:'habitat',w:1,cond:()=>crPolCars(40).length>=2||crTier()>=4||crChainOf('D04'),
+  signs:[['W2','（好幾節車廂，同時出現了不自然的光影。）','high'],['W3','（乘客們開始不安。設備也越來越常出錯。）','high']],
+  inv:'局部的污染越過了原本的範圍，正在連成一片。',
+  eff:{isolate:'reduce',purify:'reduce',shield:1,evacuate:2,ask:'intel',xiyuan:3,pax:2},pax:['nature','defend','sense','care'],
+  out:{s:[-8,-5],p:[0,4],f:[8,16]},dmg:{p:['seal','pol:habitat'],f:['stop','seal','hurt','pol:habitat']},chain:{f:['S4']},cd:12,after:['分區淨化','逐步恢復車廂功能']},
+ D05:{n:'不明污染物附著',cat:'D',sev:[1,3],prev:'P2',lead:3,at:'any',where:'memory',w:2,cond:()=>true,
+  signs:[['W1','（典藏車廂裡，有一股說不出來的味道。）','low'],['W2','（有一件收藏品的表面，出現了奇怪的光斑。）','mid']],
+  inv:'有一點不明的污染物附著在收藏品上，正在慢慢擴散。',
+  eff:{inspect:'avoid',purify:'avoid',isolate:'reduce',ask:'intel',xiyuan:1},pax:['sense','know','nature'],
+  out:{s:[0,0],p:[2,6],f:[6,12]},dmg:{p:['pol:memory'],f:['pol:memory','seal']},chain:{f:['D01','D04']},cd:5,after:['清除污染','確認沒有殘留']}};
+/* 誤導：有些徵兆最後只是自然現象（調查就能知道，不需要大量資源） */
+const CR_FALSE={A01:'只是星雲正常的季節流動。',A05:'只是交界的景色本來就這麼漂亮。',B01:'原來是一隻很大、很溫和的界域生命，正好同路。',C03:'這一段航道本來就長得很像。',D02:'那是植物正常長大時的紋路。',D03:'牠只是想家了，不是生病。',D05:'是一件古老收藏品本來的光澤。'};
+/* ---------- 列車的狀態（危機解除不代表馬上恢復） ---------- */
+const trainStatus=()=>state.trainSt||(state.trainSt={run:'normal',shield:0,energyBad:0,slow:0,offroute:0,faults:[]});
+const TRAIN_RUN_N={normal:'正常行駛',slow:'減速',stop:'緊急停駛',repair:'修復中'};
+const crPolCars=n=>Object.entries(state.carPol||{}).filter(([c,v])=>v>=n).map(([c])=>c);
+const crChainOf=id=>(state.crChain||[]).some(x=>x.id===id);
+const crSealed=c=>(state.sealed||[]).includes(c);
+/* ---------- 排程：頻率、平靜期、同時只有一個主要危機 ---------- */
+const CR_GAP={1:2,2:5,3:12,4:20};   /* 同等級兩次之間至少隔幾趟（約等於規格的遊戲日） */
+const CR_CALM={1:0,2:1,3:2,4:3};
+function crPick(phase){ const ctx=phase; const tier=crTier(); state.crLast=state.crLast||{}; state.crHist=state.crHist||[];
+ const L=Object.entries(CRISES).filter(([id,E])=>{ if((E.at==='voyage')!==(ctx==='depart')&&E.at!=='any') return false; const sevN=crSevOf(E); if(state.journeyCount-(state.crLast['S'+sevN]==null?-99:state.crLast['S'+sevN])<CR_GAP[sevN]) return false;
+  const last=state.crHist.filter(h=>h.id===id).slice(-1)[0]; if(last&&state.journeyCount-last.j<E.cd) return false; try{ return E.cond(); }catch(e){ return false; } });
+ if(!L.length) return null; const W=L.map(([id,E])=>[id,E.w*(E.cat==='D'||E.cat==='B'?1+tier*.35:1)]); const tot=W.reduce((a,x)=>a+x[1],0); let r=Math.random()*tot; for(const [id,w] of W){ if((r-=w)<0) return id; } return W[0][0]; }
+const crSevOf=E=>{ let s=E.sev[0]; if(crTier()>=3||(state.energy!=null&&state.energy<20)) s=Math.min(E.sev[1],s+1); if(s>=4&&!(crTier()>=4||state.crS4ok)) s=3; return s; };
+function crStart(id,opts){ const E=CRISES[id]; if(!E) return null; opts=opts||{}; const sevN=opts.sev||crSevOf(E), real=opts.real!=null?opts.real:!(CR_FALSE[id]&&Math.random()<.22);
+ const st=E.lead===0?'W4':E.lead>=3?'W1':E.lead===2?'W2':'W3';
+ state.crisis={id,sevN,stage:st,node:0,lead:E.lead,real,intel:0,signs:[],acts:[],prep:{},reduce:0,avoided:false,askedXi:false,pax:[],xi:false,j:state.journeyCount,cause:opts.cause||'航行條件'};
+ state.crLast=state.crLast||{}; state.crLast['S'+sevN]=state.journeyCount; save(); crSign(); return state.crisis; }
+/* 每個節點（出發、到站）推進一次 */
+function crNode(phase){ if(navigator.webdriver&&!window.CRISIS_TEST) return; state.energy=Math.min(100,(state.energy==null?80:state.energy)+8); crSpread(); crRecover();
+ if(trainT()>=100&&!state.disaster) return crDisaster();
+ const C=state.crisis; if(C){ C.node++; if(C.stage!=='W4'&&!C.done){ const order=['W1','W2','W3','W4']; let i=order.indexOf(C.stage); if(C.delay){ C.delay--; } else if(i<3){ i++; C.stage=order[i]; } if(C.stage==='W4'&&CRISES[C.id].at!=='voyage') return crOutbreak(); save(); crSign(); } return; }
+ const ch=(state.crChain||[]).shift(); if(ch){ save(); if(ch.id==='S4'){ state.crS4ok=1; return crStart('D04',{sev:4,cause:'連鎖：界染擴散'}); } return crStart(ch.id,{cause:'連鎖：'+(CRISES[ch.from]?CRISES[ch.from].n:'')}); }
+ if(state.crCalm!=null&&state.journeyCount<state.crCalm) return; if(state.disaster) return;
+ const p=.18+crTier()*.06; if(Math.random()>p) return; const id=crPick(phase); if(id) crStart(id); }
+/* 局部污染擴散：只有在條件符合時才影響全局 */
+const CAR_NEXT={cab:['observation'],observation:['cab','memory'],memory:['observation','nature'],nature:['memory','habitat'],habitat:['nature','observatory'],observatory:['habitat']};
+function crSpread(){ const P=state.carPol=state.carPol||{}; Object.entries(P).forEach(([c,v])=>{ if(v>=60){ trainTAdd(2); (CAR_NEXT[c]||[]).forEach(n=>{ if(!crSealed(c)) P[n]=Math.min(100,(P[n]||0)+5); }); } if(v>0&&v<60&&crSealed(c)) P[c]=Math.max(0,v-5); }); }
+function crRecover(){ Object.keys(PASSENGERS).forEach(id=>{ const s=state.passengers[id]; if(!s||!s.crSt||s.crSt==='ok') return; s.crN=(s.crN||0)+1; if(s.crSt==='scared'&&s.crN>=1){ s.crSt='recover'; } else if(s.crSt==='recover'){ s.crSt='ok'; } else if((s.crSt==='hurt'||s.crSt==='care')&&s.crN>=3){ s.crSt='recover'; } }); }
+/* ---------- 徵兆：自然出現在場景裡（精靈感應、熱點、乘客的話）；不直接說出事件名稱 ---------- */
+function crSign(){ const C=state.crisis; if(!C||C.done) return; const E=CRISES[C.id]; const sg=E.signs.filter(x=>x[0]===C.stage);
+ sg.forEach(x=>{ if(!C.signs.includes(x[1])) C.signs.push(x[1]); }); save(); if(sg.length&&!(navigator.webdriver&&!window.CRISIS_TEST)) setTimeout(()=>sense(sg[0][1]),3200); renderHUD(); hsRefresh(); }
+const crVisible=()=>{ const C=state.crisis; return C&&!C.done&&(C.stage==='W2'||C.stage==='W3')&&(state.currentPhase!=='outside'); };
+/* ---------- 調查（觀察是免費的；更深入要花一點東西） ---------- */
+const INTEL_N=['還不知道是什麼','好像有什麼不對勁','大概知道是哪一類的問題','知道是什麼了'];
+function crIntel(n,why){ const C=state.crisis; if(!C) return; C.intel=Math.min(3,Math.max(C.intel,n)); if(why) C.how=(C.how||[]).concat(why); save(); }
+function crInvestigate(){ const C=state.crisis, E=CRISES[C.id]; if(C.intel>=1&&!C.real){ crIntel(3,'仔細觀察'); return crFalseEnd(); } crIntel(Math.max(1,C.intel+(C.stage==='W3'?2:1)),'觀察'); }
+function crFalseEnd(){ const C=state.crisis; C.done=1; C.result='false'; crRecord('false',[]); state.crisis=null; save(); sense(`（……${CR_FALSE[C.id]}虛驚一場。）`); state.obsRec=(state.obsRec||0)+1; render(); }
+/* ---------- 精靈的行動：預防（爆發前）或應變（爆發後） ---------- */
+function crCanPay(cost){ for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ if((state.energy==null?80:state.energy)<v) return '能源不夠'; } else if(k==='purify'){ if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)) return '身上沒有可以淨化的材料'; } else if(matCount(k)<v) return `需要${MATS[k].name} ×${v}`; } return null; }
+function crPay(cost){ const used=[]; for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ state.energy=(state.energy==null?80:state.energy)-v; used.push('能源 '+v); } else if(k==='purify'){ const m=Object.entries(MATS).find(([m,M])=>M.use==='purify'&&matCount(m)>0)[0]; state.materials[m]--; used.push(MATS[m].name); } else { state.materials[k]-=v; used.push(MATS[k].name+' ×'+v); } } return used; }
+function crActList(){ const C=state.crisis; if(!C) return []; const E=CRISES[C.id], W4=C.stage==='W4';
+ const keys=['observe','ask','askXi'].concat(C.intel>=2||W4?Object.keys(E.eff).filter(k=>!['ask','askXi','intel'].includes(k)):['route','pause','inspect','isolate']);   /* 判斷不清楚時，只看得到一般的選項 */
+ const uniq=[...new Set(keys)].filter(k=>CR_ACT[k]&&!(W4&&(k==='observe'||k==='pause'))&&(k!=='xiyuan'||W4||C.sevN>=3)&&(k!=='pax'));
+ return uniq.map(k=>{ const A=CR_ACT[k], why=(A.need&&A.need())||crCanPay(A.cost)||(C.acts.includes(k)&&k!=='observe'?'已經做過了':null); return {k,n:A.n,d:A.d,why,hint:C.intel>=3&&E.eff[k]&&E.eff[k]!=='intel'?'✦':''}; }); }
+function crDo(k){ const C=state.crisis; if(!C) return null; const E=CRISES[C.id], A=CR_ACT[k], why=(A.need&&A.need())||crCanPay(A.cost); if(why) return {t:why,bad:1};
+ const used=crPay(A.cost); C.acts.push(k); let t='';
+ if(k==='observe'){ crInvestigate(); if(!state.crisis) return {t:'虛驚一場。',end:1}; t=C.intel>=3?E.inv:C.intel>=2?`看起來是「${CR_CAT[E.cat]}」一類的問題。`:'確實有什麼不對勁。'; }
+ else if(k==='ask'){ const L=crHelpers(['sense','know','realm']); const id=L.find(x=>(CR_ABIL[x]||[]).some(t=>E.pax.includes(t)))||L[0]; const ok=(CR_ABIL[id]||[]).some(t=>E.pax.includes(t)); crIntel(ok?3:Math.max(C.intel,2),nm(id)+'的情報'); if(!C.real&&ok) { crFalseEnd(); return {t:`${nm(id)}說：「${CR_FALSE[C.id]}」`,end:1}; } t=`${nm(id)}：「${ok?E.inv:'……我不太確定。可是，感覺不太好。'}」`; C.pax.push({id,k:'info'}); state.passengers[id].records.push({j:state.journeyCount,t:`危機的時候，提供了情報。`}); }
+ else if(k==='askXi'){ C.askedXi=true; const know=C.sevN>=2&&Math.random()<.8; crIntel(know?3:Math.max(C.intel,2),'曦淵的判斷'); t=know?`曦淵：「${E.inv}」`:'曦淵：「……我也看不清楚。小心一點。」'; }
+ else { const e=E.eff[k]; if(C.stage!=='W4'){ C.prep[k]=1;
+   if(e==='avoid'&&C.intel>=2){ C.avoided=true; t=`${A.n}。……危險好像過去了。`; } else if(e==='avoid'){ C.reduce++; t=`${A.n}。……不知道有沒有用，可是感覺好一點了。`; }
+   else if(e==='reduce'){ C.reduce++; t=`${A.n}。就算發生了，損失也會小一點。`; } else if(e==='delay'){ C.delay=(C.delay||0)+1; t='停下來等了一下，多爭取了一點時間觀察。'; } else if(typeof e==='number'){ C.reduce+=e>=2?1:0; t=`${A.n}。`; } else { t=`${A.n}。……好像跟這次的問題沒有關係。`; C.wrong=(C.wrong||0)+1; }
+   if(k==='isolate'){ crSeal(E.where); } if(k==='lowpower'){ trainStatus().slow=1; }
+   if(k==='route'||k==='pause'){ trainStatus().slow=1; }
+   if(C.avoided) return crAvoid(t); }
+  else { t=`${A.n}。`; if(k==='isolate') crSeal(E.where); if(k==='evacuate'){ Object.keys(PASSENGERS).filter(aboard).forEach(id=>{ if(state.passengers[id].place&&state.passengers[id].place!=='outside') state.passengers[id].place=undefined; }); C.evac=1; } if(k==='xiyuan'){ C.xi=true; state.crXiJ=state.journeyCount; } } }
+ save(); return {t,used}; }
+function crSeal(car){ if(!car||car==='cab') return; state.sealed=state.sealed||[]; if(!state.sealed.includes(car)) state.sealed.push(car); }
+function crAvoid(t){ const C=state.crisis; C.done=1; C.result='avoid'; const E=CRISES[C.id]; const rw=[]; if(E.cat==='A'||E.cat==='B'){ state.obsRec=(state.obsRec||0)+1; rw.push('新的觀測紀錄'); } if(C.id==='B01'&&!state.collectibles.includes('anomaly_rift')){}
+ Object.keys(PASSENGERS).filter(aboard).forEach(id=>{ const s=state.passengers[id]; if((s.stage||0)>=1){ s.trust=(s.trust||0)+1; } }); rw.push('乘客對你更信任了');
+ crRecord('avoid',rw); state.crisis=null; trainStatus().slow=0; save(); setTimeout(()=>toast(`✦ 成功避開了危機・${E.n}`),600); render(); return {t,end:1}; }
+/* ---------- 乘客支援 ---------- */
+function crAskPax(id){ const C=state.crisis, E=CRISES[C.id]; const W=paxWill(id,{...E,sevN:C.sevN}); if(C.pax.some(p=>p.id===id&&p.k!=='info')) return {t:'牠已經在幫忙了。'}; C.pax.push({id,k:W.k,v:W.v||0}); save(); return {t:`${nm(id)}：${W.t}`,k:W.k}; }
+/* 乘客主動：信任高、能力相合的乘客，徵兆出現時自己來告訴你 */
+function crPaxReport(H){ const C=state.crisis; if(!C||C.done||C.stage==='W1'||C.paxTold) return false; const E=CRISES[C.id];
+ const id=H.find(x=>(CR_ABIL[x]||[]).some(t=>['sense','know','realm'].includes(t)&&E.pax.includes(t))&&(state.passengers[x].stage||0)>=2&&paxSt(x)!=='hurt'); if(!id) return false; C.paxTold=1; crIntel(Math.max(C.intel,C.real?2:3),nm(id)+'主動告訴你'); C.pax.push({id,k:'info'}); save();
+ setTimeout(()=>dialogueScript([[id,'……等一下。'],[id,C.real?(C.intel>=3?E.inv:`我感覺到……是${CR_CAT[E.cat]}那一類的東西。要小心。`):CR_FALSE[C.id]||'……應該沒事。']],()=>{ if(!C.real) crFalseEnd(); render(); }),600); return true; }
+/* ---------- 爆發與應變 ---------- */
+function crOutbreak(){ const C=state.crisis; if(!C||C.done) return; if(!C.real){ return crFalseEnd(); } C.stage='W4'; C.burst=state.journeyCount; save(); document.body.classList.add('cr-alert');
+ const E=CRISES[C.id]; if(navigator.webdriver&&!window.CRISIS_TEST) return; setTimeout(()=>{ SFX.tone(220,0,1.2,'square',.02); dialogueScript([['self',`——${E.n}。`],['self',E.inv],['dragon',C.sevN>=3?'冷靜。告訴我你要怎麼做。':'先不要慌。']],()=>crPanel()); },400); }
+function crScore(){ const C=state.crisis, E=CRISES[C.id]; let s=0; C.acts.forEach(k=>{ const e=E.eff[k]; s+=typeof e==='number'?e:e==='reduce'||e==='avoid'?2:0; }); s+=C.reduce;
+ C.pax.filter(p=>p.k!=='info'&&p.k!=='refuse'&&p.k!=='none').forEach(p=>s+=Math.min(2,p.v||1)); if(C.pax.some(p=>p.k==='info')) s+=.5;
+ if(C.xi) s+=E.eff.xiyuan||2; if((state.energy==null?80:state.energy)<20) s-=1; if(crTier()>=3) s-=1; if(trainStage('repair')>=3) s+=1; s-=(C.wrong||0)*.5; return s; }
+function crResolve(){ const C=state.crisis; if(!C||C.done) return null; const E=CRISES[C.id], s=crScore(), need=2+C.sevN*1.5; const res=s>=need?'succ':s>=need-2.5?'part':'fail';
+ C.done=1; C.result=res; document.body.classList.remove('cr-alert'); const [lo,hi]=E.out[res[0]]; const d=Math.round(lo+(hi-lo)*Math.min(1,C.sevN/4)); trainTAdd(d,d<0?`${E.n}解決之後，列車的界染淡了一些。`:null);
+ const dm=res==='succ'?[]:(E.dmg[res==='part'?'p':'f']||[]); const T=trainStatus(), lines=[];
+ dm.forEach(x=>{ if(x==='stop'){ T.run='stop'; lines.push('列車緊急停駛'); } else if(x==='slow'){ T.slow=1; if(T.run==='normal') T.run='slow'; lines.push('列車減速'); } else if(x==='shield'){ T.shield=1; lines.push('防護結界受損'); } else if(x==='energy'){ T.energyBad=1; state.energy=Math.max(0,(state.energy||80)-25); lines.push('能源異常'); }
+  else if(x==='seal'){ crSeal(E.where); lines.push(`${CAR_N(E.where)}暫時封鎖`); } else if(x.startsWith('pol:')){ const c=x.slice(4); state.carPol=state.carPol||{}; state.carPol[c]=Math.min(100,(state.carPol[c]||0)+(res==='fail'?45:25)); lines.push(`${CAR_N(c)}受到污染`); }
+  else if(x==='plant'){ const pod=(state.pods||[]).find(c=>c&&c.st<2); if(pod){ pod.wilt=1; lines.push('一株植物受損（可以救回來）'); } } else if(x==='offroute'){ T.offroute=1; lines.push('列車偏離了原本的航線'); }
+  else if(x==='hurt'||x==='scared'||x==='memory'||x==='paxpol'){ const L=Object.keys(PASSENGERS).filter(aboard); if(C.evac&&x==='hurt'){ lines.push('乘客們都在安全的地方，沒有人受傷'); return; } const n=x==='scared'?2:1; L.slice(0,n).forEach(id=>{ state.passengers[id].crSt=x==='hurt'?'hurt':x==='paxpol'?'polluted':'scared'; state.passengers[id].crN=0; }); if(L.length) lines.push(x==='hurt'?`${nm(L[0])}受傷了`:x==='paxpol'?`${nm(L[0])}受到污染，需要照護`:x==='memory'?`${nm(L[0])}的時間感有點混亂`:'有乘客受到驚嚇'); } });
+ if(T.shield||T.run==='stop'||T.energyBad||(state.sealed||[]).length) state.repairs=(state.repairs||[]).concat((E.after||[]).filter(a=>!(state.repairs||[]).some(r=>r.t===a)).map(t=>({t,done:0,need:t.includes('結界')?{stardust:1}:t.includes('淨化')||t.includes('污染')?{purify:1}:{sand:1}})));
+ C.pax.filter(p=>p.k!=='refuse'&&p.k!=='none').forEach(p=>{ state.passengers[p.id].records.push({j:state.journeyCount,t:`在「${E.n}」的時候幫了忙。`}); if(p.k!=='info'){ state.passengers[p.id].trust=(state.passengers[p.id].trust||0)+1; } });
+ if(res!=='succ'&&E.chain[res==='part'?'p':'f']){ const ch=E.chain[res==='part'?'p':'f'].filter(id=>id==='S4'||CRISES[id]); if(ch.length&&Math.random()<(res==='fail'?.7:.35)){ state.crChain=(state.crChain||[]).concat([{id:ch[0],from:C.id}]); lines.push('……好像還有後續的問題'); } }
+ if(res==='succ'&&E.special){ lines.push(E.special); }
+ state.crCalm=state.journeyCount+CR_CALM[C.sevN]; crRecord(res,lines,d); state.crisis=null; save(); render(); return {res,lines,d}; }
+/* ---------- 善後：列車不會自動恢復；要實際動手修 ---------- */
+function crRepair(i){ const R=(state.repairs||[])[i]; if(!R||R.done) return '已經修好了'; const why=crCanPay(R.need); if(why) return why; crPay(R.need); R.done=1; const T=trainStatus();
+ if(R.t.includes('結界')) T.shield=0; if(R.t.includes('核心')||R.t.includes('能源')) T.energyBad=0; if(R.t.includes('航線')||R.t.includes('導航')||R.t.includes('位置')) T.offroute=0;
+ if(R.t.includes('污染')||R.t.includes('淨化')) Object.keys(state.carPol||{}).forEach(c=>{ state.carPol[c]=Math.max(0,state.carPol[c]-40); });
+ if(state.repairs.every(r=>r.done)){ T.run='normal'; T.slow=0; T.faults=[]; state.sealed=(state.sealed||[]).filter(c=>(state.carPol||{})[c]>=60); state.repairs=[]; if(state.disaster&&state.disaster.st>=3){ state.disaster=null; state.crS4ok=0; } logJ('危機的善後完成了，列車恢復正常行駛。','find'); }
+ else if(T.run==='stop'&&state.repairs.filter(r=>!r.done).length<=1) T.run='repair'; save(); return null; }
+function crUnseal(c){ const p=(state.carPol||{})[c]||0; if(p>=60) return '這節車廂的污染還很重，要先淨化。'; state.sealed=(state.sealed||[]).filter(x=>x!==c); save(); return null; }
+function crPurifyCar(c){ const why=crCanPay({purify:1}); if(why) return why; crPay({purify:1}); state.carPol=state.carPol||{}; state.carPol[c]=Math.max(0,(state.carPol[c]||0)-30); trainTAdd(-1); save(); return null; }
+function crCare(id){ const s=state.passengers[id]; if(!s||!['hurt','care','polluted','scared'].includes(s.crSt)) return '牠現在很好。'; if(s.crSt==='polluted'){ const w=crCanPay({purify:1}); if(w) return w; crPay({purify:1}); } else if(matCount('dew')>0) state.materials.dew--; s.crSt='recover'; s.crN=0; s.records.push({j:state.journeyCount,t:'危機之後，受到你的照護。'}); save(); return null; }
+/* ---------- 界染 100%：不是遊戲結束，而是可以搶救的重大災變 ---------- */
+function crDisaster(){ const D=state.disaster={st:1,core:(crPolCars(0).sort((a,b)=>(state.carPol[b]||0)-(state.carPol[a]||0))[0])||'nature',j:state.journeyCount}; const T=trainStatus(); T.run='stop'; state.crisis=null; state.crChain=[];
+ Object.keys(PASSENGERS).filter(aboard).forEach(id=>{ if(state.passengers[id].place!=='outside') state.passengers[id].place=undefined; }); ['nature','observation','memory'].forEach(c=>{ if((state.carPol||{})[c]>=40) crSeal(c); });
+ logJ('列車的界染失控了。進入緊急狀態。','find'); save(); document.body.classList.add('cr-disaster'); if(!(navigator.webdriver&&!window.CRISIS_TEST)) setTimeout(()=>dialogueScript([['self','車廂的光一盞一盞變暗。列車停了下來。'],['dragon','界染失控了。……還來得及。先找到污染最重的地方。'],['self','大家都先到棲息車廂。我去找。']],()=>crPanel()),600); }
+const DIS_STEP=['','找出主要的污染源','淨化污染核心','穩定列車、分區恢復'];
+function crDisAct(k){ const D=state.disaster; if(!D) return '沒有災變。';
+ if(D.st===1){ const h=crHelpers(['sense']).filter(id=>paxSt(id)!=='hurt'); if(!h.length&&k!=='search') return '需要感知能力的乘客幫忙，或者自己一節一節去找。'; D.st=2; D.found=h[0]||'self'; save(); return null; }
+ if(D.st===2){ const n=crHelpers(['nature']).filter(id=>paxSt(id)!=='hurt'); const why=crCanPay({purify:2}); if(why) return why+'（需要兩份淨化材料）'; if(!n.length&&k!=='xiyuan') return '一個人淨化不了。需要自然能力的乘客，或請曦淵幫忙穩住。'; crPay({purify:1}); crPay({purify:1}); D.st=3; D.by=n[0]||'dragon'; if(k==='xiyuan') state.crXiJ=state.journeyCount; state.carPol[D.core]=20; trainTAdd(-25,'主要的污染源被淨化了。'); save(); return null; }
+ if(D.st===3){ state.repairs=(state.repairs||[]).concat([{t:'分區淨化',done:0,need:{purify:1}},{t:'修復防護結界',done:0,need:{stardust:1}}]); document.body.classList.remove('cr-disaster'); D.st=4; logJ('災變搶救成功。接下來，要一節一節修好。','find'); crRecord('rescue',['主要污染源已淨化','還需要分區修復']); save(); return null; } return null; }
+/* ---------- 事件紀錄（整合進既有筆記本） ---------- */
+function crRecord(res,lines,d){ const C=state.crisis||{}, E=CRISES[C.id]||{n:'界染災變'}; state.crHist=state.crHist||[];
+ state.crHist.push({id:C.id||'DIS',n:E.n,j:state.journeyCount,sev:C.sevN?'S'+C.sevN:'S4',cause:C.cause||'界染失控',signs:(C.signs||[]).slice(0,3),acts:(C.acts||[]).map(k=>CR_ACT[k]?CR_ACT[k].n:k),pax:(C.pax||[]).map(p=>`${nm(p.id)}（${{active:'主動協助',agree:'同意協助',calm:'安撫後協助',info:'提供情報',refuse:'拒絕',none:'無法協助'}[p.k]}）`),xi:!!C.xi,res,d:d||0,lines:lines||[]});
+ if(state.crHist.length>40) state.crHist.shift(); logJ(`危機紀錄：${E.n}・${{succ:'成功',part:'部分成功',fail:'失敗',avoid:'事前避開',false:'虛驚一場',rescue:'搶救成功'}[res]}。`,'find'); }
+const RES_N={succ:'成功',part:'部分成功',fail:'失敗',avoid:'事前避開',false:'虛驚一場',rescue:'搶救成功'};
+function crNoteSection(){ const H=(state.crHist||[]); if(!H.length&&!state.repairs?.length) return ''; return `<h3 class="jr-h" style="margin-top:22px">危機紀錄</h3><ul class="nb-list">${H.slice(-8).reverse().map(h=>`<li class="filed"><span><b>第 ${h.j} 趟・${h.n}</b>（${h.sev}）<br><small>原因：${esc(h.cause)}${h.signs.length?`；徵兆：${esc(h.signs.map(s=>s.replace(/[（）]/g,'')).join('／'))}`:''}${h.acts.length?`；行動：${h.acts.join('、')}`:''}${h.pax.length?`；乘客：${h.pax.join('、')}`:''}${h.xi?'；曦淵介入':''}${h.lines.length?`；結果：${esc(h.lines.join('、'))}`:''}${h.d?`；列車界染 ${h.d>0?'+':''}${h.d}`:''}</small></span><em>${RES_N[h.res]}</em></li>`).join('')}</ul>${(state.repairs||[]).some(r=>!r.done)?`<p class="jr-p"><b>還需要修復：</b>${state.repairs.filter(r=>!r.done).map(r=>r.t).join('、')}</p>`:''}`; }
+/* ---------- 應變面板（沿用駕駛室的「列車核心」；不新增大型設備） ---------- */
+function crPanel(){ const C=state.crisis, D=state.disaster, T=trainStatus(), E=C&&CRISES[C.id]; let body='';
+ if(D&&D.st<4){ body=`<h3 class="prep-h">界染失控・搶救</h3><p class="prep-b">第 ${D.st} 步：${DIS_STEP[D.st]}。污染最重的地方：${CAR_N(D.core)}。</p><div class="zask"><button class="btn" data-dis="go">${D.st===1?'請感知的乘客幫忙找':D.st===2?'淨化污染核心（兩份淨化材料）':'穩定列車，開始分區修復'}</button>${D.st===1?'<button class="btn ghost" data-dis="search">自己一節一節找</button>':''}${D.st===2&&!CR_ACT.xiyuan.need()?'<button class="btn ghost" data-dis="xiyuan">請曦淵穩住污染</button>':''}</div>`; }
+ else if(C&&!C.done&&(C.stage!=='W1'||C.intel>0)){ const L=crActList();
+  body=`<h3 class="prep-h">${C.intel>=3?E.n:C.intel>=2?CR_CAT[E.cat]:'不對勁的感覺'}${C.intel>=3?`<small>・${CR_SEV['S'+C.sevN]}・${CR_PREV[E.prev]}</small>`:''}</h3><p class="prep-b">${CR_W[C.stage]}・${INTEL_N[C.intel]}${C.intel>=3?`<br>${E.inv}`:''}</p>${C.signs.length?`<p class="cs-rec">看到的徵兆：${C.signs.map(s=>s.replace(/[（）]/g,'')).join('／')}</p>`:''}
+  <div class="cr-acts">${L.map(a=>`<button class="btn ${a.why?'ghost dis':'ghost'}" data-cr="${a.k}" ${a.why?'disabled':''} title="${esc(a.d)}">${a.hint}${a.n}${a.why?`<small>（${a.why}）</small>`:''}</button>`).join('')}</div>
+  ${C.stage==='W4'||C.intel>=2?`<h3 class="prep-h">請乘客幫忙</h3><div class="cr-acts">${Object.keys(PASSENGERS).filter(aboard).map(id=>{ const fit=(CR_ABIL[id]||[]).filter(t=>E.pax.includes(t)); const asked=C.pax.find(p=>p.id===id&&p.k!=='info'); return `<button class="btn ghost ${fit.length?'':'dis'}" data-pax="${id}" ${fit.length&&!asked?'':'disabled'}>${nm(id)}<small>${fit.length?'・'+fit.map(t=>ABIL_N[t]).join('、'):'・幫不上忙'}${paxSt(id)!=='ok'?'・'+PAX_ST_N[paxSt(id)]:''}${asked?'・'+({active:'協助中',agree:'協助中',calm:'協助中',refuse:'拒絕了'}[asked.k]||''):''}</small></button>`; }).join('')||'<small>車上沒有乘客。</small>'}</div>`:''}
+  ${C.stage==='W4'?`<div class="zask"><button class="btn" data-cr-go>${C.acts.length?'就這樣應對':'什麼都不做，撐過去'}</button></div>`:''}<p class="cr-msg"></p>`; }
+ else { const P=Object.entries(state.carPol||{}).filter(([c,v])=>v>0), R=(state.repairs||[]).map((r,i)=>[r,i]).filter(([r])=>!r.done), hurt=Object.keys(PASSENGERS).filter(id=>aboard(id)&&['hurt','care','polluted','scared'].includes(paxSt(id)));
+  body=`<h3 class="prep-h">列車狀態</h3><p class="prep-b">${TRAIN_RUN_N[T.run]}${T.shield?'・防護結界受損':''}${T.energyBad?'・能源異常':''}${T.offroute?'・偏離航線':''}<br>列車界染 ${trainT()}（${CR_TIER[crTier()][1]}）・能源 ${Math.round(state.energy==null?80:state.energy)}</p>
+  ${P.length?`<p class="cs-rec">局部污染：${P.map(([c,v])=>`${CAR_N(c)} ${v}${crSealed(c)?'（封鎖中）':''}`).join('、')}</p><div class="cr-acts">${P.map(([c])=>`<button class="btn ghost" data-pur="${c}">淨化${CAR_N(c)}</button>`).join('')}${(state.sealed||[]).map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:(state.sealed||[]).length?`<div class="cr-acts">${state.sealed.map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:''}
+  ${R.length?`<h3 class="prep-h">需要修復</h3><div class="cr-acts">${R.map(([r,i])=>`<button class="btn ghost" data-rep="${i}">${r.t}<small>（${Object.entries(r.need).map(([k,v])=>k==='purify'?'淨化材料':MATS[k].name+' ×'+v).join('、')}）</small></button>`).join('')}</div>`:''}
+  ${hurt.length?`<h3 class="prep-h">需要照護的乘客</h3><div class="cr-acts">${hurt.map(id=>`<button class="btn ghost" data-care="${id}">${nm(id)}<small>・${PAX_ST_N[paxSt(id)]}</small></button>`).join('')}</div>`:''}<p class="cr-msg"></p>`; }
+ const ov=panel(`<div class="eyebrow">駕駛室・列車核心</div><h2>${D&&D.st<4?'緊急狀態':C&&!C.done?'應變':'列車狀態'}</h2>${body}`,'small crov'); const msg=t=>{ const m=ov.querySelector('.cr-msg'); if(m) m.textContent=t; };
+ const re=()=>{ closeOv(ov); setTimeout(()=>{ if(state.crisis||state.disaster||(state.repairs||[]).some(r=>!r.done)||trainStatus().run!=='normal') crPanel(); },320); };
+ ov.querySelectorAll('[data-cr]').forEach(b=>b.onclick=()=>{ const r=crDo(b.dataset.cr); if(!r) return; if(r.end){ closeOv(ov); return; } msg(r.t); setTimeout(re,1300); });
+ ov.querySelectorAll('[data-pax]').forEach(b=>b.onclick=()=>{ const r=crAskPax(b.dataset.pax); msg(r.t); setTimeout(re,1500); });
+ const go=ov.querySelector('[data-cr-go]'); if(go) go.onclick=()=>{ const r=crResolve(); closeOv(ov); if(r) setTimeout(()=>dialogueScript([['self',{succ:'……撐過去了。',part:'危機控制住了。可是，留下了一些傷。',fail:'……沒能擋住。'}[r.res]]].concat(r.lines.map(t=>['self',t+'。'])),()=>{ if(r.res!=='succ') sense('（到駕駛室的列車核心，可以看到需要修復的地方。）'); render(); }),360); };
+ ov.querySelectorAll('[data-dis]').forEach(b=>b.onclick=()=>{ const w=crDisAct(b.dataset.dis); if(w) return msg(w); re(); });
+ ov.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>{ const w=crRepair(+b.dataset.rep); if(w) return msg(w); re(); });
+ ov.querySelectorAll('[data-pur]').forEach(b=>b.onclick=()=>{ const w=crPurifyCar(b.dataset.pur); if(w) return msg(w); re(); });
+ ov.querySelectorAll('[data-unseal]').forEach(b=>b.onclick=()=>{ const w=crUnseal(b.dataset.unseal); if(w) return msg(w); re(); });
+ ov.querySelectorAll('[data-care]').forEach(b=>b.onclick=()=>{ const w=crCare(b.dataset.care); if(w) return msg(w); re(); }); }
+/* 列車核心：有危機或需要修復時，打開的是應變面板 */
+const crActive=()=>!!(state.crisis&&!state.crisis.done&&(state.crisis.stage!=='W1'||state.crisis.intel>0))||!!(state.disaster&&state.disaster.st<4)||(state.repairs||[]).some(r=>!r.done)||trainStatus().run!=='normal'||Object.values(state.carPol||{}).some(v=>v>0)||(state.sealed||[]).length>0||Object.keys(PASSENGERS).some(id=>aboard(id)&&['hurt','polluted'].includes(paxSt(id)));
+/* 封鎖中的車廂：門還能走，裡面的功能暫停（只有解除封鎖和淨化可以做） */
+function crSealMsg(h){ if(!crSealed(h.scene)) return null; if(h.shape==='door'||String(h.id).startsWith('cr-')||h.id==='cab-core') return null; return `${CAR_N(h.scene)}封鎖中。到駕駛室的列車核心，淨化或解除封鎖。`; }
+/* 徵兆的熱點：只在徵兆所在的車廂、危險徵兆以上才出現（細微徵兆只有感覺） */
+const CR_SIGN_N={observation:'儀器的讀數',observatory:'車尾外的動靜',cab:'核心的聲音',nature:'植物的紋路',habitat:'角落的聲響',memory:'奇怪的光斑'};
+const CR_SIGN_AT={observation:{x:76,y:62},observatory:{x:60,y:20},cab:{x:40,y:84},nature:{x:70,y:74},habitat:{x:50,y:88},memory:{x:84,y:86}};
+HSDEF.push(...Object.keys(CR_SIGN_AT).map(car=>({id:'cr-'+car,scene:car,get name(){ const C=state.crisis; return C&&C.stage==='W4'?'危機':CR_SIGN_N[car]; },at:CR_SIGN_AT[car],layer:3,track:false,cls:'cr-hs',
+ show:()=>{ const C=state.crisis; return !!(C&&!C.done&&CRISES[C.id].where===car&&(crVisible()||C.stage==='W4')); },imp:()=>true,act:()=>crPanel()})));
+HSDEF.forEach(h=>{ const o=h.lock; h.lock=()=>(o&&o())||crSealMsg(h); });
+
+/* 航行中：外部危機在航程過半時爆發；爆發後沒處理完，列車不會到站 */
+function crVoyTick(v){ const C=state.crisis; if(!C||C.done||C.burst) return; if(CRISES[C.id].at==='voyage'&&C.stage==='W4'&&v.progress>=.55&&v.fin==null) crOutbreak(); }
+const crBlockDepart=()=>trainStatus().run==='stop'?'列車停駛中。要先在列車核心完成修復，才能出發。':(state.crisis&&state.crisis.burst&&!state.crisis.done)?'危機還沒處理完。':(state.disaster&&state.disaster.st<4)?'列車在緊急狀態，不能出發。':null;
+{ const _cc=cabCore; cabCore=function(){ return crActive()?crPanel():_cc(); }; const H=HSDEF.find(h=>h.id==='cab-core'); if(H){ const oi=H.imp; H.imp=()=>!!(state.crisis&&state.crisis.burst&&!state.crisis.done)||!!(state.disaster&&state.disaster.st<4)||(state.repairs||[]).some(r=>!r.done)||(oi?oi():false); } }
 
 const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views||VIEW_BOTH.includes(h.id)) return true; if(h.scene==='observation') return (h.id==='obs-back'?0:1)===(state.oview||0); return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
 function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
