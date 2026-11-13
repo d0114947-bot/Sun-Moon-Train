@@ -212,7 +212,7 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .vine-me{position:absolute;right:0;bottom:0;width:54%;display:flex;flex-direction:column;align-items:flex-end}
 .vine-me>img{width:100%;height:auto;filter:drop-shadow(0 0 20px rgba(255,200,225,.4));transition:filter 1s}
 .vine-me.rest>img{filter:drop-shadow(0 0 34px rgba(190,255,200,.85)) brightness(1.08)}
-.vine-bub{position:relative;margin-bottom:6px;width:min(300px,84vw);padding:12px 14px;border-radius:16px;background:rgba(255,250,242,.95);color:#3a2e4a;font-size:14.5px;line-height:1.75;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:sayin .5s ease both}
+.vine-bub{position:relative;margin-bottom:6px;width:min(300px,84vw);max-height:min(42vh,340px);overflow-y:auto;padding:12px 14px;border-radius:16px;background:rgba(255,250,242,.95);color:#3a2e4a;font-size:14.5px;line-height:1.75;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:sayin .5s ease both}
 .vine-bub::after{content:"";position:absolute;right:22%;bottom:-9px;border:9px solid transparent;border-bottom:0;border-top-color:rgba(255,250,242,.95)}
 .vine-bub .row{margin-top:8px;gap:8px;justify-content:flex-start}
 .vine-bub .btn{padding:6px 14px;font-size:13px}
@@ -1899,6 +1899,10 @@ body.env-warp .env-ov{filter:hue-rotate(25deg) blur(.4px)}body.env-clear .env-ov
 body.old-echo #scene{animation:oldflick 2.2s ease-in-out 2}body.old-echo .evo-glyph text,body.old-echo .tr-veil{filter:drop-shadow(0 0 8px #ffd27a)}@keyframes oldflick{0%,100%{filter:none}20%{filter:brightness(.82)}24%{filter:brightness(1.12) sepia(.25)}60%{filter:sepia(.3) brightness(.95)}}
 .evo-proj.echo-shift{animation:pjshift 4s ease-in-out}@keyframes pjshift{50%{transform:rotate(18deg);filter:hue-rotate(40deg) brightness(1.4)}}
 .mote.visitor .orb{box-shadow:0 0 22px 8px currentColor;animation:visfloat 4s ease-in-out infinite;opacity:.85}@keyframes visfloat{50%{transform:translateY(-8px)}}
+/* 生命種子庫 */
+.keep-row{margin-top:8px;font-size:13.5px;line-height:1.8}.keep-row b{color:#f3e2b4;font-weight:500;margin:0 6px 0 10px}.keep-row b:first-child{margin-left:0}.keep-row small{display:block;opacity:.75}.vit{padding:1px 8px;border-radius:999px;border:1px solid}.vit.v3{color:#b8f0a0}.vit.v2{color:#e8e0c0}.vit.v1{color:#ffb8a0}
+.vine-topics{flex-wrap:wrap;gap:6px}.vine-topics .btn{font-size:12.5px;padding:4px 10px}.vine-say{margin-top:8px;font-size:13.5px;line-height:1.75}
+.cdx-r{margin:1px 0;line-height:1.5;font-size:13px}.cdx-r b{display:inline-block;min-width:6em;color:#6b5434}.cdx-r.lock{opacity:.45}.cdx-pic{height:64px;display:flex;align-items:center;justify-content:center;margin:2px 0}.cdx-pic img{max-height:64px}.plantcodex .jr-sub{margin-bottom:2px}.ov.plantcodex p.cdx-r{font-size:12.5px!important;line-height:1.45!important;margin:0 0 1px!important}.ov.plantcodex .jr-h{margin-bottom:0!important}.cdx-pic.unk{opacity:.5;font-size:13px}.endg{font-size:12px;color:#b04a3a;border:1px solid;border-radius:4px;padding:0 4px}
 .who-list{list-style:none;padding:0;margin:8px 0 0}.who-list li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(232,201,131,.18)}.who-list b{font-weight:500;color:#f3e2b4}.who-list span{text-align:right;font-size:14px}
 </style>
 
@@ -3800,7 +3804,7 @@ function byeTalk(id,next){ const s=state.passengers[id], B=s.bye, nm=PASSENGERS[
   render(); next&&next(); })); }
 function byeGift(id,next){ const nm=PASSENGERS[id].name, B=state.passengers[id].bye;
  const ov=panel(`<div class="eyebrow">送給${nm}</div><h2>要讓牠帶走哪一盆？</h2><div class="jars">${plantsHave().map(p=>`<button class="jar" data-bg="${p}">${jarSvg(jarLeaf(PLANTS[p].color))}<span class="cnt">×${plantN(p)}</span><span class="tag">${PLANTS[p].name}</span></button>`).join('')}</div>`,'care');
- ov.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{ const p=b.dataset.bg, pr=PREF[id]||{love:[],like:[]}; plantAdd(p,-1); B.gift=p; save(); closeOv(ov);
+ ov.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{ const p=b.dataset.bg, pr=PREF[id]||{love:[],like:[]}; plantAdd(p,-1); B.gift=p; try{ bankByeGift(id,p); }catch(e){} save(); closeOv(ov);
   setTimeout(()=>dialogueScript([[id,pr.love.includes(p)?`……是${PLANTS[p].name}。你記得我喜歡這個。`:`${PLANTS[p].name}……好漂亮。`],[id,`我會把它種在${OMEN[id]?OMEN[id].h:'我住的地方'}。`]],()=>{ render(); next&&next(); }),320); }); }
 /* 陪牠在展望台看最後一次星空 */
 function byeStars(id){ const s=state.passengers[id], B=s.bye; B.stars=1; s.records.push({j:state.journeyCount,t:'和你在展望台看了最後一次星空。'}); logJ(`和${PASSENGERS[id].name}在展望台看了最後一次星空。`,'life'); save();
@@ -4142,13 +4146,14 @@ setInterval(()=>{ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STO
   s.place='deck'; s.roamAt=Date.now(); save(); render(); return sense(`（……${PASSENGERS[id].name}好像去了展望台。）`); }
  roamGo(id,pl,true); },20000);
 /* 走進車廂時：同一節車廂裡的乘客，有話要說就會自己開口 */
-function meetHere(){ if(document.querySelector('#layer .dlg,#layer .cine,#layer .board,#layer .ov:not(.drawer)')) return false; if(hanami()) return true; byeSync(); if(echoTrace()||echoStar()) return true; if(state.currentCarriage==='nature'&&envReact([])) return true; if(socEventRun()) return true; exploreTogether();
+function meetHere(){ if(document.querySelector('#layer .dlg,#layer .cine,#layer .board,#layer .ov:not(.drawer)')) return false; if(hanami()) return true; byeSync(); if(echoTrace()||echoStar()) return true; if(bankPendTry()) return true; if(state.currentCarriage==='nature'&&envReact([])) return true; if(socEventRun()) return true; exploreTogether();
  if(state.currentCarriage==='observatory'&&state.currentPhase==='voyage'&&state.voyage&&!state.voyage.snail&&(state.snailFriend||0)>=2&&(state.journeyCount%2===0)){ setTimeout(snailVisit,700); return true; } const H=hereList(); if(!H.length) return false;
  for(const id of H) if(askHere(id)) return true;
  for(const id of H){ const s=state.passengers[id]; if(byeOn(id)&&s.bye.starsAsk&&!s.bye.stars&&s.place==='deck'&&state.currentCarriage==='observatory') return byeStars(id); }
  for(const id of H) if(pairByeTry(id)||packTry(id)||omenTry(id)) return true;
  if(echoFriend(H)) return true;
  if(giftHandTry(H)) return true;
+ if(bankHomeTry(H)) return true;
  if(envReact(H)) return true;
  if(compHintTry()||compPastTry()) return true;
  if(resReact(H)) return true;
@@ -4269,7 +4274,7 @@ function podDrawer(focus,hsid){ let sel=focus||0;
  return hsDrawer(hsid,api=>{ const draw=say=>{ const c=state.pods[sel], P=c&&PLANTS[c.p], m=state.storyFlags.natureLight||'dawn', items=[]; let note=say||'';
    if(!c){ const list=Object.keys(PLANTS).filter(p=>seedN(p)>0);
     if(!note) note=list.length?`${POD_N[sel]}艙是空的。要種哪一顆種子？`:`${POD_N[sel]}艙是空的，可是典藏櫃裡沒有能種的種子了。`;
-    list.forEach(p=>{ const Q=PLANTS[p], kn=seedKnown(p); items.push({t:kn?Q.seed:'未鑑定的種子',s:`${kn?TRAIT[traitOf(p)][0]+'・':''}${state.wish&&state.wish.p===p&&kn?PASSENGERS[state.wish.id].name+'想要的・':''}×${seedN(p)}${kn?'':'・先請守望藤看看'}`,off:!kn,on:()=>{ state.pods[sel]={p,st:0,j:state.journeyCount}; seedAdd(p,-1); state.storyFlags.gt_plant=1; logJ(`在培育艙・${POD_N[sel]}種下${Q.seed}。`,'grow'); save(); SFX.glass(); render();
+    list.forEach(p=>{ const Q=PLANTS[p], kn=seedKnown(p); items.push({t:kn?Q.seed:'未鑑定的種子',s:`${kn?TRAIT[traitOf(p)][0]+'・':''}${state.wish&&state.wish.p===p&&kn?PASSENGERS[state.wish.id].name+'想要的・':''}×${seedN(p)}${kn?'':'・先請守望藤看看'}`,off:!kn,on:()=>{ state.pods[sel]={p,st:0,j:state.journeyCount,...(bankOn(2)&&vitOf(p)<=1?{slow:1}:{})}; seedAdd(p,-1); state.storyFlags.gt_plant=1; logJ(`在培育艙・${POD_N[sel]}種下${Q.seed}。`,'grow'); save(); SFX.glass(); render();
      /* 種下之後：先停下來看看它，再決定接下來要做什麼 */
      api.set({note:`<span class="hdw-seed">${seedImg(p)?`<img src="${seedImg(p)}" alt="">`:''}</span>把${Q.seed}輕輕放進培育液裡。<br>種子慢慢沉下去，停在發光的液體中間，輕輕地轉了一圈。`,items:[{t:'再看一下',on:()=>draw(`${Q.seed}靜靜地浮在${POD_N[sel]}艙裡。……好像在適應新的家。`)}]}); }}); });
    } else if(c.st>=2){ if(!note) note=`${P.name}開花了！`; items.push({t:'收成',cls:'on',on:()=>harvest()},{t:'陪它一下',on:()=>touch()});
@@ -4754,6 +4759,7 @@ function voyageArrive(){
  state.storyFlags.lightLure=!!(state.voyage&&state.voyage.light); state.storyFlags.lastMods=(state.voyage&&state.voyage.mods)||{}; state.voyage=null; state.journeyCount++; state.currentLocation=dest; state.routeNext=null; state.currentPhase='docked';
  if(!state.visitedLocations.includes(dest)) state.visitedLocations.push(dest);
  gardenGrow();   // 培育艙：航行一趟長一段
+ try{ bankArrive(); }catch(e){}
  state.duty=dutyFresh();
  /* 到站後把三件裝備放回裝備台：星途符牒要重新寫入下一段航程，羅盤要重新校準，護符要重新充能 */
  if(equipAll()){ state.spirit.equipment={tablet:false,compass:false,talisman:false}; state.storyFlags.eqBack=1; }
@@ -5300,7 +5306,7 @@ function notebookPanel(){
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
- return journal({cls:'notebook',title:'筆記本',pages:()=>{ const P=pages(); P[0]+=reqSection(); return P; },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
+ return journal({cls:'notebook',title:'筆記本',pages:()=>{ const P=pages(); P[0]+=reqSection()+bankNoteSection(); return P; },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])),
   onClick:(e,ov)=>{ const b=e.target.closest('[data-erase]'); if(!b) return; const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); ov.refresh(); }}); }
 /* 圖鑑：未整理的欄位顯示放入筆記的空格 */
 function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
@@ -5775,8 +5781,8 @@ function forageNow(){ const loc=state.currentLocation, F=FORAGE[loc]; if(!F) ret
  const f0=state.forage, refill=f0&&f0.key===key&&f0.doneAt&&(f0.n||0)<2&&Date.now()-f0.doneAt>120000;   /* 採完之後過一陣子，只會再長出一點常見的材料 */
  if(refill){ const n=(f0.n||0)+1, R=seeded(state.journeyCount*131+loc.length*17+n*977), com=F.pool.filter(([m])=>MATS[m]), tot=com.reduce((a,[,w])=>a+w,0); let r=R()*tot, m=com[0][0]; for(const [x,w] of com){ if((r-=w)<0){ m=x; break; } }
   const i=(n-1)%3, [x,y]=F.spots[i]; f0.n=n; f0.doneAt=null; f0.spots.forEach(sp=>sp.taken=true); f0.spots[i]={x:Math.max(6,Math.min(94,x+(R()-.5)*14)),y,m,taken:false,re:1}; save(); return f0; }
- if(!state.forage||state.forage.key!==key){ const n=refill?(f0.n||0)+1:0, R=seeded(state.journeyCount*131+loc.length*17+n*977), tot=F.pool.reduce((a,[,w])=>a+w,0);
-  const pick=()=>{ let r=R()*tot; for(const [m,w] of F.pool){ if((r-=w)<0) return COLLECTIBLES[m]&&state.collectibles.includes(m)?F.pool[0][0]:m; } return F.pool[0][0]; };
+ if(!state.forage||state.forage.key!==key){ const n=refill?(f0.n||0)+1:0, R=seeded(state.journeyCount*131+loc.length*17+n*977), POOL=bankForagePool(loc,F.pool), tot=POOL.reduce((a,[,w])=>a+w,0);
+  const pick=()=>{ let r=R()*tot; for(const [m,w] of POOL){ if((r-=w)<0) return COLLECTIBLES[m]&&state.collectibles.includes(m)?F.pool[0][0]:m; } return F.pool[0][0]; };
   state.forage={key,n,spots:F.spots.map(([x,y])=>({x:Math.max(6,Math.min(94,x+(n?(R()-.5)*14:0))),y,m:pick(),taken:false}))}; }
  return state.forage; }
 const matCount=m=>((state.materials||{})[m])||0;
@@ -5871,8 +5877,8 @@ const SKILL_FIND={
 function hiddenMems(){ return HID_ALL.filter(h=>h.need).map(h=>({id:'hid_'+h.id,title:h.name,get scene(){ return Object.keys(HIDDEN).find(k=>HIDDEN[k].includes(h)); },have:()=>!!(hidFound(h.id)&&state.hiddenFound[h.id].who),
  get text(){ const f=state.hiddenFound&&state.hiddenFound[h.id], nm=f&&f.who&&PASSENGERS[f.who]?PASSENGERS[f.who].name:'牠'; return h.text.replace('{who}',nm); }})); }
 /* 界域地誌：這個地方的採集與發現 */
-function atlasFinds(id){ const L=(state.forageLog||{})[id], H=(HIDDEN[id]||[]).filter(h=>hidFound(h.id)); if(!L&&!H.length) return '';
- return `<div class="jr-finds">${L&&L.found.length?`<p class="jr-p"><b>採集過：</b>${L.found.map(foundName).join('、')}</p>`:''}${H.length?`<p class="jr-p"><b>隱藏的地方：</b></p><ul class="jr-hid">${H.map(h=>{ const f=state.hiddenFound[h.id]; return `<li>✦ ${h.name}${f.who&&PASSENGERS[f.who]?`<span>（和${PASSENGERS[f.who].name}）</span>`:''}</li>`; }).join('')}</ul>`:''}${HIDDEN[id]&&H.length<HIDDEN[id].length?`<p class="jr-me">這裡應該還有 ${HIDDEN[id].length-H.length} 個我沒發現的地方。</p>`:''}</div>`; }
+function atlasFinds(id){ const L=(state.forageLog||{})[id], H=(HIDDEN[id]||[]).filter(h=>hidFound(h.id)); if(!L&&!H.length) return bankAtlas(id);
+ return `<div class="jr-finds">${L&&L.found.length?`<p class="jr-p"><b>採集過：</b>${L.found.map(foundName).join('、')}</p>`:''}${H.length?`<p class="jr-p"><b>隱藏的地方：</b></p><ul class="jr-hid">${H.map(h=>{ const f=state.hiddenFound[h.id]; return `<li>✦ ${h.name}${f.who&&PASSENGERS[f.who]?`<span>（和${PASSENGERS[f.who].name}）</span>`:''}</li>`; }).join('')}</ul>`:''}${HIDDEN[id]&&H.length<HIDDEN[id].length?`<p class="jr-me">這裡應該還有 ${HIDDEN[id].length-H.length} 個我沒發現的地方。</p>`:''}${bankAtlas(id)}</div>`; }
 /* 下車邀請：同行乘客能在這裡找到隱藏地點時，按鈕上會有一顆小星星 */
 const hidFor=(id,loc)=>(HIDDEN[loc]||[]).some(h=>h.need&&h.need===skillOf(id)&&(!hidFound(h.id)||(h.carve&&!state.hiddenFound[h.id].lit&&matCount('mosslight')>0)));
 
@@ -6177,7 +6183,7 @@ function seedIntro(){ if(state.storyFlags.seedTalk) return; state.storyFlags.see
  setTimeout(()=>dialogueScript([['self','（手心裡多了一顆小小的種子。）'],['self','回到列車之後，先把它收進森羅溫室的種子典藏櫃吧。'],
   ['self','稀有的種子，要先請守望藤看看是什麼，再用溫室中央的晶石，調成它喜歡的光。常見的種子，什麼光都可以。'],
   ['self','然後找一個空的培育艙種下去。停靠的時候常去陪陪它，就算光不對也會長。'],['self','航行一趟、兩趟……它就會開花了。']],()=>render()),900); }
-function gardenGrow(){ const nb=[]; (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; const P=PLANTS[c.p]; if(lightOk(c)||c.tk||voyBless()==='train'||(state.storyFlags.lastMods||{}).bloom){ c.st=P.rare?c.st+1:2; if(c.st>=2) nb.push(c.p); } c.tk=null; }); if(nb.length) setTimeout(()=>nb.forEach(p=>bloomCall(p)),6000); }
+function gardenGrow(){ const nb=[]; (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; if(c.slow){ c.slow=0; return; }   /* 衰弱的種子：多等一趟才發芽 */ const P=PLANTS[c.p]; if(lightOk(c)||c.tk||voyBless()==='train'||(state.storyFlags.lastMods||{}).bloom){ c.st=P.rare?c.st+1:2; if(c.st>=2) nb.push(c.p); } c.tk=null; }); if(nb.length) setTimeout(()=>nb.forEach(p=>bloomCall(p)),6000); }
 function podLightNote(){ const L=(state.pods||[]).map((c,k)=>c&&c.st<2?`${POD_N[k]}艙・${PLANTS[c.p].name}（${PLANTS[c.p].light==='any'?'什麼光都可以':'喜歡'+LIGHT_N[PLANTS[c.p].light]} ${lightOk(c)?'✓':'✗'}）`:null).filter(Boolean);
  return L.length?`<p class="envkv">${L.join('　')}</p>`:''; }
 
@@ -6247,8 +6253,9 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
      :meSay('……認不出來是什麼種子。守望藤也許知道。'))+tut(); if(kn&&!labeled(id)) labelSheet(ov,id,c.name,ov.querySelector(`[data-seed="${id}"]`)); };
  const showC=p=>{ const P=PLANTS[p]; pick(ov.querySelector(`[data-cs="${p}"]`)); SFX.glass(); sayReset(ov);
   ov.querySelector('#sv').innerHTML=`<div class="seed3d"><div class="orbit"></div>${seedImg(p)?`<img class="seedimg" src="${seedImg(p)}" alt="">`:`<div class="core" style="--c:${P.color}"></div>`}</div>`+meSay(`<b>${P.seed}</b>，還有 ${seedN(p)} 顆。種下去會長成${P.name}。${P.desc}<br>${P.hybrid?`這是${PLANTS[P.from[0]].name}和${PLANTS[P.from[1]].name}結出的變種，喜歡${LIGHT_N[P.light]}，航行兩趟才會開花。`:'常見的種子，什麼光都可以，航行一趟就會開花。'}`)+tut(); if(!labeled(p)) labelSheet(ov,p,P.seed,ov.querySelector(`[data-cs="${p}"]`)); };
- ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>show(b.dataset.seed));
- ov.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>showC(b.dataset.cs));
+ const keep=p=>{ const sv=ov.querySelector('#sv'); if(sv&&PLANTS[p]&&seedN(p)>0) sv.insertAdjacentHTML('beforeend',seedKeepHTML(p)); };
+ ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>{ show(b.dataset.seed); keep(b.dataset.seed.replace('seed_','')); });
+ ov.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{ showC(b.dataset.cs); keep(b.dataset.cs); });
  ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=meSay(`<b>${M.name}</b>，還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
  const f=rare.find(id=>state.collectibles.includes(id)&&!COLLECTIBLES[id].sealed&&PLANTS[id.replace('seed_','')]), fc=common.find(p=>seedN(p)>0);
  if(fc&&(!f||!seedN(f.replace('seed_','')))) showC(fc); else if(f) show(f); else { const a=rare.find(id=>state.collectibles.includes(id)); if(a) show(a); }
@@ -6293,7 +6300,7 @@ function gardenPanel(focus){ const ov=panel('','stage garden'), pn=ov.querySelec
   say='';
   pn.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{ sel=+b.dataset.pk; SFX.tap(); draw(); });
   pn.querySelectorAll('[data-plant]').forEach(b=>b.onclick=()=>{ const p=b.dataset.plant; if(!seedKnown(p)||seedN(p)<1) return;
-   state.pods[sel]={p,st:0,j:state.journeyCount}; seedAdd(p,-1); state.storyFlags.gt_plant=1; logJ(`在培育艙・${POD_N[sel]}種下${PLANTS[p].seed}。`,'grow'); save(); SFX.glass(); say=`把${PLANTS[p].seed}輕輕放進培育液裡。`; render(); draw(); });
+   state.pods[sel]={p,st:0,j:state.journeyCount,...(bankOn(2)&&vitOf(p)<=1?{slow:1}:{})}; seedAdd(p,-1); state.storyFlags.gt_plant=1; logJ(`在培育艙・${POD_N[sel]}種下${PLANTS[p].seed}。`,'grow'); save(); SFX.glass(); say=`把${PLANTS[p].seed}輕輕放進培育液裡。`; render(); draw(); });
   const t=pn.querySelector('#g-touch'); if(t) t.onclick=()=>{ const c=state.pods[sel], P=PLANTS[c.p];
    if(c.tk===stopKey()||c.st>=2){ say=P.touch; } else { c.tk=stopKey(); save(); say=P.touch+'<br>……今天，它會好好長大的。'; }
    if(P.sound) SFX.tone(1568,0,.8,'sine',.03); else SFX.tone(988,0,.4,'sine',.02); draw(); };
@@ -6416,9 +6423,9 @@ function natTint(){ if(state.currentCarriage!=='nature'||state.currentPhase==='o
  const f={dawn:`brightness(${b}) saturate(1.08) sepia(.12)`,moon:`brightness(${(b*.8).toFixed(2)}) saturate(.82) hue-rotate(16deg)`,star:`brightness(${(b*.9).toFixed(2)}) saturate(1.18) hue-rotate(-26deg)`}[m];
  [document.querySelector('#scene img.bg')].forEach(im=>{ if(im){ im.style.transition='filter .8s'; im.style.filter=f; } }); }
 /* 守望藤：不跳視窗。動態的精靈直接出現在守望藤旁邊，頭上冒出對話框；點其他地方就離開 */
-function vinePanel(){ const seen=state.clues.includes('clue_ring');
+function vinePanel(hid){ if(bankPendTry()) return; const seen=state.clues.includes('clue_ring');
  const old=document.querySelector('#layer .vine-actor'); if(old){ old._bye(); return; }
- const hs=document.querySelector('#scene [data-hs="nat-special"]'); if(!hs) return;
+ const hs=document.querySelector(`#scene [data-hs="${hid||'nat-special'}"]`)||document.querySelector('#scene [data-hs="nat-special"],#scene [data-hs="nat-vine-b"]'); if(!hs) return;
  const r=(hs.querySelector('.mk')||hs).getBoundingClientRect(), ax=r.left+r.width/2, ay=r.top+r.height/2, left=ax>innerWidth*.5;
  const ov=document.createElement('div'); ov.className='vine-actor '+(left?'l':'r');
  const W=Math.min(260,innerWidth*.34); ov.style.cssText=`left:${Math.max(8,Math.min(innerWidth-W-8,left?ax-W-30:ax+30))}px;top:${Math.max(150,Math.min(innerHeight-W*1.1-10,ay-W*.35))}px;width:${W}px`;
@@ -6435,7 +6442,7 @@ function vinePanel(){ const seen=state.clues.includes('clue_ring');
   const r=bub.querySelector('#vr'), n=bub.querySelector('#vn');
   if(r) r.onclick=()=>{ const P=PURIFY.vine; if(TAINT.purify('vine',P.n,null,P.log)){ me.classList.add('rest'); leaves(); sense(PUR_NARR.vine[0]); bub.innerHTML=`${P.done}<br><small>界染度 ${TAINT.val()}</small>`; hsRefresh(); } };
   if(n) n.onclick=()=>{ bub.hidden=true; SFX.tap(); };
-  bub.insertAdjacentHTML('beforeend',vineGardenRow()); vineGardenBind(bub,me,leaves); };
+  bub.insertAdjacentHTML('beforeend',vineGardenRow()); vineGardenBind(bub,me,leaves); bub.insertAdjacentHTML('beforeend',vineTopicsRow()); vineTopicsBind(bub); requestAnimationFrame(()=>{ const r=bub.getBoundingClientRect(); if(r.top<72) ov.style.top=(parseFloat(ov.style.top)+72-r.top)+'px'; }); };
  me.querySelector('img').onclick=()=>{ if(bub.hidden){ bub.hidden=false; ask(); } };
  ask(); }
 function envPanel(){ const ov=panel('','small stage envov'), pn=ov.querySelector('.panel');
@@ -7622,6 +7629,117 @@ HSDEF.push(
  {id:'mem-casket',scene:'memory',name:'時光匣',at:{x:18,y:84},layer:3,act:()=>casketPanel(),ver:()=>[(state.starMsgs||[]).filter(m=>m.read).length,(state.pGifts||[]).length,Object.keys(state.visitors||{}).length,Object.keys(state.oldEcho||{}).length].join(':')},
  {id:'cab-gift',scene:'cab',name:'一樣小東西',at:{x:60,y:84},layer:3,track:false,show:()=>!!(state.giftPend&&state.giftPend.mode==='place'),imp:()=>true,act:()=>giftFound()},
  ...Object.entries(VISITORS).map(([id,V])=>({id:'vis-'+id,scene:V.car,name:V.name,shape:'npc',cls:'idle-stand visitor',color:()=>V.col[0],at:V.at,layer:3,track:false,show:()=>{ const v=visHere(); return !!(v&&v.id===id); },act:()=>visitorMeet()})));
+
+/* ================================================================
+   生命種子庫：溫室是跨界生命的保存中繼站（不是研究中心）
+   五個階段都由實際事件解鎖：種子失去活性 → 乘客認出消失的故鄉植物（或植物在車上長不大）
+   → 第一次和接收者建立聯繫 → 親手送達並收到復育消息 → 生命方舟
+   只新增兩個熱點（都在溫室「向後看」）：守望藤、植物生命圖鑑。保存沿用種子典藏櫃，委託與復育紀錄寫在筆記本
+   ================================================================ */
+const BANK_N=['','認識植物','認識保存','跨界連結','生命傳遞','生命方舟'];
+const bank=()=>state.bank||(state.bank={stage:1,ev:{},vit:{},comm:[],deliv:[],world:{}});
+const bankOn=n=>bank().stage>=n;
+function bankUp(n,why){ const B=bank(); if(B.stage>=n) return false; B.stage=n; B.ev['s'+n]=state.journeyCount; logJ(`溫室的種子庫：${BANK_N[n]}（${why}）。`,'grow'); save(); setTimeout(()=>toast(`✦ 種子庫・${BANK_N[n]}`),600); hsRefresh(); return true; }
+NPCS.vine={name:'守望藤',image:null,land:false,art:()=>`<svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg"><g fill="#9fd68a" opacity=".85"><path d="M200 560 C160 420 250 360 200 220 C170 140 230 90 210 40" stroke="#6fae63" stroke-width="10" fill="none"/>${Array.from({length:9},(_,i)=>`<ellipse cx="${200+(i%2?40:-40)}" cy="${520-i*52}" rx="34" ry="14" transform="rotate(${i%2?-30:30} ${200+(i%2?40:-40)} ${520-i*52})"/>`).join('')}</g><circle cx="210" cy="40" r="10" fill="#ffe7a8"/></svg>`};
+/* ---------- 保存（第二階段起）：沿用種子典藏櫃與界域調節晶石的光 ---------- */
+const KEEP_NEED={dawn:'晨光・溫暖',moon:'月輝・陰涼',star:'星輝・乾燥',any:'什麼光都可以'};
+const VIT_N=['','衰弱','普通','良好'];
+const vitOf=p=>{ const v=bank().vit[p]; return v==null?2:v; };
+/* 每次到站：種子跟著溫室的光慢慢變好或變弱（最低只到「衰弱」，不會消失） */
+function bankKeepTick(){ if(!bankOn(2)) return; const m=state.storyFlags.natureLight||'dawn', B=bank();
+ Object.keys(PLANTS).filter(p=>seedN(p)>0).forEach(p=>{ const need=PLANTS[p].light||'any'; B.vit[p]=need==='any'||need===m?Math.min(3,vitOf(p)+1):Math.max(1,vitOf(p)-1); }); }
+function seedKeepHTML(p){ if(!bankOn(2)||!PLANTS[p]) return ''; const v=vitOf(p), need=KEEP_NEED[PLANTS[p].light||'any'];
+ return `<p class="keep-row"><b>保存需求</b>${need}<b>保存狀態</b><span class="vit v${v}">${VIT_N[v]}</span>${v<=1?'<small>衰弱的種子種下去，要多等一趟才會發芽。照對光，會慢慢恢復。</small>':''}</p>`; }
+/* ---------- 第一個事件：種子失去活性 ---------- */
+function bankLostCheck(){ const B=bank(); if(B.stage>=2||B.ev.lost||!(state.grown||[]).length||state.journeyCount<3) return;
+ const kinds=Object.keys(PLANTS).filter(p=>seedN(p)>0); if(kinds.length<3) return; const p=kinds.find(x=>!PLANTS[x].rare&&seedN(x)>=2)||kinds.find(x=>seedN(x)>=2); if(!p) return;
+ seedAdd(p,-1); B.ev.lost={p,j:state.journeyCount}; B.pend='lost'; save(); }
+const BANK_SAY={
+ lost:p=>[['self','種子典藏櫃裡，有一顆種子變灰了。'],['self',`是${PLANTS[p].seed}。……摸起來，冷冷的。`],['vine','種子也是活的。'],['vine','放太久、光不對，它就會睡著。睡得太深，就醒不過來了。'],['self','……那要怎麼保存？'],['vine','每一種種子，喜歡的光不一樣。你看櫃子，我教你。']],
+ cant:()=>[['vine','你種過很多植物了。'],['vine','可是有些植物，在列車裡永遠長不大。'],['vine','它們的根，記得自己的土地。……要回到那裡，才算真的活下來。'],['self','回到那裡……是誰帶它們回去？'],['vine','你。或者，你遇見的那些生命。']],
+ ark:()=>[['vine','你知道嗎。'],['vine','很久以前，這節車廂叫做「方舟」。'],['vine','渡守把每一個熄滅的世界裡，最後的一顆種子，都放在這裡。'],['vine','現在，換你了。'],['self','……我只是喜歡收集不同世界的植物。'],['vine','我知道。一開始，他們也是。']]};
+/* ---------- 第二個事件：乘客認出故鄉已經消失的植物 ---------- */
+function homePlantMatch(){ for(const id of Object.keys(HOME_NAME||{})){ if(!aboard(id)||(state.passengers[id].stage||0)<2) continue; const p=Object.keys(HOME_NAME[id]).find(x=>seedN(x)>0||plantN(x)>0||(state.grown||[]).includes(x)); if(p) return [id,p]; } return null; }
+function bankHomeTry(H){ const B=bank(); if(B.stage!==2||B.ev.home) return false; const m=homePlantMatch(); if(!m||!H.includes(m[0])) return false; const [id,p]=m, hn=HOME_NAME[id][p];
+ B.ev.home={id,p,j:state.journeyCount}; save();
+ setTimeout(()=>dialogueScript([[id,`……這個，是「${hn}」。`],[id,'我的家鄉，以前到處都是。'],[id,'現在，那裡已經沒有了。'],['self',`……${PLANTS[p].name}，在這裡還活著。`],[id,'嗯。……如果有一天，有個地方能讓它長回去就好了。']],()=>{ state.passengers[id].records.push({j:state.journeyCount,t:`認出了${PLANTS[p].name}：家鄉的「${hn}」。`}); bankUp(3,`${nm(id)}認出了家鄉已經消失的植物`); render(); }),600); return true; }
+/* ---------- 接收者：沿用外景既有的地點（古樹、星河），不新增熱點 ---------- */
+const RCV={
+ tree:{hs:'out-tree',loc:'dawnForest',name:'古樹',trait:'dawn',meet:[['self','把手放在古樹上。樹冠裡那個數數的聲音，停了下來。'],['self','……它在問：你身上，是不是有森林以前的味道？'],['self','森林的邊緣，有一片空地。以前那裡長滿了晨光的花，後來一株一株不見了。'],['self','它想要回一株。……可以嗎？']],news:p=>`晨曦森林的邊緣，${PLANTS[p].name}長出了第一片新葉。古樹說，數數的聲音又多了一個。`},
+ river:{hs:'out-river',loc:'starIslands',name:'星河的守潮者',trait:'moon',meet:[['self','星河的邊上，有一群很小的光，一直在守著漂走的浮島留下的空位。'],['self','牠們說：島漂走的時候，島上的植物也一起走了。'],['self','如果有一株月光的植物，能留在這裡……星河就不會那麼空。']],news:p=>`星河浮島的空位上，${PLANTS[p].name}開花了。守潮者說，漂走的島，也許會循著花香回來。`}};
+const ENDANGER=['tidelotus','twinbloom','memnut','deeproot','trilight'];
+function rcvWant(r){ const R=RCV[r], B=bank(), done=B.deliv.filter(d=>d.rcv===r).map(d=>d.p);
+ const pool=Object.keys(PLANTS).filter(p=>traitOf(p)===R.trait&&!done.includes(p)&&(bankOn(5)||!ENDANGER.includes(p)));
+ const prefer=pool.filter(p=>(state.grown||[]).includes(p)||seedN(p)>0); const L=(bankOn(5)?prefer.filter(p=>ENDANGER.includes(p)).concat(prefer):prefer).concat(pool); return L[0]||null; }
+const commOn=r=>bank().comm.find(c=>c.rcv===r&&c.st==='on');
+const canGive=p=>plantN(p)>0||(seedN(p)>0&&vitOf(p)>=2);
+function rcvAct(r){ const R=RCV[r], B=bank(); if(!bankOn(3)||state.currentLocation!==R.loc) return false; const c=commOn(r);
+ if(!c){ const p=rcvWant(r); if(!p) return dialogueScript([['self',`${R.name}安安靜靜的。上次送來的植物，長得很好。`]]),true;
+  return dialogueScript(R.meet.concat([['self',`牠想要的是……${PLANTS[p].name}。`]]),()=>{ B.comm.push({id:'c'+state.journeyCount+r,rcv:r,loc:R.loc,p,st:'on',j:state.journeyCount}); if(!bankOn(4)) bankUp(4,`第一次和${R.name}建立了聯繫`); toast(`✦ 寫進筆記本：把${PLANTS[p].name}帶給${R.name}`); save(); render(); }),true; }
+ const p=c.p; if(!canGive(p)) return dialogueScript([['self',`${R.name}還在等${PLANTS[p].name}。`],['self',seedN(p)>0?'種子太衰弱了……先在溫室照對光，讓它恢復一點。':'要先在溫室種出來，或帶一顆有活力的種子來。']]),true;
+ const usePlant=plantN(p)>0; const ov=panel(`<div class="eyebrow">${LOCATIONS[R.loc].name}</div><h2>交給${R.name}</h2><p>要把${usePlant?PLANTS[p].name:PLANTS[p].seed}交給${R.name}嗎？</p><div class="zask"><button class="btn" data-give="1">交給牠</button><button class="btn ghost" data-give="0">再等一下</button></div>`,'small');
+ ov.querySelectorAll('[data-give]').forEach(bt=>bt.onclick=()=>{ closeOv(ov); const ch={k:bt.dataset.give==='1'}; if(!ch.k) return render();
+  if(usePlant) plantAdd(p,-1); else seedAdd(p,-1); c.st='done'; c.done=state.journeyCount; B.deliv.push({rcv:r,loc:R.loc,p,j:state.journeyCount,newsJ:state.journeyCount+2,how:usePlant?'plant':'seed'});
+  logJ(`把${PLANTS[p].name}親手交給了${R.name}。`,'grow'); save();
+  setTimeout(()=>dialogueScript([['self',`${R.name}收下了${PLANTS[p].name}。`],['self','接下來，是牠們的事了。……我只是把它帶到這裡。']],()=>{ toast('✦ 送達・寫進筆記本'); bankArkCheck(); render(); }),320); }),true; }
+/* 乘客離開時帶走的植物（精靈的準備）也算一次跨界送達 */
+function bankByeGift(id,p){ if(!bankOn(4)||!p) return; const B=bank(); if(B.deliv.some(d=>d.rcv==='home_'+id)) return; B.deliv.push({rcv:'home_'+id,loc:state.currentLocation,p,j:state.journeyCount,newsJ:state.journeyCount+2,how:'bye'}); save(); }
+/* 到站：復育消息（不用一直巡視；在到站的時候自然傳來） */
+function bankNewsTick(){ const B=bank(); let got=null; B.deliv.forEach(d=>{ if(d.news||state.journeyCount<d.newsJ) return; d.news=state.journeyCount;
+  const t=RCV[d.rcv]?RCV[d.rcv].news(d.p):`${nm(d.rcv.slice(5))}帶回家的${PLANTS[d.p].name}，在牠的家鄉落地生根了。`; d.newsT=t; got=t;
+  B.world[d.loc]=B.world[d.loc]||[]; if(RCV[d.rcv]&&!B.world[d.loc].includes(d.p)) B.world[d.loc].push(d.p);   /* 世界真的改變：那個地方開始長出這種植物 */
+  logJ('復育消息：'+t,'grow'); });
+ if(got){ save(); setTimeout(()=>sense(`（傳來了復育的消息：${got}）`),9500); } bankArkCheck(); }
+function bankArkCheck(){ const B=bank(); if(B.stage!==4) return; const news=B.deliv.filter(d=>d.news).length; if(B.deliv.length>=3&&news>=2&&!B.ev.ark){ B.ev.ark=state.journeyCount; B.pend='ark'; save(); } }
+/* 世界的變化：送達並復育成功的植物，會出現在那個地方的採集點 */
+function bankForagePool(loc,pool){ const W=(bank().world||{})[loc]||[]; return W.length?pool.concat(W.map(p=>['sd:'+p,2])):pool; }
+/* 世界劇情：同一個地方復育了兩種以上，界域地誌會記下那裡的改變 */
+function bankAtlas(loc){ const W=(bank().world||{})[loc]||[]; if(!W.length) return ''; return `<p class="jr-p"><b>復育：</b>${W.map(p=>PLANTS[p].name).join('、')}在這裡重新長了出來。${W.length>=2?(loc==='dawnForest'?'森林的邊緣，又變回了一片晨光的花海。':'星河上空出來的位置，開始有島慢慢漂回來。'):''}</p>`; }
+/* ---------- 第二階段後，回到溫室時播放待處理的事件 ---------- */
+function bankPendTry(){ const B=bank(); if(!B.pend||state.currentCarriage!=='nature'||state.currentPhase==='outside') return false; const k=B.pend; B.pend=null; save();
+ setTimeout(()=>dialogueScript(BANK_SAY[k](B.ev.lost&&B.ev.lost.p),()=>{ if(k==='lost') bankUp(2,'一顆種子失去了活性'); if(k==='cant') bankUp(3,'有些植物在列車裡長不大'); if(k==='ark') bankUp(5,'送出去的植物在別的世界活了下來'); render(); }),600); return true; }
+function bankCantCheck(){ const B=bank(); if(B.stage!==2||B.ev.home||B.ev.cant) return; if(state.journeyCount-(B.ev.s2||0)>=3){ B.ev.cant=state.journeyCount; B.pend='cant'; save(); } }
+function bankArrive(){ try{ bankLostCheck(); bankKeepTick(); bankCantCheck(); bankNewsTick(); }catch(e){} }
+/* ---------- 守望藤：依進度開放的知識（有自己的個性，不替你做事） ---------- */
+const VINE_TOPIC=[
+ {k:'grow',n:'生長環境',s:1,t:()=>'每一株植物都有自己喜歡的光。晨光系的在早上醒來，月輝系的喜歡安靜的夜，星輝系的……很難伺候。<br>培育艙的光不對，它也會長，只是要你多陪陪它。'},
+ {k:'keep',n:'保存建議',s:2,t:()=>{ const weak=Object.keys(PLANTS).filter(p=>seedN(p)>0&&vitOf(p)<=1); return weak.length?`${weak.slice(0,3).map(p=>`${PLANTS[p].seed}想要${KEEP_NEED[PLANTS[p].light||'any']}`).join('；')}。<br>把晶石的光調過去，下一站它們就會好一點。`:'櫃子裡的種子都睡得很好。……你很細心。'; }},
+ {k:'rare',n:'特殊的植物',s:2,t:()=>'變種的植物，是兩株植物的花粉自己決定的。我也猜不到它們會長成什麼。<br>還有櫃子裡那三顆封著的古種……它們在等的，不是光。'},
+ {k:'cross',n:'跨界復育',s:3,t:()=>{ const c=bank().comm.filter(x=>x.st==='on'); return c.length?`${c.map(x=>`${RCV[x.rcv].name}在等${PLANTS[x.p].name}`).join('；')}。<br>開過花的植物最好。種子的話，要有活力的。`:'你可以去問問那些失去植物的地方。古樹記得森林以前的樣子，星河的守潮者記得漂走的島。<br>我不能替你去。……我的根，在這裡。'; }},
+ {k:'story',n:'植物的記憶',s:5,t:()=>'我是這節車廂的第一株植物。渡守把我種下的時候，說：「如果哪天我們不在了，你就幫忙記得。」<br>我記得。每一顆經過這裡的種子，我都記得。'}];
+function vineTopicsRow(){ const L=VINE_TOPIC.filter(x=>bankOn(x.s)); return L.length?`<div class="row vine-topics">${L.map(x=>`<button class="btn ghost" data-vt="${x.k}">${x.n}</button>`).join('')}</div>`:''; }
+function vineTopicsBind(bub){ bub.querySelectorAll('[data-vt]').forEach(b=>b.onclick=()=>{ const T=VINE_TOPIC.find(x=>x.k===b.dataset.vt); let o=bub.querySelector('.vine-say'); if(!o){ bub.insertAdjacentHTML('beforeend','<p class="vine-say"></p>'); o=bub.querySelector('.vine-say'); } o.innerHTML=T.t(); SFX.tone(784,0,.4,'sine',.02); }); }
+/* ---------- 植物生命圖鑑（沿用筆記本的書頁設計）：欄位依階段開放 ---------- */
+function plantOrigin(p){ const L=Object.entries(FORAGE).filter(([l,F])=>F.pool.some(([m])=>m==='sd:'+p||m==='seed_'+p)).map(([l])=>LOCATIONS[l].name); const P=PLANTS[p];
+ return P.hybrid?`${PLANTS[P.from[0]].name}和${PLANTS[P.from[1]].name}的變種`:L.length?L.join('、'):P.legacy?'守護者留下／乘客分給你的種子':'旅途中偶然得到'; }
+function plantNative(p){ const hs=Object.keys(HOME_NAME||{}).filter(id=>HOME_NAME[id][p]); const t=traitOf(p);
+ return `${t==='dawn'?'日界・晨光照得到的地方':t==='moon'?'月界・安靜的夜裡':t==='star'?'星光直接落下的高處':'不挑地方'}${hs.length?`（${hs.map(id=>`${nm(id)}的家鄉叫它「${HOME_NAME[id][p]}」`).join('；')}）`:''}`; }
+function plantRcv(p){ const t=traitOf(p), r=Object.entries(RCV).filter(([k,R])=>R.trait===t).map(([k,R])=>`${R.name}（${LOCATIONS[R.loc].name}）`); return r.length?r.join('、'):'還沒有找到。'; }
+function codexPanel(){ const B=bank(), s=B.stage, seen=p=>seedN(p)>0||(state.grown||[]).includes(p)||plantN(p)>0||(state.seedKnown||[]).includes(p);
+ const known=Object.keys(PLANTS).filter(seen), unk=Object.keys(PLANTS).length-known.length;
+ const row=(n,v,on)=>on?`<p class="cdx-r"><b>${n}</b>${v}</p>`:`<p class="cdx-r lock"><b>${n}</b>？？？</p>`;
+ const page=p=>{ const P=PLANTS[p], D=B.deliv.filter(d=>d.p===p), g=(state.grown||[]).includes(p);
+  return `<h3 class="jr-h">${P.name}${ENDANGER.includes(p)&&s>=5?' <small class="endg">瀕危</small>':''}</h3><p class="jr-sub">${P.seed}${P.lang?'・'+P.lang:''}</p>${PLANT_IMG[p]&&g?`<figure class="cdx-pic"><img src="${PLANT_IMG[p]}" alt=""></figure>`:`<figure class="cdx-pic unk">${g?'':'還沒有種出來'}</figure>`}
+   ${row('外觀',g?P.desc:'種出來之後才看得到。',true)}${row('發現來源',plantOrigin(p),true)}${row('植物特性',TRAIT[traitOf(p)]?TRAIT[traitOf(p)].join('：'):'—',true)}${row('生長條件',LIGHT_N[P.light||'any'],true)}
+   ${row('保存需求',KEEP_NEED[P.light||'any'],s>=2)}${row('保存狀態',seedN(p)>0?VIT_N[vitOf(p)]:'櫃子裡沒有種子',s>=2)}
+   ${row('原生環境',plantNative(p),s>=3)}${row('可能的接收者',plantRcv(p),s>=3)}
+   ${row('跨界送達',D.length?D.map(d=>`第 ${d.j} 趟・${RCV[d.rcv]?RCV[d.rcv].name:nm(d.rcv.slice(5))+'的家鄉'}`).join('<br>'):'還沒有送出去過。',s>=4)}
+   ${row('復育成果',D.filter(d=>d.news).map(d=>d.newsT).join('<br>')||'還沒有消息。',s>=5||(s>=4&&D.some(d=>d.news)))}`; };
+ const pages=()=>[`<h3 class="jr-h">植物生命圖鑑</h3><p class="jr-sub">溫室・${BANK_N[s]}</p><p class="jr-p">${s===1?'記錄在旅途中遇見的植物。':s===2?'種子也是活的。圖鑑裡多了保存的欄位。':s===3?'每一株植物都有它原本的土地。':s===4?'有些植物，可以被帶回去。':'這節車廂，曾經叫做方舟。'}</p><p class="jr-p">已記錄 ${known.length} 種${unk?`・還有 ${unk} 種沒有遇見`:''}</p>${s>=4?`<p class="jr-p">送出去的植物 ${B.deliv.length} 株・收到的復育消息 ${B.deliv.filter(d=>d.news).length} 則</p>`:''}`].concat(known.map(page));
+ return journal({cls:'plantcodex',title:'植物生命圖鑑',pages,tabs:[['總覽',0]].concat(known.slice(0,10).map((p,i)=>[PLANTS[p].name,i+1]))}); }
+/* 筆記本：植物的委託、送達與復育消息（第四階段起） */
+function bankNoteSection(){ const B=bank(); if(!bankOn(4)) return ''; const C=B.comm, D=B.deliv;
+ return `<h3 class="jr-h" style="margin-top:22px">植物的旅程</h3><ul class="nb-list">${C.map(c=>`<li class="${c.st==='on'?'':'filed'}"><span><b>${RCV[c.rcv].name}</b>：把${PLANTS[c.p].name}帶到${LOCATIONS[c.loc].name}</span><em>${c.st==='on'?(canGive(c.p)?'可以送了':'準備中'):'已送達 ✦'}</em></li>`).join('')}${D.filter(d=>d.rcv.startsWith('home_')).map(d=>`<li class="filed"><span><b>${nm(d.rcv.slice(5))}</b>：帶著${PLANTS[d.p].name}回家</span><em>已送達 ✦</em></li>`).join('')}</ul>${D.filter(d=>d.news).length?`<p class="jr-p"><b>復育消息</b><br>${D.filter(d=>d.news).map(d=>esc(d.newsT)).join('<br>')}</p>`:''}`; }
+/* ---------- 溫室「向後看」的兩個熱點 ---------- */
+HSDEF.push(
+ {id:'nat-vine-b',scene:'nature',name:'守望藤',at:{x:73,y:44},layer:2,act:()=>vinePanel('nat-vine-b'),imp:()=>!!bank().pend},
+ {id:'nat-codex',scene:'nature',name:'植物生命圖鑑',at:{x:86,y:46},layer:3,act:()=>codexPanel(),ver:()=>bank().stage+':'+(state.grown||[]).length+':'+bank().deliv.length});
+VIEW_BACK.push('nat-vine-b','nat-codex');
+/* 接收者：沿用晨曦森林的古樹、星河浮島的星河 */
+HSDEF.forEach(h=>{ const r=Object.keys(RCV).find(k=>RCV[k].hs===h.id); if(!r) return; const oa=h.act, ol=h.layer, oimp=h.imp;
+ h.act=el=>{ if(rcvAct(r)) return; if(typeof oa==='function') return oa(el); if(oa) return runAct(oa); whisper(el,typeof h.hint==='function'?h.hint():h.hint); };
+ Object.defineProperty(h,'layer',{get(){ return bankOn(3)?2:ol; },configurable:true});
+ h.imp=()=>{ const c=commOn(r); return (c&&canGive(c.p))||(bankOn(3)&&!commOn(r)&&!!rcvWant(r)&&!bank().comm.some(x=>x.rcv===r&&x.st==='on'))||(oimp?oimp():false); }; });
 
 const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views||VIEW_BOTH.includes(h.id)) return true; if(h.scene==='observation') return (h.id==='obs-back'?0:1)===(state.oview||0); return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
 function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
