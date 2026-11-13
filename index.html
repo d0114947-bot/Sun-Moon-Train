@@ -5205,7 +5205,8 @@ function farewell(id,next){ const p=PASSENGERS[id], s=state.passengers[id], nm=p
   refl.push(['self',bd?`${PASSENGERS[bd.o].name}還站在車門邊，看著外面。……我也陪牠站一下。`:'列車好像輕了一點。……可是，也好像比較暖了。']);
   B.st='gone'; B.script=sc.concat(refl); save();
   /* 6 離開的場景 8 紀念品 9 圖鑑與回憶水晶 */
-  cine.cls='clear'; cine([`${nm}的光沿著車門滑出去，`,'在月台邊停了一下，然後消失在遠處。'].concat(K?[`你的手心裡，多了一樣東西：「${K[0]}」。`]:[]),once1(()=>dialogueScript(refl,()=>{ if(K) toast('紀念品收進典藏車廂的收藏櫃'); setTimeout(()=>toast(`✦ 回憶水晶凝結了新的片刻：告別・${nm}`),K?1800:0); render(); next&&next(); })));
+  /* 乘客告別的共用過場：車門外的月台、遠方的光 */
+  cine([`${nm}的光沿著車門滑出去，`,'在月台邊停了一下，然後消失在遠處。'].concat(K?[`你的手心裡，多了一樣東西：「${K[0]}」。`]:[]),once1(()=>{ if(K) itemPop('keep_'+id,K[0]); dialogueScript(refl,()=>{ if(K) toast('紀念品收進典藏車廂的收藏櫃'); setTimeout(()=>toast(`✦ 回憶水晶凝結了新的片刻：告別・${nm}`),K?1800:0); render(); next&&next(); }); }),BYE_IMG);
  });
 }
 function reunion(id){ const p=PASSENGERS[id], s=state.passengers[id];
@@ -6797,8 +6798,10 @@ function crysFor(c,k=0){ const [h,sa]=hexHue(c); const L=Object.entries(CRYS_HUE
 const ITEM_IMG={dew:'assets/mat-dew.webp',sand:'assets/mat-sand.webp',mosslight:'assets/mat-mosslight.webp',auroramoss:'assets/mat-auroramoss.webp',pollen:'assets/mat-pollen.webp',stardust:'assets/mat-stardust.webp',
  relic_ring:'assets/item-relic_ring.webp',anomaly_rift:'assets/item-anomaly_rift.webp',crystal_echo:'assets/item-crystal_echo.webp',
  keep_felinia:'assets/keep-felinia.webp',keep_leviathaurora:'assets/keep-leviathaurora.webp',keep_cinder:'assets/keep-cinder.webp',keep_aelis:'assets/keep-aelis.webp',keep_pyro:'assets/keep-pyro.webp',keep_vandora:'assets/keep-vandora.webp',
- keep_frost:'assets/keep-frost.webp',keep_sirenora:'assets/keep-sirenora.webp',keep_titan:'assets/keep-titan.webp',keep_lynx:'assets/keep-lynx.webp',keep_strider:'assets/keep-strider.webp'};
+ keep_frost:'assets/keep-frost.webp',keep_sirenora:'assets/keep-sirenora.webp',keep_titan:'assets/keep-titan.webp',keep_lynx:'assets/keep-lynx.webp',keep_strider:'assets/keep-strider.webp',
+ keep_windkoi:'assets/keep-windkoi.webp',keep_mnemo:'assets/keep-mnemo.webp',keep_cabbfrog:'assets/keep-cabbfrog.webp',keep_skywhale:'assets/keep-skywhale.webp',keep_scythe:'assets/keep-scythe.webp',keep_dawnsail:'assets/keep-dawnsail.webp',keep_grinfox:'assets/keep-grinfox.webp',keep_skyfox:'assets/keep-skyfox.webp',keep_moonwyrm:'assets/keep-moonwyrm.webp',keep_sandwyrm:'assets/keep-sandwyrm.webp',keep_treeling:'assets/keep-treeling.webp',keep_sola:'assets/keep-sola.webp'};
 const itemImg=id=>ITEM_IMG[id]||null;
+const BYE_IMG='assets/bye-scene.jpg';
 const itemIcon=(id,c,k)=>itemImg(id)?`<img class="gemimg itemimg" src="${itemImg(id)}" alt="" draggable="false">`:gemIcon(c,k);
 /* 撿到東西時：實物圖在畫面中間浮起來一下 */
 function itemPop(id,label){ const im=itemImg(id); if(!im) return; const d=document.createElement('div'); d.className='item-pop'; d.innerHTML=`<img src="${im}" alt=""><b>${label||''}</b>`; document.body.appendChild(d); setTimeout(()=>d.remove(),2400); }
