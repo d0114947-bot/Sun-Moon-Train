@@ -2948,12 +2948,14 @@ const EVENTS = {
 function freshState(){ return {
  v:1, introDone:false, journeyCount:0, currentLocation:'origin', currentCarriage:'observation', currentPhase:'docked',
  duty:dutyFresh(), spirit:{contamination:null,contaminationLog:[],taint:6,pur:null,equipment:{tablet:false,compass:false,talisman:false}}, voyage:null,
- passengers:{}, completedEvents:[], pendingEvents:[], unlockedLocations:['dawnForest','starIslands'], visitedLocations:[],
+ passengers:{}, completedEvents:[], pendingEvents:[], unlockedLocations:['dawnForest','starIslands'], visitedLocations:[], trainTaint:30,   /* 列車的全局界染：新的旅程從 30 開始（舊存檔保留原本的數值） */
  view:{}, seen:{}, discoveredLifeforms:[], collectibles:['seed_ancient_a','seed_ancient_b','seed_ancient_c'], clues:[], storyFlags:{natureLight:'dawn'},
  culture:null, log:[{j:0,t:'列車在沉睡之地甦醒。精靈接下了列車的值勤職責。'}]
 };}
 let state = load() || freshState();
-function load(){ try{ const s=JSON.parse(localStorage.getItem(SAVE_KEY)); return s&&s.v===1? Object.assign(freshState(),s):null; }catch(e){ return null; } }
+function load(){ try{ const s=JSON.parse(localStorage.getItem(SAVE_KEY)); return s&&s.v===1? oldTrainTaint(Object.assign(freshState(),s),s):null; }catch(e){ return null; } }
+/* 舊存檔：沒有列車界染欄位的存檔，保留當時隱含的 60，不被新的起始值 30 覆蓋 */
+function oldTrainTaint(st,raw){ if(raw&&raw.introDone&&raw.trainTaint==null) st.trainTaint=60; return st; }
 function save(){ try{ state.savedAt=Date.now(); localStorage.setItem(SAVE_KEY,JSON.stringify(state)); }catch(e){} }
 
 const aboard = id => !!(state.passengers[id]&&state.passengers[id].aboard);
@@ -4918,7 +4920,7 @@ function normalizeState(){
 /* 讀檔：直接恢復狀態，不重播開場、不重跑初次值勤 */
 function loadGame(st,name){
  closeAll(); const ms=$('#mainscreen'); if(ms) ms.remove();
- SFX.init(); SFX.stopDrone(); TRAINSFX.stop(); BGM.start(); CAB.reset(); state=Object.assign(freshState(),clone(st)); normalizeState(); save();
+ SFX.init(); SFX.stopDrone(); TRAINSFX.stop(); BGM.start(); CAB.reset(); state=oldTrainTaint(Object.assign(freshState(),clone(st)),st); normalizeState(); save();
  PANO.active=null; layout.centered=false; RUNNING=true; render();
  if(state.currentPhase==='voyage') SFX.startDrone(); else if(state.currentPhase==='docked'){ NOFEEL=true; arrivalChecks(); }
  toast('已喚回：'+name);
@@ -7285,7 +7287,7 @@ const EVO=[
  {k:'repair',n:'界染修復',car:'cab',col:'#bff4ff',tone:[1046,1318,1568],stages:['受染','初步淨化','能量恢復','完整修復'],
   got:['車窗暗暗的，水晶混濁，金色的裝飾失去了光澤。','車窗慢慢變透明，水晶裡出現了微弱的光。','車廂裡的光變亮了；穿越界壁時，列車替你擋下了一點界染。','車窗清澈，水晶恢復了原本的光澤。古代的能量重新在列車裡流動。'],
   hint:['列車也需要淨化：駕駛室的核心水晶在等。','淨化、日界的晨光、會吸收界染的生命，都會幫列車恢復。','',''],
-  calc:()=>{ const t=trainT(); return t<15?4:t<35?3:t<55?2:1; },
+  calc:()=>{ const t=trainT(); return t<7?4:t<17?3:t<27?2:1; },   /* 門檻跟著新的起始值（30）等比例調整 */
   prog:()=>`列車界染 ${trainT()}`},
  {k:'guard',n:'渡守記憶',car:'memory',col:'#ffd6a0',tone:[392,523,784],stages:['模糊的記憶','記憶回聲','隱藏空間開啟','列車真相'],
   got:['典藏車廂裡，有一處不尋常的空間痕跡。','封印的門扉浮現了輪廓，會回應你身上的光；映心鏡偶爾映出陌生的身影。','渡守的值勤室打開了。','值勤室裡更深的紀錄亮了起來：這列車真正的用途。'],
@@ -7917,10 +7919,13 @@ const crSealed=c=>(state.sealed||[]).includes(c);
 const CR_GAP={1:2,2:5,3:12,4:20};   /* 同等級兩次之間至少隔幾趟（約等於規格的遊戲日） */
 const CR_CALM={1:0,2:1,3:2,4:3};
 function crPick(phase){ const ctx=phase; const tier=crTier(); state.crLast=state.crLast||{}; state.crHist=state.crHist||[];
- const L=Object.entries(CRISES).filter(([id,E])=>{ if((E.at==='voyage')!==(ctx==='depart')&&E.at!=='any') return false; const sevN=crSevOf(E); if(state.journeyCount-(state.crLast['S'+sevN]==null?-99:state.crLast['S'+sevN])<CR_GAP[sevN]) return false;
+ const L=Object.entries(CRISES).filter(([id,E])=>{ if((E.at==='voyage')!==(ctx==='depart')&&E.at!=='any') return false; if(E.sev[0]>crCap()) return false;   /* 還沒開放的等級，不會被抽到 */ const sevN=crSevOf(E); if(state.journeyCount-(state.crLast['S'+sevN]==null?-99:state.crLast['S'+sevN])<CR_GAP[sevN]) return false;
   const last=state.crHist.filter(h=>h.id===id).slice(-1)[0]; if(last&&state.journeyCount-last.j<E.cd) return false; try{ return E.cond(); }catch(e){ return false; } });
  if(!L.length) return null; const W=L.map(([id,E])=>[id,E.w*(E.cat==='D'||E.cat==='B'?1+tier*.35:1)]); const tot=W.reduce((a,x)=>a+x[1],0); let r=Math.random()*tot; for(const [id,w] of W){ if((r-=w)<0) return id; } return W[0][0]; }
-const crSevOf=E=>{ let s=E.sev[0]; if(crTier()>=3||(state.energy!=null&&state.energy<20)) s=Math.min(E.sev[1],s+1); if(s>=4&&!(crTier()>=4||state.crS4ok)) s=3; return s; };
+/* 前期保護：危機的等級隨旅程逐步開放（不改冷卻、間隔、平靜期）
+   旅程 0～2：只有 S1｜3～6：最高 S2｜7 起而且處理過 2 次危機：最高 S3｜12 起：最高 S3，S4 仍要特殊條件 */
+const crCap=()=>{ const j=state.journeyCount||0, n=(state.crHist||[]).filter(h=>h.res!=='false').length; return j<3?1:j<7?2:(j>=12||n>=2)?(j>=12?4:3):2; };
+const crSevOf=E=>{ let s=E.sev[0]; if(crTier()>=3||(state.energy!=null&&state.energy<20)) s=Math.min(E.sev[1],s+1); if(s>=4&&!(crTier()>=4||state.crS4ok)) s=3; return Math.max(E.sev[0],Math.min(s,crCap())); };
 function crStart(id,opts){ const E=CRISES[id]; if(!E) return null; opts=opts||{}; const sevN=opts.sev||crSevOf(E), real=opts.real!=null?opts.real:!(CR_FALSE[id]&&Math.random()<.22);
  const st=E.lead===0?'W4':E.lead>=3?'W1':E.lead===2?'W2':'W3';
  state.crisis={id,sevN,stage:st,node:0,lead:E.lead,real,intel:0,signs:[],acts:[],prep:{},reduce:0,avoided:false,askedXi:false,pax:[],xi:false,j:state.journeyCount,cause:opts.cause||'航行條件'};
@@ -7929,7 +7934,8 @@ function crStart(id,opts){ const E=CRISES[id]; if(!E) return null; opts=opts||{}
 function crNode(phase){ if(navigator.webdriver&&!window.CRISIS_TEST) return; state.energy=Math.min(100,(state.energy==null?80:state.energy)+8); crSpread(); crRecover();
  if(trainT()>=100&&!state.disaster) return crDisaster();
  const C=state.crisis; if(C){ C.node++; if(C.stage!=='W4'&&!C.done){ const order=['W1','W2','W3','W4']; let i=order.indexOf(C.stage); if(C.delay){ C.delay--; } else if(i<3){ i++; C.stage=order[i]; } if(C.stage==='W4'&&CRISES[C.id].at!=='voyage') return crOutbreak(); save(); crSign(); } return; }
- const ch=(state.crChain||[]).shift(); if(ch){ save(); if(ch.id==='S4'){ state.crS4ok=1; return crStart('D04',{sev:4,cause:'連鎖：界染擴散'}); } return crStart(ch.id,{cause:'連鎖：'+(CRISES[ch.from]?CRISES[ch.from].n:'')}); }
+ let ch=(state.crChain||[]).shift(); if(ch&&(ch.id==='S4'?crCap()<4:CRISES[ch.id].sev[0]>crCap())) ch=null;   /* 前期：太重的連鎖事件不會發生 */
+ if(ch){ save(); if(ch.id==='S4'){ state.crS4ok=1; return crStart('D04',{sev:4,cause:'連鎖：界染擴散'}); } return crStart(ch.id,{cause:'連鎖：'+(CRISES[ch.from]?CRISES[ch.from].n:'')}); }
  if(state.crCalm!=null&&state.journeyCount<state.crCalm) return; if(state.disaster) return;
  const p=.18+crTier()*.06; if(Math.random()>p) return; const id=crPick(phase); if(id) crStart(id); }
 /* 局部污染擴散：只有在條件符合時才影響全局 */
