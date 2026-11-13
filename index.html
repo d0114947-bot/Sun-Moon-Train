@@ -2038,6 +2038,13 @@ body:has(#layer .dlg.dragon-talk) #scene [data-hs="cab-dragon"]{opacity:0!import
 .item-pop b{font-family:var(--f-display);letter-spacing:.2em;color:#fff3d6;text-shadow:0 0 8px #000,0 0 18px rgba(0,0,0,.8);font-size:17px}
 @keyframes itempop{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
 
+/* 隱藏地點的水彩插畫 */
+.hid-pic{margin:8px auto 12px;max-width:min(520px,100%)}
+.hid-pic img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+img.memimg{width:100%;height:100%;object-fit:cover}
+.memview .cr img.memimg{object-fit:contain;background:#f4efe3}
+.jr-hid li{display:flex;align-items:center;gap:8px;margin:4px 0}.jr-hid .hid-th{width:64px;height:48px;object-fit:cover;border-radius:4px;box-shadow:0 2px 5px rgba(60,40,20,.3)}
+
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -6013,6 +6020,9 @@ const HIDDEN={
  ]
 };
 const HID_ALL=Object.values(HIDDEN).flat();
+/* 隱藏地點的水彩插畫：發現時、回憶水晶、界域地誌都會用到 */
+const HID_IMG={df_carving:'assets/hid-df_carving.jpg',df_canopy:'assets/hid-df_canopy.jpg',df_bloom:'assets/hid-df_bloom.jpg',df_spring:'assets/hid-df_spring.jpg',df_glow:'assets/hid-df_glow.jpg',df_ring:'assets/hid-df_ring.jpg',df_shadow:'assets/hid-df_shadow.jpg',df_scope:'assets/hid-df_scope.jpg',si_pool:'assets/hid-si_pool.jpg',si_ridge:'assets/hid-si_ridge.jpg',si_ruin:'assets/hid-si_ruin.jpg',si_sprout:'assets/hid-si_sprout.jpg',si_song:'assets/hid-si_song.jpg',si_tide:'assets/hid-si_tide.jpg',si_scope:'assets/hid-si_scope.jpg',si_dim:'assets/hid-si_dim.jpg',si_crystal:'assets/hid-si_crystal.jpg',df_hollow:'assets/hid-df_hollow.jpg',si_back:'assets/hid-si_back.jpg'};
+const hidPic=id=>HID_IMG[id]?`<figure class="hid-pic"><img src="${HID_IMG[id]}" alt=""></figure>`:'';
 const hidFound=id=>!!(state.hiddenFound&&state.hiddenFound[id]);
 const hidOK=h=>(!hidFound(h.id)||(h.carve&&!state.hiddenFound[h.id].lit&&matCount('mosslight')>0))&&(h.need?(state.companion&&skillOf(state.companion)===h.need):h.cond());
 /* 畫面上一次只亮一個隱藏點 */
@@ -6031,13 +6041,13 @@ function hiddenOpen(){ const h=hiddenNow(); if(!h) return; const who=h.need?stat
   save(); SFX.chime(); render(); return got; };
  const txt=h.text.replace('{who}',nm);
  if(h.carve){ const has=matCount('mosslight')>0;
-  const ov=panel(`<div class="eyebrow">${LOCATIONS[loc].name}・和${nm}一起</div><h2>${h.name}</h2><p>${txt}</p><p class="carve-q">刻痕很深，可是苔蘚的影子蓋住了一半。</p><div class="zask">${has?`<button class="btn" data-carve="1">用光苔片照亮刻紋（剩 ${matCount('mosslight')}）</button>`:''}<button class="btn ghost" data-carve="0">${has?'就這樣看':'就這樣看（沒有光苔片）'}</button></div>`,'care');
+  const ov=panel(`<div class="eyebrow">${LOCATIONS[loc].name}・和${nm}一起</div><h2>${h.name}</h2>${hidPic(h.id)}<p>${txt}</p><p class="carve-q">刻痕很深，可是苔蘚的影子蓋住了一半。</p><div class="zask">${has?`<button class="btn" data-carve="1">用光苔片照亮刻紋（剩 ${matCount('mosslight')}）</button>`:''}<button class="btn ghost" data-carve="0">${has?'就這樣看':'就這樣看（沒有光苔片）'}</button></div>`,'care');
   ov.querySelectorAll('[data-carve]').forEach(b=>b.onclick=()=>{ const lit=b.dataset.carve==='1'; if(lit){ state.materials.mosslight=matCount('mosslight')-1; } const got=finish(lit)||[];
    const q=ov.querySelector('.carve-q'), z=ov.querySelector('.zask'); if(z) z.remove();
    if(q) q.outerHTML=`${lit?`<p>${h.more}</p>`:'<p>看得出是圓環，其他的就看不清楚了。……下次帶著光苔片來，也許就讀得懂。</p>'}<p class="pur-done">${got.length?`取得：${got.join('、')}。`:''}${lit?'界染度也淡了一些。':''}這一幕凝結成了回憶水晶，也寫進了界域地誌。</p>`; });
   return; }
  const got=finish(false);
- panel(`<div class="eyebrow">${LOCATIONS[loc].name}・${who?`和${nm}一起`:'隱藏的地方'}</div><h2>${h.name}</h2><p>${txt}</p><p class="pur-done">取得：${got.join('、')}。${who?'這一幕凝結成了回憶水晶，也寫進了界域地誌。':'這個地方寫進了界域地誌。'}</p>`,'care'); }
+ panel(`<div class="eyebrow">${LOCATIONS[loc].name}・${who?`和${nm}一起`:'隱藏的地方'}</div><h2>${h.name}</h2>${hidPic(h.id)}<p>${txt}</p><p class="pur-done">取得：${got.join('、')}。${who?'這一幕凝結成了回憶水晶，也寫進了界域地誌。':'這個地方寫進了界域地誌。'}</p>`,'care'); }
 /* 每個地方的採集紀錄：去過幾次、採過哪些東西（寫進界域地誌） */
 function forageLogAdd(m){ const loc=state.currentLocation; state.forageLog=state.forageLog||{}; const L=state.forageLog[loc]||(state.forageLog[loc]={stops:[],found:[]});
  const k=stopKey(); if(!L.stops.includes(k)){ L.stops.push(k); if(L.stops.length>12) L.stops.shift(); } const first=!L.found.includes(m); if(first) L.found.push(m);
@@ -6053,11 +6063,11 @@ const SKILL_FIND={
  ancient:{dawnForest:['sd:mossgrass','從古老的樹根旁撿起一顆苔草種子'],starIslands:['sd:glowcap','從星砂底下挖出一顆微光菇的孢子']}
 };
 /* 回憶水晶：乘客帶你找到的隱藏地點 */
-function hiddenMems(){ return HID_ALL.filter(h=>h.need).map(h=>({id:'hid_'+h.id,title:h.name,get scene(){ return Object.keys(HIDDEN).find(k=>HIDDEN[k].includes(h)); },have:()=>!!(hidFound(h.id)&&state.hiddenFound[h.id].who),
+function hiddenMems(){ return HID_ALL.filter(h=>h.need).map(h=>({id:'hid_'+h.id,title:h.name,img:HID_IMG[h.id],get scene(){ return Object.keys(HIDDEN).find(k=>HIDDEN[k].includes(h)); },have:()=>!!(hidFound(h.id)&&state.hiddenFound[h.id].who),
  get text(){ const f=state.hiddenFound&&state.hiddenFound[h.id], nm=f&&f.who&&PASSENGERS[f.who]?PASSENGERS[f.who].name:'牠'; return h.text.replace('{who}',nm); }})); }
 /* 界域地誌：這個地方的採集與發現 */
 function atlasFinds(id){ const L=(state.forageLog||{})[id], H=(HIDDEN[id]||[]).filter(h=>hidFound(h.id)); if(!L&&!H.length) return bankAtlas(id);
- return `<div class="jr-finds">${L&&L.found.length?`<p class="jr-p"><b>採集過：</b>${L.found.map(foundName).join('、')}</p>`:''}${H.length?`<p class="jr-p"><b>隱藏的地方：</b></p><ul class="jr-hid">${H.map(h=>{ const f=state.hiddenFound[h.id]; return `<li>✦ ${h.name}${f.who&&PASSENGERS[f.who]?`<span>（和${PASSENGERS[f.who].name}）</span>`:''}</li>`; }).join('')}</ul>`:''}${HIDDEN[id]&&H.length<HIDDEN[id].length?`<p class="jr-me">這裡應該還有 ${HIDDEN[id].length-H.length} 個我沒發現的地方。</p>`:''}${bankAtlas(id)}</div>`; }
+ return `<div class="jr-finds">${L&&L.found.length?`<p class="jr-p"><b>採集過：</b>${L.found.map(foundName).join('、')}</p>`:''}${H.length?`<p class="jr-p"><b>隱藏的地方：</b></p><ul class="jr-hid">${H.map(h=>{ const f=state.hiddenFound[h.id]; return `<li>${HID_IMG[h.id]?`<img class="hid-th" src="${HID_IMG[h.id]}" alt="">`:'✦ '}${h.name}${f.who&&PASSENGERS[f.who]?`<span>（和${PASSENGERS[f.who].name}）</span>`:''}</li>`; }).join('')}</ul>`:''}${HIDDEN[id]&&H.length<HIDDEN[id].length?`<p class="jr-me">這裡應該還有 ${HIDDEN[id].length-H.length} 個我沒發現的地方。</p>`:''}${bankAtlas(id)}</div>`; }
 /* 下車邀請：同行乘客能在這裡找到隱藏地點時，按鈕上會有一顆小星星 */
 const hidFor=(id,loc)=>(HIDDEN[loc]||[]).some(h=>h.need&&h.need===skillOf(id)&&(!hidFound(h.id)||(h.carve&&!state.hiddenFound[h.id].lit&&matCount('mosslight')>0)));
 
@@ -6868,7 +6878,7 @@ const MEMORIES=[
 ];
 MEMORIES.push(...hiddenMems(),...byeMems());
 const memsHave=()=>MEMORIES.filter(m=>m.have());
-function memArt(m){ if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
+function memArt(m){ if(m.img) return `<img class="memimg" src="${m.img}" alt="">`; if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
  return `<span class="portrait-wash">${portraitOf(charOf(m.who))}${m.who2?portraitOf(charOf(m.who2)):''}</span>`; }
 
 
