@@ -2025,6 +2025,19 @@ body:has(#layer .dlg.dragon-talk) #scene [data-hs="cab-dragon"]{opacity:0!import
 
 .ov.float:has(.fl-boxes) .c3-host{transform:translateY(84px) scale(.84);transform-origin:50% 0}
 
+/* 材料與收藏品的實物圖 */
+.ov.float .fl .cr>img.itemimg{object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,.45)) drop-shadow(0 0 10px rgba(255,236,200,.25))}
+.ov.float .fl.gem:has(img.itemimg) .cr{background:none!important;clip-path:none!important}
+.gem3d.hasimg{background:none!important;width:min(300px,60vw)!important;height:min(300px,40vh)!important}
+.gem3d.hasimg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 10px 20px rgba(0,0,0,.45))}
+.jar.matj{background:none}.jar.matj .matimg{display:block;width:74%;height:auto;max-height:84px;object-fit:contain;margin:8px auto 4px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.btn.matb{display:inline-flex;align-items:center;gap:8px}.btn.matb .mbi{width:30px;height:30px;object-fit:contain}
+.disc-taint .dt-drawer .btn.matb{flex-direction:row!important;align-items:center}
+.item-pop{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);z-index:80;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:8px;animation:itempop 2.4s ease-out forwards}
+.item-pop img{width:clamp(110px,16vmin,170px);height:auto;filter:drop-shadow(0 0 18px rgba(255,236,190,.6)) drop-shadow(0 8px 16px rgba(0,0,0,.5))}
+.item-pop b{font-family:var(--f-display);letter-spacing:.2em;color:#fff3d6;text-shadow:0 0 8px #000,0 0 18px rgba(0,0,0,.8);font-size:17px}
+@keyframes itempop{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}30%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-90%) scale(.9)}}
+
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -3812,7 +3825,7 @@ function arriveReact(v){ const dest=v.to, L=LOCATIONS[dest], H=hereList(); if(!H
  const id=H[Math.floor(Math.random()*H.length)]; return Math.random()<.5?[[id,ARRIVE_CHAT[Math.floor(Math.random()*ARRIVE_CHAT.length)]]]:null; }
 function prepPanel(){ const v=state.voyage, dest=v?v.to:nextStop(), L=LOCATIONS[dest], F=FORAGE[dest], ri=ROUTE_INFO[dest]||{}, rk=realmKey(dest);
  /* 精簡版：能用圖的用圖，文字只當輔助；沒有內容的欄位不顯示 */
- const mats=F?[...new Map(F.pool.map(([m])=>{ if(m.startsWith('sd:')){ const p=m.slice(3); return [PLANTS[p].seed,{n:PLANTS[p].seed,img:seedImg(p),c:PLANTS[p].color}]; } if(COLLECTIBLES[m]) return ['稀有種子',{n:'稀有種子',img:seedImg(m),c:COLLECTIBLES[m].color||'#e8d8ff'}]; if(MATS[m]) return [MATS[m].name,{n:MATS[m].name,img:null,c:MATS[m].color}]; return null; }).filter(Boolean)).values()].slice(0,6):[];
+ const mats=F?[...new Map(F.pool.map(([m])=>{ if(m.startsWith('sd:')){ const p=m.slice(3); return [PLANTS[p].seed,{n:PLANTS[p].seed,img:seedImg(p),c:PLANTS[p].color}]; } if(COLLECTIBLES[m]) return ['稀有種子',{n:'稀有種子',img:seedImg(m),c:COLLECTIBLES[m].color||'#e8d8ff'}]; if(MATS[m]) return [MATS[m].name,{n:MATS[m].name,img:itemImg(m),c:MATS[m].color}]; return null; }).filter(Boolean)).values()].slice(0,6):[];
  const ab=Object.keys(PASSENGERS).filter(aboard), comp=ab.filter(id=>(state.passengers[id].stage||0)>=2&&(skillOf(id)||PASSENGERS[id].home===dest)), leave=ab.filter(leavingNext);
  const warn=[ri.warn&&ri.warn!=='無'?ri.warn:'',state.duty.obs&&state.duty.obs.to===dest?`前方界壁：${state.duty.obs.lv}`:'',v&&v.sky&&!v.sky.watched?`航道上有${SKY[v.sky.type].name}`:''].filter(Boolean);
  const chip=(img,c,n)=>`<span class="pp-chip">${img?`<img src="${img}" alt="">`:`<i style="--c:${c}"></i>`}<small>${n}</small></span>`;
@@ -5953,8 +5966,8 @@ function forageNow(){ const loc=state.currentLocation, F=FORAGE[loc]; if(!F) ret
 const matCount=m=>((state.materials||{})[m])||0;
 function forageTake(i){ const f=forageNow(), sp=f&&f.spots[i]; if(!sp||sp.taken) return; if(i===3&&state.companion){ const [m,pre]=compFind(state.companion,sp.m); sp.m=m; if(pre) setTimeout(()=>sense(pre.replace(/：$/,'。')),300); } sp.taken=true; if(f.spots.every(x=>x.taken)) f.doneAt=Date.now(); forageLogAdd(sp.m);
  if(sp.m.startsWith('sd:')){ const pid=sp.m.slice(3); seedAdd(pid,1); toast(`採集到種子：${PLANTS[pid].seed}（共 ${seedN(pid)}）`); seedIntro(); }
- else if(COLLECTIBLES[sp.m]){ const got=addItem(sp.m,true); if(got){ logJ(`在${LOCATIONS[state.currentLocation].name}找到了${COLLECTIBLES[sp.m].name}。`,'find'); toast(`✦ 找到稀有種子：${COLLECTIBLES[sp.m].name}`); } }
- else { state.materials=state.materials||{}; state.materials[sp.m]=matCount(sp.m)+1; toast(`採集到：${MATS[sp.m].name}（共 ${matCount(sp.m)}）`); }
+ else if(COLLECTIBLES[sp.m]){ const got=addItem(sp.m,true); if(got){ itemPop(sp.m,COLLECTIBLES[sp.m].name); logJ(`在${LOCATIONS[state.currentLocation].name}找到了${COLLECTIBLES[sp.m].name}。`,'find'); toast(`✦ 找到稀有種子：${COLLECTIBLES[sp.m].name}`); } }
+ else { state.materials=state.materials||{}; state.materials[sp.m]=matCount(sp.m)+1; itemPop(sp.m,MATS[sp.m].name); toast(`採集到：${MATS[sp.m].name}（共 ${matCount(sp.m)}）`); }
  SFX.tone(1318,0,.35,'triangle',.025); save(); render(); }
 /* ================================================================
    採集：探索發現優先，資源收集其次
@@ -6062,7 +6075,7 @@ function placeVisit(id){ const P=PLACES[id], first=!(state.places||[]).includes(
  if(first){ state.places=state.places||[]; state.places.push(id); if(COLLECTIBLES[P.give]) addItem(P.give,true); else { state.materials=state.materials||{}; state.materials[P.give]=matCount(P.give)+2; }
   logJ(`${PASSENGERS[id].name}帶你去了${P.name}。`,'life'); if(id==='sola') addClue('clue_island'); state.passengers[id].records.push({j:state.journeyCount,t:`帶你去了${P.name}。`}); save(); SFX.chime(); render(); } }
 /* 材料的用途：澆灌（培育艙）、淨化（守望藤） */
-function matButtons(use){ return Object.entries(MATS).filter(([m,M])=>M.use===use&&matCount(m)>0).map(([m,M])=>`<button class="btn ghost" data-mat="${m}">${use==='water'?'用':'點燃'}${M.name}${use==='water'?'澆灌':''}（剩 ${matCount(m)}）</button>`).join(''); }
+function matButtons(use){ return Object.entries(MATS).filter(([m,M])=>M.use===use&&matCount(m)>0).map(([m,M])=>`<button class="btn ghost matb" data-mat="${m}">${itemImg(m)?`<img class="mbi" src="${itemImg(m)}" alt="">`:''}${use==='water'?'用':'點燃'}${M.name}${use==='water'?'澆灌':''}（剩 ${matCount(m)}）</button>`).join(''); }
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-mat]'); if(!b) return; const m=b.dataset.mat, M=MATS[m]; if(matCount(m)<1) return;
  if(M.use==='water'||(M.grow&&b.dataset.slot!==undefined)){ const k=+(b.dataset.slot||0), c=(state.pods||[])[k]; if(!c||c.st>=2) return; state.materials[m]--; c.st=PLANTS[c.p].rare?c.st+1:2; logJ(`用${M.name}澆灌培育艙，${PLANTS[c.p].name}長大了一段。`,'grow'); save(); render(); fxPour(k,M.color); toast(`${M.name}灑進培育艙，${PLANTS[c.p].name}長大了`); const g=document.querySelector('#layer .ov.garden'); if(g&&g.redraw) g.redraw(); }
  else { state.materials[m]--; TAINT.add(-8); logJ(`在守望藤旁點燃${M.name}，界染度下降。`); save(); SFX.tone(1175,0,1.2,'sine',.03); fxBurstAt(b,M.color); b.outerHTML=`<p class="pur-done">${M.name}化成柔光散開，身上的沉重感又淡了一些。</p>`; } });
@@ -6412,7 +6425,7 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
  <div class="jar-split"><div class="jar-l"><p class="jar-sub">稀有種子</p><div class="jars">${rare.map(rjar).join('')}</div>
  <p class="jar-sub">常見種子</p><div class="jars">${(()=>{ const has=common.filter(p=>seedN(p)>0||(state.grown||[]).includes(p)), rest=common.length-has.length; return has.map(cjar).join('')+Array.from({length:Math.min(3,rest)},()=>'<div class="jar seed unk2">'+jarSvg('')+'</div>').join(''); })()}</div>
  ${Object.keys(PLANTS).some(p=>PLANTS[p].hybrid&&(seedN(p)>0||(state.grown||[]).includes(p)))?`<p class="jar-sub">變種種子</p><div class="jars">${Object.keys(PLANTS).filter(p=>PLANTS[p].hybrid&&(seedN(p)>0||(state.grown||[]).includes(p))).map(cjar).join('')}</div>`:''}
- <p class="jar-sub">採集材料</p>${mats.length?`<div class="jars">${mats.map(([m,M])=>`<button class="jar" data-mt="${m}">${jarSvg(jarDust(M.color))}<span class="cnt">×${matCount(m)}</span><span class="tag">${M.name}</span></button>`).join('')}</div>`:'<p class="hint1">（還是空的。下車的時候，留意地上閃著微光的東西。）</p>'}
+ <p class="jar-sub">採集材料</p>${mats.length?`<div class="jars">${mats.map(([m,M])=>`<button class="jar ${itemImg(m)?'matj':''}" data-mt="${m}">${itemImg(m)?`<img class="matimg" src="${itemImg(m)}" alt="">`:jarSvg(jarDust(M.color))}<span class="cnt">×${matCount(m)}</span><span class="tag">${M.name}</span></button>`).join('')}</div>`:'<p class="hint1">（還是空的。下車的時候，留意地上閃著微光的東西。）</p>'}
  </div><div class="jar-r" id="sv">${infoCap(`一格一格的玻璃瓶裡，收著來自不同世界的種子。`)}</div></div>`,'stage');
  const pick=b=>ov.querySelectorAll('.jar').forEach(x=>x.classList.toggle('on',x===b));
  const tut=()=>growTutOn()&&first?meSay('拿到的種子都會收在這裡。稀有的種子要照對光才會長；常見的種子什麼光都可以。<br>還沒鑑定的種子，先拿去問問守望藤。'):'';
@@ -6425,7 +6438,7 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
  const keep=p=>{ const sv=ov.querySelector('#sv'); if(sv&&PLANTS[p]&&seedN(p)>0) sv.insertAdjacentHTML('beforeend',seedKeepHTML(p)); };
  ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>{ show(b.dataset.seed); keep(b.dataset.seed.replace('seed_','')); });
  ov.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{ showC(b.dataset.cs); keep(b.dataset.cs); });
- ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=infoCap(`<b class="nm">${M.name}</b>還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
+ ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=(itemImg(b.dataset.mt)?`<div class="plant3d"><img src="${itemImg(b.dataset.mt)}" alt=""></div>`:'')+infoCap(`<b class="nm">${M.name}</b>還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
  const f=rare.find(id=>state.collectibles.includes(id)&&!COLLECTIBLES[id].sealed&&PLANTS[id.replace('seed_','')]), fc=common.find(p=>seedN(p)>0);
  if(fc&&(!f||!seedN(f.replace('seed_','')))) showC(fc); else if(f) show(f); else { const a=rare.find(id=>state.collectibles.includes(id)); if(a) show(a); }
 }
@@ -6780,6 +6793,15 @@ function hexHue(c){ const m=/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})/i.exec(S
  if(d){ h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4; h*=60; if(h<0) h+=360; } return [h,mx?d/mx:0]; }
 function crysFor(c,k=0){ const [h,sa]=hexHue(c); const L=Object.entries(CRYS_HUE).map(([n,[ch,cs]])=>{ const dh=Math.min(Math.abs(h-ch),360-Math.abs(h-ch)); return [+n,dh+(sa<.15?(cs<.25?0:60):0)]; }).sort((a,b)=>a[1]-b[1]);
  const near=L.filter(x=>x[1]<=L[0][1]+25); return near[k%near.length][0]; }
+/* 材料、收藏品、乘客紀念品的實物圖（去背） */
+const ITEM_IMG={dew:'assets/mat-dew.webp',sand:'assets/mat-sand.webp',mosslight:'assets/mat-mosslight.webp',auroramoss:'assets/mat-auroramoss.webp',pollen:'assets/mat-pollen.webp',stardust:'assets/mat-stardust.webp',
+ relic_ring:'assets/item-relic_ring.webp',anomaly_rift:'assets/item-anomaly_rift.webp',crystal_echo:'assets/item-crystal_echo.webp',
+ keep_felinia:'assets/keep-felinia.webp',keep_leviathaurora:'assets/keep-leviathaurora.webp',keep_cinder:'assets/keep-cinder.webp',keep_aelis:'assets/keep-aelis.webp',keep_pyro:'assets/keep-pyro.webp',keep_vandora:'assets/keep-vandora.webp',
+ keep_frost:'assets/keep-frost.webp',keep_sirenora:'assets/keep-sirenora.webp',keep_titan:'assets/keep-titan.webp',keep_lynx:'assets/keep-lynx.webp',keep_strider:'assets/keep-strider.webp'};
+const itemImg=id=>ITEM_IMG[id]||null;
+const itemIcon=(id,c,k)=>itemImg(id)?`<img class="gemimg itemimg" src="${itemImg(id)}" alt="" draggable="false">`:gemIcon(c,k);
+/* 撿到東西時：實物圖在畫面中間浮起來一下 */
+function itemPop(id,label){ const im=itemImg(id); if(!im) return; const d=document.createElement('div'); d.className='item-pop'; d.innerHTML=`<img src="${im}" alt=""><b>${label||''}</b>`; document.body.appendChild(d); setTimeout(()=>d.remove(),2400); }
 const gemIcon=(c,k=0)=>`<img class="gemimg" src="${crysUrl(crysFor(c,k))}" alt="" draggable="false">`;
 /* 回憶水晶（重要時刻）：由既有劇情進度推導出的記憶，不新增設定 */
 const MEMORIES=[
@@ -7024,10 +7046,10 @@ function memoryPanel(){ oldSync(); const M=(state.starMsgs||[]).filter(m=>m.read
 function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item').concat(keepsHave().map(p=>'keep_'+p)), G=(state.pGifts||[]).slice().reverse();
  return floatField({cls:'items',title:'收藏櫃',per:12,boxStyle:'tab',boxes:[{k:'it',n:'旅途收藏'},{k:'keep',n:'乘客的紀念品'},{k:'gift',n:'乘客的禮物'}],empty:{keep:'還沒有。',gift:'還沒有收到禮物。熟悉的乘客，有一天也會想送你什麼。'},
   sub:()=>`旅途中留下的東西 ${itemsHave().length}`,
-  items:items.map(id=>({id,box:id.startsWith('keep_')?'keep':'it',have:state.collectibles.includes(id),cls:'gem',attr:`data-it="${id}"`,inner:gemIcon(COLLECTIBLES[id].icon,id.length),label:COLLECTIBLES[id].name}))
+  items:items.map(id=>({id,box:id.startsWith('keep_')?'keep':'it',have:state.collectibles.includes(id),cls:'gem',attr:`data-it="${id}"`,inner:itemIcon(id,COLLECTIBLES[id].icon,id.length),label:COLLECTIBLES[id].name}))
    .concat(G.map((g,k)=>({id:'gift:'+k,box:'gift',have:true,cls:'gem',inner:gemIcon(g.special?'star':'leaf',k+3),label:g.name}))),
   view:id=>{ if(String(id).startsWith('gift:')){ const g=G[+String(id).slice(5)]; return `<div class="showcase"><div class="gem3d">${gemIcon(g.special?'star':'leaf')}</div><h2>${esc(g.name)}</h2><p class="fl-where">${nm(g.pid)}・第 ${g.j} 趟・${{hand:'親手交給你',click:'說話的時候拿出來',place:'放在值勤的位置',secret:'離開前偷偷留下'}[g.how]||''}</p><p style="max-width:460px;line-height:1.9">${esc(g.desc)}</p></div>`; }
-   const c=COLLECTIBLES[id]; return `<div class="showcase"><div class="gem3d">${gemIcon(c.icon)}</div><h2>${c.name}</h2><p class="fl-where">${ORIGIN_NOTE[id]||(c.from?PASSENGERS[c.from].name+'下車時留下':'')}</p><p style="max-width:460px;line-height:1.9">${c.desc}</p></div>`; }}); }
+   const c=COLLECTIBLES[id]; return `<div class="showcase"><div class="gem3d ${itemImg(id)?'hasimg':''}">${itemIcon(id,c.icon)}</div><h2>${c.name}</h2><p class="fl-where">${ORIGIN_NOTE[id]||(c.from?PASSENGERS[c.from].name+'下車時留下':'')}</p><p style="max-width:460px;line-height:1.9">${c.desc}</p></div>`; }}); }
 
 /* 日月儀：像地球儀一樣的球，標出七個界域的位置；可以拖曳轉動 */
 const GLOBE_POS={origin:[0,4],dawnForest:[-42,24],starIslands:[58,40],reverseRealm:[128,-26],boundlessCorridor:[196,14],silentVoid:[252,-42],timeriftSea:[310,-6]};
@@ -7154,7 +7176,7 @@ function discTaintHTML(){ const t=trainT(), st=trainStage('repair'), cr=typeof c
  return `<div class="disc-taint ${cr?'alert':''}"><button class="dt-btn" id="dtt" aria-expanded="false"><span>列車界染</span><b>${t}</b><small>${cr?'需要應變':EVO_K.repair.stages[st-1]}</small></button><div class="dt-drawer" id="dtd"></div></div>`; }
 function discTaintBind(ov){ const b=ov.querySelector('#dtt'), d=ov.querySelector('#dtd'); if(!b) return;
  const fill=()=>{ const used=TAINT.used('p:core'), mats=Object.entries(MATS).filter(([m,M])=>M.use==='purify'&&matCount(m)>0), cr=typeof crActive==='function'&&crActive();
-  d.innerHTML=cr?`<button class="btn" id="dt-cr">打開應變面板</button>`:used?'<p>今天已經把光注入過水晶了。</p>':mats.length?mats.map(([m,M])=>`<button class="btn ghost" data-core="${m}">把${M.name}的光注入水晶<small>剩 ${matCount(m)}</small></button>`).join(''):'<p>身上沒有可以注入的光。<br>光苔片、花粉、星塵都可以。</p>';
+  d.innerHTML=cr?`<button class="btn" id="dt-cr">打開應變面板</button>`:used?'<p>今天已經把光注入過水晶了。</p>':mats.length?mats.map(([m,M])=>`<button class="btn ghost matb" data-core="${m}">${itemImg(m)?`<img class="mbi" src="${itemImg(m)}" alt="">`:''}把${M.name}的光注入水晶<small>剩 ${matCount(m)}</small></button>`).join(''):'<p>身上沒有可以注入的光。<br>光苔片、花粉、星塵都可以。</p>';
   const c=d.querySelector('#dt-cr'); if(c) c.onclick=()=>{ closeOv(ov); setTimeout(()=>crPanel(),280); };
   d.querySelectorAll('[data-core]').forEach(x=>x.onclick=()=>{ if(!TAINT.once('p:core')) return; const m=x.dataset.core; state.materials[m]=matCount(m)-1; trainTAdd(-4,`把${MATS[m].name}的光注入了控制晶盤的水晶。`); save(); SFX.tone(1046,0,1,'sine',.03); fxBurstAt(x,'#bff4ff');
    const crys=ov.querySelector('.dsc-crystal'); if(crys){ crys.classList.remove('fed'); void crys.getBBox; crys.classList.add('fed'); }
