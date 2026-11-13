@@ -2045,6 +2045,9 @@ img.memimg{width:100%;height:100%;object-fit:cover}
 .memview .cr img.memimg{object-fit:contain;background:#f4efe3}
 .jr-hid li{display:flex;align-items:center;gap:8px;margin:4px 0}.jr-hid .hid-th{width:64px;height:48px;object-fit:cover;border-radius:4px;box-shadow:0 2px 5px rgba(60,40,20,.3)}
 
+.sm-info .sm-pic{display:block;width:min(320px,100%);aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin:0 0 8px;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+img.memimg.vis{object-fit:contain!important;background:none!important;filter:drop-shadow(0 0 12px rgba(255,230,180,.6))}
+
 </style>
 
 <div id="viewport"><div id="stage"><div id="scene"></div></div></div>
@@ -3582,7 +3585,9 @@ document.addEventListener('pointermove',e=>{ const d=OSKY.drag; if(!d) return; c
 const oskyUp=()=>{ const d=OSKY.drag; if(!d) return; OSKY.drag=null; const el=document.getElementById('osky'); if(el) el.classList.remove('grab'); if(d.moved>6) HSC.until=performance.now()+250; };
 document.addEventListener('pointerup',oskyUp); document.addEventListener('pointercancel',oskyUp);
 addEventListener('resize',oskyPut);
-function renderOutside(){ const L=LOCATIONS[state.currentLocation]; return svgScene(L.art())+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
+/* 各界域的場景插畫：下車探索的畫面、回憶水晶、星圖 */
+const LOC_IMG={dawnForest:'assets/loc-dawnForest.jpg',starIslands:'assets/loc-starIslands.jpg',reverseRealm:'assets/loc-reverseRealm.jpg',boundlessCorridor:'assets/loc-boundlessCorridor.jpg',silentVoid:'assets/loc-silentVoid.jpg',timeriftSea:'assets/loc-timeriftSea.jpg'};
+function renderOutside(){ const L=LOCATIONS[state.currentLocation], im=LOC_IMG[state.currentLocation]; return (im?`<img class="bg" src="${im}" alt="${L.name}">`:svgScene(L.art()))+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
 
 function renderHUD(){
  const L=LOCATIONS[state.currentLocation], ph=state.currentPhase, v=state.voyage;
@@ -4856,7 +4861,7 @@ const XRUN={
   dialogueScript(sc,()=>{ state.storyFlags['hsSeen_'+id]=1; s.records.push({j:state.journeyCount,t:`在觀測車廂看見了家鄉的${H.name}。`}); shareMem('home_'+id,`看見${H.name}`,[id],H.point);
    constRecAdd(voyBless(),'obs'); logJ(`航行中，和${PASSENGERS[id].name}一起看見了牠家鄉的${H.name}。`,'life'); toast(c?`✦ 下次跟${PASSENGERS[id].name}說話，牠會說起${H.name}`:`✦ 去星座盤，把${H.name}連起來吧`); xevGive('x_homestar',1); render(); }); },
  /* 生命事件：跟著列車的小光 → 隱藏訪客、圖鑑外的生命 */
- x_lostlight(h){ const first=xevHist('x_lostlight').n===0; state.snailFriend=(state.snailFriend||0)+1;
+ x_lostlight(h){ const first=xevHist('x_lostlight').n===0; state.snailFriend=(state.snailFriend||0)+1; state.visitors=state.visitors||{}; { const r=state.visitors.lightling||(state.visitors.lightling={n:0,first:state.journeyCount,items:['星塵']}); r.n++; r.lastJ=state.journeyCount; } setTimeout(()=>{ const d=document.createElement('div'); d.className='item-pop'; d.innerHTML=`<img src="${LIGHTLING_IMG}" alt=""><b>迷路的小光生命</b>`; document.body.appendChild(d); setTimeout(()=>d.remove(),2400); },500);
   dialogueScript([['self','車尾的欄杆外，有幾顆小小的光，一直跟著列車。'],['self','我把星光調亮一點，牠們就靠過來了。'],['self',first?'……牠們繞著我轉了一圈，好像在說謝謝。':'是上次那群小光。牠們記得我。']],()=>{
    state.materials=state.materials||{}; state.materials.stardust=matCount('stardust')+1; logJ('航行中，迷路的小光跟著列車走了一段。','life'); xevGive('x_lostlight',1); toast('星塵 +1'); render(); }); }
 };
@@ -6283,8 +6288,8 @@ Object.assign(INTERACT,{
 /* ---------- 森羅溫室車廂 ---------- */
 const POD_IMG='assets/nat-pod.webp', TREE_IMG='assets/nat-tree.webp', GEM_IMG='assets/nat-gem.webp';
 function jarSvg(inner){ return `<svg class="jarsvg" viewBox="0 0 80 110" aria-hidden="true"><rect x="19" y="3" width="42" height="10" rx="3" fill="#c8a85e"/><rect x="17" y="11" width="46" height="4" rx="2" fill="#a88a45"/><path d="M22 16 h36 q12 6 12 22 v50 q0 16 -16 16 h-28 q-16 0 -16 -16 v-50 q0 -16 12 -22z" fill="rgba(225,238,255,.16)" stroke="rgba(245,250,255,.8)" stroke-width="1.6"/>${inner}<path d="M17 36 q-3 28 1 54" stroke="#fff" stroke-opacity=".6" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`; }
-const SEED_IMG={sunfern:'assets/seed-sunfern.webp',dewmoss:'assets/seed-dewmoss.webp',tidebloom:'assets/seed-tidebloom.webp',starspore:'assets/seed-starspore.webp',bell:'assets/seed-bell.webp',mossgrass:'assets/seed-mossgrass.webp',goldreed:'assets/seed-goldreed.webp',stardaisy:'assets/seed-stardaisy.webp',shellbloom:'assets/seed-shellbloom.webp',glowcap:'assets/seed-glowcap.webp',starbell:'assets/seed-starbell.webp',tidelotus:'assets/seed-tidelotus.webp',goldfern:'assets/seed-goldfern.webp',glowmoss:'assets/seed-glowmoss.webp',dustdaisy:'assets/seed-dustdaisy.webp',dewbell:'assets/seed-dewbell.webp',emberkern:'assets/seed-emberkern.webp',spirepod:'assets/seed-spirepod.webp',owlbur:'assets/seed-owlbur.webp',duskchest:'assets/seed-duskchest.webp',nightcap:'assets/seed-nightcap.webp',hearthnut:'assets/seed-hearthnut.webp',trilight:'assets/seed-trilight.webp',veilseed:'assets/seed-veilseed.webp',urchin:'assets/seed-urchin.webp',inkseed:'assets/seed-inkseed.webp',lantern:'assets/seed-lantern.webp',mothwing:'assets/seed-mothwing.webp',starbean:'assets/seed-starbean.webp',fuzzhusk:'assets/seed-fuzzhusk.webp',deeproot:'assets/seed-deeproot.webp',memnut:'assets/seed-memnut.webp',pearlgrain:'assets/seed-pearlgrain.webp',ancient_a:'assets/seed-ancient_a.webp',ancient_b:'assets/seed-ancient_b.webp',ancient_c:'assets/seed-ancient_c.webp'};
-const PLANT_IMG={duskchest:'assets/plant-duskchest.webp',pearlgrain:'assets/plant-pearlgrain.webp',glowmoss:'assets/plant-glowmoss.webp',stardaisy:'assets/plant-stardaisy.webp',starbell:'assets/plant-starbell.webp',sunfern:'assets/plant-sunfern.webp',inkseed:'assets/plant-inkseed.webp',goldfern:'assets/plant-goldfern.webp',fuzzhusk:'assets/plant-fuzzhusk.webp',goldreed:'assets/plant-goldreed.webp',nightcap:'assets/plant-nightcap.webp',dustdaisy:'assets/plant-dustdaisy.webp',deeproot:'assets/plant-deeproot.webp',dewmoss:'assets/plant-dewmoss.webp',hearthnut:'assets/plant-hearthnut.webp',owlbur:'assets/plant-owlbur.webp',starbean:'assets/plant-starbean.webp',emberkern:'assets/plant-emberkern.webp',veilseed:'assets/plant-veilseed.webp',dewbell:'assets/plant-dewbell.webp',bell:'assets/plant-bell.webp',mothwing:'assets/plant-mothwing.webp',shellbloom:'assets/plant-shellbloom.webp',memnut:'assets/plant-memnut.webp',trilight:'assets/plant-trilight.webp',spirepod:'assets/plant-spirepod.webp',urchin:'assets/plant-urchin.webp',mossgrass:'assets/plant-mossgrass.webp',tidelotus:'assets/plant-tidelotus.webp',glowcap:'assets/plant-glowcap.webp',lantern:'assets/plant-lantern.webp',tidebloom:'assets/plant-tidebloom.webp',starspore:'assets/plant-starspore.webp'};
+const SEED_IMG={twinbloom:'assets/seed-twinbloom.webp',sunfern:'assets/seed-sunfern.webp',dewmoss:'assets/seed-dewmoss.webp',tidebloom:'assets/seed-tidebloom.webp',starspore:'assets/seed-starspore.webp',bell:'assets/seed-bell.webp',mossgrass:'assets/seed-mossgrass.webp',goldreed:'assets/seed-goldreed.webp',stardaisy:'assets/seed-stardaisy.webp',shellbloom:'assets/seed-shellbloom.webp',glowcap:'assets/seed-glowcap.webp',starbell:'assets/seed-starbell.webp',tidelotus:'assets/seed-tidelotus.webp',goldfern:'assets/seed-goldfern.webp',glowmoss:'assets/seed-glowmoss.webp',dustdaisy:'assets/seed-dustdaisy.webp',dewbell:'assets/seed-dewbell.webp',emberkern:'assets/seed-emberkern.webp',spirepod:'assets/seed-spirepod.webp',owlbur:'assets/seed-owlbur.webp',duskchest:'assets/seed-duskchest.webp',nightcap:'assets/seed-nightcap.webp',hearthnut:'assets/seed-hearthnut.webp',trilight:'assets/seed-trilight.webp',veilseed:'assets/seed-veilseed.webp',urchin:'assets/seed-urchin.webp',inkseed:'assets/seed-inkseed.webp',lantern:'assets/seed-lantern.webp',mothwing:'assets/seed-mothwing.webp',starbean:'assets/seed-starbean.webp',fuzzhusk:'assets/seed-fuzzhusk.webp',deeproot:'assets/seed-deeproot.webp',memnut:'assets/seed-memnut.webp',pearlgrain:'assets/seed-pearlgrain.webp',ancient_a:'assets/seed-ancient_a.webp',ancient_b:'assets/seed-ancient_b.webp',ancient_c:'assets/seed-ancient_c.webp'};
+const PLANT_IMG={twinbloom:'assets/plant-twinbloom.webp',duskchest:'assets/plant-duskchest.webp',pearlgrain:'assets/plant-pearlgrain.webp',glowmoss:'assets/plant-glowmoss.webp',stardaisy:'assets/plant-stardaisy.webp',starbell:'assets/plant-starbell.webp',sunfern:'assets/plant-sunfern.webp',inkseed:'assets/plant-inkseed.webp',goldfern:'assets/plant-goldfern.webp',fuzzhusk:'assets/plant-fuzzhusk.webp',goldreed:'assets/plant-goldreed.webp',nightcap:'assets/plant-nightcap.webp',dustdaisy:'assets/plant-dustdaisy.webp',deeproot:'assets/plant-deeproot.webp',dewmoss:'assets/plant-dewmoss.webp',hearthnut:'assets/plant-hearthnut.webp',owlbur:'assets/plant-owlbur.webp',starbean:'assets/plant-starbean.webp',emberkern:'assets/plant-emberkern.webp',veilseed:'assets/plant-veilseed.webp',dewbell:'assets/plant-dewbell.webp',bell:'assets/plant-bell.webp',mothwing:'assets/plant-mothwing.webp',shellbloom:'assets/plant-shellbloom.webp',memnut:'assets/plant-memnut.webp',trilight:'assets/plant-trilight.webp',spirepod:'assets/plant-spirepod.webp',urchin:'assets/plant-urchin.webp',mossgrass:'assets/plant-mossgrass.webp',tidelotus:'assets/plant-tidelotus.webp',glowcap:'assets/plant-glowcap.webp',lantern:'assets/plant-lantern.webp',tidebloom:'assets/plant-tidebloom.webp',starspore:'assets/plant-starspore.webp'};
 const plantImg=k=>PLANT_IMG[k]||null;
 const seedImg=k=>SEED_IMG[String(k).replace(/^seed_/,'')]||null;
 const jarSeed=(c,sealed,img)=>img?`<circle class="jar-glow" cx="40" cy="72" r="22" fill="${c}" opacity=".3"/><image href="${img}" x="21" y="52" width="38" height="40" preserveAspectRatio="xMidYMid meet"/>${sealed?'<circle cx="40" cy="72" r="18" fill="none" stroke="#e2d6ff" stroke-width="1.4" stroke-dasharray="3 3"/>':''}`:`<circle class="jar-glow" cx="40" cy="72" r="22" fill="${c}" opacity=".3"/><circle cx="40" cy="72" r="8.5" fill="${c}"/><circle cx="37" cy="69" r="3" fill="#fff" opacity=".85"/>${sealed?'<circle cx="40" cy="72" r="15" fill="none" stroke="#e2d6ff" stroke-width="1.4" stroke-dasharray="3 3"/>':''}`;
@@ -6693,7 +6698,7 @@ function starMap(){
  const ov=panel(`<div class="eyebrow">星月觀測車廂</div><h2>古代星圖</h2><div class="starmap">${svg}</div><div class="sm-legend"><span>◉ 已探索</span><span>○ 已能鎖定・尚未抵達</span><span>░ 訊號微弱</span><span style="color:#7fe6f0">◎ 列車位置</span></div><div class="sm-info" id="smi" aria-live="polite"></div>`,'');
  const info=id=>{ const s=locStatus(id), L=LOCATIONS[id];
   if(s==='fog') return '<b>訊號微弱</b><br>'+unlockInfo(id);
-  return `<b>${L.name}</b>　<span style="color:var(--mute)">${L.realm}・${L.domain}・座標 ${L.coord}</span><br>${s==='seen'?L.desc:revealed(id)&&!L.ready?`${L.desc}<br><span style="color:#d9c8ff">座標已解讀，但通往這裡的航道還沒有開通。</span>`:'尚未抵達。導航裝置已能鎖定它的訊號。'}${id===cur?'<br><span style="color:var(--gold)">列車目前停靠於此。</span>':''}${id===to?`<br><span style="color:var(--gold)">${voy?'航行目的地':'下一站'}</span>`:''}`; };
+  return `${s==='seen'&&LOC_IMG[id]?`<img class="sm-pic" src="${LOC_IMG[id]}" alt="">`:''}<b>${L.name}</b>　<span style="color:var(--mute)">${L.realm}・${L.domain}・座標 ${L.coord}</span><br>${s==='seen'?L.desc:revealed(id)&&!L.ready?`${L.desc}<br><span style="color:#d9c8ff">座標已解讀，但通往這裡的航道還沒有開通。</span>`:'尚未抵達。導航裝置已能鎖定它的訊號。'}${id===cur?'<br><span style="color:var(--gold)">列車目前停靠於此。</span>':''}${id===to?`<br><span style="color:var(--gold)">${voy?'航行目的地':'下一站'}</span>`:''}`; };
  const sel=id=>{ ov.querySelectorAll('[data-st]').forEach(g=>g.classList.toggle('sel',g.dataset.st===id)); ov.querySelector('#smi').innerHTML=info(id); };
  ov.querySelectorAll('[data-st]').forEach(g=>{ g.addEventListener('click',()=>sel(g.dataset.st)); g.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); sel(g.dataset.st); } }); });
  sel(cur||to);
@@ -6811,7 +6816,7 @@ const ITEM_IMG={dew:'assets/mat-dew.webp',sand:'assets/mat-sand.webp',mosslight:
  keep_frost:'assets/keep-frost.webp',keep_sirenora:'assets/keep-sirenora.webp',keep_titan:'assets/keep-titan.webp',keep_lynx:'assets/keep-lynx.webp',keep_strider:'assets/keep-strider.webp',
  keep_windkoi:'assets/keep-windkoi.webp',keep_mnemo:'assets/keep-mnemo.webp',keep_cabbfrog:'assets/keep-cabbfrog.webp',keep_skywhale:'assets/keep-skywhale.webp',keep_scythe:'assets/keep-scythe.webp',keep_dawnsail:'assets/keep-dawnsail.webp',keep_grinfox:'assets/keep-grinfox.webp',keep_skyfox:'assets/keep-skyfox.webp',keep_moonwyrm:'assets/keep-moonwyrm.webp',keep_sandwyrm:'assets/keep-sandwyrm.webp',keep_treeling:'assets/keep-treeling.webp',keep_sola:'assets/keep-sola.webp'};
 const itemImg=id=>ITEM_IMG[id]||null;
-const BYE_IMG='assets/bye-scene.jpg';
+const BYE_IMG='assets/bye-scene.jpg', GUARD_IMG='assets/guard-room.jpg', LIGHTLING_IMG='assets/vis-lightling.webp';
 const itemIcon=(id,c,k)=>itemImg(id)?`<img class="gemimg itemimg" src="${itemImg(id)}" alt="" draggable="false">`:gemIcon(c,k);
 /* 撿到東西時：實物圖在畫面中間浮起來一下 */
 function itemPop(id,label){ const im=itemImg(id); if(!im) return; const d=document.createElement('div'); d.className='item-pop'; d.innerHTML=`<img src="${im}" alt=""><b>${label||''}</b>`; document.body.appendChild(d); setTimeout(()=>d.remove(),2400); }
@@ -6878,7 +6883,7 @@ const MEMORIES=[
 ];
 MEMORIES.push(...hiddenMems(),...byeMems());
 const memsHave=()=>MEMORIES.filter(m=>m.have());
-function memArt(m){ if(m.img) return `<img class="memimg" src="${m.img}" alt="">`; if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
+function memArt(m){ if(m.img) return `<img class="memimg" src="${m.img}" alt="">`; if(m.scene&&LOC_IMG[m.scene]) return `<img class="memimg" src="${LOC_IMG[m.scene]}" alt="">`; if(m.scene) return `<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${ART.defs}${m.scene==='voyage'?ART.loc.voyage():LOCATIONS[m.scene].art()}</svg>`;
  return `<span class="portrait-wash">${portraitOf(charOf(m.who))}${m.who2?portraitOf(charOf(m.who2)):''}</span>`; }
 
 
@@ -7049,11 +7054,11 @@ function memoryPanel(){ oldSync(); const M=(state.starMsgs||[]).filter(m=>m.read
    .concat((state.sharedMem||[]).map(m=>({id:'sm:'+m.id,box:'mom',have:true,cls:'shard shared',attr:`data-sm="${m.id}"`,inner:`<span class="portrait-wash">${m.who.slice(0,2).filter(w=>PASSENGERS[w]).map(w=>portraitOf(charOf(w))).join('')||memArt({scene:m.loc==='voyage'?'voyage':m.loc})}</span>`,label:m.title})))
    .concat(M.map((m,k)=>({id:'msg:'+k,box:'msg',have:true,cls:'shard shared',inner:`<span class="portrait-wash">${PASSENGERS[m.pid]?portraitOf(PASSENGERS[m.pid]):''}</span>`,label:nm(m.pid)})))
    .concat(E.map(([id])=>({id:'echo:'+id,box:'echo',have:true,cls:'shard',inner:memArt({scene:'voyage'}),label:OLD[id].n})))
-   .concat(V.map(([id])=>({id:'vis:'+id,box:'vis',have:true,cls:'shard',inner:`<svg viewBox="0 0 40 50" aria-hidden="true"><circle cx="20" cy="22" r="9" fill="${(VISITORS[id].col||['#fff'])[0]}" opacity=".85"/><circle cx="20" cy="22" r="16" fill="none" stroke="${(VISITORS[id].col||['#fff'])[0]}" opacity=".35"/></svg>`,label:VISITORS[id].name}))),
+   .concat(V.filter(([id])=>VISITORS[id]).map(([id])=>({id:'vis:'+id,box:'vis',have:true,cls:VISITORS[id].img?'gem':'shard',inner:VISITORS[id].img?`<img class="gemimg itemimg" src="${VISITORS[id].img}" alt="">`:`<svg viewBox="0 0 40 50" aria-hidden="true"><circle cx="20" cy="22" r="9" fill="${(VISITORS[id].col||['#fff'])[0]}" opacity=".85"/><circle cx="20" cy="22" r="16" fill="none" stroke="${(VISITORS[id].col||['#fff'])[0]}" opacity=".35"/></svg>`,label:VISITORS[id].name}))),
   view:id=>{ id=String(id);
    if(id.startsWith('msg:')){ const m=M[+id.slice(4)]; return `<h2>${nm(m.pid)}留下的話</h2><p class="fl-where">${whereOf(m.j,m.loc)}</p><div class="memview"><blockquote>${esc(m.text)}</blockquote></div>`; }
    if(id.startsWith('echo:')){ const k=id.slice(5), O=OLD[k], r=state.oldEcho[k]; return `<h2>${O.n}</h2><p class="fl-where">${whereOf(r.j,r.loc)}・${O.full?(r.full?'已完整解讀':'還有聽不清的部分'):'已完整解讀'}</p><div class="memview"><blockquote>${(O.full&&r.full?O.lines.slice(0,3).concat(O.fullLines):O.lines).map(esc).join('<br>')}</blockquote></div>`; }
-   if(id.startsWith('vis:')){ const k=id.slice(4), Vd=VISITORS[k], r=state.visitors[k]; return `<h2>${Vd.name}</h2><p class="fl-where">${Vd.type}・遇見 ${r.n} 次</p><div class="memview"><blockquote>${Vd.looks}<br><small>留下：${r.items.join('、')||'—'}${r.with?`・${nm(r.with)}認得牠`:''}</small></blockquote></div>`; }
+   if(id.startsWith('vis:')){ const k=id.slice(4), Vd=VISITORS[k], r=state.visitors[k]; return `<h2>${Vd.name}</h2><p class="fl-where">${Vd.type}・遇見 ${r.n} 次</p><div class="memview">${Vd.img?`<div class="cr"><img class="memimg vis" src="${Vd.img}" alt=""></div>`:''}<blockquote>${Vd.looks}<br><small>留下：${r.items.join('、')||'—'}${r.with?`・${nm(r.with)}認得牠`:''}</small></blockquote></div>`; }
    if(id.startsWith('sm:')){ const m=(state.sharedMem||[]).find(x=>'sm:'+x.id===id); return `<h2>${m.title}</h2><p class="fl-where">第 ${m.j} 趟・${m.loc==='voyage'?'航行中':LOCATIONS[m.loc]?LOCATIONS[m.loc].name:''}・${m.who.filter(w=>PASSENGERS[w]).map(w=>PASSENGERS[w].name).join('、')||'我'}</p><div class="memview"><blockquote>${m.text}</blockquote></div>`; }
    const m=MEMORIES.find(x=>x.id===id); return `<h2>${m.title}</h2><div class="memview"><div class="cr">${memArt(m)}</div><blockquote>${m.text}</blockquote></div>`; }}); }
 function itemsPanel(){ const items=Object.keys(COLLECTIBLES).filter(id=>COLLECTIBLES[id].kind==='item').concat(keepsHave().map(p=>'keep_'+p)), G=(state.pGifts||[]).slice().reverse();
@@ -7475,8 +7480,8 @@ const HSDEF=[
  {id:'ot-back',scene:'observatory',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},act:'go:observation'},
  /* 列車外 */
  {id:'out-board-origin',scene:'out:origin',name:'上車',shape:'door',at:{x:50,y:60},layer:3,imp:()=>true,act:()=>boardTrain()},
- {id:'out-tree',scene:'out:dawnForest',name:'古樹',at:{x:50,y:40},layer:2,act:'out:tree'},
- {id:'out-ring',scene:'out:dawnForest',name:'古樹上的圓環',at:{x:50,y:62},layer:2,act:'out:ring',imp:()=>!state.collectibles.includes('relic_ring')},
+ {id:'out-tree',scene:'out:dawnForest',name:'古樹',at:{x:60,y:18},layer:2,act:'out:tree'},
+ {id:'out-ring',scene:'out:dawnForest',name:'古樹上的圓環',at:{x:64,y:35},layer:2,act:'out:ring',imp:()=>!state.collectibles.includes('relic_ring')},
  {id:'out-moss',scene:'out:dawnForest',name:'林間光苔',at:{x:20,y:88},layer:1,hint:'只在晨光最斜的時候發亮的苔蘚。人類經過時，它們會在同一瞬間熄滅。'},
  
  {id:'out-hid-df',scene:'out:dawnForest',get name(){ const h=hiddenNow(); return h?h.name:''; },get at(){ const h=hiddenNow(); return h?h.at:{x:-50,y:-50}; },layer:3,track:false,show:()=>!!hiddenNow(),imp:()=>true,act:()=>hiddenOpen()},
@@ -7487,9 +7492,9 @@ const HSDEF=[
  {id:'out-comp-df',scene:'out:dawnForest',name:()=>state.companion?PASSENGERS[state.companion].name:'',shape:'npc',cls:'idle-stand',color:()=>state.companion?PASSENGERS[state.companion].color:'#fff',get sprite(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?p.image:null; },get sx(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?`;--sh:22%;--ar:${p.ar||'590/420'}`:''; },at:COMP_SLOT,layer:4,track:false,show:()=>!!state.companion,act:()=>compTalk()},
  
  {id:'out-back-df',scene:'out:dawnForest',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'},
- {id:'out-crystal',scene:'out:starIslands',name:'漂浮晶體',at:{x:51,y:40},layer:2,act:'out:crystal',imp:()=>!state.collectibles.includes('crystal_echo')},
- {id:'out-spore',scene:'out:starIslands',name:'晶體縫隙',at:{x:25,y:60},layer:2,act:'out:spore',imp:()=>!state.collectibles.includes('seed_starspore')},
- {id:'out-river',scene:'out:starIslands',name:'星河',at:{x:79,y:20},layer:1,hint:'不是水，是大量緩慢移動的光。浮島在上面漂流，偶爾有一座島被潮汐帶離河道。'},
+ {id:'out-crystal',scene:'out:starIslands',name:'漂浮晶體',at:{x:31,y:50},layer:2,act:'out:crystal',imp:()=>!state.collectibles.includes('crystal_echo')},
+ {id:'out-spore',scene:'out:starIslands',name:'晶體縫隙',at:{x:42,y:78},layer:2,act:'out:spore',imp:()=>!state.collectibles.includes('seed_starspore')},
+ {id:'out-river',scene:'out:starIslands',name:'星河',at:{x:66,y:42},layer:1,hint:'不是水，是大量緩慢移動的光。浮島在上面漂流，偶爾有一座島被潮汐帶離河道。'},
  {id:'out-sola',scene:'out:starIslands',name:'會講冷笑話的光',shape:'npc',cls:'idle-drift',color:()=>PASSENGERS.sola.color,at:{x:70,y:72},layer:4,track:false,imp:()=>true,
   show:()=>{ const s=state.passengers.sola; return !!(s&&!s.aboard&&s.left&&!done('reunion_sola_'+state.journeyCount)); },act:()=>reunion('sola')},
  {id:'out-hid-si',scene:'out:starIslands',get name(){ const h=hiddenNow(); return h?h.name:''; },get at(){ const h=hiddenNow(); return h?h.at:{x:-50,y:-50}; },layer:3,track:false,show:()=>!!hiddenNow(),imp:()=>true,act:()=>hiddenOpen()},
@@ -7498,7 +7503,7 @@ const HSDEF=[
  {id:'out-f2-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[2]?{x:f.spots[2].x,y:f.spots[2].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(2),act:()=>forageTake(2)},
  {id:'out-f3-si',scene:'out:starIslands',name:'閃著微光的東西',get at(){ const f=forageNow(); return f&&f.spots[3]?{x:f.spots[3].x,y:f.spots[3].y}:{x:-50,y:-50}; },layer:2,track:false,imp:()=>true,show:forageShow(3),act:()=>forageTake(3)},
  {id:'out-comp-si',scene:'out:starIslands',name:()=>state.companion?PASSENGERS[state.companion].name:'',shape:'npc',cls:'idle-stand',color:()=>state.companion?PASSENGERS[state.companion].color:'#fff',get sprite(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?p.image:null; },get sx(){ const p=state.companion&&PASSENGERS[state.companion]; return p&&p.sprite?`;--sh:22%;--ar:${p.ar||'590/420'}`:''; },at:COMP_SLOT,layer:4,track:false,show:()=>!!state.companion,act:()=>compTalk()},
- {id:'out-drift',scene:'out:starIslands',name:'浮島漂走的痕跡',at:{x:70,y:44},layer:3,track:false,show:()=>state.companion==='sola',imp:()=>!(state.places||[]).includes('sola'),act:()=>placeVisit('sola')},
+ {id:'out-drift',scene:'out:starIslands',name:'浮島漂走的痕跡',at:{x:80,y:30},layer:3,track:false,show:()=>state.companion==='sola',imp:()=>!(state.places||[]).includes('sola'),act:()=>placeVisit('sola')},
  {id:'out-back-si',scene:'out:starIslands',name:'返回列車',shape:'back',at:{x:8,y:88},act:'back:'}
 ];
 /* 環景車廂：從哪扇門進來，就面向車廂內部 */
@@ -7665,7 +7670,7 @@ const GUARD_REC=[
  ['給醒來的那一位','若有一日列車再次醒來，願醒來的那一位，替我們把剩下的生命帶回家。不用急。界壁會等，我們也會等。'],
  ['渡守的羅盤','一只停住的羅盤。指針沒有指向任何渡口，而是指著寂滅虛空的正中央——那裡有一點和你身上一樣的晨光。']];
 function guardRoom(){ const g=trainStage('guard'), n=g>=4?4:2; state.storyFlags.guardRoomSeen=1; save();
- panel(`<div class="eyebrow">隱藏空間・${EVO_K.guard.stages[g-1]}</div><h2>渡守的值勤室</h2><p>一間很小的房間。一張桌子、一把椅子、一盞還留著餘溫的燈。椅背上，刻著和駕駛室一樣的圓環。</p>${GUARD_REC.map((r,i)=>i<n?`<h3 class="prep-h">${r[0]}</h3><p class="prep-b">${r[1]}</p>`:`<h3 class="prep-h" style="opacity:.45">？？？</h3><p class="prep-b" style="opacity:.45">紀錄的光還沒亮。</p>`).join('')}${g>=4?'<p class="pur-done">原來，這列車一直在等的，不是渡守回來。是等一位願意繼續值勤的人。</p>':''}`,'care growov');
+ panel(`<div class="eyebrow">隱藏空間・${EVO_K.guard.stages[g-1]}</div><h2>渡守的值勤室</h2><figure class="hid-pic"><img src="${GUARD_IMG}" alt=""></figure><p>一間很小的房間。一張桌子、一把椅子、一盞還留著餘溫的燈。椅背上，刻著和駕駛室一樣的圓環。</p>${GUARD_REC.map((r,i)=>i<n?`<h3 class="prep-h">${r[0]}</h3><p class="prep-b">${r[1]}</p>`:`<h3 class="prep-h" style="opacity:.45">？？？</h3><p class="prep-b" style="opacity:.45">紀錄的光還沒亮。</p>`).join('')}${g>=4?'<p class="pur-done">原來，這列車一直在等的，不是渡守回來。是等一位願意繼續值勤的人。</p>':''}`,'care growov');
  if(g>=4&&!state.storyFlags.truthLog){ state.storyFlags.truthLog=1; logJ('在渡守的值勤室，讀到了列車真正的用途。','find'); save(); } }
 /* 列車成長紀錄（記憶典藏車廂） */
 function growthPanel(){ const L=(state.trainLog||[]).slice(-6).reverse(), U=(state.trainUnlock||[]).filter(id=>HSDEF.some(h=>h.id===id));
@@ -7826,6 +7831,8 @@ function envReact(H){ const e=envNow(); if(!e) return false; state.envSeen=state
 /* ---------- 四、隱藏訪客：短暫搭乘的生命（不是正式乘客） ---------- */
 const orbArt=(c1,c2,shape)=>()=>`<svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="va${c1.slice(1)}"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="${c1}" stop-opacity=".8"/><stop offset="1" stop-color="${c2}" stop-opacity="0"/></radialGradient></defs>${shape==='tall'?`<ellipse cx="200" cy="330" rx="90" ry="200" fill="url(#va${c1.slice(1)})"/>`:shape==='wide'?`<ellipse cx="200" cy="380" rx="170" ry="90" fill="url(#va${c1.slice(1)})"/>`:`<circle cx="200" cy="360" r="130" fill="url(#va${c1.slice(1)})"/>`}<circle cx="170" cy="350" r="7" fill="#fff" opacity=".8"/><circle cx="230" cy="350" r="7" fill="#fff" opacity=".8"/></svg>`;
 const VISITORS={
+ /* 迷路的小光生命：航行中跟著列車的小光（由「跟著列車的小光」事件記錄，不會以熱點出現） */
+ lightling:{name:'迷路的小光生命',type:'星界生命',realm:'航道上',looks:'一團軟軟的、發著暖光的小生命，拖著一條像煙一樣的尾巴。會一直跟著亮著的光走。',car:'observatory',at:{x:60,y:30},col:['#ffe9c0','#d9c8ff'],img:'assets/vis-lightling.webp',shape:'tall',repeat:1,cond:()=>false,why:'航行中，車尾的星光亮著的時候',story:[]},
  tidewisp:{name:'星潮的小透明',type:'星界生命',realm:'星河的潮汐裡',looks:'像水母又像一滴水的透明小生命，身體裡有一圈很淡的光。',car:'observation',at:{x:30,y:40},col:['#bff4ff','#7fd6ff'],shape:'tall',repeat:1,
   cond:()=>(envNow()||{}).id==='tide',why:'星潮出現的時候',
   story:[['self','觀測窗上，貼著一個透明的小生命。'],['tidewisp','……你有沒有看到，一顆藍色的星星？它以前，就在這裡。'],['self','……我沒有看過。'],['tidewisp','嗯。它熄掉很久了。我還是每次潮水來的時候，都來看一下。'],['self','牠在窗上停了一會兒，跟著退潮離開了。']],give:['sand',2],gname:'潮汐晶砂 ×2'},
@@ -8013,8 +8020,8 @@ function bankNoteSection(){ const B=bank(); if(!bankOn(4)) return ''; const C=B.
  return `<h3 class="jr-h" style="margin-top:22px">植物的旅程</h3><ul class="nb-list">${C.map(c=>`<li class="${c.st==='on'?'':'filed'}"><span><b>${RCV[c.rcv].name}</b>：把${PLANTS[c.p].name}帶到${LOCATIONS[c.loc].name}</span><em>${c.st==='on'?(canGive(c.p)?'可以送了':'準備中'):'已送達 ✦'}</em></li>`).join('')}${D.filter(d=>d.rcv.startsWith('home_')).map(d=>`<li class="filed"><span><b>${nm(d.rcv.slice(5))}</b>：帶著${PLANTS[d.p].name}回家</span><em>已送達 ✦</em></li>`).join('')}</ul>${D.filter(d=>d.news).length?`<p class="jr-p"><b>復育消息</b><br>${D.filter(d=>d.news).map(d=>esc(d.newsT)).join('<br>')}</p>`:''}`; }
 /* ---------- 溫室「向後看」的兩個熱點 ---------- */
 HSDEF.push(
- {id:'nat-vine-b',scene:'nature',name:'守望藤',at:{x:73,y:44},layer:2,act:()=>vinePanel('nat-vine-b'),imp:()=>!!bank().pend},
- {id:'nat-codex',scene:'nature',name:'植物生命圖鑑',at:{x:86,y:46},layer:3,act:()=>codexPanel(),ver:()=>bank().stage+':'+(state.grown||[]).length+':'+bank().deliv.length});
+ {id:'nat-vine-b',scene:'nature',name:'守望藤',at:{x:9,y:38},layer:2,act:()=>vinePanel('nat-vine-b'),imp:()=>!!bank().pend},
+ {id:'nat-codex',scene:'nature',name:'植物生命圖鑑',at:{x:81,y:43},layer:3,act:()=>codexPanel(),ver:()=>bank().stage+':'+(state.grown||[]).length+':'+bank().deliv.length});
 VIEW_BACK.push('nat-vine-b','nat-codex');
 /* 接收者：沿用晨曦森林的古樹、星河浮島的星河 */
 HSDEF.forEach(h=>{ const r=Object.keys(RCV).find(k=>RCV[k].hs===h.id); if(!r) return; const oa=h.act, ol=h.layer, oimp=h.imp;
