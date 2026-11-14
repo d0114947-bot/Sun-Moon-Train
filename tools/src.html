@@ -3616,7 +3616,7 @@ function act(k,v){
   case 'go': return moveTo(v);
   case 'turn': return turnView();
   case 'exit': if(state.currentPhase!=='docked') return toast('航行中無法離開列車');
-   if(state.currentLocation==='origin') return toast('列車停泊在沉睡之地，這裡無法下車');
+   if(state.currentLocation==='origin') return toast(`列車停泊在${LOCATIONS.origin.name}，這裡無法下車`);
    if(resStage()>=5) return dialogueScript([['self','……身體太重了。現在下車，可能會回不來。'],['self','先去淨化吧。']]);
    /* 車門聯鎖已經確認鎖上：準備出發，不能再下車 */
    if(state.duty&&state.duty.doors) return dialogueScript([['self','車門聯鎖已經鎖上了。列車準備出發，不能再下車了。']]);
@@ -4992,7 +4992,7 @@ function autoMark(t){ let m=document.querySelector('#automark'); if(!m){ m=docum
 function slotsGet(){ try{ const a=JSON.parse(localStorage.getItem(SLOT_KEY)||'[]'); return Array.isArray(a)?a:[]; }catch(e){ return []; } }
 function slotsSet(a){ try{ localStorage.setItem(SLOT_KEY,JSON.stringify(a)); return true; }catch(e){ return false; } }
 function fmtTime(t){ const d=new Date(t); return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
-function stateSummary(s){ if(s.chapter==='act1'&&!s.introDone) return {loc:'沉睡之地',realm:'',journey:0,where:'沉睡之地',run:'第一幕',pass:'無',life:0,clues:0,duty:'—',cont:'尚未量測'};
+function stateSummary(s){ if(s.chapter==='act1'&&!s.introDone) return {loc:'沉睡之地',realm:'',journey:0,where:'沉睡之地',run:s.act1&&s.act1.ended?(s.act2&&s.act2.completed?'第三幕':'第二幕'):'第一幕',pass:'無',life:0,clues:0,duty:'—',cont:'尚未量測'};
  const L=LOCATIONS[s.currentLocation]||LOCATIONS.origin, voy=s.currentPhase==='voyage'&&s.voyage;
  const ab=Object.keys(s.passengers||{}).filter(id=>s.passengers[id].aboard&&PASSENGERS[id]).map(id=>PASSENGERS[id].name);
  const d=s.duty||{}, eq=(s.spirit&&s.spirit.equipment)||{};
@@ -5075,6 +5075,7 @@ function loadGame(st,name){
  if(state.chapter==='act1'&&!state.introDone){ save(); ACT1.enter(); return; }
  BGM.start(); CAB.reset(); normalizeState(); save();
  PANO.active=null; layout.centered=false; RUNNING=true; render();
+ if(act3TrainIntro()) return;   /* 第三幕：進入列車後、刻文還沒讀完就離開的，重新接上 */
  if(state.currentPhase==='voyage') SFX.startDrone(); else if(state.currentPhase==='docked'){ NOFEEL=true; arrivalChecks(); }
  toast('已喚回：'+name);
 }
@@ -7439,7 +7440,7 @@ const HSDEF=[
  ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'||id==='treeling'||id==='sandwyrm'||id==='grinfox'||id==='moonwyrm'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!state.passengers[id].place,imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:8,y:50},act:'exit:',
-  lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?'列車停泊在沉睡之地，這裡無法下車。':null},
+  lock:()=>state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?`列車停泊在${LOCATIONS.origin.name}，這裡無法下車。`:null},
  {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:51},act:'go:observation'},
  {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:50,y:46},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
@@ -8331,7 +8332,7 @@ HSDEF.forEach(h=>{ const o=h.lock; h.lock=()=>(o&&o())||crSealMsg(h); });
 
 /* 航行中：外部危機在航程過半時爆發；爆發後沒處理完，列車不會到站 */
 function crVoyTick(v){ const C=state.crisis; if(!C||C.done||C.burst) return; if(CRISES[C.id].at==='voyage'&&C.stage==='W4'&&v.progress>=.55&&v.fin==null) crOutbreak(); }
-const crBlockDepart=()=>trainStatus().run==='stop'?'列車停駛中。要先在控制晶盤完成修復，才能出發。':(state.crisis&&state.crisis.burst&&!state.crisis.done)?'危機還沒處理完。':(state.disaster&&state.disaster.st<4)?'列車在緊急狀態，不能出發。':null;
+const crBlockDepart=()=>act3DepartBlock()||(trainStatus().run==='stop'?'列車停駛中。要先在控制晶盤完成修復，才能出發。':(state.crisis&&state.crisis.burst&&!state.crisis.done)?'危機還沒處理完。':(state.disaster&&state.disaster.st<4)?'列車在緊急狀態，不能出發。':null);
 { const Hd=HSDEF.find(h=>h.id==='cab-disc'); if(Hd){ const oi=Hd.imp; Hd.imp=()=>!!(state.crisis&&state.crisis.burst&&!state.crisis.done)||!!(state.disaster&&state.disaster.st<4)||(state.repairs||[]).some(r=>!r.done)||(oi?oi():false); } }
 { const _cc=cabCore; cabCore=function(){ return crActive()?crPanel():_cc(); }; const H=HSDEF.find(h=>h.id==='cab-core'); if(H){ const oi=H.imp; H.imp=()=>!!(state.crisis&&state.crisis.burst&&!state.crisis.done)||!!(state.disaster&&state.disaster.st<4)||(state.repairs||[]).some(r=>!r.done)||(oi?oi():false); } }
 
@@ -9466,6 +9467,239 @@ const ACT2=(()=>{
   _shadowNow:()=>{ spawnShadow(); return sh&&{x:sh.x,z:sh.z}; }, SEG};
 })();
 
+/* =====================================================================
+   第三幕：遠方的異常景象（沉睡之地 → 列車）
+   只透過 ACT1 的掛勾點與受控介面運作，不改第一幕、第二幕的劇情、條件與存檔欄位。
+   ・觸發：第二幕完成（看見「留下的光痕」）之後。醒來方向的左後方，遠處的星光逐漸變密（不顯示任何介面）
+   ・場景一：海面與星空之間浮著幾道不規則的「空間窗」，窗裡是別的空間的景色（沿用界域插畫）；
+            最大的一道縫隙裡，停著一列沉睡的列車（不發光、不啟動、沒有聲音，也不對精靈有任何反應）
+   ・場景二：可以自由飛進縫隙；四個觀察點（空間紋理、古老碎片、特殊構造、車身紋路），每個只記錄一次
+   ・場景三：至少看過一個觀察點後，靠近車門可以「進入」→ 列車內部（棲息車廂）→ 古老刻文介紹列車
+   ・進入列車後：接上原本的列車遊戲；出發（控制晶盤）先保持沉睡，留給下一幕
+   存檔：state.act3＝{trainSeen, obs:[], entered, introduced, canDepart}
+   ===================================================================== */
+const ACT3_DEF=()=>({trainSeen:false,obs:[],entered:false,introduced:false,canDepart:false});
+const act3NewGame=()=>!!(state&&state.act3&&state.act3.entered);
+/* 控制晶盤：第三幕的列車還在沉睡，不能出發 */
+function act3DepartBlock(){ return state&&state.act3&&state.act3.entered&&!state.act3.canDepart?'水晶沒有回應。……它還在沉睡。':null; }
+/* 新遊戲（經過第三幕）的起點是「世界縫隙」；?legacy=1 的舊開場仍然是沉睡之地的停泊處 */
+{ const O=LOCATIONS.origin, base={name:O.name,domain:O.domain,desc:O.desc,img:O.img};
+  Object.defineProperties(O,{
+   name:{get:()=>act3NewGame()?'世界縫隙':base.name,configurable:true},
+   domain:{get:()=>act3NewGame()?'沉睡之地的邊緣':base.domain,configurable:true},
+   desc:{get:()=>act3NewGame()?'沉睡之地邊緣的一道世界縫隙。列車靜靜停在這裡，周圍漂著空間碎片與星光。':base.desc,configurable:true},
+   img:{get:()=>act3NewGame()?'sky-origin.jpg':base.img,configurable:true}});
+  const M=MEMORIES.find(m=>m.id==='wake');
+  if(M){ const t0=M.title, x0=M.text; Object.defineProperties(M,{
+   title:{get:()=>act3NewGame()?'發現':t0,configurable:true},
+   text:{get:()=>act3NewGame()?'在沉睡之地邊緣的世界縫隙裡，發現了一列沉睡的列車。走進去，裡面竟然有那麼大的空間。':x0,configurable:true}}); } }
+
+const ACT3=(()=>{
+ const S3=()=>state.act3, A=()=>ACT1.api;
+ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+ const RC={x:-460,z:-460};                       /* 列車所在的縫隙（醒來方向的左後方） */
+ const SQ=Math.SQRT1_2, U={x:SQ,z:-SQ}, N={x:SQ,z:SQ};   /* 列車車身方向 U；側面朝向來的方向 N */
+ const wpt=(a,s,y)=>[RC.x+U.x*a+N.x*s,y,RC.z+U.z*a+N.z*s];
+ /* 空間窗：窗裡是別的空間的景色（沿用界域插畫，不新增圖） */
+ const WINS=[
+  {x:RC.x+U.x*190+N.x*40,z:RC.z+U.z*190+N.z*40,y:24,r:24,img:'timeriftSea',sd:1.3},
+  {x:RC.x-U.x*210+N.x*10,z:RC.z-U.z*210+N.z*10,y:42,r:19,img:'starIslands',sd:2.1},
+  {x:RC.x+U.x*120-N.x*170,z:RC.z+U.z*120-N.z*170,y:16,r:17,img:'boundlessCorridor',sd:3.7},
+  {x:RC.x+U.x*300-N.x*60,z:RC.z+U.z*300-N.z*60,y:58,r:14,img:'reverseRealm',sd:4.4},
+  {x:RC.x-U.x*130-N.x*190,z:RC.z-U.z*130-N.z*190,y:30,r:13,img:'silentVoid',sd:5.9},
+  {x:RC.x,z:RC.z,y:20,r:54,main:true,sd:7.2}];
+ const IMGS={}; let imgsOk=false;
+ function loadImgs(){ if(imgsOk) return; imgsOk=true; WINS.forEach(w=>{ if(w.img&&!IMGS[w.img]){ const im=new Image(); im.src=LOC_IMG[w.img]; IMGS[w.img]=im; } }); }
+ /* 列車（程式繪製的暫代造型：沒有燈、覆著薄霧） */
+ const CARS=[{a0:20,a1:38,loco:1},{a0:3,a1:18.5},{a0:-14,a1:1.5},{a0:-31,a1:-15.5}];
+ const CW=4.6, CY0=12, CY1=18.2;
+ /* 觀察點 */
+ const SPOTS={
+  texture:{p:()=>[RC.x+N.x*118,24,RC.z+N.z*118],lines:['邊緣的光……一層一層疊著。','像是好幾個地方，被縫在了一起。'],rec:'世界縫隙的邊緣：光一層一層疊在一起，像好幾個空間被縫在一起。'},
+  shard:{p:()=>wpt(-46,26,30),lines:['白色的石頭……上面有金色的線。','它在這裡漂了多久了？'],rec:'縫隙裡漂著的古老碎片：白色石材嵌著金色紋線，看不出原本屬於什麼。'},
+  struct:{p:()=>wpt(29,0,CY1+5),lines:['這個圓環……不是裝飾。','像是用來……對準什麼的。'],rec:'列車頂上的圓環構造：以古老的幾何組成，看起來不只是裝飾。'},
+  carving:{p:()=>wpt(-6.5,CW/2+.2,15.2),lines:['車身上刻著紋路。','圓、弧、星……好古老的樣式。'],rec:'車身的紋路：圓環、弧線與星形交織在一起，是很古老的樣式。'}};
+ const DOOR=()=>wpt(16.2,CW/2+.2,14.6), NEAR=22;
+ let on=false, ap=0, apT=false, ob=0, phase='', near=null, btn=null, said={}, frags=[], dust=[];
+ const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(13579);
+ for(let i=0;i<46;i++){ const r=30+rnd()*90, an=rnd()*6.3; frags.push({x:RC.x+Math.cos(an)*r,z:RC.z+Math.sin(an)*r,y:6+rnd()*46,s:.6+rnd()*2.2,ph:rnd()*6.3,k:.2+rnd()*.5,gold:rnd()<.35}); }
+ for(let i=0;i<220;i++){ const r=20+rnd()*170, an=rnd()*6.3; dust.push({x:RC.x+Math.cos(an)*r,z:RC.z+Math.sin(an)*r,y:2+rnd()*90,ph:rnd()*6.3,c:rnd()<.3?'255,232,190':rnd()<.5?'210,200,255':'240,244,255'}); }
+ const act=()=>!!(state.act2&&state.act2.completed&&state.act1&&state.act1.ended);
+ const lockedNow=()=>{ const a=A(); return a.lock||a.busy||a.saying(); };
+ const dimK=()=>state.world&&state.world.dimension==='moon'?1:.72;   /* 兩個維度都看得到；月界的沉睡之地裡更清楚 */
+ function initState(){ const s=state.act3=Object.assign(ACT3_DEF(),state.act3||{}); s.obs=Array.isArray(s.obs)?s.obs.filter(k=>SPOTS[k]):[]; ['trainSeen','entered','introduced','canDepart'].forEach(k=>s[k]=!!s[k]); }
+
+ /* ---------- 介面：靠近觀察點時的「觀察／進入」 ---------- */
+ const CSS=`
+.a3-act{position:absolute;left:50%;bottom:calc(max(18px,env(safe-area-inset-bottom)) + 96px);transform:translate(-50%,8px);padding:9px 20px;border-radius:999px;border:1px solid rgba(240,220,170,.5);background:rgba(10,12,34,.62);backdrop-filter:blur(6px);color:#fff6e2;font-family:var(--f-display);font-size:15px;letter-spacing:.16em;cursor:pointer;z-index:5;opacity:0;pointer-events:none;transition:opacity .5s,transform .5s;-webkit-tap-highlight-color:transparent}
+.a3-act.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}.a3-act:hover{background:rgba(30,30,70,.75)}
+.a3-act kbd{display:inline-block;margin-left:8px;padding:0 6px;border-radius:5px;border:1px solid rgba(255,240,200,.5);font-size:11px;letter-spacing:0;font-family:inherit;opacity:.75}
+.a1.touch .a3-act{font-size:16px;padding:11px 24px}.a1.touch .a3-act kbd{display:none}
+`;
+ function buildUI(){ const el=A().el; if(!el) return; if(!document.getElementById('a3css')){ const st=document.createElement('style'); st.id='a3css'; st.textContent=CSS; document.head.appendChild(st); }
+  btn=document.createElement('button'); btn.className='a3-act'; btn.addEventListener('pointerdown',e=>e.stopPropagation()); btn.onclick=e=>{ e.stopPropagation(); press(); }; el.appendChild(btn); }
+ function showBtn(k){ if(!btn) return; if(!k){ btn.classList.remove('on'); btn.dataset.k=''; return; } if(btn.dataset.k!==k){ btn.dataset.k=k; btn.innerHTML=(k==='door'?'進入':'觀察')+'<kbd>Enter</kbd>'; } btn.classList.add('on'); }
+ const KD=e=>{ if(!on||e.repeat||e.ctrlKey||e.metaKey||e.altKey) return; if(e.code!=='Enter'&&e.code!=='NumpadEnter') return; if(!near) return; e.preventDefault(); press(); };
+ function press(){ if(!near||phase||lockedNow()) return; const k=near; near=null; showBtn(null); if(k==='door') enterTrain(); else observe(k); }
+
+ /* ---------- 觀察與進入 ---------- */
+ function observe(k){ const s=S3(); if(s.obs.includes(k)) return; s.obs.push(k); A().persist();
+  if(SFX.on()){ SFX.tone(988,0,1.2,'sine',.012); SFX.tone(1480,.18,1.2,'sine',.008); }
+  A().say(SPOTS[k].lines); }
+ function enterTrain(){ const a=A(), s=S3(); if(!s.obs.length) return; phase='enter'; a.setLock(true);
+  if(SFX.on()){ SFX.tone(392,0,2.4,'sine',.01); SFX.tone(587,.3,2.2,'sine',.008); }
+  a.tw(a.fadeObj,'v',1,1.8,()=>{ a.after(.4,()=>setTimeout(toTrain,0)); }); }   /* 離開第一幕的畫面要等這一幀結束 */
+ function toTrain(){ const s=S3(); s.entered=true; A().persist(); ACT1.exit(); act3BeginTrain(); }
+
+ /* ---------- 每幀邏輯 ---------- */
+ function logic(dt){ if(!act()) return; const a=A(), P=a.P, s=S3();
+  if(!apT){ if(lockedNow()) return; apT=true; if(ap<1) a.tw({get v(){return ap},set v(x){ap=x}},'v',1,6); }
+  const d=Math.hypot(P.x-RC.x,P.z-RC.z);
+  ob=clamp((150-d)/70,0,1);
+  if(phase) return;
+  /* 場景一：發現列車 */
+  if(!s.trainSeen&&ap>.6&&!lockedNow()){ const pr=a.proj(RC.x,22,RC.z), onScr=pr&&Math.abs(pr.x-a.W/2)<a.W*.36&&pr.y>0&&pr.y<a.H;
+   if((d<340&&onScr)||d<150){ s.trainSeen=true; a.persist(); phase='seen'; a.setLock(true);
+    if(SFX.on()){ SFX.tone(262,0,4,'sine',.008); SFX.tone(392,.5,3.5,'sine',.006); }
+    a.after(1.2,()=>a.say(['那是……列車？'],()=>{ a.after(.8,()=>{ phase=''; a.setLock(false); }); })); return; } }
+  if(!s.trainSeen){ near=null; showBtn(null); return; }
+  /* 場景二、三：觀察點與車門 */
+  let best=null, bd=NEAR; const P3=[P.x,P.y,P.z];
+  const dist=q=>Math.hypot(q[0]-P3[0],q[1]-P3[1],q[2]-P3[2]);
+  for(const k in SPOTS){ if(s.obs.includes(k)) continue; const q=dist(SPOTS[k].p()); if(q<bd){ bd=q; best=k; } }
+  const dd=dist(DOOR()); if(dd<NEAR&&(!best||dd<bd)){ if(s.obs.length) best='door'; else if(!said.door&&!lockedNow()){ said.door=1; a.say(['……門。','先看看四周吧。']); } }
+  near=lockedNow()?null:best; showBtn(near); }
+
+ /* ---------- 繪製 ---------- */
+ const Pj=q=>A().proj(q[0],q[1],q[2]);
+ function drawPre(x,W,H,C){ if(!act()||ap<=0) return; loadImgs(); const a=A(), P=a.P, T=a.T, d=Math.hypot(P.x-RC.x,P.z-RC.z);
+  drawStars(x,W,H,C,d);
+  const ws=WINS.map(w=>({w,d:Math.hypot(w.x-C.x,w.z-C.z)})).sort((p,q)=>q.d-p.d);
+  for(const {w} of ws){ if(w.main) drawMain(x,W,H,C,w); else drawWin(x,W,H,C,w); } }
+ /* 遠方的星光變密：朝縫隙的方向，越接近越密 */
+ function drawStars(x,W,H,C,d){ const T=A().T, hy=C.hy; let ang=Math.atan2(RC.x-C.x,RC.z-C.z)-C.yaw; ang=Math.atan2(Math.sin(ang),Math.cos(ang)); if(Math.abs(ang)>1.25||hy<=0) return;
+  const k=ap*clamp(.35+.65*(1-(d-150)/1100),.35,1)*clamp(1-ob,0,1); if(k<.02) return;
+  const sx=W/2+Math.tan(ang)*C.f, sy=hy-C.f*.16, R=C.f*.55;
+  x.save(); x.beginPath(); x.rect(0,0,W,hy); x.clip(); x.globalCompositeOperation='lighter';
+  const g=x.createRadialGradient(sx,sy,0,sx,sy,R); g.addColorStop(0,`rgba(200,190,255,${.10*k})`); g.addColorStop(.5,`rgba(150,140,230,${.04*k})`); g.addColorStop(1,'rgba(150,140,230,0)'); x.fillStyle=g; x.fillRect(sx-R,sy-R,R*2,R*2);
+  const n=Math.round(30+70*k);
+  for(let i=0;i<n;i++){ const h1=Math.sin(i*12.9898)*43758.5453, h2=Math.sin(i*78.233)*12345.6789, u=h1-Math.floor(h1), v=h2-Math.floor(h2);
+   const rr=Math.pow(u,1.7)*R*.85, aa=v*6.283, px=sx+Math.cos(aa)*rr*1.4, py=sy+Math.sin(aa)*rr*.7; if(py>hy) continue;
+   const tw=.5+.5*Math.sin(T*(1+v*2)+i), al=k*tw*(.35+.5*(1-u)); x.fillStyle=`rgba(${i%5===0?'255,236,200':i%3===0?'215,205,255':'240,244,255'},${al})`; const r=i%11===0?1.6:.9; x.fillRect(px-r/2,py-r/2,r,r); }
+  x.restore(); }
+ /* 不規則的縫隙外形 */
+ function shape(x,cx,cy,R,sd,T){ x.beginPath(); for(let i=0;i<=28;i++){ const t=i/28*6.283, n=.82+.13*Math.sin(t*3+sd)+.07*Math.sin(t*7+sd*2+T*.3)+.05*Math.sin(t*11-sd+T*.5); const px=cx+Math.cos(t)*R*n*1.18, py=cy+Math.sin(t)*R*n*.86; i?x.lineTo(px,py):x.moveTo(px,py); } x.closePath(); }
+ function edge(x,cx,cy,R,sd,T,al){ x.save(); x.globalCompositeOperation='lighter'; shape(x,cx,cy,R*1.04,sd,T); x.strokeStyle=`rgba(200,185,255,${.22*al})`; x.lineWidth=Math.max(2,R*.09); x.stroke();
+  shape(x,cx,cy,R,sd,T); x.strokeStyle=`rgba(245,235,255,${.55*al})`; x.lineWidth=1.2; x.stroke();
+  for(let i=0;i<8;i++){ const t=i*.785+sd+T*.05, px=cx+Math.cos(t)*R*1.12, py=cy+Math.sin(t)*R*.92+Math.sin(T+i)*2, r=Math.max(1,R*.03); x.fillStyle=`rgba(255,240,210,${.5*al*(.5+.5*Math.sin(T*1.7+i))})`; x.fillRect(px-r/2,py-r/2,r,r); }
+  x.restore(); }
+ function drawWin(x,W,H,C,w){ const a=A(), T=a.T, pr=a.proj(w.x,w.y+Math.sin(T*.3+w.sd)*1.5,w.z); if(!pr) return; const dd=Math.hypot(w.x-a.P.x,w.z-a.P.z);
+  const al=ap*dimK()*clamp((1150-dd)/550,0,1)*clamp(1-ob*.8,0,1); if(al<.02) return; const R=w.r*C.f/pr.z; if(R<1.5||pr.x+R*2<0||pr.x-R*2>W) return;
+  const im=IMGS[w.img];
+  x.save(); shape(x,pr.x,pr.y,R,w.sd,T); x.clip(); x.globalAlpha=al*.92;
+  if(im&&im.complete&&im.naturalWidth){ const par=clamp((pr.x-W/2)/W,-1,1)*R*.5, iw=R*3.4, ih=iw*im.naturalHeight/im.naturalWidth; x.drawImage(im,pr.x-iw/2-par,pr.y-ih/2,iw,ih); }
+  else { x.fillStyle='#2a2660'; x.fillRect(pr.x-R*2,pr.y-R*2,R*4,R*4); }
+  x.globalAlpha=1; const g=x.createRadialGradient(pr.x,pr.y,R*.4,pr.x,pr.y,R*1.2); g.addColorStop(0,'rgba(20,16,50,0)'); g.addColorStop(1,`rgba(20,16,50,${.55*al})`); x.fillStyle=g; x.fillRect(pr.x-R*1.3,pr.y-R*1.3,R*2.6,R*2.6);
+  x.restore(); edge(x,pr.x,pr.y,R,w.sd,T,al); }
+ /* 主要的縫隙：裡面是另一個空間，列車停在那裡；越靠近縫隙越大，最後整個進到縫隙裡 */
+ function drawMain(x,W,H,C,w){ const a=A(), T=a.T, pr=a.proj(w.x,w.y,w.z), dd=Math.hypot(w.x-a.P.x,w.z-a.P.z);
+  const al=ap*clamp((1250-dd)/600,0,1)*(dimK()*.8+.2); if(al<.02) return;
+  x.save();
+  if(ob<1){ if(!pr){ x.restore(); return; } const R=w.r*C.f/pr.z*(1+ob*ob*14); shape(x,pr.x,pr.y,R,w.sd,T); x.clip(); }
+  x.globalAlpha=ob>=1?1:clamp(al+ob,0,1);
+  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'rgba(10,8,30,.96)'); g.addColorStop(.55,'rgba(22,16,58,.94)'); g.addColorStop(1,'rgba(12,10,36,.96)'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  inner(x,W,H,C);
+  x.restore();
+  if(ob<1&&pr){ const R=w.r*C.f/pr.z*(1+ob*ob*14); edge(x,pr.x,pr.y,R,w.sd,T,al*(1-ob)); } }
+ function inner(x,W,H,C){ const a=A(), T=a.T;
+  x.save(); x.globalCompositeOperation='lighter';
+  for(const p of dust){ const pr=a.proj(p.x,p.y+Math.sin(T*.25+p.ph)*.8,p.z); if(!pr||pr.x<0||pr.x>W||pr.y<0||pr.y>H) continue; const al=(.35+.35*Math.sin(T*1.2+p.ph))*clamp(1-pr.z/320,0,1); if(al<.03) continue; const r=clamp(C.f/pr.z*.05,.6,2.4); x.fillStyle=`rgba(${p.c},${al})`; x.fillRect(pr.x-r/2,pr.y-r/2,r,r); }
+  x.restore();
+  /* 斷開的古老軌道 */
+  x.save(); x.strokeStyle='rgba(200,175,120,.32)'; x.lineWidth=1.4;
+  for(let i=-6;i<6;i++){ if(i===-4||i===2||i===3) continue; const p0=Pj(wpt(i*10,0,CY0-1.2+Math.sin(i)*.2)), p1=Pj(wpt(i*10+8.4,0,CY0-1.2+Math.sin(i+1)*.2)); if(!p0||!p1) continue; x.beginPath(); x.moveTo(p0.x,p0.y); x.lineTo(p1.x,p1.y); x.stroke(); }
+  x.restore();
+  /* 漂浮的空間碎片（遠的先畫） */
+  const fs=frags.map(f=>({f,pr:a.proj(f.x,f.y+Math.sin(T*.3+f.ph)*1.2,f.z)})).filter(o=>o.pr).sort((p,q)=>q.pr.z-p.pr.z);
+  drawTrain(x,W,H,C);
+  for(const {f,pr} of fs){ const r=clamp(f.s*C.f/pr.z,.8,34), an=T*f.k+f.ph; x.save(); x.translate(pr.x,pr.y); x.rotate(an);
+   x.fillStyle=f.gold?'rgba(58,52,62,.7)':'rgba(40,40,76,.7)'; x.strokeStyle=f.gold?'rgba(220,190,120,.5)':'rgba(220,215,255,.32)'; x.lineWidth=1;
+   x.beginPath(); x.moveTo(-r,-r*.3); x.lineTo(r*.2,-r*.7); x.lineTo(r*.9,r*.1); x.lineTo(-r*.1,r*.6); x.closePath(); x.fill(); x.stroke(); x.restore(); }
+  drawSpots(x,C); }
+ /* 列車：方盒車廂＋車頂圓環＋車身紋路；沒有燈、不冒煙 */
+ function drawTrain(x,W,H,C){ const a=A(), T=a.T, cam=[C.x,C.y,C.z], faces=[];
+  const boxes=[]; for(const c of CARS){ const h=c.loco?CY1-.6:CY1; boxes.push({a0:c.a0,a1:c.a1,s:CW/2,y0:CY0,y1:h,c,main:1}); boxes.push({a0:c.a0+.7,a1:c.a1-.7,s:CW/2-.9,y0:h,y1:h+.8,c,roof:1}); }
+  for(const B of boxes){ const c=B.c, s=B.s, h=B.y1, y0=B.y0, v=(aa,ss,yy)=>wpt(aa,ss,yy);
+   const F=[{n:[N.x,0,N.z],q:[v(B.a0,s,y0),v(B.a1,s,y0),v(B.a1,s,h),v(B.a0,s,h)],k:B.roof?'roofs':'side',c,sd:1,main:B.main},
+    {n:[-N.x,0,-N.z],q:[v(B.a1,-s,y0),v(B.a0,-s,y0),v(B.a0,-s,h),v(B.a1,-s,h)],k:B.roof?'roofs':'side',c,sd:-1,main:B.main},
+    {n:[U.x,0,U.z],q:[v(B.a1,s,y0),v(B.a1,-s,y0),v(B.a1,-s,h),v(B.a1,s,h)],k:'end',c,front:c.loco&&B.main},
+    {n:[-U.x,0,-U.z],q:[v(B.a0,-s,y0),v(B.a0,s,y0),v(B.a0,s,h),v(B.a0,-s,h)],k:'end',c},
+    {n:[0,1,0],q:[v(B.a0,s,h),v(B.a1,s,h),v(B.a1,-s,h),v(B.a0,-s,h)],k:'top',c}];
+   if(B.main) F.push({n:[0,-1,0],q:[v(B.a0,-s,y0),v(B.a1,-s,y0),v(B.a1,s,y0),v(B.a0,s,y0)],k:'bot',c});
+   for(const f of F){ const m=f.q.reduce((o,p)=>[o[0]+p[0]/4,o[1]+p[1]/4,o[2]+p[2]/4],[0,0,0]); const dv=[cam[0]-m[0],cam[1]-m[1],cam[2]-m[2]];
+    if(dv[0]*f.n[0]+dv[1]*f.n[1]+dv[2]*f.n[2]<=0) continue; f.dist=Math.hypot(dv[0],dv[1],dv[2])+(B.roof?-.01:0); faces.push(f); } }
+  faces.sort((p,q)=>q.dist-p.dist);
+  const fill={side:'rgba(30,32,66,.97)',roofs:'rgba(38,38,74,.97)',end:'rgba(24,25,54,.97)',top:'rgba(46,46,86,.97)',bot:'rgba(14,14,34,.97)'};
+  for(const f of faces){ const ps=f.q.map(Pj); if(ps.some(p=>!p)) continue;
+   x.beginPath(); ps.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)); x.closePath(); x.fillStyle=fill[f.k]; x.fill(); x.strokeStyle='rgba(205,180,120,.45)'; x.lineWidth=1; x.stroke();
+   if(f.k==='side'&&f.main) sideDeco(x,f,T); if(f.k==='end'&&f.front) frontDeco(x,f); }
+  /* 車頂的圓環構造（火車頭上） */
+  const ringC=wpt(29,0,CY1+5), rp=[]; for(let i=0;i<=24;i++){ const t=i/24*6.283; rp.push(Pj([ringC[0]+U.x*Math.cos(t)*4.2,ringC[1]+Math.sin(t)*4.2,ringC[2]+U.z*Math.cos(t)*4.2])); }
+  if(rp.every(Boolean)){ x.save(); x.strokeStyle='rgba(215,190,130,.6)'; x.lineWidth=clamp(C.f/rp[0].z*.35,1,5); x.beginPath(); rp.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)); x.stroke();
+   x.lineWidth=1; x.strokeStyle='rgba(215,190,130,.35)'; const b0=Pj(wpt(29,0,CY1-.6)), b1=Pj(wpt(29,0,CY1+.8)); if(b0&&b1){ x.beginPath(); x.moveTo(b0.x,b0.y); x.lineTo(b1.x,b1.y); x.stroke(); } x.restore(); }
+  /* 覆在車身上的薄霧 */
+  x.save(); x.globalCompositeOperation='screen';
+  for(let i=0;i<7;i++){ const p=Pj(wpt(-30+i*11+Math.sin(T*.2+i)*2,CW*.4*Math.sin(i*2.1),CY0+1+Math.sin(T*.3+i)*.6)); if(!p) continue; const r=clamp(C.f/p.z*7,6,260); const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,r); g.addColorStop(0,'rgba(190,190,235,.16)'); g.addColorStop(1,'rgba(190,190,235,0)'); x.fillStyle=g; x.fillRect(p.x-r,p.y-r,r*2,r*2); }
+  x.restore(); }
+ function sideDeco(x,f,T){ const c=f.c, s=f.sd*(CW/2+.02), L=c.a1-c.a0;
+  const quad=(a0,a1,y0,y1)=>[wpt(a0,s,y0),wpt(a1,s,y0),wpt(a1,s,y1),wpt(a0,s,y1)].map(Pj);
+  const arch=(a0,a1,y0,y1)=>{ const m=(a0+a1)/2, r=(a1-a0)/2, P=[wpt(a0,s,y0),wpt(a1,s,y0)]; for(let i=0;i<=10;i++){ const t=i/10*Math.PI; P.push(wpt(m+Math.cos(t)*r,s,y1+Math.sin(t)*r*.9)); } return P.map(Pj); };
+  const poly=(ps,fs,ss)=>{ if(ps.some(p=>!p)) return; x.beginPath(); ps.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)); x.closePath(); if(fs){ x.fillStyle=fs; x.fill(); } if(ss){ x.strokeStyle=ss; x.stroke(); } };
+  x.save(); x.lineWidth=1;
+  /* 金色飾帶 */
+  [CY0+1.1,CY1-1.2].forEach(y=>{ const p0=Pj(wpt(c.a0+.3,s,y)), p1=Pj(wpt(c.a1-.3,s,y)); if(p0&&p1){ x.strokeStyle='rgba(215,190,130,.5)'; x.beginPath(); x.moveTo(p0.x,p0.y); x.lineTo(p1.x,p1.y); x.stroke(); } });
+  if(c.loco){ /* 火車頭：圓形徽紋 */ const cc=wpt((c.a0+c.a1)/2-2,s,(CY0+CY1)/2), pts=[]; for(let i=0;i<=20;i++){ const t=i/20*6.283; pts.push(Pj([cc[0]+U.x*Math.cos(t)*1.8,cc[1]+Math.sin(t)*1.8,cc[2]+U.z*Math.cos(t)*1.8])); }
+   if(pts.every(Boolean)){ x.strokeStyle='rgba(215,190,130,.55)'; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)); x.stroke(); } }
+  else { const n=Math.floor(L/3.4); for(let i=0;i<n;i++){ const a0=c.a0+.9+i*(L-1.8)/n, a1=a0+(L-1.8)/n-.9; if(c===CARS[1]&&a1>15.2&&a0<17.4) continue;
+    poly(arch(a0,a1,CY0+2.1,CY1-2.6),'rgba(40,44,92,.85)','rgba(200,180,130,.38)');
+    if(i<n-1){ const pa=a1+.45, p0=Pj(wpt(pa,s,CY0+1.4)), p1=Pj(wpt(pa,s,CY1-1.5)); if(p0&&p1){ x.strokeStyle='rgba(215,190,130,.3)'; x.beginPath(); x.moveTo(p0.x,p0.y); x.lineTo(p1.x,p1.y); x.stroke(); } } }   /* 拱窗與金色壁柱 */
+   if(c===CARS[1]) poly(arch(15.4,17.2,CY0+.4,CY1-2.3),'rgba(18,18,42,.96)','rgba(215,190,130,.6)');    /* 車門 */
+   if(c===CARS[2]){ /* 紋路：圓環、弧線、星 */ const cc=wpt(-6.5,s,CY0+1.5); for(let k=0;k<3;k++){ const pts=[]; for(let i=0;i<=16;i++){ const t=i/16*3.1416; pts.push(Pj([cc[0]+U.x*Math.cos(t)*(1+k*.7),cc[1]+Math.sin(t)*.5*(1+k*.5),cc[2]+U.z*Math.cos(t)*(1+k*.7)])); }
+     if(pts.every(Boolean)){ x.strokeStyle=`rgba(215,190,130,${.5-k*.1})`; x.beginPath(); pts.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y)); x.stroke(); } } } }
+  x.restore(); }
+ function frontDeco(x,f){ const ps=f.q.map(Pj); if(ps.some(p=>!p)) return; const cx=ps.reduce((o,p)=>o+p.x/4,0), cy=ps.reduce((o,p)=>o+p.y/4,0), r=Math.abs(ps[0].x-ps[1].x)*.32+Math.abs(ps[1].y-ps[2].y)*.1;
+  x.save(); x.strokeStyle='rgba(215,190,130,.5)'; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,Math.max(1,r),0,7); x.stroke(); x.fillStyle='rgba(40,40,80,.9)'; x.beginPath(); x.arc(cx,cy,Math.max(.5,r*.55),0,7); x.fill(); x.restore(); }   /* 車頭燈是暗的 */
+ /* 觀察點：很淡的金色閃光（看過就不再閃） */
+ function drawSpots(x,C){ const a=A(), T=a.T, s=S3(); if(!s.trainSeen) return; x.save(); x.globalCompositeOperation='lighter';
+  const L=Object.keys(SPOTS).filter(k=>!s.obs.includes(k)).map(k=>SPOTS[k].p()); if(s.obs.length) L.push(DOOR());
+  L.forEach((q,i)=>{ const pr=Pj(q); if(!pr) return; const k=(.45+.55*Math.sin(T*2.2+i*1.7))*clamp(1-pr.z/260,0,1); if(k<.04) return; const r=clamp(C.f/pr.z*.5,2,14);
+   x.fillStyle=`rgba(255,226,160,${.75*k})`; x.beginPath(); x.moveTo(pr.x,pr.y-r); x.lineTo(pr.x+r*.18,pr.y-r*.18); x.lineTo(pr.x+r,pr.y); x.lineTo(pr.x+r*.18,pr.y+r*.18); x.lineTo(pr.x,pr.y+r); x.lineTo(pr.x-r*.18,pr.y+r*.18); x.lineTo(pr.x-r,pr.y); x.lineTo(pr.x-r*.18,pr.y-r*.18); x.closePath(); x.fill(); });
+  x.restore(); }
+
+ /* ---------- 進入／離開 ---------- */
+ function enter(){ on=true; initState(); phase=''; near=null; said={}; apT=false; ap=act()?1:0; if(ap) apT=true; ob=0; buildUI(); addEventListener('keydown',KD); }
+ function exit(){ on=false; removeEventListener('keydown',KD); btn=null; near=null; phase=''; }
+ ACT1.hook('enter',enter); ACT1.hook('exit',exit); ACT1.hook('logic',logic); ACT1.hook('drawPre',drawPre);
+ return {press,RC,SPOTS:Object.keys(SPOTS),spot:k=>k==='door'?DOOR():SPOTS[k].p(),
+  _dbg:()=>({act:act(),ap,ob,phase,near,btn:!!(btn&&btn.classList.contains('on')),act3:Object.assign({},state.act3,{obs:(state.act3&&state.act3.obs||[]).slice()})})};
+})();
+
+/* 進入列車：接上原本的列車遊戲（從棲息車廂開始）；出發先保持沉睡 */
+function act3BeginTrain(){ const s=state.act3;
+ state.introDone=true; state.currentLocation='origin'; state.currentPhase='docked'; state.currentCarriage='habitat';
+ state.feelSeen=['origin']; state.carSeen=(state.carSeen||[]).filter(c=>c!=='habitat').concat('habitat');
+ if(state.log&&state.log[0]&&state.log[0].j===0&&/甦醒/.test(state.log[0].t)) state.log[0].t='精靈在沉睡之地邊緣的世界縫隙裡，發現了一列沉睡的列車。';
+ if(!state.clues.includes('clue_wake')) state.clues.push('clue_wake');
+ if(!s.logged){ s.logged=true; (s.obs||[]).forEach(k=>{ const t=ACT3_REC[k]; if(t) logJ('觀察紀錄｜'+t,'find'); }); }
+ SFX.init(); BGM.start(); CAB.reset(); normalizeState(); save();
+ PANO.active=null; layout.centered=false; RUNNING=true; render();
+ act3TrainIntro(); }
+const ACT3_REC={texture:'世界縫隙的邊緣：光一層一層疊在一起，像好幾個空間被縫在一起。',shard:'縫隙裡漂著的古老碎片：白色石材嵌著金色紋線，看不出原本屬於什麼。',struct:'列車頂上的圓環構造：以古老的幾何組成，看起來不只是裝飾。',carving:'車身的紋路：圓環、弧線與星形交織在一起，是很古老的樣式。'};
+function act3TrainIntro(){ const s=state.act3; if(!s||!s.entered||s.introduced) return false;
+ setTimeout(()=>dialogueScript([['self','這裡……竟然有這麼大的空間。'],['self','（牆上刻著一段古老的文字。）']],()=>{
+  cine(['這是一列由古老守護者打造、能夠穿梭日界、月界與世界縫隙的移動庇護所。','它承載不同生命的旅程，也提供休憩、觀測、紀錄與生活所需的空間。'],()=>{
+   s.introduced=true; save(); render(); setTimeout(()=>dialogueScript(CAR_INTRO.habitat,()=>{ render(); arrivalChecks(); }),500); }); }),1100);
+ return true; }
 
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
