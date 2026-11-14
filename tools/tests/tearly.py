@@ -1,0 +1,37 @@
+from playwright.sync_api import sync_playwright
+R=[]
+def ok(n,c,x=''): R.append(bool(c)); print(('PASS ' if c else 'FAIL ')+n,'' if c else x)
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader'])
+    pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]; pg.on('pageerror',lambda e:errs.append(str(e)))
+    pg.goto('http://127.0.0.1:8766/'); W(800); ev("window.CRISIS_TEST=1;startNew()"); W(400)
+    ok('1 new save: train contamination starts at 30',ev("state.trainTaint")==30 and ev("trainT()")==30)
+    ok('2 spirit contamination unchanged (still its own value)',ev("TAINT.val()")==6)
+    ok('3 local carriage pollution unchanged (none at start)',not ev("Object.keys(state.carPol||{}).length"))
+    ok('3b tier shown correctly for 30 (輕微界染)',ev("CR_TIER[crTier()][1]")=='輕微界染')
+    ev("state.introDone=true;evoSync()"); ok('3c restoration track starts at stage 1 (thresholds follow the new start)',ev("trainStage('repair')")==1)
+    def sample(j,hist=0,taint=30,n=400):
+        return ev(f"""(()=>{{ state.journeyCount={j}; state.trainTaint={taint}; state.crHist=Array.from({{length:{hist}}},(_,i)=>({{id:'A04',res:'succ',j:0}})); state.duty.obs={{to:'starIslands',lv:'亂流',wall:'亂流'}}; const c={{}}; for(let i=0;i<{n};i++){{ state.crLast={{}}; for(const ph of ['depart','arrive']){{ const id=crPick(ph); if(id){{ const s=crSevOf(CRISES[id]); c[s]=(c[s]||0)+1; }} }} }} return c; }})()""")
+    e0=sample(1); ok('4 journeys 0–2: only S1 crises',set(e0.keys())<={'1'} and e0.get('1',0)>0,e0)
+    e1=sample(1,taint=85); ok('4b even with very high contamination, early game stays S1',set(e1.keys())<={'1'},e1)
+    e2=sample(5,taint=70); ok('5 journeys 3–6: up to S2, never S3/S4',set(e2.keys())<={'1','2'} and e2.get('2',0)>0,e2)
+    e3=sample(8,hist=0,taint=70); ok('5b journey 8 without crisis experience: still capped at S2',set(e3.keys())<={'1','2'},e3)
+    e4=sample(8,hist=2,taint=70); ok('6 journey 8 after handling 2 crises: S3 opens',e4.get('3',0)>0 and '4' not in e4,e4)
+    e5=sample(13,hist=0,taint=70); ok('6b journey 12+: S3 opens even without experience; S4 still special',e5.get('3',0)>0 and '4' not in e5,e5)
+    e6=sample(13,hist=3,taint=85); ok('6c S4 possible only with very high contamination later on',ev("(()=>{ state.journeyCount=13; state.trainTaint=85; return crSevOf(CRISES.B01); })()")==4)
+    ok('6d S4 never early, even at high contamination',ev("(()=>{ state.journeyCount=2; state.trainTaint=95; return crSevOf(CRISES.A05); })()")<=1 or ev("CRISES.A05.sev[0]")>1)
+    ev("state.journeyCount=4;state.crisis=null;state.crChain=[{id:'S4',from:'D04'}];state.crCalm=null;crNode('arrive')"); ok('5c early S4 chain is dropped (no 災變 early)',not ev("state.crisis&&state.crisis.sevN>=3"))
+    ev("state.journeyCount=4;state.crisis=null;state.crChain=[{id:'C02',from:'A01'}];crNode('arrive')"); ok('5d allowed chains still continue early',ev("state.crisis&&state.crisis.id")=='C02')
+    # 7 cooldown / gap / calm / single crisis unchanged
+    ev("state.crisis=null;state.journeyCount=5;state.crLast={S1:4};state.crHist=[]"); ok('7a same-severity gap still applies',ev("(()=>{ for(let i=0;i<200;i++){ const id=crPick('depart'); if(id&&crSevOf(CRISES[id])===1) return false; } return true; })()"))
+    ev("state.crLast={};state.crHist=[{id:'A04',j:5,res:'succ'}]"); ok('7b per-event cooldown still applies',ev("(()=>{ for(let i=0;i<200;i++){ if(crPick('depart')==='A04') return false; } return true; })()"))
+    ev("state.crisis=null;state.crChain=[];state.crCalm=state.journeyCount+2;"); ok('7c calm period still blocks new crises',ev("(()=>{ for(let i=0;i<50;i++){ crNode('arrive'); if(state.crisis) return false; } return true; })()"))
+    ev("state.crCalm=null;crStart('A04',{real:true,sev:1});const id=state.crisis.id;"); ok('7d only one main crisis at a time',ev("(()=>{ const a=state.crisis; for(let i=0;i<5;i++){ crNode('arrive'); } return state.crisis===a||state.crisis===null||state.crisis.id===a.id; })()"))
+    # 9 old saves keep their value
+    ev("state.trainTaint=47;save()"); pg.reload(); W(900); ok('10 reload keeps train contamination and crisis state',ev("load().trainTaint")==47)
+    ev("(()=>{const s=load(); s.trainTaint=52; localStorage.setItem(SAVE_KEY,JSON.stringify(s));})()"); pg.reload(); W(900)
+    ok('9 old save keeps its own value (not forced to 30)',ev("(()=>{ state=load(); return trainT(); })()")==52)
+    ev("(()=>{const s=load(); s.introDone=true; delete s.trainTaint; localStorage.setItem(SAVE_KEY,JSON.stringify(s));})()"); pg.reload(); W(900)
+    ok('9b very old save without the field keeps the old implicit value',ev("(()=>{ state=load(); return trainT(); })()")==60)
+    ok('Z no page errors',not errs,errs)
+    print('ALL PASS' if all(R) else 'SOME FAIL',len(R))

@@ -1,0 +1,66 @@
+from playwright.sync_api import sync_playwright
+S='/tmp/claude-0/-home-claude/abce22cd-6235-5141-b5ff-f91aa22653ed/scratchpad'
+def ok(n,c,x=''): print(('PASS ' if c else 'FAIL ')+n+(' '+str(x) if x!='' else ''),flush=True)
+with sync_playwright() as p:
+    b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader','--enable-unsafe-swiftshader'])
+    pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
+    pg.on('pageerror',lambda e:errs.append(str(e)))
+    pg.goto('http://127.0.0.1:8766/'); W(900)
+    ok('K0 train order: cab → memory → greenhouse → habitat → observation → observatory', ev("TRAIN.join(',')")=='cab,memory,nature,habitat,observation,observatory' and ev("CARRIAGES.nature.name")=='森羅溫室車廂')
+    ev("document.querySelector('#mainscreen')?.remove();RUNNING=true;state=freshState();normalizeState();state.introDone=true;state.carSeen=Object.keys(CAR_INTRO);state.storyFlags.seedTalk=1;state.storyFlags.metDragon=1;state.storyFlags.noteTip=1;state.currentPhase='docked';state.currentLocation='dawnForest';state.journeyCount=3;state.visitedLocations=['dawnForest'];"
+       "for(const id of ['sola','pyro','frost']){state.discoveredLifeforms.push(id);state.passengers[id]={stage:id==='pyro'?2:1,talks:1,records:[],aboard:true,left:false,boardedJourney:2,zone:PASSENGERS[id].zone}};state.currentCarriage='habitat';render()"); W(500)
+    hd=ev("HSDEF.find(h=>h.id==='hab-door').act"); ob=ev("HSDEF.find(h=>h.id==='obs-front').act")
+    ok('K1 passengers can walk habitat → observation → observatory (memory is up front)', hd=='go:observation' and ob=='go:observatory')
+    # constellations (日界 sky while docked at the forest)
+    ev("state.currentCarriage='observation';render()"); W(500)
+    pg.click('[data-hs="obs-const"]'); W(500)
+    ok('K2 star board: 日界 constellations open, 月界 locked', ev("!document.querySelector('[data-cs=\"deer\"]').disabled") and ev("document.querySelector('[data-cs=\"train\"]').disabled"))
+    pg.click('[data-cs="deer"]'); W(300)
+    def star(i): pg.click(f'[data-st="{i}"]',force=True); W(120)
+    star(0); star(4); W(200); ok('K3 wrong pair → no line, gentle hint', '沒有星軌' in pg.inner_text('#csm'))
+    pg.screenshot(path=S+'/const1.png')
+    for a,c in [[0,1],[1,2],[2,3],[3,4],[3,5],[1,6],[2,7]]: star(a); star(c)
+    W(400); ok('K4 tracing every edge identifies the constellation', ev("(state.consts||[]).includes('deer')") and '晨鹿座' in pg.inner_text('#layer') and ev("state.log.some(l=>/晨鹿座/.test(l.t))"))
+    pg.screenshot(path=S+'/const2.png'); ev("closeAll()")
+    # departure: forecast, passengers wander
+    ev("Math.random=()=>0.1;state.duty={scan:true,briefing:true,signal:true,doors:true,reported:true};state.spirit.equipment={tablet:true,compass:true,talisman:true};startDeparture()"); W(500)
+    for _ in range(8):
+        if not ev("!!document.querySelector('.cine')"): break
+        pg.mouse.click(640,360); W(300)
+    ok('K5 every voyage gets a forecast; scope shows it', ev("!!state.voyage.sky") and (ev("scopePanel()") or True) and '星象預報' in pg.inner_text('#layer') and '約在航程' in pg.inner_text('#layer'))
+    ok('K6 familiar passengers wander to the deck on their own', ev("atDeck('pyro')"), ev("deckList()"))
+    ev("closeAll();state.currentCarriage='observatory';render()"); W(400)
+    ok('K7 nothing to watch before the event', not ev("!!document.querySelector('[data-hs=\"ot-sky\"]')"))
+    ev("state.voyage.progress=state.voyage.sky.at"); W(900)
+    ok('K8 event starts; sky-loving passengers run to the deck', ev("!!skyNow()") and ev("atDeck('sola')") and ev("!!document.querySelector('#scene .skyfx')"), ev("deckList()"))
+    pg.screenshot(path=S+'/sky1.png')
+    (lambda *a:None)(ev("(()=>{const e=document.querySelector('[data-hs=\"ot-sky\"]');const r=e.getBoundingClientRect();const t=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return [r.left,r.top,r.width,t&&t.outerHTML.slice(0,120), !!document.querySelector('#layer .ov,#layer .dlg,#layer .cine')]})()"))
+    for _ in range(10):
+        if not ev("!!document.querySelector('#layer .cine,#layer .board,#layer .dlg')"): break
+        pg.mouse.click(640,360); W(400)
+    ev("closeAll()"); W(300)
+    t0=ev("state.spirit.taint"); pg.click('[data-hs="ot-sky"]',timeout=5000); W(800)
+    ok('K9 watching: passengers on deck speak, crystal, starlight purifies', ev("skyNow().watched") and ev("state.spirit.taint")==max(0,t0-5) and ev("MEMORIES.find(m=>m.id==='sky_'+state.voyage.sky.type).have()") and ev("document.querySelectorAll('.zlist li').length")>=2)
+    pg.screenshot(path=S+'/sky2.png'); ev("closeAll()")
+    ev("state.voyage.progress=state.voyage.sky.at+.3"); W(700); ok('K10 event ends after its window', ev("state.voyage.sky.ended") and not ev("!!skyNow()"))
+    # 月界 constellation with clue (voyage = moon sky)
+    for _ in range(20):
+        if not ev("!!document.querySelector('#layer .cine,#layer .board,#layer .dlg')"): break
+        if ev("!!document.querySelector('.dlg .chs button')"): ev("document.querySelector('.dlg .chs button').click()"); W(1100)
+        elif ev("!!document.querySelector('.dlg')"): pg.locator('.dlg .box').last.click(force=True); W(200)
+        elif ev("!!document.querySelector('#layer .board #hi')"): ev("document.querySelector('#layer .board #hi').click()"); W(700)
+        else: pg.mouse.click(640,360); W(400)
+    ev("closeAll()"); W(300); ev("constPanel('train')"); W(300)
+    print('DBG2',ev("[document.querySelectorAll('[data-st]').length,(()=>{const e=document.querySelector('[data-st=\"0\"]');if(!e)return null;const r=e.getBoundingClientRect();const t=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return t&&t.outerHTML.slice(0,100)})(),document.querySelector('#layer').innerHTML.slice(0,200)]"))
+    for a,c in [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,4],[0,7]]: star(a); star(c)
+    W(400); print('DBG',ev("[state.clues, typeof addClue]"))
+    ok('K11 古列車座 gives a guardian clue', ev("state.clues.includes('clue_const_train')"))
+    ev("closeAll();if(state.voyage) state.voyage.progress=.6;state.currentCarriage='observation';render()"); W(600); pg.screenshot(path=S+'/obs_book.png')
+    pg.mouse.click(*ev("(()=>{const r=document.querySelector('[data-hs=\"obs-skybook\"]').getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]})()")); W(600)
+    ok('K13 star log book: sky tab shows the watched event + unseen hints', ev("document.querySelectorAll('.sb-card:not(.unk)').length")==1 and ev("document.querySelectorAll('.sb-card.unk .sb-hint').length")==3)
+    pg.screenshot(path=S+'/book_sky.png')
+    pg.click('[data-sbt="const"]'); W(300); n14=ev("document.querySelectorAll('.sb-card:not(.unk)').length"); ok('K14 constellation tab: 2 identified', n14==2, n14)
+    pg.click('[data-sbt="log"]'); W(300); n15=ev("document.querySelectorAll('.sb-log li').length"); ok('K15 observation log lists entries with journey numbers', n15==3, n15)
+    pg.screenshot(path=S+'/book_log.png')
+    ok('K12 no errors', not errs, errs)
+    b.close()

@@ -8682,6 +8682,9 @@ const ACT1=(()=>{
  let tweens=[], timers=[], rings=[], motes=[], glints=[], stars=[];
  let tut=null, sayQ=[], sayCur=null, A=null;
  const S=()=>state.act1;
+ /* 掛勾點（第二幕等後續系統使用）：沒有登錄任何掛勾時，第一幕的行為與畫面完全不變 */
+ const HOOKS={enter:[],exit:[],logic:[],drawPre:[],drawPost:[]};
+ const runHooks=(k,...a)=>{ const L=HOOKS[k]; for(let n=0;n<L.length;n++){ try{ L[n](...a); }catch(e){ console.error(e); } } };
  const speed=()=>(window.ACT1_SPEED||1);
  const clamp=(v,a,b)=>v<a?a:v>b?b:v, lerp=(a,b,t)=>a+(b-a)*t, ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
  const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(97531);
@@ -8908,7 +8911,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
    const hg=x.createLinearGradient(0,hy-H*.05,0,hy+H*.05); hg.addColorStop(0,'rgba(255,226,170,0)'); hg.addColorStop(.5,'rgba(255,226,170,.14)'); hg.addColorStop(1,'rgba(255,226,170,0)'); x.fillStyle=hg; x.fillRect(0,hy-H*.05,W,H*.1); }
   /* 水幕（逐欄投射到 z=cz 的平面） */
   const cz=S().cz, L=lg; L.setTransform(DPR,0,0,DPR,0,0); L.clearRect(0,0,W,H); const step=4, bases=[];
-  for(let sx=0;sx<W;sx+=step){ const u=(sx+step/2-W/2)/f, dx=C.cos*u+C.sin, dz=-C.sin*u+C.cos; if(dz<=.04) continue; const t=(cz-C.z)/dz; if(t<=0) continue;
+  for(let sx=0;sx<W;sx+=step){ const u=(sx+step/2-W/2)/f, dx=C.cos*u+C.sin, dz=-C.sin*u+C.cos; if(Math.abs(dz)<=.04) continue;   /* 穿過瀑布後，回頭也看得見水幕 */ const t=(cz-C.z)/dz; if(t<=0) continue;
    const wx=C.x+dx*t, q=Math.floor(wx/2.5), h1=hash(q), h2=hash(q*3.1+7);
    const yB=hy+C.y*f/t, yTr=hy-(TOPY-C.y)/t*f, yT=Math.max(-8,yTr); if(yB<yT) continue;
    const al=clamp(1.15-t/9000,.38,1)*(.62+.38*Math.sin(wx/900+1.3))*(.7+.3*h2);
@@ -8937,6 +8940,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
     const pr=proj(mx,my,mz); if(!pr||(pr.z<cam.CD)!==near) continue; const r=clamp(m.s*f/pr.z*.06,.6,7), a=(.35+.35*Math.sin(T*1.3+m.ph))*clamp(1-pr.z/60,0,1)*(frozen?1.5:1);
     if(a<.03) continue; x.fillStyle=`rgba(${m.c},${Math.min(1,a)})`; x.beginPath(); x.arc(pr.x,pr.y,r,0,7); x.fill(); if(r>1.6){ x.fillStyle=`rgba(${m.c},${a*.18})`; x.beginPath(); x.arc(pr.x,pr.y,r*3.2,0,7); x.fill(); } } };
   drawMotes(false);
+  if(HOOKS.drawPre.length) runHooks('drawPre',x,W,H,C);
   /* 精靈與倒影 */
   if(img.complete&&img.naturalWidth&&dark&&!spr.hide){ const bob=Math.sin(T*1.6)*.12*(1-clamp(P.vt/8,0,1)), pr=proj(P.x,P.y+bob,P.z);
    if(pr){ const h=2.7*f/pr.z, w=h*IW/IH, lit=(1-Math.cos(cam.off))/2, flap=1+Math.sin(T*(P.vt>1||Math.abs(P.vy)>1?7:3.2))*.035;
@@ -8956,7 +8960,8 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
     x.restore(); C.spX=pr.x; C.spY=pr.y; C.spH=h; C.artX=pr.x+(432-ICX)*h/IH; C.artY=pr.y+(352-ICY)*h/IH; } }
   drawMotes(true);
   /* 靠近水幕時的水霧 */
-  const dC=cz-P.z, mz=clamp((520-dC)/360,0,1)*.32*(Math.cos(C.yaw)>0?1:.4); if(mz>.01){ gr=x.createLinearGradient(0,0,0,H); gr.addColorStop(0,`rgba(214,222,255,${mz*.5})`); gr.addColorStop(.5,`rgba(200,206,255,${mz})`); gr.addColorStop(1,`rgba(160,170,240,${mz*.4})`); x.fillStyle=gr; x.fillRect(0,0,W,H); }
+  /* 瀑布可以接近、穿越：用「離水幕平面的距離」，並依據鏡頭是否面向水幕決定霧氣（在水幕前方時與原本完全相同） */
+  const dC0=cz-P.z, dC=Math.abs(dC0), mz=clamp((520-dC)/360,0,1)*.32*(Math.cos(C.yaw)*(dC0<0?-1:1)>0?1:.4); if(mz>.01){ gr=x.createLinearGradient(0,0,0,H); gr.addColorStop(0,`rgba(214,222,255,${mz*.5})`); gr.addColorStop(.5,`rgba(200,206,255,${mz})`); gr.addColorStop(1,`rgba(160,170,240,${mz*.4})`); x.fillStyle=gr; x.fillRect(0,0,W,H); }
   /* 光紋 */
   for(const r of rings.slice()){ const u=(T-r.t0)/r.d; if(u>=1){ rings.splice(rings.indexOf(r),1); continue; } if(u<0) continue; const rad=r.r0+u*r.r1;
    x.lineWidth=r.broken?1.6:2.2; x.strokeStyle=`rgba(${r.c},${(1-u)*(r.broken?(Math.random()<.5?.7:.1):.75)})`;
@@ -8964,6 +8969,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
    else { x.beginPath(); x.arc(r.x,r.y,rad,0,7); x.stroke(); x.lineWidth=1; x.strokeStyle=`rgba(255,240,210,${(1-u)*.35})`; x.beginPath(); x.arc(r.x,r.y,rad*.94,0,7); x.stroke(); } }
   /* 暗角 */
   const vg=x.createRadialGradient(W/2,H*.5,Math.min(W,H)*.35,W/2,H*.5,Math.max(W,H)*.78); vg.addColorStop(0,'rgba(2,2,12,0)'); vg.addColorStop(1,'rgba(2,2,12,.55)'); x.fillStyle=vg; x.fillRect(0,0,W,H);
+  if(HOOKS.drawPost.length) runHooks('drawPost',x,W,H,C);
   el.querySelector('.a1-fade').style.opacity=fade.toFixed(3);
   return dC; }
 
@@ -8980,7 +8986,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   if(P.y<1.6){ P.y=Math.max(1.4,lerp(P.y,1.6,1-Math.exp(-dt*6))); if(P.vy<0) P.vy*=.5; } /* 貼近水面時自然托起，不會被吸入海中 */
   P.vt=Math.hypot(P.vx,P.vz);
   const lat=P.vx*c-P.vz*s; P.bank+=(clamp(-lat*.022-i.t*.12,-.32,.32)-P.bank)*(1-Math.exp(-dt*4));
-  S().cz=Math.max(S().cz,P.z+170); /* 水幕永遠在前方：越接近，它越是遠 */
+  /* 第二幕起：瀑布固定在存檔記錄的位置，可以飛到、也可以穿過（原本「永遠在前方」的規則已移除，經使用者核准） */
   wingT-=dt; const mv=Math.max(P.vt/MS,Math.abs(P.vy)/MV); if(wingT<=0&&!lock){ if(mv>.15){ snd.wing(.6+mv); wingT=.55; } else { snd.wing(.35); wingT=1.7; } }
   return i; }
 
@@ -8989,9 +8995,13 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
  function persist(){ if(!state||!state.act1) return; state.act1.pos={x:+P.x.toFixed(2),y:+P.y.toFixed(2),z:+P.z.toFixed(2),yaw:+P.yaw.toFixed(3)}; save(); }
  function setLock(v){ lock=v; if(el) el.classList.toggle('locked',v); if(v) BL(); }
 
- function loop(now){ if(!el){ raf=0; return; } raf=requestAnimationFrame(loop); const rdt=Math.min(.1,Math.max(0,(now-(last||now))/1000)); last=now; const dt=rdt*speed(); T+=dt;
+ function loop(now){ if(!el){ raf=0; return; } raf=requestAnimationFrame(loop);
+  /* 測試用：凍結時間（只有自動測試會設定 window.ACT1_FREEZE），畫面固定在指定時刻，用來做逐像素比對 */
+  if(window.ACT1_FREEZE!=null){ T=+window.ACT1_FREEZE; last=now; draw(); return; }
+  const rdt=Math.min(.1,Math.max(0,(now-(last||now))/1000)); last=now; const dt=rdt*speed(); T+=dt;
   tick(dt); const i=physics(dt); const dC=draw(); auUpdate(dC,P.vt+Math.abs(P.vy));
   logic(dt,i,dC);
+  if(HOOKS.logic.length) runHooks('logic',dt,i,dC);
   saveT+=rdt; if(saveT>6){ saveT=0; persist(); } }
 
  /* ---------- 教學 ---------- */
@@ -9150,7 +9160,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   state.chapter='act1'; state.act1=Object.assign(fresh(),state.act1||{}); const a=S(); a.flags=a.flags||{}; a.got=a.got||[];
   T=0; tweens=[]; timers=[]; rings=[]; sayQ=[]; sayCur=null; tut=null; busy=false; frozen=false; keys={}; idleT=0; stillT=0; A=null;
   Object.assign(cam,{off:0,CD:10,CH:2.2,hy:0,look:0}); Object.assign(spr,{sleep:0,eye:1,art:.35,tilt:0,hide:0}); fade=1;
-  build(); document.body.classList.add('in-act1'); auStart(); last=0; raf=requestAnimationFrame(loop);
+  build(); document.body.classList.add('in-act1'); auStart(); runHooks('enter'); last=0; raf=requestAnimationFrame(loop);
   if(a.pos) Object.assign(P,a.pos,{vx:0,vy:0,vz:0,vt:0,bank:0}); else Object.assign(P,{x:0,y:3,z:0,yaw:0,vx:0,vy:0,vz:0,vt:0,bank:0});
   /* 從中斷處恢復：演出中途離開的，回到演出的起點或之後的穩定狀態，不會卡住、也不重複已完成的教學 */
   if(a.stage==='first') a.stage='held';
@@ -9162,8 +9172,13 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   if(a.stage==='ending'){ setLock(true); after(1.2,()=>endingScene()); return; }
   after(.8,()=>setLock(false)); }
  function start(){ SFX.init(); state=freshState(); state.chapter='act1'; state.act1=fresh(); save(); enter(); }
- function exit(){ if(raf) cancelAnimationFrame(raf); raf=0; unbind(); auStop(); if(el){ el.remove(); el=null; } document.body.classList.remove('in-act1'); tut=null; }
+ function exit(){ if(el) runHooks('exit'); if(raf) cancelAnimationFrame(raf); raf=0; unbind(); auStop(); if(el){ el.remove(); el=null; } document.body.classList.remove('in-act1'); tut=null; }
+ /* 給後續系統的唯讀／受控介面：只透過這裡碰第一幕的狀態 */
+ const api={ get el(){ return el; }, get P(){ return P; }, get cam(){ return cam; }, get spr(){ return spr; }, get C(){ return C; }, get T(){ return T; },
+  get lock(){ return lock; }, get busy(){ return busy; }, get fade(){ return fade; }, saying, say, after, tw, setLock, persist, fadeObj:fadeO,
+  proj:(X,Y,Z)=>proj(X,Y,Z), get cz(){ return S().cz; }, TOPY, get W(){ return W; }, get H(){ return H; }, get touch(){ return touchUI; } };
  return {start,enter,exit,active:()=>!!el,
+  hook:(k,fn)=>{ if(!HOOKS[k]) throw new Error('unknown hook '+k); HOOKS[k].push(fn); }, api,
   _dbg:()=>({stage:S()&&S().stage,tut:S()&&S().tut,lock,busy,P:{x:P.x,y:P.y,z:P.z,yaw:P.yaw,vt:P.vt,vy:P.vy},cz:S()&&S().cz,got:S()&&S().got.slice(),flags:S()&&Object.assign({},S().flags),fade,saying:saying(),senseN:S()&&S().senseN,againN:S()&&S().againN,passN:S()&&S().passN,ended:S()&&S().ended,exT:S()&&S().exT,sinceFirst:S()&&S().sinceFirst,tip:el&&el.querySelector('.a1-tip').textContent,frozen,cam:Object.assign({},cam)}),
   _set:o=>{ Object.assign(P,o.P||{}); if(o.act1) Object.assign(S(),o.act1); if(o.stillT!=null) stillT=o.stillT; }};
 })();
@@ -9211,6 +9226,252 @@ function earthNewsTick(){ if(!RUNNING||document.hidden||!state.introDone||(navig
  logJ(`在${LOCATIONS[state.currentLocation].name}聽說了地球上的事：${a.replace(/^聽說，/,'')}`,'find');
  dialogueScript(sc,()=>render()); }
 setInterval(()=>{ try{ earthNewsTick(); }catch(e){} },6000);
+
+/* =====================================================================
+   沉睡之地的世界狀態（第二幕前置）
+   state.world：location、dimension（unresolved｜moon｜sun）——只在沉睡之地章節建立，列車存檔不會有
+   state.act2 ：firstAnomalySeen、firstSwitchCompleted、canSwitch、freeSwitchTutorialCompleted、switchCount
+   ・unresolved＝沉睡之地原本、尚未辨識維度的狀態，不是日界也不是月界
+   ・場景版本不存檔，由 dimension 推算（unresolved→original、moon→月界、sun→日界）
+   ・第一次異常的局部空間重疊是暫時性事件效果，不寫進 world
+   ===================================================================== */
+const WORLD_DIMS=['unresolved','moon','sun'];
+const ACT2_DEF=()=>({firstAnomalySeen:false,firstSwitchCompleted:false,canSwitch:false,freeSwitchTutorialCompleted:false,switchCount:0});
+function sleepWorldInit(){
+ const w=state.world=Object.assign({location:'sleeping_land',dimension:'unresolved'},state.world||{});
+ if(!WORLD_DIMS.includes(w.dimension)) w.dimension='unresolved';
+ delete w.sceneVariant;   /* 場景版本永遠由維度推算，不存檔 */
+ const a=state.act2=Object.assign(ACT2_DEF(),state.act2||{});
+ ['firstAnomalySeen','firstSwitchCompleted','canSwitch','freeSwitchTutorialCompleted'].forEach(k=>a[k]=!!a[k]);
+ a.switchCount=Math.max(0,Math.floor(+a.switchCount||0));
+ if(a.firstSwitchCompleted) a.canSwitch=true;          /* 第一次切換完成，就能自由切換 */
+ if(!a.firstSwitchCompleted){ a.canSwitch=false; w.dimension='unresolved'; }   /* 還沒切換過，不可能在其他維度 */
+ if(w.dimension==='sun') w.dimension='unresolved';      /* 日界尚未加入：不會出現在沉睡之地 */
+}
+const sceneVariantOf=d=>({unresolved:'original',moon:'moon',sun:'sun'})[d]||'original';
+ACT1.hook('enter',sleepWorldInit);
+
+/* =====================================================================
+   第二幕：世界的另一面（沉睡之地）
+   只透過 ACT1 的掛勾點與受控介面運作，不改第一幕的劇情、條件與存檔欄位。
+   ・銀河星點路徑：第一幕結束後出現，引導到正前方瀑布中段（甦醒方向，左右 ±120，海面～水幕中段）
+   ・穿過那一段水幕 → 第一次異常（局部空間重疊，短暫一瞥）→ 劇情引導第一次切換（玩家親自按 V／月牙）
+   ・切換：V 鍵與右上角月牙共用同一套邏輯；unresolved（沉睡之地原本）↔ moon（月界的沉睡之地）
+   ・月界的沉睡之地效果：M1 天空銀紫微光、M3 海面淡紫薄霧、M4 冷色水面反光、M6 上升光粒、M7 精靈細微光暈
+   ・黑影：只在月界的沉睡之地，約 15 秒一次，遠處、不停在畫面中央、鏡頭不追
+   ・跨界事件「留下的光痕」：在原本狀態飛過的路，在月界的沉睡之地會留下光痕
+   存檔：state.world.dimension；state.act2（firstAnomalySeen、firstSwitchCompleted、canSwitch、
+        freeSwitchTutorialCompleted、switchCount，以及事件用的 trail、trailSeen、trailMark、completed）
+   ===================================================================== */
+const ACT2=(()=>{
+ const SEG={x0:-120,x1:120,yMax:585};                 /* 觸發的瀑布區段（容錯範圍） */
+ const FADE_DIM=.8, FIRST_FADE=1.6;
+ const A=()=>ACT1.api, S=()=>state.act2, Wd=()=>state.world;
+ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+ let on=false, ui=null, prev=null, idle=0, pend=false, phase='', mb=0, trans=null, queued=false, sh=null, shT=0, lastTrail=null;
+ let pts=[], gpMode='', rise=[], cold=[], orbit=0, glimpse=0, glimpseR=0, tipEl=null;
+ const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(24680);
+ for(let i=0;i<260;i++) cold.push({ox:rnd(),oz:rnd(),ph:rnd()*6.3,k:.5+rnd()*1.2,w:.4+rnd()*1});
+ const ended=()=>!!(state.act1&&state.act1.ended);
+ const lockedNow=()=>{ const a=A(); return a.lock||a.busy||a.saying(); };   /* 劇情事件：等第一幕的演出和字幕都結束 */
+ const cutscene=()=>{ const a=A(); return a.lock||a.busy; };                 /* 切換：只有演出（操作被鎖住）時不反應，內心字幕不影響 */
+
+ /* ---------- 存檔補欄位（第二幕事件用） ---------- */
+ function initState(){ const a=S(); if(!a) return; a.trail=Array.isArray(a.trail)?a.trail.slice(-300):[]; a.trailSeen=!!a.trailSeen; a.trailMark=+a.trailMark||0; a.completed=!!a.completed; }
+
+ /* ---------- 介面：右上角月牙 ---------- */
+ const MOON_SVG=`<svg viewBox="-24 -24 48 48" aria-hidden="true"><defs><radialGradient id="mnG"><stop offset="0" stop-color="#fff6e0" stop-opacity=".9"/><stop offset="1" stop-color="#b9a6ff" stop-opacity="0"/></radialGradient></defs>
+  <circle class="mn-halo" r="22" fill="url(#mnG)"/><circle class="mn-ghost" r="13" fill="none" stroke="#e8e2ff" stroke-width=".8"/>
+  <g class="mn-rot"><path class="mn-cres" d="M2 -12 A12 12 0 1 0 2 12 A8 12 0 1 1 2 -12 Z"/></g>
+  <g class="mn-stars"><circle cx="13" cy="-11" r="1.1"/><circle cx="16" cy="3" r=".8"/><circle cx="9" cy="14" r=".7"/></g></svg>`;
+ const CSS=`
+.a2-moon{position:absolute;right:max(16px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));width:46px;height:46px;padding:0;border-radius:50%;border:1px solid rgba(220,210,255,.35);background:rgba(10,12,34,.45);backdrop-filter:blur(6px);cursor:pointer;z-index:5;opacity:0;transform:scale(.7);transition:opacity 1s,transform 1s;pointer-events:none;-webkit-tap-highlight-color:transparent}
+.a2-moon.show{opacity:.85;transform:none;pointer-events:auto}.a2-moon:hover{opacity:1}
+.a2-moon svg{width:100%;height:100%;display:block;overflow:visible}
+.a2-moon .mn-cres{fill:#efe6cf;transition:fill .8s}.a2-moon .mn-ghost{opacity:.22;transition:opacity .8s}.a2-moon .mn-halo{opacity:.25;transition:opacity .8s}.a2-moon .mn-stars circle{fill:#fff;opacity:0;transition:opacity .8s}
+.a2-moon.moon .mn-cres{fill:#d9ccff}.a2-moon.moon .mn-ghost{opacity:.08}.a2-moon.moon .mn-halo{opacity:.75}.a2-moon.moon .mn-stars circle{opacity:.85}
+.a2-moon .mn-rot{transform-origin:0 0;transform-box:view-box}
+.a2-moon.spin .mn-rot{animation:a2spin .8s cubic-bezier(.4,0,.2,1)}@keyframes a2spin{0%{transform:rotate(0) scaleX(1)}50%{transform:rotate(-120deg) scaleX(.35)}100%{transform:rotate(-360deg) scaleX(1)}}
+.a2-moon .kv{position:absolute;right:-3px;bottom:-3px;width:15px;height:15px;display:flex;align-items:center;justify-content:center;letter-spacing:0;font-size:9px;line-height:1;padding:0;border-radius:4px;background:rgba(10,12,34,.7);border:1px solid rgba(220,210,255,.3);color:#e8e2ff;font-family:var(--f-body);opacity:.7}
+.a1.touch .a2-moon{width:52px;height:52px}.a1.touch .a2-moon .kv{display:none}
+.a2-moon.call::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(230,215,255,.6);animation:a2call 2.4s ease-in-out infinite}
+@keyframes a2call{0%,100%{opacity:.2;transform:scale(.92)}50%{opacity:.9;transform:scale(1.08)}}
+.a2-tip{position:absolute;right:max(16px,env(safe-area-inset-right));top:calc(max(12px,env(safe-area-inset-top)) + 60px);padding:7px 14px;border-radius:999px;background:rgba(10,12,34,.6);border:1px solid rgba(230,215,170,.38);color:#fff6e2;font-family:var(--f-display);font-size:14px;letter-spacing:.12em;white-space:nowrap;z-index:5;opacity:0;transition:opacity .6s;pointer-events:none}
+.a2-tip.on{opacity:1}.a2-tip kbd{display:inline-block;min-width:1.4em;padding:1px 6px;margin:0 3px;border-radius:5px;border:1px solid rgba(255,240,200,.55);background:rgba(255,255,255,.08);font-family:inherit}
+.a2-veil{position:absolute;inset:0;pointer-events:none;z-index:4;opacity:0;background:radial-gradient(ellipse at 50% 55%,rgba(235,225,255,.55),rgba(120,100,220,.25) 60%,rgba(20,10,60,.1))}
+`;
+ function buildUI(){ const el=A().el; if(!el) return; if(!document.getElementById('a2css')){ const st=document.createElement('style'); st.id='a2css'; st.textContent=CSS; document.head.appendChild(st); }
+  ui=document.createElement('button'); ui.className='a2-moon'; ui.setAttribute('aria-label','切換維度（V）'); ui.title='V'; ui.innerHTML=MOON_SVG+'<span class="kv">V</span>';
+  ui.addEventListener('pointerdown',e=>e.stopPropagation()); ui.onclick=e=>{ e.stopPropagation(); press(); };
+  el.appendChild(ui); tipEl=document.createElement('div'); tipEl.className='a2-tip'; el.appendChild(tipEl);
+  const v=document.createElement('div'); v.className='a2-veil'; el.appendChild(v); syncUI(); }
+ function syncUI(){ if(!ui) return; const a=S(); ui.classList.toggle('show',!!(a.canSwitch||phase==='prompt')); ui.classList.toggle('moon',Wd().dimension==='moon'); ui.classList.toggle('call',phase==='prompt'); }
+ function tip(html){ if(!tipEl) return; if(!html){ tipEl.classList.remove('on'); return; } tipEl.innerHTML=html; tipEl.classList.add('on'); }
+ const veil=()=>A().el&&A().el.querySelector('.a2-veil');
+
+ /* ---------- 輸入：V 鍵（實體按鍵位置，輸入法下也有效）與月牙按鈕，共用同一個入口 ---------- */
+ const KD=e=>{ if(!on||e.code!=='KeyV'||e.repeat||e.ctrlKey||e.metaKey||e.altKey) return; e.preventDefault(); press(); };
+ function press(){ const a=S();
+  if(phase==='prompt'){ firstSwitch(); return; }
+  if(!a.canSwitch) return;
+  if(cutscene()&&!trans) return;             /* 劇情演出中不反應 */
+  if(trans){ queued=!queued; return; }       /* 過渡中：記住最多一次，結束後執行 */
+  toggle(); }
+
+ /* ---------- 切換 ---------- */
+ function sndSwitch(to){ if(!SFX.on()) return; const base=to==='moon'?[784,1175,1568,2093]:[2093,1568,1175,784]; base.forEach((f,i)=>SFX.tone(f,i*.09,1.3,'sine',.014)); SFX.noise(.9,1800,700,.004); }
+ function toggle(){ const d=Wd().dimension, to=d==='moon'?'unresolved':'moon';   /* 切回來永遠是 unresolved，絕不會變成 sun */
+  trans={to,t0:A().T,d:FADE_DIM,from:mb}; if(ui){ ui.classList.remove('spin'); void ui.offsetWidth; ui.classList.add('spin'); } sndSwitch(to); }
+ function finish(to){ Wd().dimension=to; const a=S(); a.switchCount=(a.switchCount||0)+1; trans=null; syncUI(); A().persist();
+  if(to==='unresolved'&&a.firstSwitchCompleted&&!a.freeSwitchTutorialCompleted){ a.freeSwitchTutorialCompleted=true; tip(''); A().persist(); }
+  if(to==='moon'){ shT=8+Math.random()*6; } else { sh=null; rise=[]; }
+  if(queued){ queued=false; A().after(.05,()=>{ if(S().canSwitch&&!cutscene()) toggle(); }); } }
+
+ /* ---------- 第一次異常與第一次切換 ---------- */
+ function anomaly(){ const a=A(); phase='anomaly'; a.setLock(true); gpMode='swirl';
+  SFX.tone(220,0,4,'sine',.012); SFX.tone(330,.2,4,'sine',.008); [1319,1760,2349].forEach((f,i)=>SFX.tone(f,.6+i*.35,2.4,'sine',.007));
+  a.tw(a.cam,'off',.9,1.6); a.tw(a.cam,'CD',8,1.6);
+  a.after(.8,()=>{ glimpse=0; a.tw({get v(){return glimpse},set v(x){glimpse=x}},'v',1,.7); });
+  a.after(3.0,()=>{ a.tw({get v(){return glimpse},set v(x){glimpse=x}},'v',0,.6); });
+  a.after(3.8,()=>a.say(['……剛才，水的後面……','那是……另一個地方？','好像……伸手就碰得到。'],()=>{
+   a.tw(a.cam,'off',0,1.4); a.tw(a.cam,'CD',10,1.4);
+   S().firstAnomalySeen=true; gpMode='gone'; pts=[]; a.persist(); prompt(); })); }
+ function prompt(){ phase='prompt'; A().setLock(true); syncUI(); tip(A().touch?'輕觸右上角的月牙':'按<kbd>V</kbd>'); }
+ function firstSwitch(){ const a=A(); if(phase!=='prompt') return; phase='first'; tip(''); ui&&ui.classList.remove('call');
+  if(ui){ ui.classList.remove('spin'); void ui.offsetWidth; ui.classList.add('spin'); } sndSwitch('moon');
+  const v=veil(); if(v){ v.style.transition='opacity .9s'; v.style.opacity=.85; setTimeout(()=>{ v.style.transition='opacity 1.6s'; v.style.opacity=0; },900); }
+  trans={to:'moon',t0:a.T,d:FIRST_FADE,from:mb,first:true}; }
+ function firstDone(){ const a=S(); a.firstSwitchCompleted=true; a.canSwitch=true; phase=''; Wd().dimension='moon'; a.switchCount=(a.switchCount||0)+1; trans=null; syncUI(); A().persist(); shT=10;
+  A().setLock(false); A().say(['……這裡是……？']);
+  A().after(6,()=>{ if(!S().freeSwitchTutorialCompleted&&!phase) tip(A().touch?'輕觸月牙，隨時可以切換回去':'按<kbd>V</kbd>　隨時可以切換回去'); }); }
+
+ /* ---------- 每幀邏輯 ---------- */
+ function logic(dt){ const a=A(), st=S(), P=a.P, cz=a.cz;
+  /* 過渡 */
+  if(trans){ const u=clamp((a.T-trans.t0)/trans.d,0,1), target=trans.to==='moon'?1:0; mb=trans.from+(target-trans.from)*u; if(u>=1){ mb=target; if(trans.first) firstDone(); else finish(trans.to); } }
+  else mb=Wd().dimension==='moon'?1:0;
+  orbit+=dt;
+  if(!ended()){ prev={x:P.x,y:P.y,z:P.z}; return; }
+  /* 光痕：第一幕結束後，在原本狀態飛過的路 */
+  if(Wd().dimension==='unresolved'&&!trans&&!phase){ const L=st.trail, q=L[L.length-1]; if(!q||Math.hypot(P.x-q[0],P.z-q[2],P.y-q[1])>6){ L.push([+P.x.toFixed(1),+P.y.toFixed(1),+P.z.toFixed(1)]); if(L.length>300) L.splice(0,L.length-300), st.trailMark=Math.max(0,st.trailMark-1); } }
+  /* 穿越水幕（用上一幀到這一幀的線段判斷，高速也不會漏） */
+  if(prev&&(prev.z-cz)*(P.z-cz)<=0&&prev.z!==P.z){ const u=(cz-prev.z)/(P.z-prev.z), x=prev.x+(P.x-prev.x)*u, y=prev.y+(P.y-prev.y)*u;
+   const inSeg=x>=SEG.x0&&x<=SEG.x1&&y<=SEG.yMax;
+   if(inSeg&&!st.firstAnomalySeen&&!phase) pend=true; else splash(); }
+  prev={x:P.x,y:P.y,z:P.z};
+  if(pend&&!phase){ if(lockedNow()) idle=0; else { idle+=dt; if(idle>=(window.ACT2_FAST?0:1.2)){ pend=false; idle=0; splash(true); anomaly(); } } }
+  /* 黑影：只在月界的沉睡之地 */
+  if(Wd().dimension==='moon'&&!trans&&mb>=1){ shT-=dt; if(shT<=0&&!sh){ spawnShadow(); shT=13+Math.random()*4; } }
+  if(sh){ sh.t+=dt; if(sh.t>sh.d) sh=null; }
+  /* 跨界事件：留下的光痕 */
+  if(Wd().dimension==='moon'&&!trans&&!phase&&!lockedNow()&&st.firstSwitchCompleted&&!st.completed){ const vis=trailVisible();
+   if(!st.trailSeen&&vis.old){ st.trailSeen=true; st.trailMark=st.trail.length; a.persist(); a.say(['這是……我剛才飛過的地方？']); }
+   else if(st.trailSeen&&vis.fresh){ st.completed=true; a.persist(); a.say(['在那邊做的事……這裡都看得見。']); } }
+ }
+ function trailVisible(){ const a=A(), L=S().trail, P=a.P, m=S().trailMark; let old=false, near=0, vis=0;
+  for(let i=0;i<L.length;i++){ const q=L[i], d=Math.hypot(q[0]-P.x,q[2]-P.z); if(d>140) continue; const pr=a.proj(q[0],q[1],q[2]), on=!!pr&&pr.x>=0&&pr.x<=a.W&&pr.y>=0&&pr.y<=a.H;
+   if(i<m||!S().trailSeen){ if(on) old=true; } else { if(d<60) near++; if(pr&&Math.abs(pr.x-a.W/2)<a.W*.6) vis++; } }
+  return {old,fresh:near>=3&&vis>=1}; }   /* 新的光痕：就在精靈身邊，而且畫面上看得到 */
+ let splashT=-9, splashBig=false;
+ function splash(big){ splashT=A().T; splashBig=!!big; if(!big&&SFX.on()) SFX.tone(1760,0,.8,'sine',.006); }
+ function spawnShadow(){ const a=A(), P=a.P, yaw=a.C.yaw; for(let k=0;k<6;k++){ const side=Math.random()<.5?-1:1, ang=yaw+side*(.35+Math.random()*.45), dist=150+Math.random()*120;
+   const x=P.x+Math.sin(ang)*dist, z=P.z+Math.cos(ang)*dist, pr=a.proj(x,8,z); if(!pr) continue; if(Math.abs(pr.x-a.W/2)<a.W*.18) continue;
+   sh={x,z,y:3+Math.random()*10,vx:-side*Math.cos(yaw)*(9+Math.random()*6),vz:side*Math.sin(yaw)*(9+Math.random()*6),t:0,d:2.4+Math.random()*1.2,s:.8+Math.random()*.6}; return; } }
+
+ /* ---------- 繪製（掛在第一幕的掛勾點；不在月界、沒有事件時什麼都不畫） ---------- */
+ function drawPre(x,W,H,C){ const a=A(), T=a.T, P=a.P;
+  if(ended()&&!S().firstAnomalySeen&&gpMode!=='gone') drawPath(x,W,H,C);
+  if(mb>0) drawMoonBack(x,W,H,C,mb);
+  if(mb>0&&S().trail.length) drawTrail(x,mb);
+  if(sh&&mb>0) drawShadow(x,mb);
+  if(T-splashT<1.4) drawSplash(x,W,H,C);
+ }
+ function drawPost(x,W,H,C){ if(mb>0) drawSpiritGlow(x,C,mb); if(glimpse>0) drawGlimpse(x,W,H,C); }
+
+ /* 銀河星點路徑：只在精靈附近、稀疏；沿著「朝那一段瀑布」的方向排列流動；越接近越明顯 */
+ const PCOL=['200,220,255','255,255,255','255,170,180'];
+ function drawPath(x,W,H,C){ const a=A(), P=a.P, cz=a.cz, T=a.T; const tx=clamp(P.x,SEG.x0+30,SEG.x1-30), dz=cz-P.z, dx=tx-P.x, D=Math.hypot(dx,dz)||1, ux=dx/D, uz=dz/D;
+  const near=clamp(1-Math.abs(dz)/1800,0,1), N=Math.round(12+near*16);
+  while(pts.length<N) pts.push({s:Math.random()*170+8,off:(Math.random()-.5)*16,h:Math.random()<.4?.35:1+Math.random()*7,ph:Math.random()*6.3,c:PCOL[(Math.random()*3)|0],r:.5+Math.random()*.8,life:0,max:6+Math.random()*8});
+  if(pts.length>N) pts.length=N;
+  x.save(); x.globalCompositeOperation='lighter';
+  for(const p of pts){ const nowS=performance.now()/1000; if(p.t0==null) p.t0=nowS; p.life=nowS-p.t0; if(p.life>p.max){ Object.assign(p,{s:Math.random()*170+8,off:(Math.random()-.5)*16,life:0,t0:nowS,ph:Math.random()*6.3}); }
+   const s=(p.s+T*1.6*(gpMode==='swirl'?0:1))%180, X=P.x+ux*s-uz*p.off, Z=P.z+uz*s+ux*p.off;
+   if(Math.abs(cz-Z)<10){ continue; }              /* 到了瀑布附近就融進水幕 */
+   let Y=p.h+Math.sin(T*.7+p.ph)*.4; let XX=X, ZZ=Z;
+   if(gpMode==='swirl'){ const ang=T*.9+p.ph, R=3+p.r*4; XX=P.x+Math.cos(ang)*R; ZZ=P.z+Math.sin(ang)*R; Y=P.y+Math.sin(ang*1.3)*1.5; }
+   const pr=a.proj(XX,Y,ZZ); if(!pr) continue;
+   const fadeIn=clamp(p.life/1.2,0,1)*clamp((p.max-p.life)/1.2,0,1), tw=.55+.45*Math.sin(T*1.8+p.ph), al=(.5+.45*near)*fadeIn*tw*clamp(1-pr.z/200,0,1);
+   if(al<.02) continue; const r=clamp(p.r*C.f/pr.z*.07,1,6);
+   const g=x.createRadialGradient(pr.x,pr.y,0,pr.x,pr.y,r*4); g.addColorStop(0,`rgba(${p.c},${al})`); g.addColorStop(1,`rgba(${p.c},0)`); x.fillStyle=g; x.fillRect(pr.x-r*4,pr.y-r*4,r*8,r*8);
+   x.fillStyle=`rgba(255,255,255,${al*.9})`; x.beginPath(); x.arc(pr.x,pr.y,r*.6,0,7); x.fill(); }
+  x.restore(); }
+
+ /* M1 天空銀紫微光、M3 海面淡紫薄霧、M4 冷色水面反光、M6 上升光粒 */
+ function drawMoonBack(x,W,H,C,k){ const a=A(), T=a.T, P=a.P, hy=C.hy;
+  x.save(); x.globalCompositeOperation='screen';
+  const br=.8+.2*Math.sin(T*Math.PI*2/12);                                        /* M1 */
+  let g=x.createLinearGradient(0,0,0,Math.max(1,hy)); g.addColorStop(0,`rgba(150,130,220,${.13*k*br})`); g.addColorStop(.7,`rgba(170,160,235,${.06*k*br})`); g.addColorStop(1,'rgba(170,160,235,0)');
+  x.fillStyle=g; x.fillRect(0,0,W,Math.max(0,hy));
+  if(hy<H){ const low=clamp(1-P.y/40,.15,1);                                       /* M3 */
+   for(let b=0;b<4;b++){ const y0=hy+(H-hy)*(.04+b*.06), hh=(H-hy)*(.05+b*.03), off=((T*(6+b*3))%W);
+    g=x.createLinearGradient(0,y0-hh,0,y0+hh); g.addColorStop(0,'rgba(190,170,255,0)'); g.addColorStop(.5,`rgba(190,170,255,${.07*k*low})`); g.addColorStop(1,'rgba(190,170,255,0)');
+    x.fillStyle=g; x.fillRect(-W+off,y0-hh,W*2,hh*2); }
+   const R=150;                                                                    /* M4 */
+   for(const p of cold){ const gx=p.ox*2*R+R*2*Math.round((C.x-p.ox*2*R)/(2*R)), gz=p.oz*2*R+R*2*Math.round((C.z-p.oz*2*R)/(2*R)), pr=a.proj(gx,0,gz); if(!pr||pr.y>H||pr.y<hy) continue;
+    let s=Math.sin(T*p.k+p.ph); if(s<=0) continue; s=s*s*s*clamp(1-pr.z/R,0,1)*k; if(s<.03) continue; const w=clamp(p.w*C.f/pr.z,1,30);
+    x.fillStyle=`rgba(190,215,255,${s*.6})`; x.fillRect(pr.x-w/2,pr.y,w,Math.max(1,w*.08)); } }
+  while(rise.length<40) rise.push({x:P.x+(Math.random()-.5)*90,z:P.z+(Math.random()-.2)*110,y:0,v:.4+Math.random()*.6,ph:Math.random()*6.3});   /* M6 */
+  for(const r of rise){ r.y+=r.v/60; if(r.y>14||Math.hypot(r.x-P.x,r.z-P.z)>110) Object.assign(r,{x:P.x+(Math.random()-.5)*90,z:P.z+(Math.random()-.2)*110,y:0});
+   const pr=a.proj(r.x+Math.sin(T*.4+r.ph)*.6,r.y,r.z); if(!pr) continue; const al=k*clamp(r.y/2,0,1)*clamp((14-r.y)/5,0,1)*.6*clamp(1-pr.z/110,0,1); if(al<.02) continue;
+   const rr=clamp(C.f/pr.z*.06,.6,4); g=x.createRadialGradient(pr.x,pr.y,0,pr.x,pr.y,rr*3.5); g.addColorStop(0,`rgba(185,170,255,${al})`); g.addColorStop(1,'rgba(185,170,255,0)'); x.fillStyle=g; x.fillRect(pr.x-rr*3.5,pr.y-rr*3.5,rr*7,rr*7); }
+  x.restore(); }
+ /* M7 精靈細微光暈（造型不變） */
+ function drawSpiritGlow(x,C,k){ if(!C.spX||!C.spH) return; const T=A().T, h=C.spH, cx=C.spX, cy=C.spY;
+  x.save(); x.globalCompositeOperation='screen'; const br=.85+.15*Math.sin(T*1.4);
+  const g=x.createRadialGradient(cx,cy,h*.25,cx,cy,h*.7); g.addColorStop(0,'rgba(200,180,255,0)'); g.addColorStop(.6,`rgba(200,180,255,${.10*k*br})`); g.addColorStop(.85,`rgba(255,226,170,${.06*k*br})`); g.addColorStop(1,'rgba(255,226,170,0)');
+  x.fillStyle=g; x.fillRect(cx-h*.7,cy-h*.7,h*1.4,h*1.4);
+  for(let i=0;i<4;i++){ const ang=orbit*.7+i*Math.PI/2, ex=cx+Math.cos(ang)*h*.42, ey=cy+Math.sin(ang)*h*.16-h*.05, r=Math.max(1,h*.012);
+   x.fillStyle=`rgba(${i%2?'255,230,180':'215,200,255'},${.7*k})`; x.beginPath(); x.arc(ex,ey,r,0,7); x.fill(); }
+  x.restore(); }
+ /* 光痕：在原本狀態飛過的路 */
+ function drawTrail(x,k){ const a=A(), L=S().trail, P=a.P, T=a.T; x.save(); x.globalCompositeOperation='lighter'; x.lineCap='round';
+  let last=null; for(let i=0;i<L.length;i++){ const q=L[i]; if(Math.hypot(q[0]-P.x,q[2]-P.z)>220){ last=null; continue; } const pr=a.proj(q[0],q[1],q[2]); if(!pr){ last=null; continue; }
+   if(last){ const al=k*.32*clamp(1-pr.z/220,0,1)*(.75+.25*Math.sin(T*1.2+i*.4)); x.strokeStyle=`rgba(235,215,255,${al})`; x.lineWidth=clamp(C2(pr.z),1,6); x.beginPath(); x.moveTo(last.x,last.y); x.lineTo(pr.x,pr.y); x.stroke(); }
+   last=pr; }
+  x.restore(); }
+ const C2=z=>A().C.f/z*.08;
+ /* 黑影：模糊、沒有輪廓特徵的暗影，從遠處橫向掠過 */
+ function drawShadow(x,k){ const a=A(), s=sh, X=s.x+s.vx*s.t, Z=s.z+s.vz*s.t, pr=a.proj(X,s.y,Z); if(!pr) return;
+  const u=s.t/s.d, al=k*.32*Math.sin(Math.PI*clamp(u,0,1)), w=clamp(a.C.f/pr.z*6*s.s,8,120), h=w*.45;
+  x.save(); x.translate(pr.x,pr.y); x.scale(1,h/w); const g=x.createRadialGradient(0,0,0,0,0,w); g.addColorStop(0,`rgba(8,6,22,${al})`); g.addColorStop(.6,`rgba(10,8,28,${al*.5})`); g.addColorStop(1,'rgba(10,8,28,0)');
+  x.fillStyle=g; x.beginPath(); x.arc(0,0,w,0,7); x.fill(); x.restore(); }
+ /* 穿越水幕時的光影：一般區段很淡；觸發區段較明顯 */
+ function drawSplash(x,W,H,C){ const u=(A().T-splashT)/1.4, al=(splashBig?.35:.12)*Math.sin(Math.PI*clamp(u,0,1));
+  const g=x.createRadialGradient(W/2,H*.5,0,W/2,H*.5,Math.max(W,H)*.6); g.addColorStop(0,`rgba(225,232,255,${al})`); g.addColorStop(1,'rgba(225,232,255,0)');
+  x.save(); x.globalCompositeOperation='screen'; x.fillStyle=g; x.fillRect(0,0,W,H); x.restore(); }
+ /* 第一次異常：精靈周圍的局部空間重疊，短暫看見另一個世界（月界的沉睡之地）的一角 */
+ function drawGlimpse(x,W,H,C){ const a=A(), T=a.T, k=glimpse, cx=C.spX||W/2, cy=C.spY||H/2, R=Math.min(W,H)*.32*k;
+  x.save(); x.beginPath(); x.arc(cx,cy,R,0,7); x.clip();
+  drawMoonBack(x,W,H,Object.assign({},C,{hy:C.hy+6*Math.sin(T*2)}),1);
+  x.globalCompositeOperation='screen'; x.strokeStyle=`rgba(225,210,255,${.5*k})`; x.lineWidth=1;
+  x.beginPath(); x.moveTo(0,C.hy+14); x.lineTo(W,C.hy+14+8*Math.sin(T)); x.stroke();          /* 錯開的第二條地平線 */
+  for(let i=0;i<7;i++){ const r=R*(.25+i*.11)+Math.sin(T*1.3+i)*4; x.strokeStyle=`rgba(255,230,190,${.18*k})`; x.beginPath(); x.arc(cx,cy,r,i*.8+T*.2,i*.8+T*.2+1.6); x.stroke(); }   /* 空間紋路 */
+  x.restore();
+  x.save(); x.globalCompositeOperation='screen'; x.strokeStyle=`rgba(230,215,255,${.55*k})`; x.lineWidth=1.4; x.beginPath(); x.arc(cx,cy,R,0,7); x.stroke(); x.restore(); }
+
+ /* ---------- 進入／離開 ---------- */
+ function enter(){ on=true; initState(); phase=''; splashT=-9; trans=null; queued=false; pend=false; idle=0; sh=null; rise=[]; pts=[]; glimpse=0; gpMode='';
+  mb=Wd().dimension==='moon'?1:0; prev=null; shT=8; buildUI(); addEventListener('keydown',KD);
+  const a=S();
+  if(a.firstAnomalySeen&&!a.firstSwitchCompleted&&ended()) A().after(1.4,()=>{ if(on&&!phase) prompt(); });   /* 中途離開：回到切換提示 */
+  else if(a.firstSwitchCompleted&&!a.freeSwitchTutorialCompleted) A().after(2,()=>{ if(on&&!phase) tip(A().touch?'輕觸月牙，隨時可以切換回去':'按<kbd>V</kbd>　隨時可以切換回去'); }); }
+ function exit(){ on=false; removeEventListener('keydown',KD); ui=null; tipEl=null; phase=''; trans=null; pts=[]; rise=[]; sh=null; mb=0; }
+ ACT1.hook('enter',enter); ACT1.hook('exit',exit); ACT1.hook('logic',logic); ACT1.hook('drawPre',drawPre); ACT1.hook('drawPost',drawPost);
+ return {press,_dbg:()=>({phase,mb,trans:!!trans,queued,pend,pts:pts.length,sh:!!sh,dim:state.world&&state.world.dimension,act2:Object.assign({},state.act2,{trail:(state.act2.trail||[]).length})}),
+  _shadowNow:()=>{ spawnShadow(); return sh&&{x:sh.x,z:sh.z}; }, SEG};
+})();
+
 
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
