@@ -1,0 +1,53 @@
+# 車廂整理：主畫面原圖、記憶車廂後期熱點跟著劇情出現、收藏只放有的、溫室沙發／圖鑑／培育艙、值勤室場景、駕駛室窗外、提示分流
+from playwright.sync_api import sync_playwright
+R=[]
+def ok(n,c,x=''): R.append(bool(c)); print(('PASS ' if c else 'FAIL ')+n,'' if c else x,flush=True)
+BASE="document.querySelector('#mainscreen,#mainscreen-out')?.remove();closeAll();state=freshState();state.introDone=true;state.journeyCount=3;state.currentLocation='dawnForest';state.visitedLocations=['dawnForest'];state.currentPhase='docked';state.carSeen=TRAIN.slice();state.annSeen='x';"
+with sync_playwright() as p:
+    b=p.chromium.launch(); pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
+    pg.on('pageerror',lambda e:errs.append(str(e)))
+    pg.add_init_script("window.LOCK_TEST=1")
+    pg.goto('http://127.0.0.1:8766/'); W(1500)
+    ok('M1 main menu: original train picture', ev("!!document.querySelector('#mainscreen video.ms-anim, #mainscreen img.ms-anim')&&!document.querySelector('#mainscreen.df')") and '上班' in ev("document.querySelector('#ms-work').innerText"))
+    hs=lambda: ev("[...document.querySelectorAll('#scene [data-hs]')].map(e=>e.dataset.hs)")
+    clean=lambda: ev("closeAll();document.querySelectorAll('#layer .dlg,#layer .cine').forEach(e=>e.remove())")
+    ev(BASE+"state.currentCarriage='memory';state.mview=0;save();PANO.active=null;RUNNING=true;render()"); W(1200); clean(); W(300)
+    h=hs(); ok('W1 memory: ancient wall not shown before the story reaches it', 'mem-wall' not in h and 'mem-clues' not in h and 'mem-rubbing' not in h, h)
+    ev("state.mview=1;render()"); W(500); ok('W2 back view: the seal is not shown yet', 'mem-seal' not in hs(), hs())
+    ev("state.trainEvo={ancient:2};state.trainUnlock=['mem-wall'];state.mview=0;render()"); W(500); ok('W3 after the story: the wall appears', 'mem-wall' in hs())
+    ev("memoryPanel()"); W(900)
+    ok('C1 memory crystal: no totals, no empty slots', '/' not in ev("document.querySelector('.ov.float .fl-head p').innerText") and not ev("document.querySelectorAll('.ov.float .fl.lock').length"))
+    ok('C2 empty → gentle line; otherwise only real crystals', ev("!!document.querySelector('.fl-empty')||document.querySelectorAll('.ov.float .fl:not(.lock)').length>0"))
+    ev("closeAll();state.collectibles.push(Object.keys(COLLECTIBLES).find(k=>COLLECTIBLES[k].kind==='item'));itemsPanel()"); W(900)
+    ok('C3 cabinet: only what you have, label 17px', ev("document.querySelectorAll('.ov.float .fl:not(.lock)').length")==1 and not ev("document.querySelectorAll('.ov.float .fl.lock').length") and ev("getComputedStyle(document.querySelector('.ov.float .fl .t')).fontSize")=='17px', ev("getComputedStyle(document.querySelector('.ov.float .fl .t')).fontSize"))
+    ok('C4 no empty tabs shown', ev("document.querySelectorAll('.fl-box').length")<=1)
+    clean()
+    # 溫室
+    ev(BASE+"state.currentCarriage='nature';state.nview=1;state.spirit.taint=30;save();render()"); W(1000); clean(); W(300)
+    h=hs(); ok('G1 back view: sofa + codex on the book', 'nat-sofa' in h and 'nat-codex' in h, h)
+    bx=ev("(()=>{const r=document.querySelector('[data-hs=nat-codex] .mk').getBoundingClientRect();return [r.x/innerWidth,r.y/innerHeight]})()"); ok('G2 codex marker sits on the book (lower right)', bx[0]>.72 and bx[1]>.48, bx)
+    ev("vinePanel('nat-vine-b')"); W(700); ok('G3 vine bubble: no scrollbar, no rest button', ev("(()=>{const b=document.querySelector('.vine-bub');return getComputedStyle(b).overflowY==='visible'})()") and not ev("!!document.querySelector('#vr')"))
+    ev("document.querySelector('.vine-actor')._bye()"); W(500)
+    t0=ev("TAINT.val()"); ev("hsClick('nat-sofa',document.querySelector('[data-hs=nat-sofa]'))"); W(3200); ok('G4 sofa: sleep a while, vine looks after you (−10)', ev("TAINT.val()")==t0-10 and '睡了一會兒' in ev("(document.querySelector('#layer .dlg')||{}).innerText||''"))
+    clean(); ev("state.nview=0;state.pods=[null,{p:Object.keys(PLANTS)[0],st:1,j:0},null,null];state.grown=[Object.keys(PLANTS)[0]];state.spirit.taint=0;render()"); W(600)
+    ev("hsClick('nat-pod-b',document.querySelector('[data-hs=nat-pod-b]'))"); W(1000); ok('G5 pod options have no "undefined"', 'undefined' not in ev("[...document.querySelectorAll('.hdw')].map(e=>e.innerText).join('|')"), ev("[...document.querySelectorAll('.hdw')].map(e=>e.innerText).join('|')"))
+    clean()
+    # 值勤室
+    ev(BASE+"state.currentCarriage='memory';state.mview=1;state.trainEvo={guard:3};state.trainUnlock=['mem-seal'];save();render()"); W(900); clean(); W(300)
+    ok('D1 seal shown when the story opens it', 'mem-seal' in hs())
+    ev("hsClick('mem-seal',document.querySelector('[data-hs=mem-seal]'))"); W(2200)
+    ok('D2 the duty room is a scene (no window)', ev("HS_SCENE()")=='guard' and not ev("!!document.querySelector('#layer .ov')") and ev("document.querySelector('#scene img.bg').getAttribute('src')").endswith('guard-room.jpg'))
+    clean(); W(300); h=hs(); ok('D3 log and blueprint are hotspots in the room; later records hidden', h==['guard-r0','guard-r1','guard-back'], h)
+    ev("hsClick('guard-r0',document.querySelector('[data-hs=guard-r0]'))"); W(700); ok('D4 reading the log', '最後一頁' in ev("document.querySelector('#layer .ov').innerText"))
+    clean(); ev("state.trainEvo.guard=4;render()"); W(400); ok('D5 stage 4: letter and compass appear', len(hs())==5, hs())
+    ev("hsClick('guard-back',document.querySelector('[data-hs=guard-back]'))"); W(1800); ok('D6 back to the memory carriage', ev("HS_SCENE()")=='memory')
+    st=ev("JSON.stringify(state)")
+    # 駕駛室
+    ev(BASE+"state.currentCarriage='cab';state.currentLocation='starIslands';save();render()"); W(1000)
+    ok('K1 cab window shows the stop\'s scene picture', 'starIslands' in (ev("[...document.querySelectorAll('#scene svg.bg image')].map(i=>i.getAttribute('href')).join(' ')") or ''))
+    # 提示
+    ev("toast('月台很安靜。')"); W(300); ok('T1 no-op status is not shown', 'id' and ev("!document.querySelector('#toast.on')") and ev("!document.querySelector('#notetop.on')"))
+    ev("toast('✦ 回憶水晶凝結了新的片刻：測試')"); W(400); ok('T2 gains: top plain text', ev("document.querySelector('#notetop.on')?.innerText")=='回憶水晶凝結了新的片刻：測試' and ev("!document.querySelector('#toast.on')"))
+    ev("toast('請先在裝備台領取星途符牒')"); W(400); ok('T3 things to do: bottom box', '星途符牒' in ev("document.querySelector('#toast.on')?.innerText||''"))
+    ok('Z no page errors', not errs, errs)
+    print('ALL PASS' if all(R) else 'SOME FAIL', len(R))

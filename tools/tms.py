@@ -4,12 +4,12 @@ S=sys.argv[1]
 def ok(n,c,x=''): print(('PASS ' if c else 'FAIL ')+n+(' '+str(x) if x!='' else ''),flush=True)
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader','--enable-unsafe-swiftshader'])
-    for vw,vh,tag,block in [(1280,720,'d',0),(390,844,'m',0),(844,390,'l',0),(1440,900,'w',0),(390,844,'mb',1),(390,844,'mc',2),(1280,720,'fd',3),(390,844,'fm',3),(844,390,'fl',3),(1440,900,'fw',3)]:
+    for vw,vh,tag,block in [(1280,720,'d',0),(390,844,'m',0),(844,390,'l',0),(1440,900,'w',0),(390,844,'mb',1),(390,844,'mc',2)]:
         ctx=b.new_context(viewport={'width':vw,'height':vh}); pg=ctx.new_page(); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
         if block==1: pg.route('**/*.mp4',lambda r:r.abort())
         if block==2: pg.add_init_script("HTMLMediaElement.prototype.play=function(){return Promise.reject(new DOMException('blocked','NotAllowedError'))};new MutationObserver(()=>document.querySelectorAll('video[autoplay]').forEach(v=>{v.removeAttribute('autoplay');v.autoplay=false;v.pause()})).observe(document,{childList:true,subtree:true})")
         pg.on('pageerror',lambda e:errs.append(str(e)))
-        pg.goto('http://127.0.0.1:8766/'+('' if block==3 else '?legacy=1')); W(3200)
+        pg.goto('http://127.0.0.1:8766/'+''); W(3200)
         r=ev("(()=>{const r=document.querySelector('#mst').getBoundingClientRect();return [r.left,r.top,r.right,r.bottom]})()")
         ok(tag+' train covers screen', r[0]<=0.5 and r[1]<=0.5 and r[2]>=vw-0.5 and r[3]>=vh-0.5, [round(x) for x in r])
         if block==3: ok(tag+' new menu: Dawn Forest picture, sleeping train, no video', ev("(()=>{const i=document.querySelector('#mst img.ms-anim');return !!i&&i.complete&&i.naturalWidth===1672&&!document.querySelector('#mst video')})()"))

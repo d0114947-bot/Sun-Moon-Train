@@ -6,11 +6,6 @@ with sync_playwright() as p:
     pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto('http://127.0.0.1:8766/'); W(1500)
-    ok('F1 new main screen: sleeping train in the Dawn Forest, no steam video', ev("!!document.querySelector('#mainscreen.df img.ms-anim')&&!document.querySelector('#mainscreen video')") and '沉睡的列車' in ev("document.querySelector('#ms-note').textContent") and ev("document.querySelector('#ms-work .lb').textContent")=='啟程')
-    pg.click('#ms-work'); W(800)
-    ok('F2 tap: forest wind, no train sound', ev("SFX.ambKey==='out:dawnForest'&&!!SFX.amb&&!TRAINSFX.out"))
-    pg.click('#ms-snd'); W(300); ok('F3 ♪ off silences the forest', ev("!SFX.amb&&PREFS.sound===false")); pg.click('#ms-snd'); W(300); ok('F4 ♪ back on', ev("!!SFX.amb&&PREFS.sound!==false"))
-    pg.goto('http://127.0.0.1:8766/?legacy=1'); W(1500)
     ok('U1 silent before any tap', ev("!TRAINSFX.out && !(BGM.el&&!BGM.el.paused)"))
     pg.click('#ms-work'); W(800)
     ok('U2 tap on main screen starts train sound', ev("!!TRAINSFX.out && SFX.ctx.state==='running' && !!TRAINSFX.timer"))
