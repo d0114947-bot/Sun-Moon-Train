@@ -9909,6 +9909,32 @@ function act6Tick(){ if(!state||!state.act5||!state.act5.done) return; if(!state
   return dialogueScript([['self','……第一次，真的處理了一件事。'],['dragon','做得不錯。到站之後，好好看看那個地方。']],()=>render()); } }
 setInterval(()=>{ try{ act6Tick(); }catch(e){ console.error(e); } },700);
 
+/* =====================================================================
+   序章尾聲：旅途的開始
+   第六幕處理完月輝潮汐、抵達星河浮島之後：第一次下車探索 → 跟著索拉去「浮島漂走的痕跡」（記錄、協助乘客）
+   → 回到車上：精靈理解自己可以怎麼探索、觀察、記錄與協助乘客 → 正式進入自由旅程（不顯示結尾畫面）
+   索拉這一趟不下車，留在車上（之後再回到星河浮島時，才依原本的規則道別）
+   存檔：state.epi＝{said:{}, out, done}；完成後 state.prologueDone＝true
+   ===================================================================== */
+const epiOn=()=>!!(state&&state.act6&&state.act6.done&&state.epi&&!state.epi.done&&state.introDone);
+function epiBadge(h){ if(!epiOn()) return ''; const a=state.epi, B=t=>`<span class="step cur"><b>✦</b><i>${t}</i></span>`;
+ if(state.currentPhase==='docked'&&state.currentLocation==='starIslands'&&a.said.arrive&&!a.out&&h.id==='hab-exit') return B('下車看看');
+ if(state.currentPhase==='outside'&&h.id==='out-drift'&&!(state.places||[]).includes(ACT5_ID)) return B('跟著索拉');
+ return ''; }
+{ const pb=proBadge; proBadge=h=>pb(h)||epiBadge(h); }
+const EPIP={t:0};
+function epiTick(){ if(!state||!state.act6||!state.act6.done) return; if(!state.epi){ state.epi={said:{},out:false,done:false}; } if(!epiOn()) return;
+ if(act4Busy()){ EPIP.t=0; return; } if(!EPIP.t) EPIP.t=performance.now(); const idle=performance.now()-EPIP.t;
+ const a=state.epi, ph=state.currentPhase, here=state.currentLocation==='starIslands', say=(k,L,cb)=>{ a.said[k]=1; save(); return dialogueScript(L,()=>{ render(); cb&&cb(); }); };
+ if(!here) return;
+ if(ph==='docked'&&!a.said.arrive&&idle>1200) return say('arrive',[['self','……到了。星河浮島。'],[ACT5_ID,'是我的星河……！'],[ACT5_ID,'值勤精靈，一起下車吧。我想讓你看一個地方。']]);
+ if(ph==='outside'){ if(!a.out){ a.out=true; save(); }
+  if(state.companion!==ACT5_ID&&!a.said.alone&&idle>1500) return say('alone',[['self','……索拉還在車上。'],['self','她想讓我看的地方，要跟她一起才找得到。回車上找她吧。']]);
+  return; }
+ if(ph==='docked'&&a.out&&(state.places||[]).includes(ACT5_ID)&&!a.done&&idle>800){ a.done=true; state.prologueDone=true; logJ('第一趟旅程完成了。從這裡開始，是自己的旅程。','find'); save();
+  return dialogueScript([[ACT5_ID,'謝謝你陪我去看。……我還想再待一陣子。'],[ACT5_ID,'等我準備好了，我會自己跟你說。'],['self','探索、觀察、記錄……還有，陪著乘客。'],['self','這就是值勤精靈的旅程吧。'],['dragon','下一站，你來決定。']],()=>render()); } }
+setInterval(()=>{ try{ epiTick(); }catch(e){ console.error(e); } },700);
+
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
