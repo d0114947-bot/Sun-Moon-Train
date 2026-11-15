@@ -1,0 +1,6 @@
+exec(open('tact4.py').read().split("    pg.goto(")[0].replace("with sync_playwright() as p:","P=sync_playwright().start()\nif 1:\n    p=P"))
+pg.goto('http://127.0.0.1:8766/'); W(900)
+ev("document.querySelector('#mainscreen,#mainscreen-out')?.remove();closeAll();"+POST3+"save();PANO.active=null;layout.centered=false;RUNNING=true;render()"); W(800)
+waitdlg(); W(600); pg.screenshot(path='a4v_guide.png'); adv(); W(500); pg.screenshot(path='a4v_badge.png')
+hs(ev("ACT4_ZONE")); W(900); ev("closeAll();document.querySelectorAll('.hdw').forEach(d=>drawerClose(d))"); waitdlg(); W(500); pg.screenshot(path='a4v_done.png'); adv()
+go('memory'); talk(); go('cab'); waitdlg(6000); W(500); pg.screenshot(path='a4v_cab.png')

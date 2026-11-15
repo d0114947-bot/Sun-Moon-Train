@@ -5,7 +5,7 @@ A2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTu
 Y=math.atan2(-1,-1); SQ=0.7071
 def setup(x,y,z,yaw,dim='unresolved',seen='true',vw=(1280,720)):
     return f"ACT1.active()&&ACT1.exit();state=freshState();state.chapter='act1';state.act1={{{A1},pos:{json.dumps({'x':x,'y':y,'z':z,'yaw':yaw})}}};state.world={{location:'sleeping_land',dimension:'{dim}'}};state.act2={A2};state.act3={{trainSeen:{seen},obs:[]}};save();ACT1.enter()"
-shots=[('far',0,10,0,Y,'unresolved'),('farmoon',-150,14,-150,Y,'moon'),('near',-460+95*SQ+30*SQ,22,-460+95*SQ-30*SQ,Y,'unresolved'),('side',-460+45*SQ+5*SQ,17,-460+45*SQ-5*SQ,Y,'moon'),('loco',-460+40*SQ+40*SQ,24,-460+40*SQ-40*SQ,Y-0.6,'unresolved')]
+shots=[('far',0,10,0,Y,'unresolved'),('farmoon',-150,14,-150,Y,'moon'),('near',-460+95*SQ+30*SQ,22,-460+95*SQ-30*SQ,Y,'unresolved'),('inside',-460+70*SQ,20,-460+70*SQ,Y,'unresolved'),('side',-460+45*SQ+5*SQ,17,-460+45*SQ-5*SQ,Y,'moon'),('loco',-460+40*SQ+40*SQ,24,-460+40*SQ-40*SQ,Y-0.6,'unresolved')]
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader'])
     pg=b.new_page(viewport={'width':1280,'height':720}); pg.add_init_script("window.ACT1_TEST=true;window.ACT1_SPEED=4")
