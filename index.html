@@ -3741,7 +3741,7 @@ const DELAY_SENSE={wall:'（……車窗外的界壁，泛起一圈一圈奇怪�
  life:'（車尾那邊，有小小的光在光軌上徘徊。去展望台看看吧。）',
  dwell:'（月台那邊……有一點特別的光。）'};
 const delayOn=k=>!!(state.delay&&state.delay.key===stopKey()&&state.delay.st==='on'&&(!k||state.delay.k===k));
-function delayTick(){ if(!RUNNING||state.currentPhase==='voyage') return; const d=state.duty, w=sigWhy();
+function delayTick(){ if(!RUNNING||state.currentPhase==='voyage') return; if(proHold()) return; const d=state.duty, w=sigWhy();
  if(!d.mic||d.signal||w.k==='clear'||!(d.scan&&equipAll()&&d.briefing)) return; if(state.delay&&state.delay.key===stopKey()) return;
  const left=(d.sigAt||0)-Date.now(), roll=((state.journeyCount*7+state.currentLocation.length*3)%10)/10;
  if(left<12000||roll>=.8){ state.delay={key:stopKey(),k:w.k,st:'none'}; save(); return; }
@@ -3805,7 +3805,7 @@ const ASK={deck:{say:'……我想去展望台看看。可以陪我去嗎？',go
  garden:{say:'今天溫室的花……好像不太一樣。我想去看看。',go:'nature',done:[['ID','你看，它的葉子轉向我們這邊了。'],['self','它認得你喔。'],['ID','……真的嗎。那我以後，要常常來。']]},
  proj:{say:'',go:'deck',done:[['ID','……真的投影出來了。'],['ID','原來從列車上看，它是這個樣子。'],['self','你想看的話，下次我再幫你打開。']]},
  zone:{say:'……今天這裡，有一點不舒服。可以幫我調整一下嗎？',go:null,done:[['ID','……嗯。好多了。'],['ID','謝謝你。你總是會注意到。']]}};
-function askRoll(id){ const v=state.voyage, s=state.passengers[id]; if(!v||v.fin!=null||(s.stage||0)<1) return false; v.asks=v.asks||[];
+function askRoll(id){ const v=state.voyage, s=state.passengers[id]; if(!v||v.fin!=null||(s.stage||0)<1) return false; if(proQuiet()) return false; v.asks=v.asks||[];
  if(v.asks.length>=2||v.asks.some(a=>a.id===id)||((state.journeyCount*5+id.length+v.asks.length)%4)) return false;
  const projC=trainStage('sky')>=2?(constDone('h_'+id)?'h_'+id:(CONSTS.find(c=>constDone(c.id)&&!(state.projPick||[]).includes(c.id))||{}).id):null;
  const types=['deck','stars','garden'].concat(careOk(id)?[]:['zone']).concat(projC?['proj']:[]), type=types[(state.journeyCount+id.length)%types.length]; const A=ASK[type];
@@ -3820,7 +3820,7 @@ function askHere(id){ const v=state.voyage; if(!v||!v.asks) return false; const 
  dialogueScript(A.done.map(([w,t])=>[w==='ID'?id:w,t]),()=>render()); return true; }
 /* 航行中：偶爾聽見同一節車廂裡的乘客 */
 const AMB=['小聲地哼著歌。','看著窗外，一動也不動。','打了一個小小的呵欠。','在夢裡輕輕翻了個身。','好像在數窗外的星星。','跟著列車的節奏，輕輕晃著。'];
-setInterval(()=>{ if(!RUNNING||document.hidden||state.currentPhase!=='voyage'||navigator.webdriver&&!window.STORY_TEST) return; if(document.querySelector('#layer .dlg,#layer .cine,#layer .ov:not(.drawer)')) return;
+setInterval(()=>{ if(!RUNNING||document.hidden||state.currentPhase!=='voyage'||navigator.webdriver&&!window.STORY_TEST) return; if(document.querySelector('#layer .dlg,#layer .cine,#layer .ov:not(.drawer)')) return; if(proQuiet()) return;
  if(HS_SCENE()==='habitat'){ const ec=Object.keys(PASSENGERS).find(id=>{ const s=state.passengers[id]; return s&&s.left&&!s.aboard&&!state.storyFlags['echo_'+id]&&state.journeyCount>(s.leftJ==null?-1:s.leftJ); });
   if(ec&&Math.random()<.5){ state.storyFlags['echo_'+ec]=1; const P=PASSENGERS[ec]; state.passengers[ec].records.push({j:state.journeyCount,t:'離開之後，棲息車廂裡還留著一點牠的光。'}); logJ(`航行中，棲息車廂裡${P.name}以前待的地方，還留著一點光。`); save(); sense(`（${P.name}以前待的地方……好像還留著一點光。）`); return; } }
  if(Math.random()>.3) return; const H=hereList(); if(!H.length) return; const id=H[Math.floor(Math.random()*H.length)]; sense(`（${PASSENGERS[id].name}${AMB[Math.floor(Math.random()*AMB.length)]}）`); },60000);
@@ -4289,7 +4289,7 @@ function roamTalk(id){ const s=state.passengers[id], p=PASSENGERS[id], pl=s.plac
  if(pl==='nature'&&likedBloom(id).length&&s.talks<p.talks.length){ s.roamChat=1; save(); const L=PLANTS[state.pods[likedBloom(id)[0]].p]; return dialogueScript([[id,`……這株${L.name}，讓我想起了以前的事。`],[id,'我想說給你聽。']],()=>talk(id)); }
  const C=ROAM_CHAT[pl]||ROAM_CHAT.nature, k=(s.roamChatN||0)%C.length; s.roamChatN=(s.roamChatN||0)+1; s.roamChat=1; save();
  dialogueScript([[id,C[k][0]],['self',C[k][1]]].concat(pl==='outside'?[[id,'……再看一下，我就回去。']]:[]),()=>render()); }
-setInterval(()=>{ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STORY_TEST) return; if(document.querySelector('#layer .cine,#layer .board')||TRANS.busy) return;
+setInterval(()=>{ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STORY_TEST) return; if(document.querySelector('#layer .cine,#layer .board')||TRANS.busy) return; if(proQuiet()) return;
  const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&(state.passengers[id].stage||0)>=1);
  /* 回來：在別的地方待了一陣子，大多會自己回棲息車廂（下車的有時會忘記） */
  ids.forEach(id=>{ const s=state.passengers[id]; if(!s.place||s.place==='deck'||!s.roamAt) return; const t=Date.now()-s.roamAt;
@@ -4363,7 +4363,7 @@ const WAIT_HINT={dwell:[['self','停站時間還沒到。……趁這段時間�
 function waitHint(w){ return; /* 改由等待時間的值勤互動（delayTick）提示 */ if(navigator.webdriver&&!window.STORY_TEST) return; const H=WAIT_HINT[w.k]; if(H) whenFree(()=>dialogueScript(H)); }
 /* 出發之前：先自動確認乘客都上車了，再說要去駕駛室 */
 function whenFree(fn,tries){ tries=tries||0; if(tries>200) return; if(document.querySelector('#layer .dlg,#layer .cine,#layer .board,#layer .ov:not(.drawer)')||TRANS.busy) return setTimeout(()=>whenFree(fn,tries+1),700); fn(); }
-function boardCheck(){ if(navigator.webdriver&&!window.STORY_TEST) return; if(!RUNNING||state.currentPhase==='voyage'||state.currentLocation==='origin'&&state.journeyCount===0) return; const key=state.journeyCount+'@'+state.currentLocation; if(state.storyFlags.boardChk===key) return;
+function boardCheck(){ if(navigator.webdriver&&!window.STORY_TEST) return; if(proQuiet()) return; if(!RUNNING||state.currentPhase==='voyage'||state.currentLocation==='origin'&&state.journeyCount===0) return; const key=state.journeyCount+'@'+state.currentLocation; if(state.storyFlags.boardChk===key) return;
  whenFree(()=>{ if(state.currentPhase==='voyage'||state.storyFlags.boardChk===key) return; state.storyFlags.boardChk=key; save();
   const out=outsideList(); if(out.length){ const nm=out.map(id=>PASSENGERS[id].name).join('、'); state.storyFlags.boardChk=''; save();
    return dialogueScript([['self','號誌轉綠了。……出發之前，先確認一下大家。'],['self','（一位一位數過去……）……咦？少了。'],['self',`${nm}……還在外面。我感覺得到，牠在月台那邊看風景。`],['self',state.currentPhase==='outside'?'去叫牠回來吧。':'得下車去請牠回來。']],()=>hsRefresh()); }
@@ -4540,6 +4540,7 @@ const realmKey=loc=>LOCATIONS[loc]&&LOCATIONS[loc].realm==='日界'?'sun':'moon'
 function purifyBtn(k){ const P=PURIFY[k]; if(TAINT.val()<10) return ''; /* 身上沒有界染，就不需要淨化 */ if(TAINT.used('p:'+k)) return `<p class="pur-done">今天已經在這裡淨化過了。下次停靠或下一段航行時可以再來。</p>`;
  return `<div class="row"><button class="btn" data-pur="${k}">${P.label}</button></div>`; }
 document.addEventListener('click',e=>{ const b=e.target.closest('[data-pur]'); if(!b) return; const k=b.dataset.pur, P=PURIFY[k];
+ if(!P) return;   /* 應變面板的「淨化車廂」也用 data-pur，不是這裡的淨化點 */
  if(TAINT.purify(k,P.n,null,P.log)){ const N=PUR_NARR[k]; fxBurstAt(b,N?N[1]:'#d8ffb0'); if(N){ sense(N[0]); SFX.tone(N[2],0,1.2,'sine',.025); } b.closest('.row').outerHTML=`<p class="pur-done">${P.done}</p>`; } });
 
 /* 自動出發與自動行駛（玩家不操控列車） */
@@ -4771,7 +4772,7 @@ function resReact(H){ const s=resStage(); if(s<1||s>=3) return false; state.resJ
   setTimeout(()=>dialogueScript(sc,()=>{ if(t==='worry'){ TAINT.purify('worry_'+id,3,null,`${PASSENGERS[id].name}的陪伴`); sense(`（${PASSENGERS[id].name}安靜地陪在旁邊。熟悉的氣息，讓身上慢慢安定下來。）`); }
    state.passengers[id].records.push({j:state.journeyCount,t:t==='worry'?'擔心你，陪在你身邊。':t==='home'?'因為你身上的光，想起了家。':'說出了牠感覺到的、你身上的共鳴。'}); save(); render(); }),600); return true; } return false; }
 /* 共鳴的時鐘：遠方的聲音、幻象、月輝植物吸收界染、精靈的提醒（一趟各一次，不會一直打擾） */
-function resTick(){ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STORY_TEST) return; resFx(); resHistAdd(); const s=resSense(), K=state.journeyCount+(state.currentPhase==='voyage'?'v':'d'); state.resT=state.resT||{};
+function resTick(){ if(!RUNNING||document.hidden||navigator.webdriver&&!window.STORY_TEST) return; if(proQuiet()) return; resFx(); resHistAdd(); const s=resSense(), K=state.journeyCount+(state.currentPhase==='voyage'?'v':'d'); state.resT=state.resT||{};
  if(document.querySelector('#layer .dlg,#layer .cine,#layer .ov:not(.drawer)')) return;
  if(s===1&&state.resT.voice!==K&&Math.random()<.3){ state.resT.voice=K; save(); return sense(RES_VOICE[state.journeyCount%RES_VOICE.length]); }
  if(s>=3&&state.resT.shadow!==K&&Math.random()<.35){ state.resT.shadow=K; save(); return sense(RES_SHADOW[state.journeyCount%RES_SHADOW.length]); }
@@ -4868,7 +4869,7 @@ const XRUN={
 };
 
 setInterval(()=>{ try{ resTick(); }catch(e){} },15000);   /* 共鳴：遠方的聲音、幻象、月輝植物（一趟各一次） */
-function voyPlan(v){ if(v.haps) return v.haps; const n=VOY_N[v.to]||2, ids=Object.keys(VOY_HAPS), seen=state.hapSeen||[], j=state.journeyCount||0;
+function voyPlan(v){ if(v.haps) return v.haps; if(proQuiet()){ v.haps=[]; return v.haps; }   /* 序章的第一趟：只處理月輝潮汐，不排航行中的小事件 */ const n=VOY_N[v.to]||2, ids=Object.keys(VOY_HAPS), seen=state.hapSeen||[], j=state.journeyCount||0;
  const order=ids.map((id,k)=>[id,(seen.includes(id)?100:0)+((k*7+j*5)%ids.length)]).sort((a,b)=>a[1]-b[1]).map(x=>x[0]), pick=[], cars=new Set();
  for(const id of order){ if(pick.length>=n) break; if(cars.has(VOY_HAPS[id].car)) continue; pick.push(id); cars.add(VOY_HAPS[id].car); }
  v.haps=pick.map((id,k)=>({id,at:HAP_AT_P[k]||.6,on:false,done:false})); v.mods=v.mods||voyMods(v);
@@ -5089,7 +5090,7 @@ function loadGame(st,name){
 }
 
 /* 這一站有誰上車：誰、幾位都是隨機的（第一次停靠一定會遇到一位）；來自這個界域的生命比較容易出現 */
-function rollBoarders(){ if(state.currentLocation==='origin') return [];
+function rollBoarders(){ if(state.currentLocation==='origin') return []; if(proQuiet()) return [];   /* 序章：第一位乘客是索拉，之前不會有其他生命上車 */
  const waiting=state.boardQ||[], pool=Object.keys(PASSENGERS).filter(id=>EVENTS['board_'+id]&&!done('board_'+id)&&!state.discoveredLifeforms.includes(id)&&!waiting.includes('board_'+id));
  const room=6-Object.keys(PASSENGERS).filter(aboard).length-waiting.length; if(!pool.length||room<=0) return [];
  const seen=state.scopeSeen||[];
@@ -5615,6 +5616,7 @@ function zoneInfo(k){ if(HDW.skip==='zone:'+k&&performance.now()<HDW.skipT) retu
  const draw=()=>{ const e=zoneEnv(k), here=zoneHere(k), others=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id)&&zoneOf(id)!==k);
   pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">結界調節</div><h2 class="rm-h">${ZONES[k].name}</h2><p class="rm-sub">${ZONE_ST(k,here.length)}</p>
   ${here.length?`<div class="rm-here">${here.map(id=>`<span class="rm-who ${careOk(id)?'ok':''}" title="${PASSENGERS[id].name}">${portraitOf(PASSENGERS[id])}<b>${PASSENGERS[id].name}${careOk(id)?' ✦':''}</b></span>`).join('')}</div>`:''}
+  ${typeof act5On==='function'&&act5On()?here.filter(id=>!careOk(id)).map(id=>`<p class="cs-rec a5-react">${PASSENGERS[id].name}${careReact(id).replace(/^（牠/,'').replace(/。）$/,'。')}</p>`).join(''):''}
   ${zoneLcd(k,e)}
   <div class="care-dials">${Object.entries(CARE_DIM).map(([d,Dm])=>`<div class="dial"><span class="dn">${dimName(d,k)}</span><div class="seg">${Dm.lv.map((n,i)=>`<button class="${e[d]===i?'on':''}" data-dk="${d}" data-dv="${i}">${n}</button>`).join('')}</div></div>`).join('')}</div>
   ${k==='rest'?(trainStage('sanct')>=2?`<div class="zask"><button class="btn ghost" data-home>歸宿之燈・${Object.values(state.passengers||{}).filter(x=>(x.stage||0)>=2||x.left).length} 盞</button></div>`:'<p class="cs-rec">這個角落……似乎曾經供其他生命休息。</p>'):''}${zoneTraces(k)}${zonePlantRow(k)}${k==='spring'?purifyBtn('spring'):''}`;
@@ -7611,7 +7613,7 @@ const EVO_SAY={
  guard2:[['self','典藏車廂的牆上，浮出了一扇門的輪廓。碰一下，它就亮了一點。'],['dragon','……那扇門，我也很久沒看到了。']],
  guard3:[['self','門扉上的封印散開了。門後面，是一間很小的房間。'],['dragon','渡守的值勤室。……以前，在你之前值勤的人，就住在那裡。']],
  guard4:[['self','值勤室裡的紀錄，一頁一頁亮了起來。'],['dragon','你終於找到了。……這列車，為什麼一直等著。']]};
-function evoPlay(){ if(!EVO_Q.length||!RUNNING) return; if(navigator.webdriver&&!window.STORY_TEST){ EVO_Q.length=0; return; }
+function evoPlay(){ if(!EVO_Q.length||!RUNNING) return; if(typeof proQuiet==='function'&&proQuiet()) return;   /* 序章期間不播（留到序章結束後） */ if(navigator.webdriver&&!window.STORY_TEST){ EVO_Q.length=0; return; }
  if(document.querySelector('#layer .dlg,#layer .cine,#layer .ov:not(.drawer),#layer .board')||TRANS.busy) return; const it=EVO_Q.shift();
  if(it.hs){ const L=GROW_LOCK[it.hs]; render(); setTimeout(()=>{ const el=document.querySelector(`#scene [data-hs="${it.hs}"]`); if(el){ el.classList.add('hs-wake'); setTimeout(()=>el.classList.remove('hs-wake'),3200); } },200); SFX.tone(1318,0,.6,'sine',.03); sense(L.line); return setTimeout(evoPlay,4500); }
  const E=EVO_K[it.k]; E.tone.forEach((f,i)=>SFX.tone(f,i*.18,.9,'sine',.028)); const sc=$('#scene'); if(sc){ sc.style.setProperty('--grow',E.col); sc.classList.remove('grow-anim'); void sc.offsetWidth; sc.classList.add('grow-anim','grow-'+it.k); setTimeout(()=>sc.classList.remove('grow-anim','grow-'+it.k),3000); }
@@ -7889,7 +7891,7 @@ const OLD={
  ferry:{n:'渡口的鐘聲',kind:'日常',cond:()=>state.currentLocation==='origin'&&trainStage('sky')>=2,where:'回到沉睡之地（古代渡口），而且星空投影已經醒來',lines:['（遠遠的鐘聲，敲了三下。）','「各位旅客，本列車即將由渡口出發。」','「……這次，車上有幾位？」','「很多很多。都坐好了。」']}};
 const OLD_CD=2, OLD_MINJ=8;
 const oldDone=id=>!!(state.oldEcho&&state.oldEcho[id]);
-function oldPick(){ if(navigator.webdriver&&!window.STORY_TEST) return null; state.oldEcho=state.oldEcho||{}; if(state.oldJ===state.journeyCount) return null;
+function oldPick(){ if(navigator.webdriver&&!window.STORY_TEST) return null; if(proQuiet()) return null; state.oldEcho=state.oldEcho||{}; if(state.oldJ===state.journeyCount) return null;
  /* 渡守的聲音是神秘的：至少跑過 8 趟以後，才會第一次聽見 */
  if((state.journeyCount||0)<OLD_MINJ) return null; const ids=Object.keys(OLD).filter(id=>!oldDone(id)&&OLD[id].cond());
  const imp=ids.find(id=>OLD[id].important); if(imp) return imp; if(!ids.length) return null; if(state.oldJR!=null&&state.journeyCount-state.oldJR<OLD_CD) return null; if(Math.random()<.5) return null; return ids[Math.floor(Math.random()*ids.length)]; }
@@ -8263,7 +8265,7 @@ function crPaxReport(H){ const C=state.crisis; if(!C||C.done||C.stage==='W1'||C.
  const id=H.find(x=>(CR_ABIL[x]||[]).some(t=>['sense','know','realm'].includes(t)&&E.pax.includes(t))&&(state.passengers[x].stage||0)>=2&&paxSt(x)!=='hurt'); if(!id) return false; C.paxTold=1; crIntel(Math.max(C.intel,C.real?2:3),nm(id)+'主動告訴你'); C.pax.push({id,k:'info'}); save();
  setTimeout(()=>dialogueScript([[id,'……等一下。'],[id,C.real?(C.intel>=3?E.inv:`我感覺到……是${CR_CAT[E.cat]}那一類的東西。要小心。`):CR_FALSE[C.id]||'……應該沒事。']],()=>{ if(!C.real) crFalseEnd(); render(); }),600); return true; }
 /* ---------- 爆發與應變 ---------- */
-function crOutbreak(){ const C=state.crisis; if(!C||C.done) return; if(!C.real){ return crFalseEnd(); } C.stage='W4'; C.burst=state.journeyCount; save(); document.body.classList.add('cr-alert');
+function crOutbreak(){ const C=state.crisis; if(!C||C.done) return; if(!C.real){ return crFalseEnd(); } C.stage='W4'; C.burst=Math.max(1,state.journeyCount); save();   /* 第 0 趟（序章第一趟）爆發也要記成「已爆發」 */ document.body.classList.add('cr-alert');
  const E=CRISES[C.id]; if(navigator.webdriver&&!window.CRISIS_TEST) return; setTimeout(()=>{ SFX.tone(220,0,1.2,'square',.02); dialogueScript([['self',`——${E.n}。`],['self',E.inv],['dragon',C.sevN>=3?'冷靜。告訴我你要怎麼做。':'先不要慌。']],()=>crPanel()); },400); }
 function crScore(){ const C=state.crisis, E=CRISES[C.id]; let s=0; C.acts.forEach(k=>{ const e=E.eff[k]; s+=typeof e==='number'?e:e==='reduce'||e==='avoid'?2:0; }); s+=C.reduce;
  C.pax.filter(p=>p.k!=='info'&&p.k!=='refuse'&&p.k!=='none').forEach(p=>s+=Math.min(2,p.v||1)); if(C.pax.some(p=>p.k==='info')) s+=.5;
@@ -9218,7 +9220,7 @@ const EARTH_NEWS=[
  ['人類的望遠鏡，現在能看到好遠好遠的地方。','可是不管看得多遠，他們還是看不見界壁，也看不見這列車。'],
  ['北邊的冰，比以前少了很多。','有些白色的熊，學會了到陸地上找東西吃。人類正在想辦法幫牠們。']
 ];
-function earthNewsTick(){ if(!RUNNING||document.hidden||!state.introDone||(navigator.webdriver&&!window.STORY_TEST&&!window.EARTH_TEST)) return;
+function earthNewsTick(){ if(proQuiet()) return; if(!RUNNING||document.hidden||!state.introDone||(navigator.webdriver&&!window.STORY_TEST&&!window.EARTH_TEST)) return;
  if(state.currentPhase!=='docked'||realmKey(state.currentLocation)!=='sun'||state.earthJ===state.journeyCount) return;
  if(TRANS.busy||document.querySelector('#layer .ov:not(.drawer),#layer .dlg,#layer .cine,#layer .board')||!paceOk(window.EARTH_TEST?0:20000)) return;
  const seen=state.earthNews=state.earthNews||[]; const k=EARTH_NEWS.findIndex((_,i)=>!seen.includes(i)); state.earthJ=state.journeyCount; if(k<0){ save(); return; }
@@ -9488,6 +9490,8 @@ const ACT2=(()=>{
    ===================================================================== */
 const ACT3_DEF=()=>({trainSeen:false,obs:[],entered:false,introduced:false,canDepart:false});
 const act3NewGame=()=>!!(state&&state.act3&&state.act3.entered);
+/* 序章期間（新遊戲，進入列車到序章尾聲）：不插入隨機登車、地球消息、乘客自己走動、共鳴低語 */
+function proQuiet(){ return !!(state&&state.act3&&state.act3.entered&&!state.prologueDone); }
 /* 控制晶盤：第三幕的列車還在沉睡，不能出發 */
 function act3DepartBlock(){ return state&&state.act3&&state.act3.entered&&!state.act3.canDepart?'水晶沒有回應。……它還在沉睡。':null; }
 /* 新遊戲：世界縫隙的另一端是日界的晨曦森林，列車就停在那裡（?legacy=1 的舊開場仍然是沉睡之地的停泊處） */
@@ -9524,6 +9528,10 @@ const ACT3=(()=>{
   carving:{p:()=>wpt(-6.5,CW/2+.2,15.2),lines:['車身上刻著紋路。','圓、弧、星……好古老的樣式。'],rec:'車身的紋路：圓環、弧線與星形交織在一起，是很古老的樣式。'}};
  const DOOR=()=>wpt(16.2,CW/2+.2,14.6), NEAR=22;
  let on=false, ap=0, apT=false, ob=0, phase='', near=null, btn=null, said={}, frags=[], dust=[];
+ let nudgeT=0, nudgeN=0;
+ function nudge(again){ const a=A(), C=a.cam, P=a.P; if(lockedNow()||S3().trainSeen) return; nudgeN++;
+  let ang=Math.atan2(RC.x-P.x,RC.z-P.z)-P.yaw; ang=Math.atan2(Math.sin(ang),Math.cos(ang)); const behind=Math.abs(ang)>1.6, side=ang>0?'右':'左';
+  a.say(again?['星光……還在那裡。']:[behind?'……背後的星光，好像變密了。':Math.abs(ang)>.6?`……${side}邊的星光，好像變密了。`:'……那邊的星光，好像變密了。']); }
  const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(13579);
  for(let i=0;i<46;i++){ const r=30+rnd()*90, an=rnd()*6.3; frags.push({x:RC.x+Math.cos(an)*r,z:RC.z+Math.sin(an)*r,y:6+rnd()*46,s:.6+rnd()*2.2,ph:rnd()*6.3,k:.2+rnd()*.5,gold:rnd()<.35}); }
  for(let i=0;i<220;i++){ const r=20+rnd()*170, an=rnd()*6.3; dust.push({x:RC.x+Math.cos(an)*r,z:RC.z+Math.sin(an)*r,y:2+rnd()*90,ph:rnd()*6.3,c:rnd()<.3?'255,232,190':rnd()<.5?'210,200,255':'240,244,255'}); }
@@ -9556,7 +9564,9 @@ const ACT3=(()=>{
 
  /* ---------- 每幀邏輯 ---------- */
  function logic(dt){ if(!act()) return; const a=A(), P=a.P, s=S3();
-  if(!apT){ if(lockedNow()) return; apT=true; if(ap<1) a.tw({get v(){return ap},set v(x){ap=x}},'v',1,6); }
+  if(!apT){ if(lockedNow()) return; apT=true; if(ap<1){ a.tw({get v(){return ap},set v(x){ap=x}},'v',1,6); nudgeT=0; a.after(4,()=>nudge(false)); } }
+  /* 引導：星光變密的方向在背後時，精靈會注意到（不顯示介面）；很久都沒有靠近，再提醒一次 */
+  if(!S3().trainSeen){ nudgeT+=dt; if(nudgeT>75&&nudgeN<2&&!lockedNow()&&Math.hypot(P.x-RC.x,P.z-RC.z)>700){ nudgeT=0; nudge(true); } }
   const d=Math.hypot(P.x-RC.x,P.z-RC.z);
   ob=clamp((150-d)/70,0,1);
   if(phase) return;
@@ -9800,11 +9810,17 @@ function act5Badge(h){ if(!act5On()||!state.act5.boarded) return ''; const a=sta
  return ''; }
 let proBadge=h=>act4Badge(h)||act5Badge(h);
 /* 右上角的筆記本按鈕：記下第一句話之後亮起 */
-function act5Hud(){ const b=document.querySelector('[data-act="notes:open"]'); if(!b) return; const on=act5On()&&state.act5.boarded&&A5.noted()&&!state.act5.nb;
+function act5Hud(){ const b=document.querySelector('[data-act="notes:open"]'); if(!b) return; const on=act5On()&&state.act5.boarded&&A5.noted()&&state.act5.said.noted&&!state.act5.nb;
  b.classList.toggle('a5-cur',on); }
 { const st=document.createElement('style'); st.textContent=`.nbk.a5-cur{position:relative;border-color:rgba(255,222,150,.95)!important;background:rgba(255,206,130,.2)!important;box-shadow:0 0 0 1px rgba(255,226,160,.9),0 0 18px rgba(255,214,140,.7);animation:a5p 1.6s ease-in-out infinite}
 .nbk.a5-cur::after{content:'✦';position:absolute;top:-10px;right:-6px;font-size:15px;color:#ffe2a0;text-shadow:0 0 6px rgba(255,210,140,.9)}
 @keyframes a5p{50%{box-shadow:0 0 0 1px rgba(255,226,160,.4),0 0 4px rgba(255,214,140,.2)}}`; document.head.appendChild(st); }
+/* 乘客資料：第五幕整理筆記時，圖鑑直接翻到索拉那一頁，並標出要放筆記的欄位 */
+{ const ob=openBook; openBook=function(ch){ const r=ob.apply(this,arguments);
+  if(ch==='life'&&act5On()&&state.act5.boarded&&A5.noted()&&!A5.filed()) setTimeout(()=>{ const l=document.querySelector('#layer .ov.lifebook [data-life="'+ACT5_ID+'"]'); if(l) l.click();
+   setTimeout(()=>{ const b=document.querySelector('#layer .ov.lifebook [data-file="'+ACT5_ID+':bio"]'); if(b) b.classList.add('a5-slot'); },350); },200);
+  return r; }; }
+{ const st=document.createElement('style'); st.textContent=`.slot-btn.a5-slot{position:relative;box-shadow:0 0 0 2px rgba(214,170,80,.9),0 0 14px rgba(214,170,80,.6);animation:a5p 1.6s ease-in-out infinite}.slot-btn.a5-slot::after{content:'✦';position:absolute;top:-12px;right:-8px;font-size:16px;color:#c8902c}`; document.head.appendChild(st); }
 { const nb0=notebookPanel; notebookPanel=function(){ const r=nb0.apply(this,arguments); if(act5On()&&state.act5.boarded&&A5.noted()&&!state.act5.nb){ state.act5.nb=true; ACT5P.nbJust=1; save(); } return r; }; }
 const ACT5P={t:0,nbJust:0};
 const a5say=(k,lines,cb)=>{ state.act5.said[k]=1; save(); return dialogueScript(lines,()=>{ render(); cb&&cb(); }); };
@@ -9853,7 +9869,9 @@ const A6C=()=>state.crisis&&state.crisis.id==='T01'?state.crisis:null;
 /* 晶盤：第五幕之後，碰一下就會醒來 */
 { const H=HSDEF.find(h=>h.id==='cab-disc'); if(H){ const ol=H.lock, oa=H.act;
   H.lock=()=>act6WakeReady()?null:(ol?ol():null);
-  H.act=el=>act6WakeReady()?act6Wake():(typeof oa==='function'?oa(el):runAct(oa)); } }
+  H.act=el=>act6WakeReady()?act6Wake():act6CrDirect()?crPanel():(typeof oa==='function'?oa(el):runAct(oa)); } }
+/* 第六幕：危機與淨化時，碰控制晶盤直接打開應變面板（不用再從「列車界染」找進去） */
+function act6CrDirect(){ if(!act6On()) return false; const a=state.act6, C=A6C(); return !!(C&&C.burst&&!C.done)||!!(a.resolved&&!a.said.pured&&((state.carPol||{}).habitat||0)>0); }
 function act6Wake(){ const a=state.act6;
  dialogueScript([['self','控制晶盤……'],['self','索拉想回家。回到星河浮島。'],['self','如果你醒著的話……可以帶她回去嗎？']],()=>{
   cine(['控制晶盤深處，亮起了一點光。','光沿著車廂的紋路，一節一節地亮了起來。','列車，醒了。'],()=>{
@@ -9866,8 +9884,9 @@ function act6Wake(){ const a=state.act6;
 function act6Badge(h){ if(!act6On()) return ''; const a=state.act6, c=state.currentCarriage, C=A6C(), B=t=>`<span class="step cur"><b>✦</b><i>${t}</i></span>`;
  if(!a.woke) return c==='cab'&&h.id==='cab-disc'?B('碰碰水晶'):'';
  if(C&&!C.done){ if(h.id==='cr-observation'&&C.intel<3&&C.stage!=='W4') return B('看看徵兆');
-  if(h.id==='hab-p-'+ACT5_ID&&a.said.mind&&!a.said.calmed) return B('安撫'); }
- if(a.resolved&&!a.said.pured&&((state.carPol||{}).habitat||0)>0&&h.id==='cab-core') return B('淨化');
+  if(C.burst&&(h.id==='cr-observation'||h.id==='cab-disc')) return B('應變');   /* 爆發後面板被關掉了，也找得到回去的地方 */
+  if(h.id.endsWith('-p-'+ACT5_ID)&&a.said.mind&&!a.said.calmed) return B('安撫'); }
+ if(a.resolved&&!a.said.pured&&((state.carPol||{}).habitat||0)>0&&h.id==='cab-disc') return B('淨化');
  return ''; }
 { const pb=proBadge; proBadge=h=>pb(h)||act6Badge(h); }
 /* 安撫索拉（意念影響） */
@@ -9901,6 +9920,7 @@ function act6Tick(){ if(!state||!state.act5||!state.act5.done) return; if(!state
   if(a.said.burst&&!C.burst&&!act4Busy()){ const o=window.CRISIS_TEST; window.CRISIS_TEST=true; try{ crOutbreak(); }finally{ window.CRISIS_TEST=o; } return; }   /* 中途離開又回來：補上爆發 */
   return; }
  /* 淨化 */
+ if(a.resolved&&!a.said.after&&idle<1500) return;   /* 先讓危機結果的對話說完 */
  if(a.resolved&&!a.said.after){ const pol=((state.carPol||{}).habitat||0)>0, need=pol&&!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0);
   if(need){ state.materials.mosslight=(state.materials.mosslight||0)+1; setTimeout(()=>toast('取得：光苔片 ×1'),400); }
   return a6say('after',pol?[['dragon','潮水退了。可是棲息車廂，還沾著一點界染。'],['dragon','駕駛室的控制晶盤，可以淨化車廂。'+(need?'這片光苔給你。':'')+'你自己身上的，就去溫室找守望藤。']]:[['dragon','潮水退了。車廂也都乾淨。'],['dragon','如果車廂沾上界染，駕駛室的控制晶盤可以淨化。你自己身上的，就去溫室找守望藤。']]); }
@@ -9927,12 +9947,12 @@ function epiTick(){ if(!state||!state.act6||!state.act6.done) return; if(!state.
  if(act4Busy()){ EPIP.t=0; return; } if(!EPIP.t) EPIP.t=performance.now(); const idle=performance.now()-EPIP.t;
  const a=state.epi, ph=state.currentPhase, here=state.currentLocation==='starIslands', say=(k,L,cb)=>{ a.said[k]=1; save(); return dialogueScript(L,()=>{ render(); cb&&cb(); }); };
  if(!here) return;
- if(ph==='docked'&&!a.said.arrive&&idle>1200) return say('arrive',[['self','……到了。星河浮島。'],[ACT5_ID,'是我的星河……！'],[ACT5_ID,'值勤精靈，一起下車吧。我想讓你看一個地方。']]);
+ if(ph==='docked'&&!a.said.arrive&&idle>3500) return say('arrive',[['self','……到了。星河浮島。'],[ACT5_ID,'是我的星河……！'],[ACT5_ID,'值勤精靈，一起下車吧。我想讓你看一個地方。']]);
  if(ph==='outside'){ if(!a.out){ a.out=true; save(); }
   if(state.companion!==ACT5_ID&&!a.said.alone&&idle>1500) return say('alone',[['self','……索拉還在車上。'],['self','她想讓我看的地方，要跟她一起才找得到。回車上找她吧。']]);
   return; }
  if(ph==='docked'&&a.out&&(state.places||[]).includes(ACT5_ID)&&!a.done&&idle>800){ a.done=true; state.prologueDone=true; logJ('第一趟旅程完成了。從這裡開始，是自己的旅程。','find'); save();
-  return dialogueScript([[ACT5_ID,'謝謝你陪我去看。……我還想再待一陣子。'],[ACT5_ID,'等我準備好了，我會自己跟你說。'],['self','探索、觀察、記錄……還有，陪著乘客。'],['self','這就是值勤精靈的旅程吧。'],['dragon','下一站，你來決定。']],()=>render()); } }
+  return dialogueScript([[ACT5_ID,'謝謝你陪我去看。……我還想再待一陣子。'],[ACT5_ID,'等我準備好了，我會自己跟你說。'],['self','探索、觀察、記錄……還有，陪著乘客。'],['self','這就是值勤精靈的旅程吧。'],['dragon','下一站，你來決定。']],()=>{ render(); setTimeout(()=>{ try{ evoPlay(); }catch(e){} },2500); }); } }
 setInterval(()=>{ try{ epiTick(); }catch(e){ console.error(e); } },700);
 
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }

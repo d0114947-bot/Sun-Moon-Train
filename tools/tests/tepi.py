@@ -45,7 +45,7 @@ with sync_playwright() as p:
     pg.goto('http://127.0.0.1:8766/'); W(900)
     # ---- 自己下車（沒帶索拉）
     ev("document.querySelector('#mainscreen,#mainscreen-out')?.remove();closeAll();"+POST6+"save();PANO.active=null;layout.centered=false;RUNNING=true;render()"); W(300)
-    s=talk(); ok('E1 arrival: 星河浮島; 索拉 wants to show a place', '星河浮島' in s and '想讓你看' in s, s)
+    s=talk(6000,25000); ok('E1 arrival: 星河浮島; 索拉 wants to show a place', '星河浮島' in s and '想讓你看' in s, s)
     W(500); ok('E2 badge on the door: 下車看看', 'step' in ev("epiBadge(HSDEF.find(h=>h.id==='hab-exit'))"))
     ok('E3 door is open now', ev("HSDEF.find(h=>h.id==='hab-exit').lock()") in (None,''))
     hs('hab-exit'); W(900)

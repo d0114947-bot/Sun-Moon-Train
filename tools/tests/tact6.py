@@ -99,7 +99,7 @@ with sync_playwright() as p:
     ok('B5 resolved successfully', ev("state.crHist.slice(-1)[0].res")=='succ' and until("state.act6.resolved",8000) and ev("state.crHist.filter(h=>h.id==='T01').length")==1, [s, ev("state.crHist")])
     s+=talk(); ok('P1 purification explained (control disc for carriages, vine for yourself)', '淨化' in s and '守望藤' in s, s)
     if ev("(state.carPol||{}).habitat||0")>0:
-        ok('P2 cab-core badge: 淨化', 'step' in ev("act6Badge(HSDEF.find(h=>h.id==='cab-core'))"))
+        ok('P2 control disc badge: 淨化 (opens the response panel directly)', 'step' in ev("act6Badge(HSDEF.find(h=>h.id==='cab-disc'))") and ev('act6CrDirect()'))
         ok('P3 purify the habitat', ev("crPurifyCar('habitat')") is None and ev("(state.carPol||{}).habitat||0")<=0 or (ev("crPurifyCar('habitat')") is None and ev("state.carPol.habitat")==0))
     s=talk(); ok('F1 act6 done; first real anomaly handled', ev("state.act6.done") and '第一次' in s, s)
     ok('F2 the voyage can now reach the station', not ev("voyTasksLeft(state.voyage)") or ev("state.voyage.fin!=null") or True)
