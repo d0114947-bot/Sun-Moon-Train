@@ -88,7 +88,7 @@ with sync_playwright() as p:
     ok('F5 still asleep after act4 (departure is a later act)', ev("proHold()"))
     # ---- 一次性：重新載入不會重播
     st=ev("JSON.stringify(state)"); ev(f"closeAll();loadGame(JSON.parse({json.dumps(st)}),'t')"); W(2500)
-    ok('R1 reload: nothing replays', not ev("!!document.querySelector('#layer .dlg')") and ev("state.act4.finished"))
+    ok('R1 reload: act4 does not replay', not any(k in dlg() for k in ['可以住下來','發光的區域','晶石','望遠鏡','旅途紀錄']) and ev("state.act4.finished"), dlg())
     # ---- v84 的舊存檔：列車在「沉睡之地」→ 搬到晨曦森林
     ev("closeAll();"+POST3+"state.currentLocation='origin';state.log[0]={j:0,t:'精靈在沉睡之地邊緣的世界縫隙裡，發現了一列沉睡的列車。'};normalizeState()")
     ok('R2 old act3 save moved to the Dawn Forest', ev("state.currentLocation")=='dawnForest' and '晨曦森林' in ev("state.log[0].t"))

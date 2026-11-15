@@ -8355,7 +8355,7 @@ function hsState(h){
  if(seen!==undefined&&(h.shape||'obj')==='obj') return 'done';        // 已閱讀
  return 'normal';
 }
-function hsBtn(h,pano){ const st=hsState(h), sh=h.shape||'obj', nm=esc(hsName(h)), sb=act4Badge(h)||(h.scene==='cab'?stepBadge(h.id)||tipBadge(h):h.scene==='nature'?growBadge(h)||tipBadge(h):tipBadge(h));
+function hsBtn(h,pano){ const st=hsState(h), sh=h.shape||'obj', nm=esc(hsName(h)), sb=proBadge(h)||(h.scene==='cab'?stepBadge(h.id)||tipBadge(h):h.scene==='nature'?growBadge(h)||tipBadge(h):tipBadge(h));
  const attrs=`data-hs="${h.id}"${pano?` data-hid="${h.id}"`:''} style="${pano?'visibility:hidden':`left:${h.at.x}%;top:${h.at.y}%`}${h.sx||''}"`;
  if(h.readout) return `<div class="hs readout" ${attrs}><span class="ro-k">空間座標</span><span class="ro-v">${nm}</span></div>`;
  if(sh==='npc'&&h.sprite) return `<button class="mote sprite st-${st} ${h.cls||''} ${sb?'stepcur':''}" ${attrs} aria-label="${nm}">${sb}<span class="spr"><img src="${h.sprite}" alt="" draggable="false"></span><span class="lb">${nm}</span></button>`;
@@ -8367,7 +8367,7 @@ function stepClamp(){ const W=innerWidth; document.querySelectorAll('#scene .hs 
 addEventListener('resize',()=>setTimeout(stepClamp,60));
 function hsRender(scene){ const L=hsList(scene); tipPick(L); setTimeout(stepClamp,30); return L.map(h=>hsBtn(h,false)).join(''); }
 function hsRefresh(){ tipPick(hsList(HS_SCENE())); setTimeout(stepClamp,30); document.querySelectorAll('#scene [data-hs]').forEach(el=>{ const h=HSDEF.find(x=>x.id===el.dataset.hs); if(!h) return;
- { const o=el.querySelector('.step'), nb=act4Badge(h)||(h.scene==='cab'?stepBadge(h.id):h.scene==='nature'?growBadge(h):'')||tipBadge(h); if(o) o.remove(); if(nb) el.insertAdjacentHTML('afterbegin',nb); el.classList.toggle('stepcur',!!nb); }
+ { const o=el.querySelector('.step'), nb=proBadge(h)||(h.scene==='cab'?stepBadge(h.id):h.scene==='nature'?growBadge(h):'')||tipBadge(h); if(o) o.remove(); if(nb) el.insertAdjacentHTML('afterbegin',nb); el.classList.toggle('stepcur',!!nb); }
  el.classList.remove('st-normal','st-important','st-locked','st-done'); el.classList.add('st-'+hsState(h)); const lb=el.querySelector('.lb'); if(lb&&!lb.querySelector('.whisper')) lb.textContent=hsName(h); }); }
 
 /* 點擊：防連點、光效回饋、依層級開啟內容、記錄已讀 */
@@ -9771,6 +9771,64 @@ function act4Tick(){ if(!state||!state.act3||!state.act3.entered) return; if(!st
 function act4Finish(){ const a=state.act4; if(a.finished||!Object.keys(ACT4).every(k=>a.done[k])) return;
  a.finished=true; logJ('認識了列車的四節車廂：自然調節、星月觀測、記憶典藏、棲息。','find'); save(); }
 setInterval(()=>{ try{ act4Tick(); }catch(e){ console.error(e); } },700);
+
+/* =====================================================================
+   第五幕：不期而遇
+   第四幕結束後，一團會發光的小生命從世界縫隙漂進車廂：星汐水母・索拉（第一位乘客）。
+   讓玩家認識：乘客不是任務道具，而是各自有目的的生命。
+   教學：對話（登車後的第一次聊天，發光的字句可以記下）、互動（調整牠住的那一區結界）、
+        筆記本（右上角）、乘客資料（記憶典藏車廂「世界與生物圖鑑」：把筆記整理進牠的欄位）
+   引導：設備上的 ✦ 徽章＋精靈的念頭；順序不限（只有「打開筆記本」要先記下一句話）
+   存檔：state.act5＝{boarded, nb, said:{}, done}
+   ===================================================================== */
+const ACT5_ID='sola';
+/* 列車還在沉睡、沒有亮光：新遊戲裡，索拉的第一句改成「好大的車」（?legacy=1 保留原句） */
+{ const T0=PASSENGERS.sola.talks[0], L0=T0.lines.slice(), N1=NOTES.sola.list[1], P0=N1.p, n0=N1.n;
+  Object.defineProperty(T0,'lines',{get:()=>act3NewGame()?['哇，好大的車！我還以為是一顆睡著的彗星。'].concat(L0.slice(1)):L0,configurable:true});
+  Object.defineProperty(N1,'p',{get:()=>act3NewGame()?'我還以為是一顆睡著的彗星':P0,configurable:true});
+  Object.defineProperty(N1,'n',{get:()=>act3NewGame()?'以為列車是一顆睡著的彗星':n0,configurable:true}); }
+const ACT5_DEF=()=>({boarded:false,nb:false,said:{},done:false});
+const act5On=()=>!!(state&&state.act4&&state.act4.finished&&state.act4.said&&state.act4.said.fin&&state.act5&&!state.act5.done&&state.introDone);
+function act5Init(){ if(!state.act4||!state.act4.finished) return; const a=state.act5=Object.assign(ACT5_DEF(),state.act5||{}); if(!a.said||typeof a.said!=='object') a.said={}; ['boarded','nb','done'].forEach(k=>a[k]=!!a[k]); }
+const A5={ talked:()=>((state.passengers[ACT5_ID]||{}).talks||0)>=1, noted:()=>notesOf(ACT5_ID).length>0, filed:()=>filedOf(ACT5_ID).bio!==undefined,
+ care:()=>aboard(ACT5_ID)&&careOk(ACT5_ID), zone:()=>'hab-'+zoneOf(ACT5_ID) };
+/* 設備上的徽章：牠住的區域（互動）、圖鑑（乘客資料）、牠本人（再聽一次） */
+function act5Badge(h){ if(!act5On()||!state.act5.boarded) return ''; const a=state.act5, c=state.currentCarriage, B=t=>`<span class="step cur"><b>✦</b><i>${t}</i></span>`;
+ if(c==='habitat'&&!A5.care()&&a.said.care&&h.id===A5.zone()) return B('調整結界');
+ if(c==='habitat'&&A5.talked()&&!A5.noted()&&a.said.note&&h.id==='hab-p-'+ACT5_ID) return B('再聽一次');
+ if(c==='memory'&&a.nb&&!A5.filed()&&h.id==='mem-book') return B('整理筆記');
+ return ''; }
+const proBadge=h=>act4Badge(h)||act5Badge(h);
+/* 右上角的筆記本按鈕：記下第一句話之後亮起 */
+function act5Hud(){ const b=document.querySelector('[data-act="notes:open"]'); if(!b) return; const on=act5On()&&state.act5.boarded&&A5.noted()&&!state.act5.nb;
+ b.classList.toggle('a5-cur',on); }
+{ const st=document.createElement('style'); st.textContent=`.nbk.a5-cur{position:relative;border-color:rgba(255,222,150,.95)!important;background:rgba(255,206,130,.2)!important;box-shadow:0 0 0 1px rgba(255,226,160,.9),0 0 18px rgba(255,214,140,.7);animation:a5p 1.6s ease-in-out infinite}
+.nbk.a5-cur::after{content:'✦';position:absolute;top:-10px;right:-6px;font-size:15px;color:#ffe2a0;text-shadow:0 0 6px rgba(255,210,140,.9)}
+@keyframes a5p{50%{box-shadow:0 0 0 1px rgba(255,226,160,.4),0 0 4px rgba(255,214,140,.2)}}`; document.head.appendChild(st); }
+{ const nb0=notebookPanel; notebookPanel=function(){ const r=nb0.apply(this,arguments); if(act5On()&&state.act5.boarded&&A5.noted()&&!state.act5.nb){ state.act5.nb=true; ACT5P.nbJust=1; save(); } return r; }; }
+const ACT5P={t:0,nbJust:0};
+const a5say=(k,lines,cb)=>{ state.act5.said[k]=1; save(); return dialogueScript(lines,()=>{ render(); cb&&cb(); }); };
+function act5Tick(){ if(!state||!state.act4||!state.act4.finished) return; if(!state.act5) act5Init(); act5Hud(); if(!act5On()) return;
+ if(act4Busy()){ ACT5P.t=0; return; } if(!ACT5P.t) ACT5P.t=performance.now();
+ const a=state.act5, c=state.currentCarriage, idle=performance.now()-ACT5P.t;
+ /* 不期而遇：從世界縫隙漂進來 */
+ if(!a.boarded){ if(idle<3500) return; a.boarded=true; save();
+  return dialogueScript([['self','……？'],['self','窗外，縫隙的方向……有什麼在發光。']],()=>boarding(ACT5_ID,'世界縫隙那一頭，輕輕閃了一下。一團會發光的小生命，順著光漂了出來，穿過車門的縫，滑進了車廂。',()=>render())); }
+ if(!A5.talked()) return;
+ if(!a.said.meet){ return a5say('meet',[['self','索拉……一隻從星河漂來的水母。']].concat(A5.noted()?[]:[['self','她說的話裡，有些字會發光。點一下，就能記進筆記本。']])); }
+ /* 互動：牠住的區域 */
+ if(c==='habitat'&&!a.said.care&&!A5.care()) return a5say('care',[['self','索拉看起來……不太自在。'],['self','她喜歡什麼樣的地方呢？試著調整她住的那一區吧。']]);
+ if(A5.care()&&!a.said.cared&&(a.said.care||c==='habitat')){ return a5say('cared',[[ACT5_ID,CARE[ACT5_ID].ok],['self','每個生命喜歡的地方，都不一樣。']]); }
+ /* 對話與筆記 */
+ if(!A5.noted()&&!a.said.note&&c==='habitat'&&idle>1500) return a5say('note',[['self','剛才那些發光的字……還沒有記下來。'],['self','再找她聊聊吧。']]);
+ if(A5.noted()&&!a.said.noted&&!A5.filed()) return a5say('noted',[['self','記下來了。'],['self','筆記本……在右上角。剛才記下的話，會留在裡面。']]);
+ if(ACT5P.nbJust){ ACT5P.nbJust=0; if(A5.filed()) return; return a5say('nbx',[['self','筆記可以帶回記憶典藏車廂，整理進「世界與生物圖鑑」。'],['self','那裡，就是每一位乘客的資料。']]); }
+ /* 乘客資料 */
+ if(A5.filed()&&!a.said.filed) return a5say('filed',[['self','索拉的資料……一點一點，變得完整了。'],['self','她不是一件要完成的事。她有自己的家，有自己想去的地方。']]);
+ /* 完成：她想回家 → 接第六幕 */
+ if(A5.care()&&a.said.cared&&A5.filed()&&a.said.filed&&!a.done){ a.done=true; logJ('第一位乘客：索拉（星汐水母）。她想回星河浮島。','find'); save();
+  return dialogueScript([[ACT5_ID,'……欸，值勤精靈。'],[ACT5_ID,'我的島，是在星河浮島那邊漂走的。'],[ACT5_ID,'如果這列車能動的話……我好想回去看看。'],['self','……列車，能動嗎？']],()=>render()); } }
+setInterval(()=>{ try{ act5Tick(); }catch(e){ console.error(e); } },700);
 
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
