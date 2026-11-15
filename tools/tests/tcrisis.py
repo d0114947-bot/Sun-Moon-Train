@@ -13,7 +13,7 @@ with sync_playwright() as p:
     pg.goto('http://127.0.0.1:8766/'); W(800); ev("window.CRISIS_TEST=1;startNew()"); W(300)
     base="document.querySelector('#mainscreen,#mainscreen-out')?.remove();closeAll();state.introDone=true;state.storyFlags.noFeel=1;state.carSeen=Object.keys(CAR_INTRO);state.journeyCount=8;state.currentLocation='dawnForest';state.currentPhase='docked';state.currentCarriage='cab';state.duty=dutyFresh();state.trainTaint=30;state.energy=80;state.crisis=null;state.crHist=[];state.crLast={};state.crCalm=null;state.crChain=[];state.repairs=[];state.trainSt=null;state.sealed=[];state.carPol={};state.disaster=null;state.materials={mosslight:3,stardust:3,dew:3,sand:3,pollen:3};"
     P=lambda d: ";".join(f"state.passengers.{i}={{stage:{s},talks:1,records:[],aboard:true}}" for i,s in d.items())
-    ok('D0 database: 20 events, one shared format',ev("Object.keys(CRISES).length")==20 and ev("Object.values(CRISES).every(E=>E.n&&E.cat&&E.sev&&E.prev&&E.eff&&E.out&&E.dmg&&E.pax&&'lead' in E&&E.cd)"))
+    ok('D0 database: 20 random events (+ tutorial T01, never drawn), one shared format',ev("Object.keys(CRISES).filter(k=>k!=='T01').length")==20 and ev("CRISES.T01.w===0&&CRISES.T01.cond()===false") and ev("Object.values(CRISES).every(E=>E.n&&E.cat&&E.sev&&E.prev&&E.eff&&E.out&&E.dmg&&E.pax&&'lead' in E&&E.cd)"))
     # 1 storm avoided by observation
     ev(base+P({'aelis':2})+";render();crStart('A01',{real:true,sev:2})"); 
     ok('1a W1: only a subtle feeling, no hotspot/name',ev("state.crisis.stage")=='W1' and not ev("crVisible()"))

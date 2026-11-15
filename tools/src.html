@@ -161,8 +161,8 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .snd.nbk span{font-size:19px}
 /* 出發前值勤：熱點上的步驟編號 */
 .hs .step{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);display:flex;align-items:center;gap:6px;white-space:nowrap;pointer-events:none;font-family:var(--f-display)}
-.hs .step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#e8c983;color:#1a1530;font-size:14px;box-shadow:0 0 0 3px rgba(232,201,131,.25)}
-.hs .step i{font-style:normal;font-size:13px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
+.hs .step b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#e8c983;color:#1a1530;font-size:20px;font-weight:700;box-shadow:0 0 0 3px rgba(232,201,131,.25)}
+.hs .step i{font-style:normal;font-size:16px;letter-spacing:.08em;padding:5px 13px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
 .hs .step.cur b{animation:steppulse 1.4s ease-in-out infinite}
 .hs .step.cur{animation:stepbob 1.2s ease-in-out infinite;transform-origin:50% 100%}
 .hs .step.below{bottom:auto;top:calc(100% + 6px);transform-origin:50% 0}
@@ -1136,8 +1136,8 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 新手提示（和值勤準備同款的跳動標記） */
 .hs .step.tip b,.mote .step.tip b,.pano-turn .step.tip b{font-size:12px}
 .mote .step,.pano-turn .step{position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);display:flex;align-items:center;gap:6px;white-space:nowrap;pointer-events:none;font-family:var(--f-display);z-index:3}
-.mote .step b,.pano-turn .step b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#e8c983;color:#1a1530;font-size:14px;box-shadow:0 0 0 3px rgba(232,201,131,.25);animation:steppulse 1.4s ease-in-out infinite}
-.mote .step i,.pano-turn .step i{font-style:normal;font-size:13px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
+.mote .step b,.pano-turn .step b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#e8c983;color:#1a1530;font-size:20px;font-weight:700;box-shadow:0 0 0 3px rgba(232,201,131,.25);animation:steppulse 1.4s ease-in-out infinite}
+.mote .step i,.pano-turn .step i{font-style:normal;font-size:16px;letter-spacing:.08em;padding:5px 13px;border-radius:999px;background:rgba(232,201,131,.92);color:#1a1530}
 .mote .step,.pano-turn .step{animation:stepbob 1.2s ease-in-out infinite;transform-origin:50% 100%}
 .mote.sprite .step{bottom:auto;top:0}
 .pano-turn .step{bottom:auto;top:calc(100% + 10px);left:auto;right:4px;transform:none}
@@ -9792,7 +9792,7 @@ function act5Badge(h){ if(!act5On()||!state.act5.boarded) return ''; const a=sta
  if(c==='habitat'&&A5.talked()&&!A5.noted()&&a.said.note&&h.id==='hab-p-'+ACT5_ID) return B('再聽一次');
  if(c==='memory'&&a.nb&&!A5.filed()&&h.id==='mem-book') return B('整理筆記');
  return ''; }
-const proBadge=h=>act4Badge(h)||act5Badge(h);
+let proBadge=h=>act4Badge(h)||act5Badge(h);
 /* 右上角的筆記本按鈕：記下第一句話之後亮起 */
 function act5Hud(){ const b=document.querySelector('[data-act="notes:open"]'); if(!b) return; const on=act5On()&&state.act5.boarded&&A5.noted()&&!state.act5.nb;
  b.classList.toggle('a5-cur',on); }
@@ -9823,6 +9823,85 @@ function act5Tick(){ if(!state||!state.act4||!state.act4.finished) return; if(!s
  if(A5.care()&&a.said.cared&&A5.filed()&&a.said.filed&&!a.done){ a.done=true; logJ('第一位乘客：索拉（星汐水母）。她想回星河浮島。','find'); save();
   return dialogueScript([[ACT5_ID,'……欸，值勤精靈。'],[ACT5_ID,'我的島，是在星河浮島那邊漂走的。'],[ACT5_ID,'如果這列車能動的話……我好想回去看看。'],['self','……列車，能動嗎？']],()=>render()); } }
 setInterval(()=>{ try{ act5Tick(); }catch(e){ console.error(e); } },700);
+
+/* =====================================================================
+   第六幕：月界的異常
+   第五幕結束（索拉想回星河浮島）→ 精靈到駕駛室碰控制晶盤 → 晶盤第一次亮起，列車醒來（序章的「沉睡」解除）
+   → 曦淵・蒼龍回來，第一次見面，帶著做出發前的值勤（第一步：量測界染度）
+   → 第一次出發，前往星河浮島（月界）→ 航行中第一次遇到真正需要處理的異常「月輝潮汐」
+   教學：危機徵兆 → 異常辨識（觀察、詢問乘客）→ 意念影響（索拉的不安讓界染沾得更深；安撫她）
+        → 精靈與乘客的應對能力（爆發時請索拉幫忙）→ 淨化（控制晶盤淨化車廂）
+   沿用既有危機系統（state.crisis、crPanel、crResolve、局部污染、列車界染），只新增一個不會被隨機抽到的教學事件
+   存檔：state.act6＝{woke, started, said:{}, resolved, done}
+   ===================================================================== */
+CRISES.T01={n:'月輝潮汐',cat:'D',sev:[1,1],prev:'P2',lead:2,at:'voyage',where:'observation',w:0,cond:()=>false,
+ signs:[['W2','（窗外的月光，一陣一陣地晃，像潮水。）','high'],['W3','（觀測儀的指針，跟著月光一起搖擺。）','high']],
+ inv:'月界的月輝潮汐湧了上來。潮水裡帶著界染，會沾上車廂，也會放大大家心裡的不安。',
+ eff:{calm:'reduce',purify:'reduce',regulate:1,shield:1,ask:'intel',askXi:'intel'},pax:['realm','care'],
+ out:{s:[-1,0],p:[1,2],f:[3,5]},dmg:{p:['pol:habitat'],f:['pol:habitat','scared']},chain:{},cd:99,after:['淨化棲息車廂']};
+const ACT6_DEF=()=>({woke:false,started:false,said:{},resolved:false,done:false});
+const act6On=()=>!!(state&&state.act5&&state.act5.done&&state.act6&&!state.act6.done&&state.introDone);
+function act6Init(){ if(!state.act5||!state.act5.done) return; const a=state.act6=Object.assign(ACT6_DEF(),state.act6||{}); if(!a.said||typeof a.said!=='object') a.said={}; }
+const act6WakeReady=()=>act6On()&&!state.act6.woke&&state.currentPhase==='docked';
+const A6C=()=>state.crisis&&state.crisis.id==='T01'?state.crisis:null;
+/* 晶盤：第五幕之後，碰一下就會醒來 */
+{ const H=HSDEF.find(h=>h.id==='cab-disc'); if(H){ const ol=H.lock, oa=H.act;
+  H.lock=()=>act6WakeReady()?null:(ol?ol():null);
+  H.act=el=>act6WakeReady()?act6Wake():(typeof oa==='function'?oa(el):runAct(oa)); } }
+function act6Wake(){ const a=state.act6;
+ dialogueScript([['self','控制晶盤……'],['self','索拉想回家。回到星河浮島。'],['self','如果你醒著的話……可以帶她回去嗎？']],()=>{
+  cine(['控制晶盤深處，亮起了一點光。','光沿著車廂的紋路，一節一節地亮了起來。','列車，醒了。'],()=>{
+   a.woke=true; state.act3.canDepart=true; state.crCalm=Math.max(state.crCalm||0,state.journeyCount+2);   /* 第一趟只會遇到教學的異常 */
+   if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)){ state.materials=state.materials||{}; state.materials.mosslight=(state.materials.mosslight||0)+1; a.gave=1; }
+   state.storyFlags.metDragon=1; logJ('控制晶盤第一次亮起。列車醒了。','find'); save(); render();
+   setTimeout(()=>dialogueScript([['dragon','……晶盤亮了。'],['dragon','我是曦淵。停靠的時候，我在外面淨化日界的界壁。感覺到列車醒過來，就回來了。'],['dragon','你就是這一次的值勤精靈吧。'],
+    ['dragon','要出發的話，先把出發前的確認做一遍。第一件事，量一量你身上的界染度。']].concat(a.gave?[['dragon','還有，帶著這片光苔。路上用得到。']]:[]),()=>{ if(a.gave) toast('取得：光苔片 ×1'); render(); }),700); }); }); }
+/* 徽章 */
+function act6Badge(h){ if(!act6On()) return ''; const a=state.act6, c=state.currentCarriage, C=A6C(), B=t=>`<span class="step cur"><b>✦</b><i>${t}</i></span>`;
+ if(!a.woke) return c==='cab'&&h.id==='cab-disc'?B('碰碰水晶'):'';
+ if(C&&!C.done){ if(h.id==='cr-observation'&&C.intel<3&&C.stage!=='W4') return B('看看徵兆');
+  if(h.id==='hab-p-'+ACT5_ID&&a.said.mind&&!a.said.calmed) return B('安撫'); }
+ if(a.resolved&&!a.said.pured&&((state.carPol||{}).habitat||0)>0&&h.id==='cab-core') return B('淨化');
+ return ''; }
+{ const pb=proBadge; proBadge=h=>pb(h)||act6Badge(h); }
+/* 安撫索拉（意念影響） */
+const act6CalmReady=()=>act6On()&&!!A6C()&&state.act6.said.mind&&!state.act6.said.calmed;
+{ const t0=talk; talk=function(id,next){ if(id===ACT5_ID&&act6CalmReady()) return act6Calm(next); return t0.apply(this,arguments); }; }
+function act6Calm(next){ const a=state.act6, C=A6C();
+ dialogueScript([['self','沒事的。我在這裡。'],[ACT5_ID,'……嗯。'],[ACT5_ID,'你在旁邊，月光好像……就沒那麼用力了。'],['self','混濁的空氣，慢慢淡了下來。']],()=>{
+  a.said.calmed=1; if(C){ C.acts.includes('calm')||C.acts.push('calm'); C.prep.calm=1; C.reduce++; }
+  state.carPol=state.carPol||{}; state.carPol.habitat=Math.max(0,(state.carPol.habitat||0)-10); trainTAdd(-1); save(); render(); next&&next(); }); }
+/* 異常沒處理完，列車不會到站 */
+{ const vt=voyTasksLeft; voyTasksLeft=function(v){ return vt.apply(this,arguments)||(act6On()&&state.act6.started&&!state.act6.resolved); }; }
+const a6say=(k,lines,cb)=>{ state.act6.said[k]=1; save(); return dialogueScript(lines,()=>{ render(); cb&&cb(); }); };
+const ACT6P={t:0};
+function act6Tick(){ if(!state||!state.act5||!state.act5.done) return; if(!state.act6) act6Init(); if(!act6On()) return;
+ if(act4Busy()){ ACT6P.t=0; return; } if(!ACT6P.t) ACT6P.t=performance.now(); const idle=performance.now()-ACT6P.t;
+ const a=state.act6, c=state.currentCarriage, ph=state.currentPhase, v=state.voyage, C=A6C();
+ if(!a.woke){ if(c!=='cab'&&!a.said.go&&idle>1500) return a6say('go',[['self','……去駕駛室看看吧。'],['self','也許，有辦法讓列車動起來。']]); return; }
+ /* 界染度（值勤的第一步之後） */
+ if(state.duty.scan&&!a.said.taint&&ph==='docked') return a6say('taint',[['dragon','界染度，是被界域的氣息沾染的程度。'],['dragon','你身上的，和列車本身的，是分開算的。太高的話，身體和列車都會出問題。'],['dragon','溫室的守望藤可以幫你淨化。記住這件事。']]);
+ if(ph!=='voyage'||!v) return;
+ /* 第一趟航行：月輝潮汐 */
+ if(!a.started&&v.progress>=.12){ a.started=true; crStart('T01',{sev:1,real:true,cause:'月界的月輝潮汐'}); save();
+  return a6say('sign',[['self','……窗外的月光，在晃。'],['dragon','是徵兆。不一定是壞事，也不一定是好事。'],['dragon','去觀測車廂看看。看清楚，再判斷。']]); }
+ if(!C||C.done){ if(a.started&&!a.resolved){ a.resolved=true; save(); } }
+ else {
+  if(C.intel>=3&&!a.said.id) return a6say('id',[['self','月輝潮汐……是真的異常。'],['self','有些徵兆只是景色，有些不是。仔細看，再問問熟悉的乘客。']]);
+  if(!a.said.mind&&C.stage!=='W4'&&(v.progress>=.35||(a.said.id&&v.progress>=.25))){ C.stage='W3'; crSign(); state.carPol=state.carPol||{}; state.carPol.habitat=Math.min(100,(state.carPol.habitat||0)+15); trainTAdd(2); save();
+   return a6say('mind',[[ACT5_ID,'……值勤精靈。月光一直在拉我的觸手。'],[ACT5_ID,'我、我有點怕……'],['self','棲息車廂的空氣……好像變得混濁了。'],['dragon','乘客的不安，也是一種意念。意念會讓界染沾得更深。'],['dragon','去陪陪她吧。']]); }
+  if(a.said.mind&&C.stage!=='W4'&&(v.progress>=.6||(a.said.calmed&&v.progress>=.5))&&!a.said.burst){
+   return a6say('burst',[['dragon','潮水要上來了。'],['dragon','精靈不戰鬥。觀察、操作列車、淨化、照護……還有，請乘客幫忙。'],['dragon','索拉懂月界的潮汐。問問她。']],()=>{ const o=window.CRISIS_TEST; window.CRISIS_TEST=true; try{ crOutbreak(); }finally{ window.CRISIS_TEST=o; } }); }
+  if(a.said.burst&&!C.burst&&!act4Busy()){ const o=window.CRISIS_TEST; window.CRISIS_TEST=true; try{ crOutbreak(); }finally{ window.CRISIS_TEST=o; } return; }   /* 中途離開又回來：補上爆發 */
+  return; }
+ /* 淨化 */
+ if(a.resolved&&!a.said.after){ const pol=((state.carPol||{}).habitat||0)>0, need=pol&&!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0);
+  if(need){ state.materials.mosslight=(state.materials.mosslight||0)+1; setTimeout(()=>toast('取得：光苔片 ×1'),400); }
+  return a6say('after',pol?[['dragon','潮水退了。可是棲息車廂，還沾著一點界染。'],['dragon','駕駛室的控制晶盤，可以淨化車廂。'+(need?'這片光苔給你。':'')+'你自己身上的，就去溫室找守望藤。']]:[['dragon','潮水退了。車廂也都乾淨。'],['dragon','如果車廂沾上界染，駕駛室的控制晶盤可以淨化。你自己身上的，就去溫室找守望藤。']]); }
+ if(a.resolved&&a.said.after&&!a.said.pured&&!(((state.carPol||{}).habitat||0)>0)){ a.said.pured=1; save(); }
+ if(a.resolved&&a.said.pured&&!a.done){ a.done=true; logJ('第一次處理了月界的異常：月輝潮汐。','find'); save();
+  return dialogueScript([['self','……第一次，真的處理了一件事。'],['dragon','做得不錯。到站之後，好好看看那個地方。']],()=>render()); } }
+setInterval(()=>{ try{ act6Tick(); }catch(e){ console.error(e); } },700);
 
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
