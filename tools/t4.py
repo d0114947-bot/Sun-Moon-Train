@@ -78,12 +78,12 @@ with sync_playwright() as p:
         dur=ev("[...document.querySelectorAll('#scene svg .sway')].map(e=>getComputedStyle(e).animationDuration)")
         W(800); ok('N1 greenhouse is a flat front view', ev("state.nview||0")==0 and ev("!!document.querySelector('#scene img.bg')"))
         hit('nat-vault'); ok('N2 seed vault full view with 3D seed', kind()=='L3' and ev("!!document.querySelector('.seed3d .core,.seed3d .seedimg')"))
-        ok('N3 uncollected seeds shown as unknown jars', ev("document.querySelectorAll('.jar.seed.unk').length")==4)
+        ok('N3 only collected seeds are shown (drawers)', ev("document.querySelectorAll('.jar.seed.unk').length")==0 and ev("!!document.querySelector('.drws')"))
         pg.click('[data-seed="seed_ancient_b"]'); W(400); _t=ev("(async()=>{let t='';for(let i=0;i<10;i++){const b=document.querySelector('.say-box');if(!b)break;t+=b.innerText;b.click();b.click();await new Promise(r=>setTimeout(r,200));}return t+document.querySelector('#layer').innerText})()"); ok('N4 seed detail shows source & status (spirit speaks)', '守護者封存' in _t and '封印保存' in _t); closeall()
         ok('N5 read vault → done state', st('nat-vault')=='st-done')
         ev("state.storyFlags.seedTalk=1;state.carSeen=Object.keys(CAR_INTRO);state.collectibles.push('seed_dewmoss');state.seedKnown=(state.seedKnown||[]).concat('dewmoss');save();render()"); W(300)
         ok('N6 new seed → vault turns gold', st('nat-vault')=='st-important')
-        hit('nat-pod-a'); W(700); ok('N7 pod drawer slides out from the hotspot (no window)', ev("!!document.querySelector('.hdw .hdw-it')") and not ev("!!document.querySelector('#layer .ov:not(.closing)')"))
+        hit('nat-pod-a'); W(700); ok('N7 pod drawer slides out from the hotspot (no window)', ev("!!document.querySelector('.hdw')") and not ev("!!document.querySelector('#layer .ov:not(.closing)')"))
         ev("[...document.querySelectorAll('.hdw .hdw-it')].find(b=>b.innerText.includes(PLANTS.dewmoss.seed)).click()"); W(500); ok('N8 planting kept', ev("state.pods[0]&&state.pods[0].p==='dewmoss'"))
         W(400); pg.mouse.click(5,700); W(500); ev("state.pods[0].st=2;render()"); W(300); ok('N9 bloomed pod is gold', st('nat-pod-a')=='st-important')
         hit('nat-pod-a'); W(700); ev("[...document.querySelectorAll('.hdw .hdw-it')].find(b=>b.innerText.includes('收成')).click()"); W(500); ok('N10 harvest → plant collected', ev("state.grown.includes('dewmoss')&&!state.pods[0]&&plantN('dewmoss')===1"))
@@ -116,9 +116,9 @@ with sync_playwright() as p:
         pg.screenshot(path=S+'/v_obs.png')
     # ---------- 記憶典藏車廂 ----------
     if only in ('all','memory'):
-        setc('cab',"state.currentPhase='docked';state.voyage=null;state.currentLocation='dawnForest'"); hit('cab-back'); W(900)
+        setc('cab',"state.currentPhase='docked';state.voyage=null;state.currentLocation='dawnForest'"); pg.click('.go-back'); W(900)
         W(1200)
-        ok('M0 entering from the cab faces the back (toward the greenhouse)', ev('state.mview')==1 and scene()=='memory'); ev('state.mview=0;render()'); W(500)
+        ok('M0 stepping back from the cab (down arrow) keeps facing the cab', ev('state.mview')==0 and scene()=='memory'); ev('state.mview=0;render()'); W(500)
         got=set(ids()); ok('M1 memory hotspots (fixed)', got>={'mem-book','mem-crystal','mem-atlas','mem-lore','mem-items','mem-clues','mem-armillary','mem-save','mem-door'} and 'mem-log' not in got and ev("typeof panoEdit")=='undefined', sorted(got))
         ok('M2 passengers never in memory carriage', ev("!document.querySelector('#scene .mote')"))
         ev("state.mview=1;render()"); W(500); ok('M3 back view: door to the greenhouse + the duty-room wall', set(ids())<={'mem-rear','mem-seal'} and 'mem-rear' in ids(), ids()); ev("state.mview=0;render()"); W(400)
@@ -180,7 +180,7 @@ with sync_playwright() as p:
         ev("document.querySelector('#layer').insertAdjacentHTML('beforeend','<div class=\"ov board\" id=\"fakeboard\"></div>');hsRefresh()"); W(100)
         ok('C5 doors not closed while someone is boarding', st('cab-doors')=='st-locked'); ev("document.querySelector('#fakeboard').remove();hsRefresh()"); W(100)
         hit('cab-compass'); W(500); ok('C6a compass panel with constellations', ev("document.querySelectorAll('.cmp-c').length")==12)
-        ev("document.querySelector('#cmp-read').click()"); W(900); ok('C6 compass: spirit analyses the route in the blue dialogue', '指針' in pg.inner_text('.dlg')); drain()
+        ev("document.querySelector('#cmp-read').click()"); W(900); ok('C6 compass: reading the needle stays inside the window', '指針' in pg.inner_text('#cmpr') and ev("!!document.querySelector('.ov.compassov')") and not ev("!!document.querySelector('.cmp-side')")); closeall()
         pg.screenshot(path=S+'/v_cab.png')
     # ---------- 火車尾展望台 ----------
     if only in ('all','observatory'):
