@@ -8335,8 +8335,8 @@ function crIntel(n,why){ const C=state.crisis; if(!C) return; C.intel=Math.min(3
 function crInvestigate(){ const C=state.crisis, E=CRISES[C.id]; if(C.intel>=1&&!C.real){ crIntel(3,'仔細觀察'); return crFalseEnd(); } crIntel(Math.max(1,C.intel+(C.stage==='W3'?2:1)),'觀察'); }
 function crFalseEnd(){ const C=state.crisis; C.done=1; C.result='false'; crRecord('false',[]); state.crisis=null; save(); sense(`（……${CR_FALSE[C.id]}虛驚一場。）`); state.obsRec=(state.obsRec||0)+1; render(); }
 /* ---------- 精靈的行動：預防（爆發前）或應變（爆發後） ---------- */
-function crCanPay(cost){ for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ if((state.energy==null?80:state.energy)<v) return '能源不夠'; } else if(k==='purify'){ if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)) return '身上沒有可以淨化的材料'; } else if(matCount(k)<v) return `需要${MATS[k].name} ×${v}`; } return null; }
-function crPay(cost){ const used=[]; for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ state.energy=(state.energy==null?80:state.energy)-v; used.push('能源 '+v); } else if(k==='purify'){ const m=Object.entries(MATS).find(([m,M])=>M.use==='purify'&&matCount(m)>0)[0]; state.materials[m]--; used.push(MATS[m].name); } else { state.materials[k]-=v; used.push(MATS[k].name+' ×'+v); } } return used; }
+function crCanPay(cost){ for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ if((state.energy==null?80:state.energy)<v) return '能源不夠'; } else if(k==='purify'){ if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)&&!(typeof proOn==='function'&&proOn())) return '身上沒有可以淨化的材料'; }   /* 序章裡沒辦法採集，淨化不需要材料（防卡關） */ else if(matCount(k)<v) return `需要${MATS[k].name} ×${v}`; } return null; }
+function crPay(cost){ const used=[]; for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ state.energy=(state.energy==null?80:state.energy)-v; used.push('能源 '+v); } else if(k==='purify'){ const f=Object.entries(MATS).find(([m,M])=>M.use==='purify'&&matCount(m)>0); if(f){ state.materials[f[0]]--; used.push(MATS[f[0]].name); } else used.push('列車的光'); } else { state.materials[k]-=v; used.push(MATS[k].name+' ×'+v); } } return used; }
 function crActList(){ const C=state.crisis; if(!C) return []; const E=CRISES[C.id], W4=C.stage==='W4';
  const keys=['observe','ask','askXi'].concat(C.intel>=2||W4?Object.keys(E.eff).filter(k=>!['ask','askXi','intel'].includes(k)):['route','pause','inspect','isolate']);   /* 判斷不清楚時，只看得到一般的選項 */
  const uniq=[...new Set(keys)].filter(k=>CR_ACT[k]&&!(W4&&(k==='observe'||k==='pause'))&&(k!=='xiyuan'||W4||C.sevN>=3)&&(k!=='pax'));
@@ -10055,6 +10055,9 @@ function act6Tick(){ if(!state||!state.act5||!state.act5.done) return; if(!state
   if(need){ state.materials.mosslight=(state.materials.mosslight||0)+1; setTimeout(()=>toast('取得：光苔片 ×1'),400); }
   return a6say('after',pol?[['dragon','潮水退了。可是棲息車廂，還沾著一點界染。'],['dragon','駕駛室的控制晶盤，可以淨化車廂。'+(need?'這片光苔給你。':'')+'你自己身上的，就去溫室的沙發休息，守望藤會照看你。']]:[['dragon','潮水退了。車廂也都乾淨。'],['dragon','如果車廂沾上界染，駕駛室的控制晶盤可以淨化。你自己身上的，就去溫室的沙發休息，守望藤會照看你。']]); }
  if(a.resolved&&a.said.after&&!a.said.pured&&!(((state.carPol||{}).habitat||0)>0)){ a.said.pured=1; save(); }
+ /* 防卡關：危機中把光苔用掉了，車廂還沾著界染 → 曦淵再給一片（序章裡沒辦法下車採集） */
+ if(a.resolved&&a.said.after&&!a.said.pured&&((state.carPol||{}).habitat||0)>0&&!a.said.gave2&&!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)){ a.said.gave2=1; state.materials=state.materials||{}; state.materials.mosslight=(state.materials.mosslight||0)+1; save();
+  return dialogueScript([['dragon','光苔用掉了？……沒關係，再給你一片。'],['dragon','拿去駕駛室的控制晶盤，把棲息車廂淨化乾淨。']],()=>{ toast('取得：光苔片 ×1'); render(); }); }
  if(a.resolved&&a.said.pured&&!a.done){ a.done=true; logJ('第一次處理了月界的異常：月輝潮汐。','find'); save();
   return dialogueScript([['self','……第一次，真的處理了一件事。'],['dragon','做得不錯。到站之後，好好看看那個地方。']],()=>render()); } }
 setInterval(()=>{ try{ act6Tick(); }catch(e){ console.error(e); } },700);
