@@ -8878,6 +8878,9 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
 .a1-icon{position:absolute;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));width:clamp(62px,9vmin,84px);height:clamp(62px,9vmin,84px);padding:0;border:none;background:none;cursor:pointer;z-index:5;
  opacity:0;transform:scale(.6);transition:opacity 1.2s,transform 1.2s;pointer-events:none;-webkit-tap-highlight-color:transparent;border-radius:50%}
 .a1-icon.show{opacity:1;transform:none;pointer-events:auto}
+.a1-still{position:absolute;inset:-12px;border-radius:50%;pointer-events:none;opacity:0;transition:opacity .4s;--p:0;
+ background:conic-gradient(rgba(255,230,170,.95) calc(var(--p)*360deg),rgba(255,255,255,.14) 0);-webkit-mask:radial-gradient(circle,transparent 62%,#000 64%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 62%,#000 64%,#000 70%,transparent 72%)}
+.a1-still.on{opacity:1}
 .a1-icon::before{content:"";position:absolute;inset:-6px;border-radius:50%;background:radial-gradient(circle,rgba(190,160,255,.28),rgba(190,160,255,0) 68%);opacity:.6;transition:opacity .6s}
 .a1-icon.call::before{animation:a1call 2.6s ease-in-out infinite}
 @keyframes a1call{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:1;transform:scale(1.12)}}
@@ -8948,7 +8951,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   el.innerHTML=`<canvas class="a1-cv"></canvas><div class="a1-big"></div><div class="a1-say"></div><div class="a1-tip"></div>
    <div class="a1-top"><button class="a1-home" aria-label="回到主畫面" title="回到主畫面">⌂</button><button class="a1-snd ${PREFS.sound===false?'off':''}" aria-label="聲音" title="聲音">♪</button></div>
    <div class="a1-stick" aria-hidden="true"><i></i></div><div class="a1-ud" aria-hidden="true"><button class="a1-u">▲</button><button class="a1-d">▼</button></div>
-   <button class="a1-icon" aria-label="幾何秘器">${artSVG()}</button><div class="a1-title"></div><div class="a1-th"></div><div class="a1-fade"></div>`;
+   <button class="a1-icon" aria-label="幾何秘器"><i class="a1-still"></i>${artSVG()}</button><div class="a1-title"></div><div class="a1-th"></div><div class="a1-fade"></div>`;
   document.body.appendChild(el);
   cv=el.querySelector('.a1-cv'); g=cv.getContext('2d'); lay=document.createElement('canvas'); lg=lay.getContext('2d');
   el.querySelector('.a1-big').innerHTML=artSVG();
@@ -9183,12 +9186,16 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   if(stg==='explore'){ a.exT=(a.exT||0)+dt; const n=['high','near','water'].filter(k=>F[k]).length; if((a.exT>38||(n>=2&&a.exT>20))&&!saying()) noticeScene(); }
   /* 被動接收 */
   if(['again','free'].includes(stg)){
-   a.sinceFirst=(a.sinceFirst||0)+dt; stillT=moving||i.f||i.s||i.v?0:stillT+dt;
-   const gap=a.sinceFirst-(a.lastPass||-999);
+   a.sinceFirst=(a.sinceFirst||0)+dt; stillT=moving||i.f||i.s||i.v||saying()?0:stillT+dt;
+   const gap=a.sinceFirst-(a.lastPass||-999), stillOk=()=>gap>8;
+   if(gap>8&&!saying()&&!a.got.includes('still')&&F.stillHint&&stillOk()&&stillT>STILL_S) return passive('still');
    if(gap>40&&!saying()){
     if(!a.got.includes('curtain')&&dC<300) return passive('curtain');
-    if(!a.got.includes('still')&&a.sinceFirst>70&&stillT>5) return passive('still');
+    if(!a.got.includes('still')&&F.stillHint&&stillOk()&&stillT>STILL_S) return passive('still');
    }
+   /* 停在空中不動：先用念頭直接說；開始靜止之後，秘器外圈跑進度 */
+   if(!a.got.includes('still')&&!F.stillHint&&a.sinceFirst>6&&!saying()){ F.stillHint=1; persist(); say(['……停在空中……不要動……','……靜下來，就能聽見秘器的聲音……']); }
+   stillUI(!a.got.includes('still')&&F.stillHint&&stillOk()&&!saying()?Math.min(1,stillT/STILL_S):0);
    if(stg==='again'&&a.againN>=1&&a.passN>=1&&!saying()){ idleT+=dt; if(idleT>3) endingScene(); } else idleT=0;
   }
  }
@@ -9285,7 +9292,9 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
    deactivate(()=>{ setStage('again'); a.sinceFirst=0;
     say(['剛才……是什麼？','沒有聽見聲音，卻能理解它的意思……','這件東西，究竟是什麼？'],()=>{ if(S().stage==='again'&&!(S().againN>0)){ icon().classList.add('call'); say(['……再碰一次看看。']); } }); }); })); }
  /* 被動接收：核心短暫亮起、部件細微偏轉，意念直接浮現 */
- function passive(id){ const a=S(); busy=true; setLock(true); a.lastPass=a.sinceFirst; a.passN=(a.passN||0)+1; a.got.push(id); persist(); stillT=0;
+ const STILL_S=3;
+ function stillUI(p){ const r=el&&el.querySelector('.a1-still'); if(!r) return; r.style.setProperty('--p',p.toFixed(3)); r.classList.toggle('on',p>.02); }
+ function passive(id){ stillUI(0); const a=S(); busy=true; setLock(true); a.lastPass=a.sinceFirst; a.passN=(a.passN||0)+1; a.got.push(id); persist(); stillT=0;
   const sv=isvg(); cls(sv,'lit shift'); snd.pulse(); const ir=icon().getBoundingClientRect(); rings.push({x:ir.left+ir.width/2,y:ir.top+ir.height/2,t0:T,d:1.6,r0:24,r1:120,c:'255,230,180'});
   after(1.4,()=>{ cls(sv,'','lit'); thought(THOUGHTS[id],()=>{ cls(sv,'','shift'); busy=false; setLock(false); persist();
    if(!a.flags.pass){ a.flags.pass=1; say(['……沒有碰它，它自己亮了。']); } }); }); }
@@ -9468,7 +9477,7 @@ const ACT2=(()=>{
  function sndSwitch(to){ if(!SFX.on()) return; const base=to==='moon'?[784,1175,1568,2093]:[2093,1568,1175,784]; base.forEach((f,i)=>SFX.tone(f,i*.09,1.3,'sine',.014)); SFX.noise(.9,1800,700,.004); }
  function toggle(){ const d=Wd().dimension, to=d==='moon'?'unresolved':'moon';   /* 切回來永遠是 unresolved，絕不會變成 sun */
   trans={to,t0:A().T,d:FADE_DIM,from:mb}; if(ui){ ui.classList.remove('spin'); void ui.offsetWidth; ui.classList.add('spin'); } sndSwitch(to); }
- function finish(to){ Wd().dimension=to; const a=S(); a.switchCount=(a.switchCount||0)+1; trans=null; syncUI(); A().persist();
+ function finish(to){ hintT=0; hintN=0; Wd().dimension=to; const a=S(); a.switchCount=(a.switchCount||0)+1; trans=null; syncUI(); A().persist();
   if(to==='unresolved'&&a.firstSwitchCompleted&&!a.freeSwitchTutorialCompleted){ a.freeSwitchTutorialCompleted=true; tip(''); A().persist(); }
   if(to==='moon'){ shT=8+Math.random()*6; } else { sh=null; rise=[]; }
   if(queued){ queued=false; A().after(.05,()=>{ if(S().canSwitch&&!cutscene()) toggle(); }); } }
@@ -9488,6 +9497,10 @@ const ACT2=(()=>{
   const v=veil(); if(v){ v.style.transition='opacity .9s'; v.style.opacity=.85; setTimeout(()=>{ v.style.transition='opacity 1.6s'; v.style.opacity=0; },900); }
   trans={to:'moon',t0:a.T,d:FIRST_FADE,from:mb,first:true}; }
  function firstDone(){ const a=S(); a.firstSwitchCompleted=true; a.canSwitch=true; phase=''; Wd().dimension='moon'; a.switchCount=(a.switchCount||0)+1; trans=null; syncUI(); A().persist(); shT=10;
+  /* 回頭看：剛才飛過的路就在背後（太遠或沒記到，就補一段在身後），鏡頭輕輕轉過去 */
+  { const P=A().P, yw=P.yaw, L=a.trail||(a.trail=[]), near=L.filter(q=>Math.hypot(q[0]-P.x,q[2]-P.z)<120).length;
+   if(near<4){ const m=L.length; for(let k=0;k<9;k++){ const d=-(16+k*7), w=Math.sin(k*.6)*6; L.push([+(P.x+Math.sin(yw)*d+Math.cos(yw)*w).toFixed(1),+Math.max(2,P.y-1+k*.3).toFixed(1),+(P.z+Math.cos(yw)*d-Math.sin(yw)*w).toFixed(1)]); } }
+   const c=A().cam; A().tw(c,'off',Math.PI,1.8); A().after(5.5,()=>A().tw(c,'off',0,1.8)); }
   A().setLock(false); A().say(['……這裡是……？']);
   A().after(6,()=>{ if(!S().freeSwitchTutorialCompleted&&!phase) tip(A().touch?'輕觸月牙，隨時可以切換回去':'按<kbd>V</kbd>　隨時可以切換回去'); }); }
 
@@ -9512,8 +9525,15 @@ const ACT2=(()=>{
   /* 跨界事件：留下的光痕 */
   if(Wd().dimension==='moon'&&!trans&&!phase&&!lockedNow()&&st.firstSwitchCompleted&&!st.completed){ const vis=trailVisible();
    if(!st.trailSeen&&vis.old){ st.trailSeen=true; st.trailMark=st.trail.length; a.persist(); a.say(['這是……我剛才飛過的地方？']); }
-   else if(st.trailSeen&&vis.fresh){ st.completed=true; a.persist(); a.say(['在那邊做的事……這裡都看得見。']); } }
+   else if(st.trailSeen&&vis.fresh){ st.completed=true; tip(''); a.persist(); a.say(['在那邊做的事……這裡都看得見。']); } }
+  /* 光痕的提示：月界待太久 → 念頭＋月牙發光 → 文字；回到原本那邊飛了一段 → 提醒切過去看 */
+  if(st.trailSeen&&!st.completed&&!trans&&!phase&&!lockedNow()){ hintT+=dt; const moon=Wd().dimension==='moon', fresh=(st.trail.length-(st.trailMark||0))>=3;
+   if(moon){ if(hintT>15&&hintN<1){ hintN=1; a.say(['……剛才飛過的地方，在另一邊會是什麼樣子？','……回到原本那邊飛一段，再切過來看看。']); ui&&ui.classList.add('call'); }
+    else if(hintT>30&&hintN<2){ hintN=2; tip(a.touch?'輕觸月牙切回去，飛一段路，再切回來':'按<kbd>V</kbd>切回去，飛一段路，再切回來'); } }
+   else if(fresh){ if(hintT>10&&hintN<1){ hintN=1; a.say(['……現在，切過去看看？']); ui&&ui.classList.add('call'); }
+    else if(hintT>25&&hintN<2){ hintN=2; tip(a.touch?'輕觸月牙切換':'按<kbd>V</kbd>　切換'); } } }
  }
+ let hintT=0, hintN=0;
  function trailVisible(){ const a=A(), L=S().trail, P=a.P, m=S().trailMark; let old=false, near=0, vis=0;
   for(let i=0;i<L.length;i++){ const q=L[i], d=Math.hypot(q[0]-P.x,q[2]-P.z); if(d>140) continue; const pr=a.proj(q[0],q[1],q[2]), on=!!pr&&pr.x>=0&&pr.x<=a.W&&pr.y>=0&&pr.y<=a.H;
    if(i<m||!S().trailSeen){ if(on) old=true; } else { if(d<60) near++; if(pr&&Math.abs(pr.x-a.W/2)<a.W*.6) vis++; } }
@@ -9614,7 +9634,7 @@ const ACT2=(()=>{
   else if(a.firstSwitchCompleted&&!a.freeSwitchTutorialCompleted) A().after(2,()=>{ if(on&&!phase) tip(A().touch?'輕觸月牙，隨時可以切換回去':'按<kbd>V</kbd>　隨時可以切換回去'); }); }
  function exit(){ on=false; removeEventListener('keydown',KD); ui=null; tipEl=null; phase=''; trans=null; pts=[]; rise=[]; sh=null; mb=0; }
  ACT1.hook('enter',enter); ACT1.hook('exit',exit); ACT1.hook('logic',logic); ACT1.hook('drawPre',drawPre); ACT1.hook('drawPost',drawPost);
- return {moonSvg:MOON_SVG,css:CSS,press,_dbg:()=>({phase,mb,trans:!!trans,queued,pend,pts:pts.length,sh:!!sh,dim:state.world&&state.world.dimension,act2:Object.assign({},state.act2,{trail:(state.act2.trail||[]).length})}),
+ return {moonSvg:MOON_SVG,css:CSS,press,_dbg:()=>({hintT,hintN,phase,mb,trans:!!trans,queued,pend,pts:pts.length,sh:!!sh,dim:state.world&&state.world.dimension,act2:Object.assign({},state.act2,{trail:(state.act2.trail||[]).length})}),
   _shadowNow:()=>{ spawnShadow(); return sh&&{x:sh.x,z:sh.z}; }, SEG};
 })();
 
@@ -9645,7 +9665,7 @@ function act3DepartBlock(){ return state&&state.act3&&state.act3.entered&&!state
 const ACT3=(()=>{
  const S3=()=>state.act3, A=()=>ACT1.api;
  const clamp=(v,a,b)=>v<a?a:v>b?b:v;
- const RC={x:-460,z:-460};                       /* 列車所在的縫隙（醒來方向的左後方） */
+ const RC={x:-230,z:-230};                       /* 列車所在的縫隙（醒來方向的左後方；拉近一半，少飛一點） */
  const SQ=Math.SQRT1_2, U0={x:SQ,z:-SQ}, N0={x:SQ,z:SQ};   /* 縫隙的方位：N0＝朝向來的方向，U0＝從來的方向看過去的左手邊 */
  /* 列車和晨曦森林畫面裡一樣停在左側：車身沿著來的方向往深處延伸（U），右側面（N）朝向畫面中央 */
  const U={x:-SQ,z:-SQ}, N={x:-SQ,z:SQ}, TC={x:RC.x+U0.x*62,z:RC.z+U0.z*62};
@@ -9673,6 +9693,14 @@ const ACT3=(()=>{
  const DOOR_SCR=[.129,.60], NEAR=22, FT={ok:false};
  let on=false, ap=0, apT=false, ob=0, phase='', near=null, btn=null, said={}, frags=[], dust=[];
  let nudgeT=0, nudgeN=0;
+ /* 星光變密的時候：鏡頭輕輕轉向縫隙，同時出現「跟著星光飛」 */
+ function turnTo(dur){ const a=A(), P=a.P; let g=Math.atan2(RC.x-P.x,RC.z-P.z)-P.yaw; g=Math.atan2(Math.sin(g),Math.cos(g)); a.tw(P,'yaw',P.yaw+g,dur); }
+ function guideStart(){ if(S3().trainSeen) return; const a=A(); if(Math.hypot(a.P.x-RC.x,a.P.z-RC.z)<200){ followShow(false); return; } if(lockedNow()){ a.after(1,guideStart); return; } a.setLock(true); turnTo(2.2); a.after(2.4,()=>{ a.setLock(false); nudge(false); followShow(true); }); }
+ function followShow(v){ if(!fbtn) return; fbtn.classList.toggle('on',!!v&&!S3().trainSeen); }
+ function follow(){ const a=A(), P=a.P; if(S3().trainSeen||lockedNow()) return; followShow(false); a.setLock(true); P.vx=P.vy=P.vz=0; P.vt=0;
+  const dx=P.x-RC.x, dz=P.z-RC.z, L=Math.hypot(dx,dz)||1, k=Math.min(1,120/L), tx=RC.x+dx*k, tz=RC.z+dz*k, dur=clamp(Math.hypot(P.x-tx,P.z-tz)/80,1.5,6);
+  turnTo(1.2); a.tw(P,'x',tx,dur); a.tw(P,'z',tz,dur); a.tw(P,'y',18,dur,()=>{ turnTo(.8); a.after(.9,()=>a.setLock(false)); }); }
+ let fbtn=null;
  function nudge(again){ const a=A(), C=a.cam, P=a.P; if(lockedNow()||S3().trainSeen) return; nudgeN++;
   let ang=Math.atan2(RC.x-P.x,RC.z-P.z)-P.yaw; ang=Math.atan2(Math.sin(ang),Math.cos(ang)); const behind=Math.abs(ang)>1.6, side=ang>0?'右':'左';
   a.say(again?['星光……還在那裡。']:[behind?'……背後的星光，好像變密了。':Math.abs(ang)>.6?`……${side}邊的星光，好像變密了。`:'……那邊的星光，好像變密了。']); }
@@ -9696,7 +9724,8 @@ const ACT3=(()=>{
 .a1.touch .a3-tsp{font-size:15px;padding:7px 13px 7px 9px}
 `;
  function buildUI(){ const el=A().el; if(!el) return; if(!document.getElementById('a3css')){ const st=document.createElement('style'); st.id='a3css'; st.textContent=CSS; document.head.appendChild(st); }
-  tspBuild(); btn=document.createElement('button'); btn.className='a3-act'; btn.addEventListener('pointerdown',e=>e.stopPropagation()); btn.onclick=e=>{ e.stopPropagation(); press(); }; el.appendChild(btn); }
+  tspBuild(); btn=document.createElement('button'); btn.className='a3-act'; btn.addEventListener('pointerdown',e=>e.stopPropagation()); btn.onclick=e=>{ e.stopPropagation(); press(); }; el.appendChild(btn);
+  fbtn=document.createElement('button'); fbtn.className='a3-act a3-follow'; fbtn.innerHTML='跟著星光飛'; fbtn.addEventListener('pointerdown',e=>e.stopPropagation()); fbtn.onclick=e=>{ e.stopPropagation(); follow(); }; el.appendChild(fbtn); if(!S3().trainSeen&&apT) followShow(true); }
  function showBtn(k){ if(!btn) return; if(!k){ btn.classList.remove('on'); btn.dataset.k=''; return; } if(btn.dataset.k!==k){ btn.dataset.k=k; btn.innerHTML=(k==='door'?'進入':'觀察')+'<kbd>Enter</kbd>'; } btn.classList.add('on'); }
  const KD=e=>{ if(!on||e.repeat||e.ctrlKey||e.metaKey||e.altKey) return; if(e.code!=='Enter'&&e.code!=='NumpadEnter') return; if(!near) return; e.preventDefault(); press(); };
  function press(){ if(!near||phase||lockedNow()) return; const k=near; near=null; showBtn(null); if(k==='door') enterTrain(); else observe(k); }
@@ -9712,7 +9741,7 @@ const ACT3=(()=>{
 
  /* ---------- 每幀邏輯 ---------- */
  function logic(dt){ if(!act()) return; const a=A(), P=a.P, s=S3();
-  if(!apT){ if(lockedNow()) return; apT=true; if(ap<1){ a.tw({get v(){return ap},set v(x){ap=x}},'v',1,6); nudgeT=0; a.after(4,()=>nudge(false)); } }
+  if(!apT){ if(lockedNow()) return; apT=true; if(ap<1) a.tw({get v(){return ap},set v(x){ap=x}},'v',1,6); nudgeT=0; if(!S3().trainSeen) a.after(2.5,()=>guideStart()); }
   /* 引導：星光變密的方向在背後時，精靈會注意到（不顯示介面）；很久都沒有靠近，再提醒一次 */
   if(!S3().trainSeen){ nudgeT+=dt; if(nudgeT>75&&nudgeN<2&&!lockedNow()&&Math.hypot(P.x-RC.x,P.z-RC.z)>700){ nudgeT=0; nudge(true); } }
   const d=Math.hypot(P.x-RC.x,P.z-RC.z);
@@ -9720,7 +9749,7 @@ const ACT3=(()=>{
   if(phase) return;
   /* 場景一：發現列車 */
   if(!s.trainSeen&&ap>.6&&!lockedNow()){ const pr=a.proj(RC.x,22,RC.z), onScr=pr&&Math.abs(pr.x-a.W/2)<a.W*.36&&pr.y>0&&pr.y<a.H;
-   if((d<340&&onScr)||d<150){ s.trainSeen=true; a.persist(); phase='seen'; a.setLock(true);
+   if((d<170&&onScr)||d<75){ s.trainSeen=true; followShow(false); a.persist(); phase='seen'; a.setLock(true);
     if(SFX.on()){ SFX.tone(262,0,4,'sine',.008); SFX.tone(392,.5,3.5,'sine',.006); }
     a.after(1.2,()=>a.say(['那是……列車？'],()=>{ a.after(.8,()=>{ phase=''; a.setLock(false); }); })); return; } }
   if(!s.trainSeen){ near=null; showBtn(null); return; }
@@ -9745,9 +9774,13 @@ const ACT3=(()=>{
  /* ---------- 繪製 ---------- */
  const Pj=q=>A().proj(q[0],q[1],q[2]);
  function drawPre(x,W,H,C){ if(!act()||ap<=0) return; loadImgs(); const a=A(), P=a.P, T=a.T, d=Math.hypot(P.x-RC.x,P.z-RC.z);
-  drawStars(x,W,H,C,d);
+  drawStars(x,W,H,C,d); if(!S3().trainSeen) drawPath(x,P,T);
   const ws=WINS.map(w=>({w,d:Math.hypot(w.x-C.x,w.z-C.z)})).sort((p,q)=>q.d-p.d);
   for(const {w} of ws){ if(w.main) drawMain(x,W,H,C,w); else drawWin(x,W,H,C,w); } tspSync(W,H); }
+ function drawPath(x,P,T){ const a=A(), dx=RC.x-P.x, dz=RC.z-P.z, L=Math.hypot(dx,dz); if(L<60) return; const ux=dx/L, uz=dz/L, st=12, off=(T*18)%st; x.save(); x.globalCompositeOperation='lighter';
+  for(let s0=8+off;s0<Math.min(L-40,260);s0+=st){ const f=s0/L, y=P.y+(20-P.y)*f+Math.sin(s0*.08+T)*1.2, w=Math.sin(s0*.05)*3, pr=a.proj(P.x+ux*s0-uz*w,y,P.z+uz*s0+ux*w); if(!pr) continue;
+   const al=Math.min(1,(s0-8)/20)*Math.max(0,1-s0/260)*.9*ap, r=Math.max(1.2,3.2*(a.W/1280)*(40/Math.max(20,s0))); const g=x.createRadialGradient(pr.x,pr.y,0,pr.x,pr.y,r*4); g.addColorStop(0,`rgba(255,240,205,${al})`); g.addColorStop(1,'rgba(255,230,180,0)'); x.fillStyle=g; x.beginPath(); x.arc(pr.x,pr.y,r*4,0,6.283); x.fill(); }
+  x.restore(); }
  /* 遠方的星光變密：朝縫隙的方向，越接近越密 */
  function drawStars(x,W,H,C,d){ const T=A().T, hy=C.hy; let ang=Math.atan2(RC.x-C.x,RC.z-C.z)-C.yaw; ang=Math.atan2(Math.sin(ang),Math.cos(ang)); if(Math.abs(ang)>1.25||hy<=0) return;
   const k=ap*clamp(.35+.65*(1-(d-150)/1100),.35,1)*clamp(1-ob,0,1); if(k<.02) return;
@@ -9855,7 +9888,7 @@ const ACT3=(()=>{
   x.restore(); }
 
  /* ---------- 進入／離開 ---------- */
- function enter(){ on=true; initState(); phase=''; near=null; said={}; apT=false; ap=act()?1:0; if(ap) apT=true; ob=0; buildUI(); addEventListener('keydown',KD); }
+ function enter(){ on=true; initState(); phase=''; near=null; said={}; apT=false; ap=act()?1:0; if(ap){ apT=true; if(!S3().trainSeen) A().after(2.5,()=>guideStart()); } ob=0; buildUI(); addEventListener('keydown',KD); }
  function exit(){ on=false; removeEventListener('keydown',KD); btn=null; tsp={}; near=null; phase=''; }
  ACT1.hook('enter',enter); ACT1.hook('exit',exit); ACT1.hook('logic',logic); ACT1.hook('drawPre',drawPre);
  return {press,RC,SPOTS:Object.keys(SPOTS),spot:k=>SPOTS[k]&&SPOTS[k].p?SPOTS[k].p():null,tspPress,inForest:()=>ob>=.92,

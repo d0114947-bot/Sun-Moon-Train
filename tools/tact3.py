@@ -37,13 +37,13 @@ with sync_playwright() as p:
     ok('N3 rifts fade in (from the far view)', until("ACT3._dbg().ap>=.99",30000)); snap('far')
     ok('N4 not seen from far away yet', not ev("state.act3.trainSeen"))
     # ---- 場景一：發現列車
-    ev(setup({'x':-250,'y':22,'z':-250,'yaw':YAW})); W(1200)
+    ev(setup({'x':-140,'y':22,'z':-140,'yaw':YAW})); W(1200)
     ok('T1 approaching the rift: spirit stops and sees the train', until("state.act3.trainSeen",30000) and ev("ACT1.api.lock"))
     ok('T2 line 「那是……列車？」', until("document.querySelector('.a1-say').textContent.includes('列車')",20000)); snap('seen')
     ok('T3 control returns', until("!ACT1.api.lock",30000))
     ok('T4 train does not react (no state change besides seen)', ev("state.act3.obs.length")==0 and not ev("state.act3.entered"))
     # ---- 車門：還沒觀察 → 不能進
-    FOR=[-460+40*0.7071,10,-460+40*0.7071]
+    FOR=[-230+40*0.7071,10,-230+40*0.7071]
     tele(FOR,YAW); W(2500)
     ok('L1 inside the rift: train is the one in the forest picture (left side), spots marked on it', until("ACT3.inForest()&&document.querySelectorAll('.a3-tsp.on').length===3",15000))
     ok('L2 the marks sit on the left part of the screen', all(x<400 for x in ev("[...document.querySelectorAll('.a3-tsp.on')].map(b=>parseFloat(b.style.left))")))
