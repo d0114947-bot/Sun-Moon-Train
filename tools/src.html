@@ -2291,7 +2291,7 @@ ART.car.cab=function(state){
  const sc={red:'#ff7a7a',amber:'#ffd27a',green:'#7dffb4'}[sig]||'#556';
  let ties=''; for(let i=0;i<8;i++){ const t=Math.pow(i/8,1.5), y=900-520*t, hw=250*(1-t)+4; ties+=`<line x1="${(800-hw).toFixed(1)}" y1="${y.toFixed(1)}" x2="${(800+hw).toFixed(1)}" y2="${y.toFixed(1)}" stroke="#f1d58e" stroke-width="${(3*(1-t)+1).toFixed(1)}" opacity=".5"/>`; }
 
- const view=voy?'':state.currentLocation==='origin'?`<image href="${LOCATIONS.origin.img}" x="0" y="0" width="1600" height="560" preserveAspectRatio="xMidYMin slice"/>`:LOC_IMG[state.currentLocation]?`<image href="${LOC_IMG[state.currentLocation]}" x="0" y="0" width="1600" height="560" preserveAspectRatio="xMidYMid slice"/>`:`<svg x="0" y="0" width="1600" height="560" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${LOCATIONS[state.currentLocation].art()}</svg>`;
+ const view=voy?'':state.currentLocation==='origin'?`<image href="${LOCATIONS.origin.img}" x="0" y="0" width="1600" height="560" preserveAspectRatio="xMidYMin slice"/>`:locImg(state.currentLocation)?`<image href="${locImg(state.currentLocation)}" x="0" y="0" width="1600" height="560" preserveAspectRatio="xMidYMid slice"/>`:`<svg x="0" y="0" width="1600" height="560" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${LOCATIONS[state.currentLocation].art()}</svg>`;
  return `${voy?`<rect width="1600" height="900" fill="#0a0c22"/><foreignObject class="cabfo" x="55" y="0" width="1516" height="560"><video xmlns="http://www.w3.org/1999/xhtml" class="cabvid" src="${CAB_VID}" autoplay="" muted="" loop="" playsinline="" preload="auto"></video></foreignObject>`:'<rect width="1600" height="900" fill="#ece8f2"/>'}${view}
  <svg x="120" y="70" width="1360" height="520" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <path d="M500 900 L 790 380 L 810 380 L 1100 900" fill="#c8a85e" opacity=".12"/><path d="M560 900 L 796 380 M1040 900 L 804 380" stroke="#f1d58e" stroke-width="5" opacity=".85"/>${ties}
@@ -3626,7 +3626,10 @@ document.addEventListener('pointerup',oskyUp); document.addEventListener('pointe
 addEventListener('resize',oskyPut);
 /* 各界域的場景插畫：下車探索的畫面、回憶水晶、星圖 */
 const LOC_IMG={dawnForest:'loc-dawnForest.jpg',starIslands:'loc-starIslands.jpg',reverseRealm:'loc-reverseRealm.jpg',boundlessCorridor:'loc-boundlessCorridor.jpg',silentVoid:'loc-silentVoid.jpg',timeriftSea:'loc-timeriftSea.jpg'};
-function renderOutside(){ const L=LOCATIONS[state.currentLocation], im=LOC_IMG[state.currentLocation]; return (im?`<img class="bg" src="${im}" alt="${L.name}">`:svgScene(L.art()))+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
+/* 第二張景：月界列車（V 切到月）時，駕駛室窗外與下車看到的是這一張 */
+const LOC_IMG2={boundlessCorridor:'loc-boundlessCorridor-2.jpg',timeriftSea:'loc-timeriftSea-2.jpg'};
+const locImg=id=>(state&&state.trainMoon&&LOC_IMG2[id])||LOC_IMG[id];
+function renderOutside(){ const L=LOCATIONS[state.currentLocation], im=locImg(state.currentLocation); return (im?`<img class="bg" src="${im}" alt="${L.name}">`:svgScene(L.art()))+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
 
 function renderHUD(){
  const L=LOCATIONS[state.currentLocation], ph=state.currentPhase, v=state.voyage;
