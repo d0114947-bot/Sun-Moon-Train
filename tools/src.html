@@ -6232,7 +6232,7 @@ new MutationObserver(()=>{ talkSync(); sayType(); if(document.querySelector('#la
 function cine(lines,onDone,img,titleCard){ const el=document.createElement('div'); el.className='cine'+(cine.cls?' '+cine.cls:''); if(cine.cls==='clear'&&!navigator.webdriver){ let k=0; const t=setInterval(()=>{ if(!el.isConnected){ clearInterval(t); return; } if(++k>=3){ k=0; el.click(); } },1000); } if(cine.cls==='intro') img=INTRO_BG; cine.cls='';
  let i=0; const draw=()=>{ const clear=el.classList.contains('clear'); el.innerHTML=`${clear?'':img?`<img src="${img}" alt="">`:'<div class="stars"></div>'}<div class="shade"></div><div class="txt">${lines[i]}</div><div class="tap">輕觸繼續</div>`; if(i>0&&img){ const im=el.querySelector('img'); im.style.animation='none'; im.style.transform='scale(1.05)'; } };
  draw(); $('#layer').appendChild(el); if(!titleCard) BL.push('',lines[0]);
- el.onclick=()=>{ i++; if(i>=lines.length){ el.style.transition='opacity .5s'; el.style.opacity=0; setTimeout(()=>{ el.remove(); onDone&&onDone(); },450); } else { const t=el.querySelector('.txt'); t.innerHTML=lines[i]; if(!titleCard) BL.push('',lines[i]); t.style.animation='none'; t.offsetWidth; t.style.animation=''; } };
+ el.onclick=()=>{ if(el._end) return; i++; if(i>=lines.length){ el._end=1; el.style.transition='opacity .5s'; el.style.opacity=0; setTimeout(()=>{ el.remove(); onDone&&onDone(); },450); } else { const t=el.querySelector('.txt'); t.innerHTML=lines[i]; if(!titleCard) BL.push('',lines[i]); t.style.animation='none'; t.offsetWidth; t.style.animation=''; } };
 }
 
 
@@ -10284,6 +10284,109 @@ const shadeOn=()=>{ const v=state.voyage; return state.currentPhase==='voyage'&&
 const moonGuard=()=>state.trainMoon&&!proOn()&&(()=>{ const loc=state.currentPhase==='voyage'&&state.voyage?state.voyage.to:state.currentLocation; return (LOCATIONS[loc]||{}).realm==='月界'; })();
 { const ad=TAINT.add.bind(TAINT); TAINT.add=function(n){ if(n>0&&moonGuard()) n=Math.max(1,Math.round(n*.6)); return ad(n); }; }
 { const cs=crStart; crStart=function(id,opts){ if(moonGuard()&&id!=='T01'){ opts=Object.assign({},opts||{}); const E=CRISES[id]; const sv=opts.sev||(E?crSevOf(E):1); if(sv>1) opts.sev=sv-1; } return cs.call(this,id,opts); }; }
+
+/* ================================================================
+   劇情章節：每一趟是一章 —— 主角乘客（保證登車）＋主線（曦淵的故事／古種）＋章末的列車進化
+   存檔：state.chap={said:{n:1},arr:{n:1},ended:[n],shown:[n],legacy:0|1}
+   舊存檔：第一次載入時，依已完成的主線自動跳過前面的章節（不播卡片）
+   自動測試：webdriver 底下預設關閉，window.CHAP_TEST=1 才開
+   ================================================================ */
+const CHAP=[
+ {n:1,title:'界壁的另一邊',to:'dawnForest',hero:'treeling',lore:['dl_wall'],evo:['ancient',2],
+  start:['索拉回到了她的島。棲息車廂，一下子安靜了好多。','曦淵說，列車要回日界補一補光。','……窗外那一層看不見的膜，到底是什麼呢？'],
+  board:'列車停靠的時候，月台邊一棵長滿苔蘚的老樹，忽然邁開了根一樣的腳。它彎下腰，慢慢鑽進了車門。',
+  heroL:[['treeling','……呵呵。被你發現了。我在森林裡，看你們的列車看了好多年了。'],['self','好多年？'],['treeling','列車經過的時候，樹會往兩邊讓。界壁，也會往兩邊讓。'],['treeling','你剛剛穿過的那層膜，我們叫它「界壁」。它不是牆，是世界的皮膚。'],['treeling','皮膚破了會痛。……所以列車經過的時候，要輕輕的。'],['self','（曦淵也說過一樣的話。）'],['treeling','森林最老的那棵樹，樹幹上有一圈一圈的刻紋。那不是年輪喔。'],['treeling','是很久以前，有人刻上去的字。……你們車上，應該也有一面一樣的牆吧？'],['self','記憶車廂的牆……！']],
+  end:['記憶車廂的牆上，有一行刻痕亮了起來。','和老樹上的圓環，是同一種字。']},
+ {n:2,title:'渡守的圓環',to:'starIslands',hero:'skywhale',lore:['dl_ferry'],evo:['sky',2],
+  start:['古樹的圓環，牆上的字。','寫下它們的人，到底是誰？','曦淵好像知道。這一趟，牠的話比平常多。'],
+  board:'列車停靠的時候，整片天空忽然暗了一下。一道巨大的灰色身影從星河下方的雲海裡浮上來，繞著列車慢慢游了一圈，然後輕輕地靠了過來。',
+  heroL:[['skywhale','…………這艘船。我，認得。'],['self','你見過這列車？'],['skywhale','很久，很久以前。我還，很小。'],['skywhale','那時候，船上，有很多人。穿著，長長的衣服。他們會，對我揮手。'],['self','……渡守。'],['skywhale','他們，在船尾，看星星。把星星，連成線。'],['skywhale','說那是，地圖。回家的，地圖。'],['skywhale','……船尾的那個台子，好暗。我，唱一首歌給它，好嗎？'],['self','（巨鯨低低地唱了起來。車廂的地板，跟著輕輕地震。）']],
+  end:['車尾的展望台上，亮起了第一批星光。','那是渡守們，回家的地圖。']},
+ {n:3,title:'曦與淵',to:'dawnForest',hero:'sirenora',lore:['dl_dimming','dl_name'],evo:['sanct',2],
+  start:['巨鯨的歌，在車廂裡繞了好久才散。','渡守們離開了。可是，為什麼？','這一趟，曦淵會說一個很長的故事。'],
+  board:'列車停靠的時候，月台起了一片濃得化不開的霧。霧裡有一抹溫柔的粉白光暈，跟著車燈，一點一點靠了過來。',
+  heroL:[['sirenora','……你身上的光，好像港口的燈。'],['sirenora','我在霧裡，聽過一首歌。很老、很老的歌。'],['sirenora','歌裡說，有一段時間，世界一個一個熄掉了。像吹熄蠟燭一樣。'],['self','……大熄滅。曦淵說過。'],['sirenora','歌的最後一段，是一條龍。一半是晨光，一半是深淵。'],['sirenora','祂守著一列不會熄的車，等最後一道光醒過來。'],['sirenora','……原來，是你啊。'],['self','（她的觸鬚輕輕碰了一下你的手。很冰，可是很溫柔。）'],['sirenora','我可以待在這裡嗎？車上的燈，讓我覺得……不會迷路。']],
+  end:['棲息車廂的上方，亮起了第一盞歸宿之燈。','日月儀轉了起來。兩個新的座標，正在發光。']},
+ {n:4,title:'倒著長的森林',to:'reverseRealm',hero:'titan',seed:'a',evo:['nature',2],
+  start:['日月儀指向的第一個地方：逆生之境。','那裡的花往下開，雨往上落。','溫室裡第一枚封存的種子，在微微發熱。'],
+  board:'列車停靠的時候，月台輕輕震了一下，又一下。倒著長的樹林裡，一座長滿苔蘚與蕨葉的小山緩緩站起，倒退著走進了車門。',
+  heroL:[['titan','……嗯。'],['titan','……我……睡了一下子。醒來的時候，森林……倒過來了。'],['self','你一直住在這裡嗎？'],['titan','……很久以前，這裡是……順著長的。'],['titan','有人……從列車上下來。手裡……拿著一顆種子。說要……等它醒。'],['titan','他說……「等倒著流的光」。'],['self','封印上的刻紋……！'],['titan','……倒著流的光……是早上的光。從地上，回到天上。'],['titan','帶種子……去曬曬晨光吧。……我，也想……跟著看。']],
+  end:['溫室裡，第一朵花開了。','那是渡守們，留給下一個時代的春天。']},
+ {n:5,title:'影子走廊',to:'boundlessCorridor',hero:'grinfox',seed:'b',evo:['repair',2],
+  start:['日月儀指向的第二個地方：無界迴廊。','曦淵說，那條航道上有影子。','被影子看見的列車，會沾上很重的界染。'],
+  board:'列車停靠在一條沒有燈的走廊裡。一道黑影一直跟在你身後三步遠的地方，你回頭——一張咧著白牙的笑臉，飄進了車門。',
+  heroL:[['grinfox','……嘻。'],['grinfox','對、對不起。我一直跟著你們。因為你們……沒有被影子看見。'],['self','你知道那些影子？'],['grinfox','我就住在它們中間。它們不壞，只是……很餓。餓到連光都想吃。'],['grinfox','所以要安靜。要變成月亮那邊的顏色，它們就看不見你了。'],['grinfox','還有……你們車上，是不是有一顆會聽潮聲的種子？'],['grinfox','迴廊盡頭有潮聲，明明沒有海。……那是種子在叫你。'],['grinfox','嘻。我陪你去聽。……你、你不要跑喔。']],
+  end:['列車穿過了影子，沒有被吃掉。','車窗上的混濁，淡了一層。']},
+ {n:6,title:'時間的縫',to:'timeriftSea',hero:'mnemo',seed:'c',evo:['guard',3],
+  start:['兩枚古種都醒了。','日月儀上，多了一片會起伏的海。','最後一枚種子在等。它等的，是日與月交換的那一瞬間。'],
+  board:'列車停靠的時候，停在半空中的浪花忽然落了下來。一團冰霧從時隙的海面上漂過來，貼著車身滑進了車門。',
+  heroL:[['mnemo','……你，是活著的記憶。'],['mnemo','我收集漂過來的記憶碎片。這片海，碎片特別多。'],['mnemo','其中有一片……是一個人。他站在列車的駕駛室，對著一條龍說話。'],['self','渡守……和曦淵？'],['mnemo','他說：「把最後一道晨曦留在車上。等它醒過來，就讓它決定要去哪裡。」'],['self','……'],['mnemo','你醒來了。所以，現在是你決定。'],['mnemo','記憶車廂裡，有一道門。這片碎片……是鑰匙。我把它放回去。']],
+  end:['記憶車廂的牆後面，那道門打開了一條縫。','渡守的記憶，回到了列車上。']},
+ {n:7,title:'歸途',to:'silentVoid',
+  start:['七個符號，亮了六個。','最後一個，指向一片什麼都沒有的地方。','曦淵說：「準備好了，就出發吧。乘客們的心意，會照亮那裡。」']}];
+const CHAP_N=['','一','二','三','四','五','六','終'];
+const chapLabel=n=>n===7?'終章':`第${CHAP_N[n]}章`;
+const chapOn=()=>!(navigator.webdriver&&!window.CHAP_TEST)&&!!state&&!!state.introDone&&!!state.prologueDone&&!proOn()&&(!state.epi||!!state.epi.done);
+function chapS(){ if(!state.chap){ state.chap={said:{},arr:{},ended:[],shown:[],legacy:0};
+  /* 舊存檔：主線已經走到哪裡，前面的章節就算完成 */
+  const K={2:()=>(state.storyFlags.dragonLore||[]).includes('dl_ferry'),3:()=>state.clues.includes('clue_dragon'),4:()=>seedOpen('seed_ancient_a'),5:()=>seedOpen('seed_ancient_b'),6:()=>seedOpen('seed_ancient_c'),7:()=>!!state.ending};
+  const lat=n=>Object.keys(K).some(m=>+m>=n&&!(n===4&&+m===5)&&K[m]());
+  for(let n=1;n<=6;n++) if(chapOwn(n)||lat(n)){ state.chap.ended.push(n); state.chap.shown.push(n); state.chap.legacy=1; } }
+ return state.chap; }
+function chapSteps(n){ const C=CHAP[n-1], S=state.chap||{said:{},arr:{}}, L=LOCATIONS[C.to], heard=id=>(state.storyFlags.dragonLore||[]).includes(id), out=[];
+ if(n===7){ const q=mainQuest().find(x=>x.k==='end'); return [{k:'end',t:q.t,sub:q.sub,done:!!state.ending}]; }
+ if(C.seed) out.push({k:'seal',t:SEEDQ[C.seed].goal[0],sub:SEEDQ[C.seed].sub[0],done:sq(C.seed)>=1||seedOpen(SEEDQ[C.seed].id)});
+ out.push({k:'go',t:`搭列車前往${L.name}`,sub:ROUTE.includes(C.to)?'完成出發前的值勤，就會往那裡開':'在星月觀測車廂的導航裝置改航道，再出發',done:!!S.arr[n]});
+ (C.lore||[]).forEach(id=>{ const D=DRAGON_LORE.find(x=>x.id===id); out.push({k:'lore',id,t:'聽曦淵說列車的往事',sub:'航行中，或出發前報備完之後，到駕駛室點曦淵',done:heard(id)}); });
+ if(C.hero){ const P=PASSENGERS[C.hero]; out.push({k:'hero',t:aboard(C.hero)?`到棲息車廂，和${P.name}聊聊`:`認識新的乘客`,sub:aboard(C.hero)?'牠有話想跟你說':`抵達${L.name}之後，有生命會在棲息車廂等你`,done:!!S.said[n]}); }
+ if(C.seed){ const k=C.seed, st=Math.min(Math.max(sq(k),1),2); out.push({k:'seed',t:SEEDQ[k].goal[st],sub:SEEDQ[k].sub[st],done:seedOpen(SEEDQ[k].id)}); }
+ return out; }
+const chapOwn=n=>n===7?!!state.ending:chapSteps(n).every(x=>x.done);
+const chapDone=n=>(state.chap&&state.chap.ended.includes(n))||chapOwn(n);
+function chapReached(n){ if(!chapOn()) return false; if(n===1) return true; if(n===4||n===5) return chapDone(3); if(n===6) return chapDone(4)&&chapDone(5); return chapDone(n-1); }
+function chapCur(){ if(!chapOn()) return 0; chapS(); const R=[1,2,3,4,5,6,7].filter(n=>chapReached(n)&&!chapDone(n)); if(!R.length) return 0;
+ const here=state.currentPhase==='voyage'&&state.voyage?state.voyage.to:state.currentLocation; return R.find(n=>CHAP[n-1].to===here)||R[0]; }
+/* 現在在等主角乘客說話的章節 */
+function chapHeroWait(id){ if(!chapOn()) return 0; chapS(); for(let n=1;n<=6;n++){ const C=CHAP[n-1]; if(C.hero===id&&chapReached(n)&&!chapDone(n)&&!state.chap.said[n]&&aboard(id)) return n; } return 0; }
+const chapHeroOf=id=>CHAP.find(c=>c.hero===id);
+/* 曦淵的故事：跟著章節說 */
+DRAGON_LORE.forEach(x=>{ const o=x.need, n=(CHAP.find(c=>(c.lore||[]).includes(x.id))||{}).n; x.need=()=>chapOn()?!!n&&chapReached(n):o(); });
+/* 主角乘客：只在自己的章節登車；不進隨機名單 */
+CHAP.forEach(C=>{ if(C.hero&&C.board) EVENTS['chb_'+C.n]={trigger:'chap',run:nx=>boarding(C.hero,C.board,nx)}; });
+{ const rb=rollBoarders; rollBoarders=function(){ let out=rb.apply(this,arguments); if(!chapOn()) return out; chapS();
+  out=out.filter(e=>{ const id=e.replace(/^board_/,''), C=chapHeroOf(id); return !C||chapDone(C.n); });
+  CHAP.forEach(C=>{ if(!C.hero||!C.board||!chapReached(C.n)||chapDone(C.n)||state.chap.said[C.n]||aboard(C.hero)||state.currentLocation!==C.to) return; const e='chb_'+C.n; if(!(state.boardQ||[]).includes(e)&&!out.includes(e)) out.unshift(e); });
+  return out; }; }
+/* 抵達：記下這一章的目的地到過了 */
+{ const va=voyageArrive; voyageArrive=function(){ const to=state.voyage&&state.voyage.to; if(to&&chapOn()){ chapS(); CHAP.forEach(C=>{ if(C.to===to&&chapReached(C.n)&&!chapDone(C.n)) state.chap.arr[C.n]=1; }); } return va.apply(this,arguments); }; }
+/* 主角乘客：先說這一章的話 */
+{ const t0=talk; talk=function(id,next){ const n=chapHeroWait(id); if(!n) return t0.apply(this,arguments); const C=CHAP[n-1], s=state.passengers[id];
+  return dialogueScript(C.heroL,()=>{ state.chap.said[n]=1; if(s){ s.records=s.records||[]; s.records.push({j:state.journeyCount,t:`${chapLabel(n)}「${C.title}」：說了一段只有在這一趟才聽得到的話。`}); } logJ(`${PASSENGERS[id].name}說起了「${C.title}」的事。`); save(); render(); next&&next(); }); }; }
+HSDEF.forEach(h=>{ const m=/^(hab-p-|rm-p-)(.+)$/.exec(h.id); if(!m||!chapHeroOf(m[2])) return; const oi=h.imp; h.imp=()=>!!chapHeroWait(m[2])||(oi?oi():false); });
+{ const pg=paxGlowTop; paxGlowTop=function(){ const r=pg.apply(this,arguments).slice(); const id=Object.keys(PASSENGERS).find(x=>chapHeroWait(x)); if(id){ ['hab-p-'+id,'rm-p-'+id].forEach(k=>{ if(!r.includes(k)) r.unshift(k); }); } return r.slice(0,3); }; }
+/* 章末：列車的改變（進化的最低階段） */
+EVO.forEach(e=>{ const oc=e.calc; e.calc=()=>{ let v=oc(); ((state.chap||{}).fl||[]).forEach(n=>{ const E=(CHAP[n-1]||{}).evo; if(E&&E[0]===e.k) v=Math.max(v,E[1]); }); return v; }; });
+/* 章名卡、章末卡 */
+function chapCheck(){ if(!RUNNING||!chapOn()) return; if(document.querySelector('#layer .cine,#layer .dlg,#layer .board,#layer .ov,#mainscreen,#mainscreen-out')) return chapSoon(2500);
+ const S=chapS();
+ for(let n=1;n<=6;n++){ if(S.ended.includes(n)||!chapOwn(n)) continue; const C=CHAP[n-1]; S.ended.push(n); S.fl=S.fl||[]; S.fl.push(n); if(!S.shown.includes(n)) S.shown.push(n);
+  if(C.evo&&C.evo[0]==='repair') trainTAdd(-6,'穿過影子之後，列車的界染淡了一層。'); logJ(`${chapLabel(n)}「${C.title}」結束了。`); save();
+  return cine([`<span class="big">${C.title}</span><span class="sub">${chapLabel(n)}・完</span>`].concat(C.end),()=>{ evoSync(); render(); },LOC_IMG[C.to],true); }
+ const c=chapCur(); if(c&&!S.shown.includes(c)){ const C=CHAP[c-1]; S.shown.push(c); save(); logJ(`${chapLabel(c)}「${C.title}」。`);
+  return cine([`<span class="big">${C.title}</span><span class="sub">${chapLabel(c)}</span>`].concat(C.start),()=>render(),LOC_IMG[C.to],true); } }
+function chapSoon(ms){ clearTimeout(chapSoon.t); chapSoon.t=setTimeout(chapCheck,ms||900); }
+{ const r0=render; render=function(){ const x=r0.apply(this,arguments); if(chapOn()) chapSoon(); return x; }; }
+/* 目標列：章節 */
+{ const g0=goalNow; goalNow=function(){ const c=chapCur(); if(!c) return g0.apply(this,arguments); const St=chapSteps(c);
+  let st=state.currentPhase==='voyage'?St.find(x=>x.k==='lore'&&!x.done&&loreNext()):null; st=st||St.find(x=>!x.done); if(!st) return g0.apply(this,arguments);
+  return {t:st.t,sub:`${chapLabel(c)}「${CHAP[c-1].title}」・${st.sub}`}; }; }
+/* 筆記本任務頁：主線改成章節 */
+{ const q0=questCats; questCats=function(){ const C=q0.apply(this,arguments); if(!chapOn()) return C; chapS(); const li=(t,st)=>({t,st:st||'on'}), L=[];
+  for(let n=1;n<=7;n++){ const H=CHAP[n-1], nm=`${chapLabel(n)}　${H.title}`;
+   if(chapDone(n)) L.push(li(nm,'done'));
+   else if(chapReached(n)){ L.push(li(nm)); chapSteps(n).forEach(x=>L.push(li('　・'+x.t,x.done?'done':'on'))); }
+   else L.push(li(`${chapLabel(n)}　……`,'lock')); }
+  const i=C.findIndex(x=>x.k==='main'); const M={k:'main',n:'主線：渡口列車的故事',L}; if(i>=0) C[i]=M; else C.unshift(M); return C; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
