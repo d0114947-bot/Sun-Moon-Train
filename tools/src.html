@@ -1058,6 +1058,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .drw-in{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.3,.7,.3,1)}.drw-in>.jars{overflow:hidden;min-height:0;transform:translateY(-12px);opacity:0;transition:transform .45s,opacity .35s;padding:0 10px}
 .drw.open .drw-in{grid-template-rows:1fr}.drw.open .drw-in>.jars{transform:none;opacity:1;padding:8px 10px 12px}.drw.open .drw-face{background:linear-gradient(180deg,rgba(255,226,160,.18),rgba(0,0,0,.1))}
 .mirrorov.moonlook .me-fig{filter:saturate(.35) sepia(.25) hue-rotate(185deg) brightness(1.18) drop-shadow(0 0 18px rgba(170,200,255,.7))}.mir-moon{color:#c9d6ff}
+.sq-read{margin-top:12px}
 .go-back{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:0;border:0;background:none;color:#f3e2b4;cursor:pointer;padding:6px 18px;opacity:.78;transition:opacity .2s,transform .2s;-webkit-tap-highlight-color:transparent}
 .go-back svg{width:46px;height:28px;filter:drop-shadow(0 0 6px rgba(0,0,0,.8)) drop-shadow(0 0 10px rgba(232,201,131,.45));animation:gobk 2.2s ease-in-out infinite}
 .go-back span{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-shadow:0 1px 4px #000;opacity:0;transition:opacity .2s}
@@ -1142,7 +1143,9 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .scope-sky>svg{width:100%;height:100%;display:block}
 .scope-shadow{position:absolute;width:9%;transform:translate(-50%,-50%);cursor:pointer;filter:brightness(0) drop-shadow(0 0 5px rgba(200,220,255,.85));opacity:.62;animation:shdrift 7s ease-in-out infinite}
 .scope-shadow img{width:100%;display:block;pointer-events:none}
-.scope-shadow.found{filter:brightness(0) drop-shadow(0 0 14px rgba(255,236,170,.9));opacity:.9;animation:none}   /* 望遠鏡裡永遠只看得到黑影，看過也一樣 */
+.scope-shadow{transition:filter 1.4s ease,opacity 1.4s ease,transform .6s}
+.scope-shadow.found{filter:brightness(1) drop-shadow(0 0 14px rgba(255,236,170,.9));opacity:1;animation:none}   /* 點一下黑影：慢慢顯出生命的模樣（解謎的樂趣）；看過的，下次就直接是看清楚的樣子 */
+.scope-shadow.reveal{animation:shrev 1.4s ease}@keyframes shrev{0%{transform:translate(-50%,-50%) scale(1)}40%{transform:translate(-50%,-50%) scale(1.12)}100%{transform:translate(-50%,-50%) scale(1)}}
 @keyframes shdrift{50%{translate:6px -5px}}
 .scope-reticle{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle,transparent 62%,rgba(0,0,0,.55) 70%),linear-gradient(90deg,transparent calc(50% - .5px),rgba(200,230,255,.35) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px)),linear-gradient(transparent calc(50% - .5px),rgba(200,230,255,.35) calc(50% - .5px) calc(50% + .5px),transparent calc(50% + .5px))}
 /* 到站的五感 */
@@ -1865,7 +1868,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 /* 植物分類標籤 */
 .trait{display:inline-block;margin:0 0 4px;padding:1px 10px;border-radius:999px;font-size:13px;letter-spacing:.1em;border:1px solid currentColor}
 .trait.dawn{color:#ffd98a}.trait.moon{color:#bcd2ff}.trait.star{color:#cdb8ff}.trait.calm{color:#a6e3b0}.trait.reso{color:#ffb3d1}
-.ov.moonaid .scope-shadow:not(.place){opacity:.9!important;filter:brightness(0) drop-shadow(0 0 14px #bcd2ff)!important}.ov.moonaid .scope-shadow.place{opacity:.9!important;filter:drop-shadow(0 0 14px #bcd2ff)!important}
+.ov.moonaid .scope-shadow:not(.place):not(.found){opacity:.9!important;filter:brightness(0) drop-shadow(0 0 14px #bcd2ff)!important}.ov.moonaid .scope-shadow.place{opacity:.9!important;filter:drop-shadow(0 0 14px #bcd2ff)!important}
 
 .rail-svg,.life-svg{display:block;width:min(760px,90vw);margin:6px auto;border-radius:10px;touch-action:manipulation}
 .rail-gap,.life-dot{cursor:pointer}.rail-gap.cur circle:nth-child(2){animation:steppulse 1s ease-in-out infinite;filter:drop-shadow(0 0 8px #ffe9a8)}
@@ -3011,9 +3014,9 @@ const CLUE_ORDER = Object.keys(CLUES);
 
 /* 事件：trigger 決定何時檢查；auto=true 立即演出；否則進入待處理入口（最多顯示兩個） */
 const EVENTS = {
- seed_a:{trigger:'arrive',loc:'reverseRealm',need:()=>!seedOpen('seed_ancient_a'),run:n=>unlockSeed('seed_ancient_a',n)},
- seed_b:{trigger:'arrive',loc:'boundlessCorridor',need:()=>!seedOpen('seed_ancient_b'),run:n=>unlockSeed('seed_ancient_b',n)},
- seed_c:{trigger:'arrive',loc:'timeriftSea',need:()=>!seedOpen('seed_ancient_c'),run:n=>unlockSeed('seed_ancient_c',n)},
+ seed_a:{trigger:'arrive',loc:'reverseRealm',need:()=>false&&!seedOpen('seed_ancient_a'),run:n=>unlockSeed('seed_ancient_a',n)},
+ seed_b:{trigger:'arrive',loc:'boundlessCorridor',need:()=>false&&!seedOpen('seed_ancient_b'),run:n=>unlockSeed('seed_ancient_b',n)},
+ seed_c:{trigger:'arrive',loc:'timeriftSea',need:()=>false&&!seedOpen('seed_ancient_c'),run:n=>unlockSeed('seed_ancient_c',n)},
  finale:{trigger:'arrive',loc:'silentVoid',run:n=>playFinale(n)},
  
  board_felinia:{trigger:'arrive',need:()=>!state.discoveredLifeforms.includes('felinia'),run:n=>boarding('felinia','列車停靠的時候，月台上颳起一陣橫風。一道帶著虹彩的影子貼著車窗滑過，無聲地鑽進了棲息車廂。',n)},
@@ -4483,7 +4486,7 @@ function micDrawer(){ const voy=state.currentPhase==='voyage', d=state.duty, w=s
 /* 界域調節晶石：抽屜 */
 function envDrawer(){ return hsDrawer('nat-crystal',api=>{ const draw=msg=>{ const m=state.storyFlags.natureLight||'dawn', M=ENV_MODES[m];
   api.set({note:msg||`${M.n}・${M.lux}・靈氣${M.ki}`+(growTutOn()&&!state.storyFlags.gt_light?'<br><small>稀有的種子照到喜歡的光才會長；常見的種子什麼光都可以。</small>':''),
-   items:Object.entries(ENV_MODES).map(([k,v])=>({t:v.n,s:k===m?'現在的光':(k==='dawn'&&state.trainMoon?'月界的列車裡，晨光照不進來':''),off:k==='dawn'&&!!state.trainMoon,cls:k===m?'on':'',on:()=>{ if(k===m||(k==='dawn'&&state.trainMoon)) return; state.storyFlags.natureLight=k; state.storyFlags.gt_light=1; save(); render(); hsRefresh(); SFX.tone(880,0,.6,'sine',.025); setTimeout(()=>{ const n=podLightNote(); draw(`切換成${v.n}了。`+(n?`<br><small>${n.replace(/<[^>]+>/g,' ')}</small>`:'')); },60); }}))}); };
+   items:seedQCrystalItems().concat(Object.entries(ENV_MODES).map(([k,v])=>({t:v.n,s:k===m?'現在的光':(k==='dawn'&&state.trainMoon?'月界的列車裡，晨光照不進來':''),off:k==='dawn'&&!!state.trainMoon,cls:k===m?'on':'',on:()=>{ if(k===m||(k==='dawn'&&state.trainMoon)) return; state.storyFlags.natureLight=k; state.storyFlags.gt_light=1; save(); render(); hsRefresh(); SFX.tone(880,0,.6,'sine',.025); setTimeout(()=>{ const n=podLightNote(); draw(`切換成${v.n}了。`+(n?`<br><small>${n.replace(/<[^>]+>/g,' ')}</small>`:'')); },60); }})))}); };
   draw(); }); }
 /* 培育艙：抽屜 */
 function podDrawer(focus,hsid){ let sel=focus||0;
@@ -6519,7 +6522,7 @@ function seedPanel(){ const first=!state.storyFlags.gt_vault; state.storyFlags.g
  const showC=p=>{ const P=PLANTS[p]; pick(ov.querySelector(`[data-cs="${p}"]`)); SFX.glass(); sayReset(ov);
   ov.querySelector('#sv').innerHTML=`<div class="seed3d"><div class="orbit"></div>${seedImg(p)?`<img class="seedimg" src="${seedImg(p)}" alt="">`:`<div class="core" style="--c:${P.color}"></div>`}</div>`+infoCap(`<b class="nm">${P.seed}</b>還有 ${seedN(p)} 顆。種下去會長成${P.name}。${P.desc}<br>${P.hybrid?`這是${PLANTS[P.from[0]].name}和${PLANTS[P.from[1]].name}結出的變種，喜歡${LIGHT_N[P.light]}，航行兩趟才會開花。`:'常見的種子，什麼光都可以，航行一趟就會開花。'}`)+tut(); if(!labeled(p)) labelSheet(ov,p,P.seed,ov.querySelector(`[data-cs="${p}"]`)); };
  const keep=p=>{ const sv=ov.querySelector('#sv'); if(sv&&PLANTS[p]&&seedN(p)>0) sv.insertAdjacentHTML('beforeend',seedKeepHTML(p)); };
- ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>{ show(b.dataset.seed); keep(b.dataset.seed.replace('seed_','')); });
+ ov.querySelectorAll('[data-seed]').forEach(b=>b.onclick=()=>{ show(b.dataset.seed); seedQBtn(ov,b.dataset.seed); keep(b.dataset.seed.replace('seed_','')); });
  ov.querySelectorAll('[data-cs]').forEach(b=>b.onclick=()=>{ showC(b.dataset.cs); keep(b.dataset.cs); });
  ov.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ const M=MATS[b.dataset.mt]; pick(b); SFX.glass(); sayReset(ov); ov.querySelector('#sv').innerHTML=(itemImg(b.dataset.mt)?`<div class="plant3d"><img src="${itemImg(b.dataset.mt)}" alt=""></div>`:'')+infoCap(`<b class="nm">${M.name}</b>還有 ${matCount(b.dataset.mt)} 份。${M.desc}`); });
  const f=rare.find(id=>state.collectibles.includes(id)&&!COLLECTIBLES[id].sealed&&PLANTS[id.replace('seed_','')]), fc=common.find(p=>seedN(p)>0);
@@ -6790,8 +6793,8 @@ function scopePanel(){ setTimeout(()=>{ const o=[...document.querySelectorAll('#
   if(id.startsWith('pl:')){ const pl=id.slice(3); placeFound(pl); el.classList.add('found'); sayReset(ov); ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(`……那不是生命的影子。是很遠很遠的某個地方。<br>${PLACE_SH[pl].line}<br><small>日月儀上，那個方向的霧好像散開了一點。</small>`)); return; }
   const p=PASSENGERS[id];
   if(!state.scopeSeen.includes(id)){ state.scopeSeen.push(id); save(); }
-  el.classList.add('found'); SFX.chime(); sayReset(ov);
-  ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(`咦……星光裡有一道影子在動。那是……某種生命的影子？<br>牠好像正朝著列車的方向。下一站，說不定會遇見牠。`)); }));
+  const first=!el.classList.contains('found'), spn=/[\u4e00-\u9fff]/.test(p.species||'')?p.species:''; el.classList.add('found','reveal'); SFX.chime(); sayReset(ov);
+  ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(first?`咦……星光裡的影子，慢慢清楚了——<br>是${spn?'一隻'+spn:'某種從沒見過的生命'}。牠好像正朝著列車的方向。下一站，說不定會遇見牠。`:`又是${spn?'那隻'+spn:'那個生命'}。牠還在朝著列車的方向。`)); }));
  ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay((sh.length?'星光裡，好像藏著什麼影子。':'今天的星空很安靜，沒有看到任何影子。')+(voy&&state.voyage.sky?`<br>星象預報：${skyLine()}。`:''))); }
 function skyLine(){ const v=state.voyage, k=v&&v.sky; if(state.currentPhase!=='voyage'||!k) return '出發之後，觀測儀會預報這趟航程的星象';
  const S=SKY[k.type].name; return k.ended?`${S}（已經結束）`:k.started?`${S}・正在發生！到火車尾展望台觀賞`:`${S}・約在航程 ${Math.round(k.at*100)}%–${Math.round((k.at+SKY_WIN)*100)}% 出現`; }
@@ -10139,8 +10142,9 @@ function mainQuest(){ const f=state.storyFlags, j=state.journeyCount||0, op=k=>s
  return [
   {k:'seal',t:'到森羅溫室的種子典藏櫃，看看那三枚封存的種子',done:!!f.sealSeen||ab>0,sub:'它們是渡守留下的古種，封印還沒有解開'},
   {k:'lore',t:`到駕駛室，聽曦淵說說列車的故事（旅程 ${Math.min(j,7)}/7）`,done:state.clues.includes('clue_dragon'),sub:'多跑幾趟旅程，曦淵會慢慢說給你聽'},
-  {k:'ab',t:`前往逆生之境和無界迴廊，喚醒封存的種子（${ab}/2）`,done:ab>=2,sub:'可以在星月觀測車廂的導航裝置改航道'},
-  {k:'c',t:'前往時隙之海，喚醒最後一枚封存種子',done:op('c')},
+  {k:'a',t:SEEDQ.a.goal[Math.min(sq('a'),2)],done:op('a'),sub:SEEDQ.a.sub[Math.min(sq('a'),2)]},
+  {k:'b',t:SEEDQ.b.goal[Math.min(sq('b'),2)],done:op('b'),sub:SEEDQ.b.sub[Math.min(sq('b'),2)]},
+  {k:'c',t:SEEDQ.c.goal[Math.min(sq('c'),2)],done:op('c'),sub:SEEDQ.c.sub[Math.min(sq('c'),2)]},
   {k:'end',t:`帶著乘客的紀念品（${Math.min(keeps,END_KEEPS)}/${END_KEEPS}），前往寂滅虛空`,done:ended,sub:'出發前，讓身上的界染度保持在 20 以下'}]; }
 /* 筆記本的任務頁：分類 —— 主線／列車的日常／乘客的請求／栽培與收集／月界的事 */
 function questCats(){ const C=[], li=(t,st)=>({t,st:st||'on'});
@@ -10160,6 +10164,9 @@ function questCats(){ const C=[], li=(t,st)=>({t,st:st||'on'});
  const M=[]; if(state.trainMoon){ M.push(li('列車現在是月界的樣子：晨光照不進溫室、淨化效果減半、打開天窗偶爾會有月輝潮汐','on'));
   if(pods.some(c=>c&&c.st<2&&PLANTS[c.p].light==='dawn')) M.push(li('培育艙裡的晨光植物，要多陪陪才會長'));
   const tired=Object.keys(state.passengers||{}).filter(id=>{ const x=state.passengers[id]; return x.aboard&&!x.left&&homeRealm(id)==='sun'&&x.talks<PASSENGERS[id].talks.length; }); if(tired.length) M.push(li(`日界來的乘客（${tired.map(id=>PASSENGERS[id].name).join('、')}）在月光下會累，回到日界再聽他們說故事`)); }
+ if(shadeOn()&&!(state.voyage.shade||{}).out) M.push(li('暗影航段：切到月界，安靜地通過'));
+ if(state.trainMoon&&moonGuard()) M.push(li('停在月界：列車也是月界的樣子，結界比較穩（界染上升變慢、危機減輕一級）','done'));
+ if(!state.trainMoon&&!proOn()&&state.prologueDone) M.push(li('有些東西只在月界才看得見：展望台的意念留言、記憶車廂牆上的字……'));
  if(M.length) C.push({k:'moon',n:'月界的事',L:M});
  return C; }
 function questPages(){ const h=questSection(), k=h.indexOf('<h4 class="qs-cat">',h.indexOf('<h4 class="qs-cat">')+1); return k>0?[h.slice(0,k),h.slice(k)]:[h]; }
@@ -10184,6 +10191,68 @@ function moonTide(){ if(!state.trainMoon||Math.random()>=.3) return; setTimeout(
    if(r==='moon'&&!fresh) sense(`（${P.name}在月光裡，看起來很有精神，想多聊一下。）`); }
   return t0.apply(this,arguments); }; }
 { const sp=spiritPanel; spiritPanel=function(){ const r=sp.apply(this,arguments); const ov=document.querySelector('.ov.mirrorov'); if(ov&&state.trainMoon){ ov.classList.add('moonlook'); const f=ov.querySelector('.mir-feel'); if(f) f.insertAdjacentHTML('afterbegin','<span class="mir-moon">鏡子裡的你，是月光的樣子。</span><br>'); } return r; }; }
+/* ================================================================
+   種子庫任務：三枚封存古種，各自要親手解開
+   ① 在種子典藏櫃讀封印上的刻紋 → ② 到那個地方，從駕駛室的窗看見「它在等的東西」 → ③ 在列車裡給它對的光
+   晨種：日界的晨光（溫室晶石）／潮種：月界的月光（月界時打開溫室天窗）／暮種：日與月交換的一瞬間（放上晶石，切換日月界）
+   存檔：state.seedQ={a,b,c}（0～2），state.seedQ.cOn（暮種放在晶石上）
+   ================================================================ */
+const SEEDQ={
+ a:{id:'seed_ancient_a',loc:'reverseRealm',ins:'刻紋寫著：「等倒著流的光。」',where:'逆生之境',win:{t:'窗外：倒著流的瀑布',at:{x:34,y:30}},
+  winL:[['self','窗外的瀑布……水是往上流的。'],['self','種子典藏櫃的方向，傳來很輕的一聲「叮」。那枚封存種子在發熱。'],['self','「倒著流的光」……是晨光嗎？讓它在日界的晨光下，照一照吧。']],
+  goal:['讀封存種子・甲封印上的刻紋（森羅溫室的種子典藏櫃）','前往逆生之境，從駕駛室的窗看看窗外','在日界的列車裡，把種子放在溫室晶石的晨光下'],
+  sub:['封印上刻著一句話','可以在星月觀測車廂的導航裝置改航道','溫室晶石要是晨光；月界的列車照不到晨光']},
+ b:{id:'seed_ancient_b',loc:'boundlessCorridor',ins:'刻紋寫著：「潮水，只回應月光。」',where:'無界迴廊',win:{t:'窗外：迴廊盡頭的潮聲',at:{x:52,y:28}},
+  winL:[['self','迴廊的盡頭……有潮聲。明明沒有海。'],['self','種子典藏櫃裡的封存種子，跟著潮聲一下一下地亮。'],['self','潮水只回應月光……切到月界，打開溫室的天窗，讓月光灌進來吧。']],
+  goal:['讀封存種子・乙封印上的刻紋（森羅溫室的種子典藏櫃）','前往無界迴廊，從駕駛室的窗聽聽窗外','在月界的列車裡，打開溫室的天窗'],
+  sub:['封印上刻著一句話','航程中會經過暗影航段：切到月界，安靜地通過','右上角的月牙（V）切換到月界']},
+ c:{id:'seed_ancient_c',loc:'timeriftSea',ins:'刻紋寫著：「暮色，是日與月交換的那一瞬間。」',where:'時隙之海',win:{t:'窗外：時隙的海岸',at:{x:44,y:36}},
+  winL:[['self','海浪停在半空中，又落下來。時間在這裡，一格一格地跳。'],['self','最後一枚封存種子，也醒了一點點。'],['self','日與月交換的那一瞬間……把它放在溫室的晶石上，切換一次日界和月界。']],
+  goal:['讀封存種子・丙封印上的刻紋（森羅溫室的種子典藏櫃）','前往時隙之海，從駕駛室的窗看看窗外','把種子放在溫室晶石上，切換一次日界／月界'],
+  sub:['封印上刻著一句話','前兩枚古種都醒了，航道才會打開','晶石的抽屜裡「放上晶石」，再按右上角的月牙（V）']}};
+const sq=k=>(state.seedQ||{})[k]||0;
+const sqSet=(k,v)=>{ state.seedQ=state.seedQ||{}; if((state.seedQ[k]||0)<v){ state.seedQ[k]=v; save(); } };
+const sqKey=id=>Object.keys(SEEDQ).find(k=>SEEDQ[k].id===id);
+function seedQBtn(ov,id){ const k=sqKey(id); if(!k||seedOpen(id)) return; const Q=SEEDQ[k], sv=ov.querySelector('#sv'); if(!sv) return;
+ sv.insertAdjacentHTML('beforeend',`<button class="btn ghost sq-read" type="button">讀封印上的刻紋</button>`);
+ sv.querySelector('.sq-read').onclick=()=>{ const first=!sq(k); sqSet(k,1); SFX.chime(); sayReset(ov);
+  ov.querySelector('.panel').insertAdjacentHTML('beforeend',meSay(`${Q.ins}<br>${first?`……它在等什麼東西。去${Q.where}看看吧。`:`要去${Q.where}。`}`)); if(first) logJ(`讀了封存古種的刻紋：${Q.ins.replace('刻紋寫著：','')}`,'find'); }; }
+HSDEF.push(...Object.entries(SEEDQ).map(([k,Q])=>({id:'sq-win-'+k,scene:'cab',name:Q.win.t,at:Q.win.at,layer:3,track:false,
+ show:()=>state.currentPhase==='docked'&&state.currentLocation===Q.loc&&!seedOpen(Q.id)&&sq(k)<2,imp:()=>true,
+ act:()=>{ if(!sq(k)) return dialogueScript([['self','窗外……好像有什麼在呼喚。'],['self','溫室的種子典藏櫃裡，有一枚封存種子在輕輕敲著玻璃。先去讀讀它封印上的刻紋吧。']],()=>render());
+  dialogueScript(Q.winL,()=>{ sqSet(k,2); logJ(`在${Q.where}，封存的古種有了反應。`,'find'); render(); }); }})));
+function sqWake(k){ const Q=SEEDQ[k]; fxBurstAt&&fxBurstAt(document.querySelector('[data-hs="nat-crystal"]')||document.body,k==='a'?'#ffe2a0':k==='b'?'#bcd2ff':'#f3b8d8'); unlockSeed(Q.id,()=>render()); }
+function seedQCrystalItems(){ const L=[];
+ if(sq('a')>=2&&!seedOpen('seed_ancient_a')){ const ok=!state.trainMoon&&(state.storyFlags.natureLight||'dawn')==='dawn';
+  L.push({t:'把封存種子・甲放在晨光下',s:ok?'它在等倒著流的光':state.trainMoon?'月界的列車照不到晨光，先切回日界':'先把光切成晨光',off:!ok,cls:ok?'on':'',on:()=>{ if(!ok) return; document.querySelectorAll('.hdw').forEach(d=>drawerClose(d)); sqWake('a'); }}); }
+ if(sq('c')>=2&&!seedOpen('seed_ancient_c')) L.push(state.seedQ.cOn?{t:'封存種子・丙在晶石上',s:'按右上角的月牙（V），切換一次日界／月界',off:true}:{t:'把封存種子・丙放在晶石上',s:'日與月交換的一瞬間',on:()=>{ state.seedQ.cOn=1; save(); SFX.glass(); document.querySelectorAll('.hdw').forEach(d=>drawerClose(d)); sense('（種子靜靜地躺在晶石上。現在……切換一次日界和月界。）'); }});
+ return L; }
+{ const sk=skylight; skylight=function(){ if(sq('b')>=2&&!seedOpen('seed_ancient_b')&&state.currentCarriage==='nature'){ if(!state.trainMoon) return dialogueScript([['self','（拉開天窗的遮光簾。）'],['self','日界的光很亮……潮種一點反應也沒有。它在等的是月光。']],()=>render());
+  return dialogueScript([['self','（拉開天窗的遮光簾。）'],['self','月光像潮水一樣灌了進來，漫過種子典藏櫃——'],['self','那枚封存種子，跟著潮水一起呼吸。']],()=>sqWake('b')); }
+  return sk.apply(this,arguments); }; }
+{ const tt=trmToggle; trmToggle=function(){ const r=tt.apply(this,arguments); if(state.seedQ&&state.seedQ.cOn&&!seedOpen('seed_ancient_c')&&state.currentCarriage==='nature') setTimeout(()=>{ state.seedQ.cOn=0; dialogueScript([['self','光從晨光變成月輝的那一瞬間——'],['self','晶石上的種子，像傍晚最後的那一刻一樣，亮了。']],()=>sqWake('c')); },900); return r; }; }
+/* ================================================================
+   月界才有的事
+   ・只在月界出現：展望台的意念留言（日界時刻紋太淡）、記憶車廂牆上的月光字、部分隱藏訪客（星潮的小透明、閃爍的念、不屬於任何地方的影子）
+   ・暗影航段：開往無界迴廊、時隙之海、寂滅虛空的航程中段，有會被光吸引的壞生命；切到月界才能安靜通過
+   ・月界保護力：停在月界的地點、列車也是月界的樣子時，界染上升變慢（×0.6）、危機的嚴重度降一級
+   ================================================================ */
+const MOON_VIS=['tidewisp','flicker','voidshape'];
+{ const H=HSDEF.find(h=>h.id==='ot-msg'); if(H){ const oa=H.act; H.act=function(){ if(!state.trainMoon) return dialogueScript([['self','展望台的刻紋裡……好像留著什麼字。'],['self','可是太淡了，看不清楚。月光下，也許看得見。']],()=>render()); return typeof oa==='function'?oa.apply(this,arguments):runAct(oa); }; } }
+HSDEF.forEach(h=>{ const m=/^vis-(.+)$/.exec(h.id); if(!m||!MOON_VIS.includes(m[1])) return; const os=h.show; h.show=()=>!!state.trainMoon&&(os?os():true); });
+HSDEF.push({id:'mem-moonwrit',scene:'memory',name:'月光下的字',at:{x:62,y:20},layer:3,track:false,show:()=>!!state.trainMoon&&state.prologueDone,imp:()=>!state.storyFlags.moonWrit,
+ act:()=>dialogueScript([['self','月光照到的地方，牆上浮出一行字。'],['self','「列車在月界的時候，請把燈調暗。光，會把不好的東西引過來。」'],['self','……是渡守留下的嗎？']],()=>{ if(!state.storyFlags.moonWrit){ state.storyFlags.moonWrit=1; logJ('記憶典藏車廂的牆上，月光下浮出渡守的字：在月界，把燈調暗。','find'); save(); } render(); })});
+const SHADE_TO=['boundlessCorridor','timeriftSea','silentVoid'], SHADE=[.35,.6];
+const shadeOn=()=>{ const v=state.voyage; return state.currentPhase==='voyage'&&v&&SHADE_TO.includes(v.to)&&!proOn(); };
+{ setInterval(()=>{ try{ if(!RUNNING||!shadeOn()) return; const v=state.voyage, p=v.progress||0; v.shade=v.shade||{};
+  if(p>=SHADE[0]-.1&&!v.shade.warn){ v.shade.warn=1; save(); dialogueScript([['dragon','前面是暗影航段。'],['dragon','那裡的東西，會被光吸引過來。把列車切到月界，讓光暗下來，安靜地過去。']],()=>render()); return; }
+  if(p>=SHADE[0]&&p<SHADE[1]){ if(!v.shade.in){ v.shade.in=1; save(); noteTop('暗影航段：切到月界，安靜地通過'); }
+   if(!state.trainMoon&&!v.shade.seen&&!document.querySelector('#layer .dlg,#layer .cine')&&Math.random()<.18){ v.shade.seen=1; TAINT.add(5); try{ trainTAdd(2); }catch(e){} save(); render();
+    dialogueScript([['self','窗外……有什麼東西，被列車的光吸引過來了。'],['self','黑黑的、沒有形狀的東西，貼著車窗滑過去。'],['dragon','被注意到了。……下一次，記得切到月界。']],()=>{ logJ('在暗影航段被壞的生命注意到了，列車沾上了界染。'); render(); }); } }
+  if(p>=SHADE[1]&&!v.shade.out){ v.shade.out=1; save(); if(!v.shade.seen){ sense('（列車暗著光，安靜地滑過了暗影。）'); logJ('切到月界，安靜地通過了暗影航段。'); } } }catch(e){} },1000); }
+const moonGuard=()=>state.trainMoon&&!proOn()&&(()=>{ const loc=state.currentPhase==='voyage'&&state.voyage?state.voyage.to:state.currentLocation; return (LOCATIONS[loc]||{}).realm==='月界'; })();
+{ const ad=TAINT.add.bind(TAINT); TAINT.add=function(n){ if(n>0&&moonGuard()) n=Math.max(1,Math.round(n*.6)); return ad(n); }; }
+{ const cs=crStart; crStart=function(id,opts){ if(moonGuard()&&id!=='T01'){ opts=Object.assign({},opts||{}); const E=CRISES[id]; const sv=opts.sev||(E?crSevOf(E):1); if(sv>1) opts.sev=sv-1; } return cs.call(this,id,opts); }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>

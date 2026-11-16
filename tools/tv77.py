@@ -72,7 +72,7 @@ with sync_playwright() as p:
     ok('C9 equipment returned only every 10 trips', ev("(()=>{ const f=document.documentElement.innerHTML; return /%10===0\\)\\{ state.spirit.equipment=\\{tablet:false/.test(f) })()"))
     # observation
     ev("state.currentCarriage='observation';render()"); W(400)
-    ok('O1 telescope: seen creatures stay silhouettes', 'brightness(0)' in ev("(()=>{ const d=document.createElement('div'); d.className='scope-shadow found'; document.body.appendChild(d); const f=getComputedStyle(d).filter; d.remove(); return f; })()"))
+    ok('O1 telescope: found creatures are revealed (not black)', 'brightness(1)' in ev("(()=>{ const d=document.createElement('div'); d.className='scope-shadow found'; document.body.appendChild(d); const f=getComputedStyle(d).filter; d.remove(); return f; })()"))
     ev("constPanel()"); W(500); ev("document.querySelector('#csproj').click()"); W(300); ev("document.querySelector('[data-cs=deer]').click()"); W(200)
     ok('O2 projection mode picks constellations', ev("(state.projPick||[]).includes('deer')") and ev("document.querySelector('[data-cs=deer]').classList.contains('proj-on')"))
     clr(); ok('O3 projection shows picked', [x['id'] for x in ev("projNow()")]==['deer'])
