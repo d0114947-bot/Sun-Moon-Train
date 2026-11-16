@@ -4076,9 +4076,14 @@ function runBoardQ(){ const q=(state.boardQ||[]).slice(); state.boardQ=[]; save(
 function closeAll(){ $('#layer').innerHTML=''; }
 /* 提示一個一個出現：前一個顯示完，才顯示下一個；過場演出時先等一下 */
 const HINTQ={q:[],busy:false};
-function hintPush(kind,t){ if(!t) return; const last=HINTQ.q[HINTQ.q.length-1]; if(last&&last.t===t) return; HINTQ.q.push({kind,t}); hintNext(); }
-function hintNext(){ if(HINTQ.busy||!HINTQ.q.length) return; if(document.querySelector('#layer .cine:not(.clear)')){ setTimeout(hintNext,600); return; }
- const h=HINTQ.q.shift(); HINTQ.busy=true; const dur=h.kind==='sense'?3600:2400; if(h.kind==='sense') senseShow(h.t); else toastShow(h.t);
+function hintPush(kind,t){ if(!t) return; const last=HINTQ.q[HINTQ.q.length-1]; if(last&&last.t===t) return; if(kind==='sense'&&INFO_ON()) HINTQ.q=HINTQ.q.filter(x=>x.kind!=='sense');   /* 新的念頭取代還沒說出口的舊念頭 */ HINTQ.q.push({kind,t}); hintNext(); }
+/* 資訊減量（序章之後）：念頭一則一則來、至少隔一段時間；自動測試預設關閉，window.INFO_TEST=1 才開 */
+const INFO_ON=()=>!(navigator.webdriver&&!window.INFO_TEST)&&!!state&&!!state.prologueDone&&!proOn();
+const SENSE_GAP=40000;
+const arrSenses=id=>INFO_ON()?(SENSES[id]||[]).slice(0,2):(SENSES[id]||[]);
+function hintNext(){ if(HINTQ.busy||!HINTQ.q.length) return; if(document.querySelector('#layer .cine:not(.clear)')||(INFO_ON()&&document.querySelector('#layer .dlg,#layer .cine'))){ clearTimeout(hintNext.w); hintNext.w=setTimeout(hintNext,600); return; }
+ let ix=0; if(INFO_ON()&&HINTQ.q[0].kind==='sense'&&performance.now()-(hintNext.ls||-1e9)<SENSE_GAP){ ix=HINTQ.q.findIndex(x=>x.kind!=='sense'); if(ix<0){ clearTimeout(hintNext.w); hintNext.w=setTimeout(hintNext,SENSE_GAP-(performance.now()-hintNext.ls)+50); return; } }
+ const h=HINTQ.q.splice(ix,1)[0]; if(h.kind==='sense') hintNext.ls=performance.now(); HINTQ.busy=true; const dur=h.kind==='sense'?3600:2400; if(h.kind==='sense') senseShow(h.t); else toastShow(h.t);
  setTimeout(()=>{ HINTQ.busy=false; setTimeout(hintNext,350); },dur); }
 function hintsIdle(cb,n){ if(navigator.webdriver) return cb(); n=n||0; if((HINTQ.busy||HINTQ.q.length)&&n<40) return setTimeout(()=>hintsIdle(cb,n+1),300); cb(); }
 /* 提示分三種：
@@ -5010,7 +5015,7 @@ function voyageArrive(){
  if(realmKey(dest)==='sun'){ TAINT.add(-8); logJ('抵達日界，晨光沖刷了身上的異界殘留，界染度下降。'); setTimeout(()=>sense(PUR_NARR.sun[0]),9000); }
  SFX.stopDrone(); SFX.arrive(); render();
  /* 抵達：稍等一下再出現站名；五感用對話框，一句一句說 */
- setTimeout(()=>{ cine.cls='clear'; cine([`<span class="big">${LOCATIONS[dest].name}</span><span class="sub">${LOCATIONS[dest].realm}・${LOCATIONS[dest].domain}・旅程 ${state.journeyCount}</span>`],once1(()=>{ if(SENSES[dest]&&!proQuiet()) setTimeout(()=>dialogueScript(SENSES[dest].map(t=>['self',t]),once1(()=>setTimeout(arrivalChecks,800))),500); else setTimeout(arrivalChecks,800); }),null,true); },1400);
+ setTimeout(()=>{ cine.cls='clear'; cine([`<span class="big">${LOCATIONS[dest].name}</span><span class="sub">${LOCATIONS[dest].realm}・${LOCATIONS[dest].domain}・旅程 ${state.journeyCount}</span>`],once1(()=>{ if(SENSES[dest]&&!proQuiet()&&!(INFO_ON()&&(state.feelSeen||[]).includes(dest))) setTimeout(()=>dialogueScript(arrSenses(dest).map(t=>['self',t]),once1(()=>setTimeout(arrivalChecks,800))),500); else setTimeout(arrivalChecks,800); }),null,true); },1400);
 }
 /* ---------- 音效（WebAudio 合成，不需音檔） ---------- */
 const PREFS=(()=>{ try{ return JSON.parse(localStorage.getItem('riyue-prefs'))||{}; }catch(e){ return {}; } })();
@@ -5197,7 +5202,7 @@ function arrivalChecks(){
  Object.entries(EVENTS).forEach(([id,e])=>{ if(e.trigger==='arrive'&&!id.startsWith('board_')&&(!e.loc||e.loc===state.currentLocation)&&!done(id)&&(!e.need||e.need())) q.push(next=>e.run(next)); });
  if(brd.length){ state.boardQ=(state.boardQ||[]).filter(x=>!brd.includes(x)).concat(brd); save();
 }
- { const fl=locFeel(); if(fl) q.unshift(next=>setTimeout(()=>dialogueScript(fl.map(t=>['self',t]),next),400)); save(); }
+ { const first=!(state.feelSeen||[]).includes(state.currentLocation), fl=locFeel(); if(fl){ if(!INFO_ON()) q.unshift(next=>setTimeout(()=>dialogueScript(fl.map(t=>['self',t]),next),400)); else if(!first) sense(fl[0]); } save(); }
  if(state.storyFlags.eqBack){ state.storyFlags.eqBack=0; logJ('把三件航程裝備放回裝備台。'); q.push(next=>dialogueScript([['self','列車停穩了。……已經跑了十趟了，把三件裝備放回裝備台保養一下吧。'],['self','星途符牒要重新寫入，星軌羅盤要重新校準，界域護符也要靜靜充一下能。'],['self','（裝備台的光一件一件亮起來。）……好了。下次出發前，再來領。']],next)); }
  const run=()=>{ const f=q.shift(); if(f) hintsIdle(()=>f(run)); else { render(); checkCarriageEvents(); } }; run();   /* 每一段劇情之間，先等提示顯示完 */
 }
@@ -5220,7 +5225,7 @@ function boarding(id,line,next){
 }
 function talk(id,next){
  const p=PASSENGERS[id], s=state.passengers[id]; if(giftClickTry(id)) return; if(byeOn(id)) return byeTalk(id,next);
- if(REQ[id]&&!reqOf(id)&&s.talks>=2&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') return reqAsk(id,next);
+ if(REQ[id]&&!reqOf(id)&&s.talks>=2&&reqGateOk()&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside') return reqAsk(id,next);
  if(HOME_C[id]&&constDone('h_'+id)&&!s.homeTold) return homeStory(id,next);
  const idx=Math.min(s.talks,p.talks.length-1), node=p.talks[idx], fresh=s.talks<p.talks.length;
  const lines=fresh?node.lines:['（'+p.name+'安靜地待在'+ZONES[p.zone].name+'。）', idleLine(id)];
@@ -10378,7 +10383,7 @@ function chapSoon(ms){ clearTimeout(chapSoon.t); chapSoon.t=setTimeout(chapCheck
 { const r0=render; render=function(){ const x=r0.apply(this,arguments); if(chapOn()) chapSoon(); return x; }; }
 /* 目標列：章節 */
 { const g0=goalNow; goalNow=function(){ const c=chapCur(); if(!c) return g0.apply(this,arguments); const St=chapSteps(c);
-  let st=state.currentPhase==='voyage'?St.find(x=>x.k==='lore'&&!x.done&&loreNext()):null; st=st||St.find(x=>!x.done); if(!st) return g0.apply(this,arguments);
+  const st=chapGoalStep(c); if(!st) return g0.apply(this,arguments);
   return {t:st.t,sub:`${chapLabel(c)}「${CHAP[c-1].title}」・${st.sub}`}; }; }
 /* 筆記本任務頁：主線改成章節 */
 { const q0=questCats; questCats=function(){ const C=q0.apply(this,arguments); if(!chapOn()) return C; chapS(); const li=(t,st)=>({t,st:st||'on'}), L=[];
@@ -10387,6 +10392,43 @@ function chapSoon(ms){ clearTimeout(chapSoon.t); chapSoon.t=setTimeout(chapCheck
    else if(chapReached(n)){ L.push(li(nm)); chapSteps(n).forEach(x=>L.push(li('　・'+x.t,x.done?'done':'on'))); }
    else L.push(li(`${chapLabel(n)}　……`,'lock')); }
   const i=C.findIndex(x=>x.k==='main'); const M={k:'main',n:'主線：渡口列車的故事',L}; if(i>=0) C[i]=M; else C.unshift(M); return C; }; }
+
+/* ================================================================
+   資訊減量②：一個畫面最多亮 2 個；跟目前目標有關的先亮（危機、航行事件最優先）
+   棲息車廂的六個休息區：有乘客不舒服、要淨化、或歸宿之燈亮了才出現
+   ================================================================ */
+function chapGoalStep(c){ const St=chapSteps(c); let st=state.currentPhase==='voyage'?St.find(x=>x.k==='lore'&&!x.done&&loreNext()):null; return st||St.find(x=>!x.done)||null; }
+function goalHsIds(){ const c=chapCur(), out=[]; if(!c) return out; const st=chapGoalStep(c); if(!st) return out; const C=CHAP[c-1];
+ const duty=()=>{ const i=dutyNow(); if(state.currentPhase==='docked'&&!state.duty.reported){ if(i>=0) out.push(DUTY_STEPS[i][0]); out.push('cab-dragon'); } };
+ if(st.k==='go'||st.k==='end'){ if(C.to&&!ROUTE.includes(C.to)&&nextStop()!==C.to) out.push('obs-nav'); duty(); out.push('cab-disc'); }
+ else if(st.k==='lore') out.push('cab-dragon');
+ else if(st.k==='hero') out.push('hab-p-'+C.hero,'rm-p-'+C.hero);
+ else if(st.k==='seal') out.push('nat-vault');
+ else if(st.k==='seed'){ const k=C.seed, q=sq(k); if(q<2) out.push('sq-win-'+k); else out.push(k==='b'?'nat-skylight':'nat-crystal'); }
+ return out; }
+const GLOW_MAX=2;
+function glowAllowed(){ const sc=HS_SCENE(), key=sc+':'+(state.currentPhase||''); if(glowAllowed.k===key&&glowAllowed.t>performance.now()-800) return glowAllowed.v;
+ const G=goalHsIds(), L=HSDEF.filter(h=>h.scene===sc&&(!h.show||h.show())&&hs0State(h)==='important').map((h,i)=>({id:h.id,w:(/^(cr-|hap-)/.test(h.id)?100:0)+(G.includes(h.id)?50:0)+(h.imp&&h.imp()?10:0)-i*.01})).sort((a,b)=>b.w-a.w);
+ const top=L.some(x=>x.w>=50)?L.filter(x=>x.w>=50):L;   /* 有跟目標相關的，就只亮那些 */
+ glowAllowed.k=key; glowAllowed.t=performance.now(); glowAllowed.v=top.slice(0,GLOW_MAX).map(x=>x.id); return glowAllowed.v; }
+const hs0State=hsState;
+hsState=function(h){ const st=hs0State(h); if(st!=='important'||!INFO_ON()) return st; return glowAllowed().includes(h.id)?st:'normal'; };
+function zoneNeeded(k){ const here=zoneHere(k); return here.some(id=>!careOk(id))||(k==='spring'&&((state.carPol||{}).habitat||0)>0)||(k==='rest'&&trainStage('sanct')>=2)||(typeof reqOn==='function'&&here.some(id=>reqOn(id)))||!!document.querySelector('#layer .ov.care'); }
+HSDEF.forEach(h=>{ const m=/^hab-(spring|rings|moss|crystal|veil|rest)$/.exec(h.id); if(!m) return; const os=h.show; h.show=()=>(os?os():true)&&(!INFO_ON()||zoneNeeded(m[1])); });
+
+/* ================================================================
+   資訊減量③：系統跟著章節開放（由那一章的主角乘客帶出來）
+   舊存檔：已經走到的章節全部開放；序章與自動測試不受影響
+   ================================================================ */
+const SYS_GATE={'obs-scope':2,'obs-skybook':2,'obs-const':2,'mem-armillary':3,'nat-samples':4,'nat-codex':4,'mem-moonwrit':5};
+const SYS_NOTE={2:'車尾的展望台、望遠鏡和天象，開放了。',3:'乘客們開始會拜託你一些事；記憶車廂的日月儀開始轉動了。',4:'溫室的植物樣本架和植物生命圖鑑，開放了。',5:'切到月界的時候，會看見只有月界才有的東西。'};
+const sysOpen=n=>!(INFO_ON()&&chapOn())||chapReached(n);
+HSDEF.forEach(h=>{ const n=SYS_GATE[h.id]; if(n){ const os=h.show; h.show=()=>sysOpen(n)&&(os?os():true); }
+ if(h.id==='obs-front'){ const ol=h.lock; h.lock=()=>(ol&&ol())||(!sysOpen(2)?'通往展望台的門還鎖著……好像要等到什麼時候，才會打開。':''); } });
+HSDEF.forEach(h=>{ const m=/^vis-(.+)$/.exec(h.id); if(!m||!MOON_VIS.includes(m[1])) return; const os=h.show; h.show=()=>sysOpen(5)&&(os?os():true); });
+{ const sf=skyForecast; skyForecast=function(){ return sysOpen(2)?sf.apply(this,arguments):null; }; }
+const reqGateOk=()=>sysOpen(3);
+{ const cc=chapCheck; chapCheck=function(){ const before=state.chap?state.chap.shown.length:0; const r=cc.apply(this,arguments); const S=state.chap; if(S&&S.shown.length>before){ const n=S.shown[S.shown.length-1]; if(SYS_NOTE[n]&&INFO_ON()&&!(S.sysN||[]).includes(n)){ S.sysN=(S.sysN||[]).concat(n); save(); setTimeout(()=>noteTop('✦ '+SYS_NOTE[n]),600); } } return r; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
