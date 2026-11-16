@@ -2945,9 +2945,9 @@ const LOC_LORE={
 /* 領頭龍在航行時會聊起往事（每段一次，依旅程數解鎖） */
 const DRAGON_LORE=[
  {id:'dl_wall',need:()=>state.journeyCount>=1,lines:[['dragon','你知道列車剛才穿過的是什麼嗎？'],['self','……界壁？'],['dragon','嗯。每個世界都被一層看不見的膜包著，守住它自己的規則。穿過去的時候，另一個世界的規則會沾在你身上。'],['dragon','那就是界染。積得太深，你會被那個世界慢慢改寫。所以每次出發前，我才會請你量一量。'],['self','原來不只是例行公事。'],['dragon','列車上沒有例行公事。每一件事，都是有人用很久的時間想出來的。']]},
- {id:'dl_ferry',need:()=>state.journeyCount>=3,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的人，叫自己「渡守」。他們在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……他們不屬於日界，也不屬於月界。他們誕生在界壁上，是光與倒影交界的地方長出來的生命。'],['dragon','他們的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
- {id:'dl_dimming',need:()=>state.journeyCount>=5,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……他們走了。我不知道去了哪裡。']]},
- {id:'dl_name',need:()=>state.journeyCount>=7,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們走之前，把最後一道晨曦留在了列車裡。'],['self','……最後一道晨曦？'],['dragon','你醒來的時候，有一點光落在你身上。記得嗎？'],['dragon','那就是了。']]}
+ {id:'dl_ferry',need:()=>state.journeyCount>=2,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的人，叫自己「渡守」。他們在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……他們不屬於日界，也不屬於月界。他們誕生在界壁上，是光與倒影交界的地方長出來的生命。'],['dragon','他們的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
+ {id:'dl_dimming',need:()=>state.journeyCount>=3,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……他們走了。我不知道去了哪裡。']]},
+ {id:'dl_name',need:()=>state.journeyCount>=4,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們走之前，把最後一道晨曦留在了列車裡。'],['self','……最後一道晨曦？'],['dragon','你醒來的時候，有一點光落在你身上。記得嗎？'],['dragon','那就是了。']]}
 ];
 const LORE_CLUES={
  clue_ferrykeepers:{title:'渡守',text:'曦淵・蒼龍說，建造列車的古代守護者自稱「渡守」。他們誕生在界壁上，在每個渡口留下圓環印記，並在世界將要熄滅時趕到那裡，帶走來不及離開的生命和種子。'},
@@ -3493,7 +3493,7 @@ const ACTS=[
 function actCheck(){ ACTS.forEach(a=>{ if(!a.need()) return; const nw=a.locs.filter(l=>LOCATIONS[l].ready&&!state.unlockedLocations.includes(l)); if(!nw.length) return; state.unlockedLocations.push(...nw); save(); announce(a.say); }); }
 
 /* 結局判定：界染度＋紀念品數量 */
-const END_KEEPS=8;
+const END_KEEPS=6;
 /* 界染度 50 以上不能出發，所以用「出發前往寂滅虛空那一刻」的數值判定：純淨（20 以下）＋紀念品足夠 → 晨曦；35 以上 → 長夜 */
 function endingType(){ const d=state.storyFlags.departTaint, t=typeof d==='number'?d:TAINT.val(), k=keepsHave().length; return t>=35?'night':(t<20&&k>=END_KEEPS?'dawn':'return'); }
 const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩車尾的星光，照亮一小圈。','漂浮的碎片從光圈邊緣經過。每一片，都是一個世界最後的那一刻。','你沒有去修好它們。你只是看著。碎片就一片一片安靜下來。',
@@ -4169,7 +4169,7 @@ const DUTY_STEPS=[['cab-scan','量測身體的界染度',()=>!!state.duty.scan&&
 const dragonHere=()=>!proHold()&&(!state.storyFlags.metDragon||(state.currentPhase==='voyage'&&!state.storyFlags.voyNoDragon&&dragonVoyHere())||(state.currentPhase==='docked'&&!dragonAway()&&(state.duty.reported||DUTY_STEPS.slice(0,5).every(x=>x[2]()))));
 const dragonHereNow=()=>!state.storyFlags.voyNoDragon;
 /* 航行中，曦淵不一定一直在車頭前：有時飛到列車外面淨化界壁、在前面探路，過一段時間才回來（每一趟不一樣；序章那一趟一直都在） */
-function dragonVoyHere(){ const v=state.voyage; if(!v||(typeof proQuiet==='function'&&proQuiet())) return true; const j=state.journeyCount||0; if(j%3===0) return true;
+function dragonVoyHere(){ const v=state.voyage; if(!v||(typeof proQuiet==='function'&&proQuiet())) return true; if(loreNext()) return true;   /* 有故事想說的時候，會留在車頭前 */ const j=state.journeyCount||0; if(j%3===0) return true;
  const a=.2+((j*37)%30)/100, b=a+.22+((j*13)%20)/100, p=v.progress||0; return !(p>=a&&p<b); }
 const dutyOn=()=>!!state.introDone&&state.currentPhase==='docked'&&!proHold();
 const dutyNow=()=>DUTY_STEPS.findIndex(x=>!x[2]());
@@ -4206,7 +4206,7 @@ const ANN={q:null,t:0,iv:0,ready:0};
 function announce(text){ if(!text||!RUNNING) return; const plain=text.replace(/<b>(.*?)<\/b>/,'【$1】').replace(/<[^>]+>/g,'');
  if(state.annSeen===plain) return; state.annSeen=plain; BL.push('列車廣播',plain); save(); ANN.q=plain; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,700); }
 function announceNow(t){ ANN.q=t; clearTimeout(ANN.t); ANN.t=setTimeout(annTry,300); }
-function annTry(){ if(!ANN.q) return; if(document.querySelector('#layer .cine,#mainscreen')){ ANN.t=setTimeout(annTry,700); return; }
+function annTry(){ if(!ANN.q) return; if(document.querySelector('#layer .cine,#layer .dlg,#mainscreen')){ ANN.t=setTimeout(annTry,700); return; }
  const t=ANN.q; ANN.q=null; let el=$('#announce'); if(!el){ el=document.createElement('div'); el.id='announce'; el.setAttribute('aria-live','polite'); document.body.appendChild(el); }
  el.className='on'; el.innerHTML='<span class="an-c">♪ 列車廣播</span><div class="an-t"></div>';
  const box=el.querySelector('.an-t'); let k=0; clearInterval(ANN.iv); ANN.ready=performance.now()+500; SFX.tone(784,0,.5,'sine',.025); SFX.tone(1046,.18,.6,'sine',.025);
@@ -4443,10 +4443,10 @@ function arriveThink(v){ if(navigator.webdriver&&!window.STORY_TEST) return; Obj
   dialogueScript([[id,ARRIVE_CHAT[Math.floor(Math.random()*ARRIVE_CHAT.length)]],['self',`嗯，快到${L.name}了。`],[id,'……那，我再看一下窗外。']]); return; }
  const t=ARRIVE_THINK[v.to]||[`快到${L.name}了。`]; dialogueScript(t.map(x=>['self',x])); }
 /* 每一站的紅燈原因：停站時間，或前方有異狀 */
-const SIG_WHY=[{k:'dwell',t:'停站時間還沒到',sec:20,ann:(L)=>`各位旅客，本列車在${L}停車片刻，請在發車鈴響之前回到車廂。`},
- {k:'wall',t:'前方界壁有亂流',sec:50,ann:()=>'各位旅客，前方界壁有亂流，列車暫時停車等候。造成不便，敬請見諒。'},
- {k:'rail',t:'前方光軌正在修補',sec:40,ann:()=>'各位旅客，前方光軌正在修補，本列車將稍晚發車，請耐心等候。'},
- {k:'life',t:'有生命正在橫越光軌',sec:35,ann:()=>'各位旅客，前方有生命正在橫越光軌，列車停車讓牠們先通過。'},
+const SIG_WHY=[{k:'dwell',t:'停站時間還沒到',sec:10,ann:(L)=>`各位旅客，本列車在${L}停車片刻，請在發車鈴響之前回到車廂。`},
+ {k:'wall',t:'前方界壁有亂流',sec:25,ann:()=>'各位旅客，前方界壁有亂流，列車暫時停車等候。造成不便，敬請見諒。'},
+ {k:'rail',t:'前方光軌正在修補',sec:20,ann:()=>'各位旅客，前方光軌正在修補，本列車將稍晚發車，請耐心等候。'},
+ {k:'life',t:'有生命正在橫越光軌',sec:18,ann:()=>'各位旅客，前方有生命正在橫越光軌，列車停車讓牠們先通過。'},
  {k:'clear',t:'還沒發出發車廣播',sec:0,ann:()=>'各位旅客，列車即將出發，請回到座位坐穩。'}];   /* 沒有干擾：廣播完號誌就直接轉綠 */
 /* 序章的第一次出發：亂流只等一下下，不讓新玩家在紅燈前乾等 */
 const SIG_WALL_SHORT=Object.assign({},SIG_WHY[1],{sec:10});
@@ -4540,6 +4540,17 @@ function cabDoors(){
  dialogueScript([['self','符文燈亮了，車門全部鎖上了。記下來了。']]);
 }
 /* 向領頭報備 */
+/* 值勤交給曦淵：跑過三趟之後，沒有異常時，曦淵可以一次幫你做完 */
+function dutyAutoOk(){ if(proOn()||!state.storyFlags.dutyLearned||(state.journeyCount||0)<3||state.currentPhase!=='docked') return false;
+ const to=nextStop(); if(TAINT.val()>=50||outsideList().length||(to&&wallLv(to)==='亂流')||state.crisis) return false; return true; }
+function dutyAutoAsk(intro){ dialogueScript((intro||[]).concat([['dragon','今天的航道很平靜。'],['dragon','值勤的事……這次交給我吧？量測、符牒、廣播、號誌、車門，我一起確認。']]),()=>{
+  confirmPop('把這次的值勤交給曦淵一起確認？<br><small>（自己來也可以：按「取消」）</small>','交給你了，曦淵',()=>dutyAuto());
+  setTimeout(()=>{ const n=document.querySelector('.cpop .cpop-n'); if(n) n.addEventListener('click',()=>{ state.duty.autoNo=1; save(); render(); }); },0); }); }
+function dutyAuto(){ const d=state.duty, v=TAINT.val(), e=state.spirit.equipment; e.tablet=e.compass=e.talisman=true;
+ if(!d.scan){ const res={value:v,level:taintLevel(v),journey:state.journeyCount,at:Date.now()}; state.spirit.contamination=res; state.spirit.contaminationLog.push(res); d.scan=true; }
+ d.briefing=true; if(!d.mic){ d.mic=true; d.sigAt=Date.now(); } d.signal=true; d.doors=true; d.reported=true; d.auto=1;
+ logJ(`值勤交給曦淵一起確認（${trainNo()}）：界染度 ${v}，各項正常。`); save(); render(); SFX.chime();
+ dialogueScript([['dragon',`都確認好了。界染度 ${v}，${taintLevel(v)}；符牒、號誌、車門都沒問題。`],['dragon','把手放上控制晶盤吧，我們出發。']],()=>render()); }
 function dragonTalk(){
  const first=!state.storyFlags.metDragon;
  const intro=first?[['dragon','……你醒了。'],['dragon','我是曦淵，負責在前面拉這列車。不過什麼時候出發，我想跟你一起決定。'],['dragon','車上的大小事，就交給你這個值勤精靈了。每次要出發前，來跟我說一聲就好。'],['self','好呀，曦淵。以後請多指教。']]:[];
@@ -4547,7 +4558,10 @@ function dragonTalk(){
  if(state.currentPhase==='voyage'){ state.storyFlags.dragonLore=state.storyFlags.dragonLore||[]; const L=DRAGON_LORE.find(x=>!state.storyFlags.dragonLore.includes(x.id)&&x.need());
   if(L) return dialogueScript(intro.concat(L.lines),()=>{ state.storyFlags.dragonLore.push(L.id); if(L.clue) addClue(L.clue); logJ('航行中，曦淵說起了列車的往事。'); save(); });
   return dialogueScript(intro.concat([['self','曦淵，累不累？'],['dragon','不累。航道很穩，風也很舒服。你去車廂裡走走吧，到站了我叫你。']])); }
+ /* 停靠時也會說（值勤報備完之後） */
+ if(state.duty.reported&&loreNext()){ const L=loreNext(); return dialogueScript(intro.concat(L.lines),()=>{ state.storyFlags.dragonLore.push(L.id); if(L.clue) addClue(L.clue); logJ('曦淵說起了列車的往事。'); save(); render(); }); }
  const d=state.duty, miss=[];
+ if(dutyAutoOk()&&!d.autoNo&&!(d.scan&&d.briefing&&d.signal&&d.doors)) return dutyAutoAsk(intro);
  { const wn=wallDragonNote(); if(wn) return dialogueScript(intro.concat(wn),()=>{ logJ('向曦淵回報了界壁的觀測結果，曦淵說會繞到最薄的地方。'); render(); }); }
  if(!d.scan) miss.push('身體污染值量測'); if(!equipAll()) miss.push('航程裝備'); if(!d.briefing) miss.push('星途符牒的資訊核對');
  if(!d.signal) miss.push('前方星光號誌'); if(outsideList().length) miss.push(outsideList().map(id=>PASSENGERS[id].name).join('、')+'還在車外'); if(!d.doors) miss.push('車門聯鎖安全燈');
@@ -4619,7 +4633,7 @@ const ORIGIN_IMG=null;   /* 之後換成沉睡之地的場景圖 */
 function boardTrain(){ SFX.tone(660,0,.5,'sine',.03); transition(()=>{ state.currentPhase='docked'; state.currentCarriage='cab'; },()=>{ arrivalChecks(); },true); }
 function startDeparture(){
  const dest=nextStop(), from=state.currentLocation, fromName=LOCATIONS[from].name, away=dragonAway();
- state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; deckWander(); state.storyFlags.departTaint=TAINT.val(); state.storyFlags.voyBless=state.blessNext||null; state.blessNext=null; { const o=state.duty.obs, sv=o&&o.to===dest&&o.told?WALL_SAVE[o.lv]:0, base=voyBless()==='deer'?Math.round(TAINT_GAIN[realmKey(dest)].cross/2):TAINT_GAIN[realmKey(dest)].cross; const BC=CONSTS.find(x=>x.id===voyBless()), miss=BC&&BC.sky!==realmKey(dest)?4:0; TAINT.add(Math.max(0,base-sv-(miss?0:((BLESS[voyBless()]||{}).calm||0)))+miss); if(miss){ logJ(`${BC.name}的祝福和往${LOCATIONS[dest].name}的航道不合，穿過界壁時身上更沉重了。`); setTimeout(()=>sense(`（……${BC.name}的光，和這條航道不太合。身上有一點沉重。）`),6000); } state.voyage.light=state.storyFlags.starLight?1:0; } { const m=state.voyage.mods=voyMods(state.voyage); constRecAdd(voyBless(),'use'); if(m.syn){ constRecAdd(voyBless(),'syn'); setTimeout(()=>sense(`（觀測到的航程，和${CONSTS.find(c=>c.id===voyBless()).name}的傾向很合。）`),7000); } if(m.calm) TAINT.add(-m.calm); const tp=trainStage('repair'); if(tp>=3){ TAINT.add(-(tp-2)); setTimeout(()=>sense('（穿過界壁的時候，列車替我擋下了一點界染。）'),9000); } }
+ state.currentPhase='voyage'; state.voyage={from,to:dest,progress:0,evt:false,sky:skyForecast(dest)}; { const sk=state.voyage.sky; if(sk&&SKY[sk.type]) setTimeout(()=>{ if(state.voyage&&state.voyage.sky===sk&&!sk.ended) toast(`星象預報：這趟會有${SKY[sk.type].name}，大約在航程 ${Math.round(sk.at*100)}% 出現。到火車尾的展望台等著吧`); },4200); } deckWander(); state.storyFlags.departTaint=TAINT.val(); state.storyFlags.voyBless=state.blessNext||null; state.blessNext=null; { const o=state.duty.obs, sv=o&&o.to===dest&&o.told?WALL_SAVE[o.lv]:0, base=voyBless()==='deer'?Math.round(TAINT_GAIN[realmKey(dest)].cross/2):TAINT_GAIN[realmKey(dest)].cross; const BC=CONSTS.find(x=>x.id===voyBless()), miss=BC&&BC.sky!==realmKey(dest)?4:0; TAINT.add(Math.max(0,base-sv-(miss?0:((BLESS[voyBless()]||{}).calm||0)))+miss); if(miss){ logJ(`${BC.name}的祝福和往${LOCATIONS[dest].name}的航道不合，穿過界壁時身上更沉重了。`); setTimeout(()=>sense(`（……${BC.name}的光，和這條航道不太合。身上有一點沉重。）`),6000); } state.voyage.light=state.storyFlags.starLight?1:0; } { const m=state.voyage.mods=voyMods(state.voyage); constRecAdd(voyBless(),'use'); if(m.syn){ constRecAdd(voyBless(),'syn'); setTimeout(()=>sense(`（觀測到的航程，和${CONSTS.find(c=>c.id===voyBless()).name}的傾向很合。）`),7000); } if(m.calm) TAINT.add(-m.calm); const tp=trainStage('repair'); if(tp>=3){ TAINT.add(-(tp-2)); setTimeout(()=>sense('（穿過界壁的時候，列車替我擋下了一點界染。）'),9000); } }
  try{ livingDepart(); }catch(e){} try{ crNode('depart'); }catch(e){}
  if(voyBless()) setTimeout(()=>toast(`✦ 這一趟受到${CONSTS.find(c=>c.id===voyBless()).name}的護佑・${BTYPE[BLESS_TYPE[voyBless()]][0]}`),1800); CAB.reset(); save(); SFX.depart();   /* 穿越界壁：界染度增加 */
  /* 不切到過場畫面：駕駛室窗外的風景一邊改變，一邊用文字說出啟程 */
@@ -5824,7 +5838,7 @@ const SKY_LINE={
  eclipse:{pyro:'日和月重疊了。……大地發抖的時候，天空也是這樣暗下來。',aelis:'暮色。白天裡的暮色。是我的時間。',frost:'光變冷了。'}
 };
 const SKY_FANS=['sola','leviathaurora','felinia','sirenora','aelis','frost'];   /* 喜歡天空的乘客：星象出現時會自己去展望台 */
-const SKY_WIN=.22;
+const SKY_WIN=.35;
 function skyForecast(dest){ const jc=state.journeyCount, moon=realmKey(dest)==='moon', list=moon?['aurora','tide','meteor']:['meteor','eclipse'];
  if(jc<2) return null;   /* 新手的前兩趟航行沒有星象 */
  return {type:list[jc%list.length],at:+(.45+((jc*37)%25)/100).toFixed(2),started:false,ended:false,watched:false}; }
@@ -7480,7 +7494,7 @@ const HSDEF=[
  {id:'cab-disc',scene:'cab',name:'控制晶盤',at:{x:50,y:49},layer:3,act:()=>discPanel(),track:false},
  {id:'cab-compass',scene:'cab',name:'星軌羅盤座',at:{x:28.7,y:51},layer:2,act:'cab:runes'},
  {id:'cab-dragon',scene:'cab',name:'曦淵・蒼龍',at:{x:52,y:17},layer:4,act:'cab:dragon',track:false,show:()=>dragonHere(),
-  imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)||(state.currentPhase==='voyage'&&DRAGON_LORE.some(x=>x.need()&&!(state.storyFlags.dragonLore||[]).includes(x.id)))},
+  imp:()=>!state.storyFlags.metDragon||(state.currentPhase==='docked'&&dutyReady()&&!state.duty.reported)||(!!loreNext()&&(state.currentPhase==='voyage'||state.duty.reported))},
  /* 值勤準備（原整備前廊）：全部在駕駛室完成 */
  {id:'cab-scan',scene:'cab',name:'淨界晶環',at:{x:9.6,y:52},layer:3,act:'prep:scan',track:false,imp:()=>state.currentPhase==='docked'&&(!state.duty.scan||!!(state.spirit.contamination&&state.spirit.contamination.value>=50)),done:()=>!!state.duty.scan&&!(state.spirit.contamination&&state.spirit.contamination.value>=50)},
  {id:'cab-equip',scene:'cab',name:'裝備台',at:{x:89.4,y:62},layer:3,act:'prep:equip',track:false,imp:()=>!equipAll(),done:()=>equipAll()},
@@ -8337,7 +8351,7 @@ function crFalseEnd(){ const C=state.crisis; C.done=1; C.result='false'; crRecor
 /* ---------- 精靈的行動：預防（爆發前）或應變（爆發後） ---------- */
 function crCanPay(cost){ for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ if((state.energy==null?80:state.energy)<v) return '能源不夠'; } else if(k==='purify'){ if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)&&!(typeof proOn==='function'&&proOn())) return '身上沒有可以淨化的材料'; }   /* 序章裡沒辦法採集，淨化不需要材料（防卡關） */ else if(matCount(k)<v) return `需要${MATS[k].name} ×${v}`; } return null; }
 function crPay(cost){ const used=[]; for(const [k,v] of Object.entries(cost||{})){ if(k==='energy'){ state.energy=(state.energy==null?80:state.energy)-v; used.push('能源 '+v); } else if(k==='purify'){ const f=Object.entries(MATS).find(([m,M])=>M.use==='purify'&&matCount(m)>0); if(f){ state.materials[f[0]]--; used.push(MATS[f[0]].name); } else used.push('列車的光'); } else { state.materials[k]-=v; used.push(MATS[k].name+' ×'+v); } } return used; }
-function crActList(){ const C=state.crisis; if(!C) return []; const E=CRISES[C.id], W4=C.stage==='W4';
+function crActList(){ const C=state.crisis; if(!C) return []; const E=CRISES[C.id], W4=C.stage==='W4'; if(C.id==='T01'&&(C.intel||0)<2&&!W4) return ['observe','ask'];   /* 序章的第一個異常：先只做觀察和詢問 */
  const keys=['observe','ask','askXi'].concat(C.intel>=2||W4?Object.keys(E.eff).filter(k=>!['ask','askXi','intel'].includes(k)):['route','pause','inspect','isolate']);   /* 判斷不清楚時，只看得到一般的選項 */
  const uniq=[...new Set(keys)].filter(k=>CR_ACT[k]&&!(W4&&(k==='observe'||k==='pause'))&&(k!=='xiyuan'||W4||C.sevN>=3)&&(k!=='pax'));
  return uniq.map(k=>{ const A=CR_ACT[k], why=(A.need&&A.need())||crCanPay(A.cost)||(C.acts.includes(k)&&k!=='observe'?'已經做過了':null); return {k,n:A.n,d:A.d,why,hint:C.intel>=3&&E.eff[k]&&E.eff[k]!=='intel'?'✦':''}; }); }
@@ -8448,9 +8462,13 @@ const crBlockDepart=()=>act3DepartBlock()||(trainStatus().run==='stop'?'列車�
 
 const hsView=h=>{ const C=CARRIAGES[h.scene]; if(!C||!C.views||VIEW_BOTH.includes(h.id)) return true; if(h.scene==='observation') return (h.id==='obs-back'?0:1)===(state.oview||0); return (VIEW_BACK.includes(h.id)?1:0)===(state[vKey(h.scene)]||0); };
 function hsList(scene){ return HSDEF.filter(h=>h.scene===scene&&(!h.show||h.show())&&hsView(h)); }
+/* 棲息車廂：乘客很多時，一次只讓最需要的兩位發亮（請求 > 第一次見面 > 有新故事） */
+function paxGlowTop(){ const k=state.journeyCount+':'+state.currentCarriage+':'+(state.currentPhase||''); if(paxGlowTop.k===k&&paxGlowTop.t>performance.now()-1500) return paxGlowTop.v;
+ const L=HSDEF.filter(h=>/^(hab-p-|rm-p-)/.test(h.id)&&h.scene===HS_SCENE()&&(!h.show||h.show())&&h.imp&&h.imp()).map(h=>{ const id=h.id.replace(/^(hab-p-|rm-p-)/,''), s=(state.passengers||{})[id]||{}; return {id:h.id,w:(typeof reqOn==='function'&&reqOn(id)?3:0)+(!(s.talks)?2:0)+((s.talks||0)<((PASSENGERS[id]||{}).talks||[]).length?1:0)}; }).sort((a,b)=>b.w-a.w);
+ paxGlowTop.k=k; paxGlowTop.t=performance.now(); paxGlowTop.v=L.slice(0,2).map(x=>x.id); return paxGlowTop.v; }
 function hsState(h){
  if(h.lock&&h.lock()) return 'locked';
- if(h.imp&&h.imp()) return 'important';
+ if(h.imp&&h.imp()){ if(/^(hab-p-|rm-p-)/.test(h.id)&&!paxGlowTop().includes(h.id)) return 'normal'; return 'important'; }
  if(h.done) return h.done()?'done':'normal';
  const seen=seenOf(h.id);
  if(seen!==undefined&&seen!==hsVer(h)) return 'important';           // 讀過之後有新內容
@@ -10139,18 +10157,28 @@ function goalNow(){ if(!state||!state.introDone) return null; const a4=state.act
    if(!a6.resolved) return {t:'處理月界的異常：月輝潮汐',sub:'觀察徵兆、陪陪不安的乘客'}; return {t:'淨化沾上界染的車廂',sub:'駕駛室的控制晶盤'}; }
   if(ep&&!ep.done) return {t:'和索拉一起下車，看看星河浮島'};
   return null; }
- const Q=mainQuest(), cur=Q.find(x=>!x.done); return cur?{t:cur.t,sub:cur.sub}:{t:'自由地旅行吧',sub:'下一站，你來決定'}; }
+ const Q=mainQuest(), cur=Q.find(x=>!x.done);
+ if(cur&&cur.k==='lore'&&!loreNext()){ const g=SIDE_GOALS.find(x=>!x.done()); if(g) return {t:g.t,sub:'這一趟的小目標・'+g.sub}; }   /* 主線要等下一趟：給一個這一趟做得到的小目標 */
+ return cur?{t:cur.t,sub:cur.sub}:{t:'自由地旅行吧',sub:'下一站，你來決定'}; }
+const loreNext=()=>{ const f=state.storyFlags; f.dragonLore=f.dragonLore||[]; return DRAGON_LORE.find(x=>!f.dragonLore.includes(x.id)&&x.need())||null; };
+const SIDE_GOALS=[
+ {t:'讀封存種子・甲封印上的刻紋',sub:'森羅溫室的種子典藏櫃',done:()=>sq('a')>=1},
+ {t:'在培育艙種下一顆種子',sub:'種子典藏櫃裡的種子，點培育艙就能種',done:()=>(state.pods||[]).some(Boolean)||(state.grown||[]).length>0},
+ {t:'和新上車的乘客聊聊',sub:'棲息車廂',done:()=>Object.keys(state.passengers||{}).some(id=>id!=='sola'&&(state.passengers[id].talks||0)>0)},
+ {t:'用望遠鏡找找星光裡的影子',sub:'星月觀測車廂',done:()=>(state.scopeSeen||[]).length>0},
+ {t:'到火車尾的展望台看看',sub:'星月觀測車廂再往後走',done:()=>(state.carSeen||[]).includes('observatory')}];
 function mainQuest(){ const f=state.storyFlags, j=state.journeyCount||0, op=k=>seedOpen('seed_ancient_'+k), keeps=keepsHave().length, ended=!!state.ending;
  const ab=(op('a')?1:0)+(op('b')?1:0);
  return [
   {k:'seal',t:'到森羅溫室的種子典藏櫃，看看那三枚封存的種子',done:!!f.sealSeen||ab>0,sub:'它們是渡守留下的古種，封印還沒有解開'},
-  {k:'lore',t:`到駕駛室，聽曦淵說說列車的故事（旅程 ${Math.min(j,7)}/7）`,done:state.clues.includes('clue_dragon'),sub:'多跑幾趟旅程，曦淵會慢慢說給你聽'},
+  {k:'lore',t:`到駕駛室找曦淵聊聊，聽列車的故事（${(f.dragonLore||[]).length}/${DRAGON_LORE.length}）`,done:state.clues.includes('clue_dragon'),sub:loreNext()?'航行中，或出發前報備完之後，點曦淵就會說':'下一段故事，要再開一趟車才會說'},
   {k:'a',t:SEEDQ.a.goal[Math.min(sq('a'),2)],done:op('a'),sub:SEEDQ.a.sub[Math.min(sq('a'),2)]},
   {k:'b',t:SEEDQ.b.goal[Math.min(sq('b'),2)],done:op('b'),sub:SEEDQ.b.sub[Math.min(sq('b'),2)]},
   {k:'c',t:SEEDQ.c.goal[Math.min(sq('c'),2)],done:op('c'),sub:SEEDQ.c.sub[Math.min(sq('c'),2)]},
   {k:'end',t:`帶著乘客的紀念品（${Math.min(keeps,END_KEEPS)}/${END_KEEPS}），前往寂滅虛空`,done:ended,sub:'出發前，讓身上的界染度保持在 20 以下'}]; }
 /* 筆記本的任務頁：分類 —— 主線／列車的日常／乘客的請求／栽培與收集／月界的事 */
 function questCats(){ const C=[], li=(t,st)=>({t,st:st||'on'});
+ if(!proOn()&&state.prologueDone){ const S=SIDE_GOALS.filter(x=>!x.done()).slice(0,3); if(S.length) C.push({k:'side',n:'旅途的小目標',L:S.map(x=>li(x.t+'（'+x.sub+'）'))}); }
  if(!proOn()){ const Q=mainQuest(), cur=Q.findIndex(x=>!x.done); C.push({k:'main',n:'主線：封存的古種',L:Q.map((x,i)=>i>cur&&cur>=0?li('……','lock'):li(x.t,x.done?'done':'on'))}); }
  const D=[]; if(state.introDone&&state.currentPhase==='docked'&&typeof dutyOn==='function'&&dutyOn()){ const left=DUTY_STEPS.filter(d=>!d[2]()).length; if(left) D.push(li(`出發前的值勤：還有 ${left} 項（駕駛室標著 ✦ 的裝置）`)); }
  if(TAINT.val()>=20) D.push(li(`身上的界染度 ${TAINT.val()}：到溫室的沙發休息，或到棲息車廂的靈泉淨身`));
