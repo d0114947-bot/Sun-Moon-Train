@@ -61,5 +61,16 @@ with sync_playwright() as p:
     ok('Q1 goal line top-left', '種子典藏櫃' in ev("document.querySelector('#hud .goal')?.innerText||''"))
     ev("document.querySelector('#hud .goal').click()"); W(1200); ok('Q2 goal opens the notebook task page', '主線' in ev("document.querySelector('.ov.notebook').innerText")); clean()
     ev("state.pods=[null,null,null,null];state.grown=[];state.seedBag={};render()"); W(500); ok('U1 no seed: no pods yet', not ev("document.querySelector('#scene [data-hs^=nat-pod]')") or True)
+    # 月界五項
+    ev(BASE+"state.prologueDone=true;state.currentCarriage='nature';state.trainMoon=true;state.storyFlags.natureLight='moon';state.pods=[{p:'dewmoss',st:0,j:0},null,null,null];save();render()"); W(700); clean()
+    dl=ev("Object.keys(PLANTS).find(p=>PLANTS[p].light==='dawn')"); ev(f"state.pods=[{{p:'{dl}',st:0,j:0}},null,null,null];gardenGrow()"); ok('X1 moon train: dawn plant untended does not grow', ev("state.pods[0].st")==0)
+    ev(f"state.pods=[{{p:'{dl}',st:0,j:0,tk:1}},null,null,null];gardenGrow()"); ok('X1b tended: grows', ev("state.pods[0].st")>0)
+    ev("state.spirit.taint=40;TAINT.purify('spring',6)"); ok('X2 moon train: spring purify halved', ev("TAINT.val()")==37)
+    ev("Math.random=()=>0.1;moonTide()"); W(3000); ok('X3 skylight in the moon: tide adds taint', ev("TAINT.val()")==40); clean()
+    sun='felinia'
+    ev(f"state.passengers['{sun}']={{stage:1,talks:0,records:[{{j:1,t:'於晨曦森林登上列車，在自然棲台落腳。'}}],aboard:true,left:false,boardedJourney:1}};talk('{sun}')"); W(600); ok('X4 sun passenger is sleepy in the moon train (no new story)', '揉了揉眼睛' in ev("document.querySelector('#layer .dlg')?.innerText||''") and ev(f"state.passengers['{sun}'].talks")==0); clean()
+    ev("spiritPanel()"); W(700); ok('X5 mirror: moon look', ev("!!document.querySelector('.mirrorov.moonlook')")); clean()
+    ev("notebookPanel('quest')"); W(1200); t=ev("document.querySelector('.ov.notebook').innerText"); ok('Q3 task page grouped', all(k in t for k in ['主線','列車的日常','栽培與收集','月界的事']), t[:300]); clean()
+    ok('F1 codex rows readable (16px)', ev("(()=>{const d=document.createElement('div');d.className='ov jr plantcodex';d.innerHTML='<p class=\"cdx-r\">x</p>';document.body.appendChild(d);const v=getComputedStyle(d.firstChild).fontSize;d.remove();return v})()")=='16px')
     ok('Z no page errors', not errs, errs)
     print('ALL PASS' if all(R) else 'SOME FAIL', len(R))

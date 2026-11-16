@@ -1063,6 +1063,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .drw-face small{margin-left:auto;font-size:12px;opacity:.7}.drw-knob{width:22px;height:8px;border-radius:4px;background:linear-gradient(180deg,#f3dca0,#a8873f);box-shadow:0 1px 2px rgba(0,0,0,.5)}
 .drw-in{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.3,.7,.3,1)}.drw-in>.jars{overflow:hidden;min-height:0;transform:translateY(-12px);opacity:0;transition:transform .45s,opacity .35s;padding:0 10px}
 .drw.open .drw-in{grid-template-rows:1fr}.drw.open .drw-in>.jars{transform:none;opacity:1;padding:8px 10px 12px}.drw.open .drw-face{background:linear-gradient(180deg,rgba(255,226,160,.18),rgba(0,0,0,.1))}
+.mirrorov.moonlook .me-fig{filter:saturate(.35) sepia(.25) hue-rotate(185deg) brightness(1.18) drop-shadow(0 0 18px rgba(170,200,255,.7))}.mir-moon{color:#c9d6ff}
 .go-back{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:center;gap:0;border:0;background:none;color:#f3e2b4;cursor:pointer;padding:6px 18px;opacity:.78;transition:opacity .2s,transform .2s;-webkit-tap-highlight-color:transparent}
 .go-back svg{width:46px;height:28px;filter:drop-shadow(0 0 6px rgba(0,0,0,.8)) drop-shadow(0 0 10px rgba(232,201,131,.45));animation:gobk 2.2s ease-in-out infinite}
 .go-back span{font-family:var(--f-display);font-size:12px;letter-spacing:.12em;text-shadow:0 1px 4px #000;opacity:0;transition:opacity .2s}
@@ -1608,6 +1609,13 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .ov.jr .page p,.ov.jr .jr-in.page p{font-size:clamp(17px,2vw,19px);line-height:1.85}
 .ov.jr .page h5,.ov.jr .jr-in.page h5{font-size:20px}
 .ov.jr .page .tally,.ov.jr .page p.aside{font-size:16px}
+/* 所有書本／筆記本樣式的視窗：字級與段落跟記憶車廂的書一致（內文 17–19px、行高 1.85、小字不小於 15px） */
+.ov.jr .jr-in.page small,.ov.jr .jr-in.page .jr-sub{font-size:15px;line-height:1.7}
+.ov.jr .jr-in.page li{font-size:clamp(16px,1.8vw,18px)}
+.ov.jr .jr-in.page .nb-list em{font-size:14px}
+.ov.jr .jr-in.page .jr-no{font-size:15px}.ov.jr .jr-in.page .jr-me::before{font-size:14px}.ov.jr .jr-in.page .jr-photo figcaption{font-size:15px}.ov.jr .jr-in.page .nb-x{font-size:15px}.ov.jr .jr-in.page .sb-c small{font-size:15px}.ov.jr .jr-in.page .nb-empty{font-size:16px}.ov.jr .jr-in.page .nb-who h3 small{font-size:14px}
+.ov.jr .cdx-r{font-size:16px;line-height:1.75;margin:2px 0}.ov.jr .cdx-r b{min-width:5.5em}
+.ov.jr .jr-in.page .qs-now{font-size:clamp(17px,2vw,19px);color:#2e2418}.ov.jr .jr-in.page .qs-cat{font-size:20px;margin:18px 0 4px;color:#5a3f22;letter-spacing:.08em}
 .ov.jr.lorebook .jr-in.page h5{position:relative;display:inline-flex;padding-bottom:6px}
 .ov.jr.lorebook .jr-in.page h5::after{content:"";position:absolute;left:-4px;right:-10px;bottom:0;height:9px;background:no-repeat center/100% 100% url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'><path d='M2 6 C 40 2, 80 9, 120 5 S 180 3, 198 6' fill='none' stroke='%237a5a30' stroke-width='1.8' stroke-linecap='round'/><path d='M8 8 C 60 5, 110 9, 190 7' fill='none' stroke='%237a5a30' stroke-width='.9' stroke-linecap='round' opacity='.6'/></svg>")}
 .scrib{font-size:16px!important;color:#8a5a2a!important;transform:rotate(-2.5deg);margin:18px 0 0 auto!important;max-width:15em;text-align:right;line-height:1.6}
@@ -1934,7 +1942,7 @@ body.old-echo #scene{animation:oldflick 2.2s ease-in-out 2}body.old-echo .evo-gl
 /* 生命種子庫 */
 .keep-row{margin-top:8px;font-size:13.5px;line-height:1.8}.keep-row b{color:#f3e2b4;font-weight:500;margin:0 6px 0 10px}.keep-row b:first-child{margin-left:0}.keep-row small{display:block;opacity:.75}.vit{padding:1px 8px;border-radius:999px;border:1px solid}.vit.v3{color:#b8f0a0}.vit.v2{color:#e8e0c0}.vit.v1{color:#ffb8a0}
 .vine-topics{flex-wrap:wrap;gap:6px}.vine-topics .btn{font-size:12.5px;padding:4px 10px}.vine-say{margin-top:8px;font-size:13.5px;line-height:1.75}
-.cdx-r{margin:1px 0;line-height:1.5;font-size:13px}.cdx-r b{display:inline-block;min-width:6em;color:#6b5434}.cdx-r.lock{opacity:.45}.cdx-pic{height:64px;display:flex;align-items:center;justify-content:center;margin:2px 0}.cdx-pic img{max-height:64px}.plantcodex .jr-sub{margin-bottom:2px}.ov.plantcodex p.cdx-r{font-size:12.5px!important;line-height:1.45!important;margin:0 0 1px!important}.ov.plantcodex .jr-h{margin-bottom:0!important}.cdx-pic.unk{opacity:.5;font-size:13px}.endg{font-size:12px;color:#b04a3a;border:1px solid;border-radius:4px;padding:0 4px}
+.cdx-r{margin:1px 0;line-height:1.5;font-size:13px}.cdx-r b{display:inline-block;min-width:6em;color:#6b5434}.cdx-r.lock{opacity:.45}.cdx-pic{height:64px;display:flex;align-items:center;justify-content:center;margin:2px 0}.cdx-pic img{max-height:64px}.plantcodex .jr-sub{margin-bottom:2px}.ov.plantcodex p.cdx-r{font-size:16px!important;line-height:1.7!important;margin:0 0 2px!important}.ov.plantcodex .jr-h{margin-bottom:0!important}.cdx-pic.unk{opacity:.5;font-size:13px}.endg{font-size:12px;color:#b04a3a;border:1px solid;border-radius:4px;padding:0 4px}
 /* 危機 */
 body.cr-alert #scene::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;box-shadow:inset 0 0 90px rgba(255,150,80,.35);animation:cralert 2.4s ease-in-out infinite}@keyframes cralert{50%{box-shadow:inset 0 0 40px rgba(255,150,80,.12)}}
 body.cr-disaster #scene::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:5;box-shadow:inset 0 0 140px rgba(200,40,60,.5);animation:cralert 1.8s ease-in-out infinite}
@@ -4493,7 +4501,7 @@ function podDrawer(focus,hsid){ let sel=focus||0;
      api.set({note:`<span class="hdw-seed">${seedImg(p)?`<img src="${seedImg(p)}" alt="">`:''}</span>把${Q.seed}輕輕放進培育液裡。<br>種子慢慢沉下去，停在發光的液體中間，輕輕地轉了一圈。`,items:[{t:'再看一下',on:()=>draw(`${Q.seed}靜靜地浮在${POD_N[sel]}艙裡。……好像在適應新的家。`)}]}); }}); });
    } else if(c.st>=2){ if(!note) note=`${P.name}開花了！`; items.push({t:'收成',cls:'on',on:()=>harvest()},{t:'陪它一下',on:()=>touch()});
    } else { const ok=lightOk(c), tended=c.tk===stopKey(), nx=P.rare&&c.st===0?'長出葉子':'開花';
-    if(!note) note=`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。<br>${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了。':'光不對……去晶石那邊調一下光，或是陪它一下。'}`;
+    if(!note) note=`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。<br>${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了。':'光不對……去晶石那邊調一下光，或是陪它一下。'}${state.trainMoon&&P.light==='dawn'?'<br>月界的列車裡照不到晨光，要多陪陪它才會長。':''}`;
     items.push({t:'陪它一下',on:()=>touch()}); const w=waterBtns(sel); if(w) items.push({html:w}); }
    if((state.grown||[]).length) items.push({html:purifyBtn('plant')});
    api.set({note,items}); };
@@ -4585,7 +4593,7 @@ const TAINT={
  pool(){ const p=state.spirit.pur; if(!p||p.key!==this.key()) state.spirit.pur={key:this.key(),used:[]}; return state.spirit.pur.used; },
  used(k){ return this.pool().includes(k); },
  once(k){ if(this.used(k)) return false; this.pool().push(k); return true; },
- purify(k,n,msg,log){ if(!this.once('p:'+k)) return false; this.add(-n); try{ trainTAdd(-1); }catch(e){} if(log) logJ(log+'，界染度下降。'); if(msg) toast(msg); SFX.tone(1175,0,1.2,'sine',.03); save(); return true; },
+ purify(k,n,msg,log){ if(!this.once('p:'+k)) return false; if(state.trainMoon&&(k==='vine'||k==='spring')){ n=Math.ceil(n/2); log=log&&log+'（月界的界染比較重，效果減半）'; } this.add(-n); try{ trainTAdd(-1); }catch(e){} if(log) logJ(log+'，界染度下降。'); if(msg) toast(msg); SFX.tone(1175,0,1.2,'sine',.03); save(); return true; },
  fx(){ const v=state.spirit.taint||0, b=document.body; if(!b) return; b.classList.toggle('taint-mild',RUNNING&&v>=20&&v<50); b.classList.toggle('taint-heavy',RUNNING&&v>=50); try{ resFx(); }catch(e){} try{ envFx(); }catch(e){} }
 };
 const realmKey=loc=>LOCATIONS[loc]&&LOCATIONS[loc].realm==='日界'?'sun':'moon';
@@ -5190,7 +5198,7 @@ function boarding(id,line,next){
   const first=!state.discoveredLifeforms.includes(id);
   complete('board_'+id); if(first) state.discoveredLifeforms.push(id);
   const s=state.passengers[id]||(state.passengers[id]={stage:0,talks:0,records:[]});
-  Object.assign(s,{aboard:true,left:false,boardedJourney:state.journeyCount,zone:p.zone});   /* 登車時先到自己原本的區域 */
+  Object.assign(s,{aboard:true,left:false,boardedJourney:state.journeyCount,zone:p.zone}); if(!s.boardLoc) s.boardLoc=state.currentLocation;   /* 登車時先到自己原本的區域 */
   s.records.push({j:state.journeyCount,t:`${state.currentPhase==='voyage'?'於航行途中':'於'+LOCATIONS[state.currentLocation].name}登上列車，在${ZONES[p.zone].name}落腳。`});
   logJ(`${p.name}（${LIFE_TYPES[p.type]}）登上了列車。`); save();
   const ov=document.createElement('div'); ov.className='ov board';
@@ -5521,7 +5529,7 @@ function takeNote(id,i,mk){ const N=NOTES[id]; if(!N) return; state.notes=state.
  a.push(i); save(); if(mk){ mk.classList.add('got'); mk.title='已記下'; } SFX.tone(1568,0,.25,'triangle',.025);
  toast(`🗒️ 記下：${N.list[i].n}`); const tip=mk&&mk.closest('.box')&&mk.closest('.box').querySelector('.hl-tip'); if(tip&&!mk.closest('.tx').querySelector('mark.hl:not(.got)')) tip.remove(); }
 /* 筆記本（HUD 的 🗒️） */
-function notebookPanel(go){
+function notebookPanel(go){ const qStart=()=>{ const n=ids().length+1; return n+(n%2); };
  const ids=()=>Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id));
  const pages=()=>[`<h3 class="jr-h">筆記本</h3><p class="jr-sub">值勤精靈的隨身筆記</p><p class="jr-p">聽乘客說話的時候，發光的字句點一下，就會記在這裡。</p><p class="jr-p">回到記憶典藏車廂，在「世界與生物圖鑑」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>${ids().length?'':'<p class="nb-empty">還沒有遇見任何乘客。</p>'}`]
   .concat(ids().map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
@@ -5533,7 +5541,7 @@ function notebookPanel(go){
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
- return journal({cls:'notebook',title:'筆記本',page:go==='quest'?ids().length+1:0,pages:()=>{ const P=pages(); P[0]+=reqSection()+bankNoteSection()+crNoteSection(); return P.concat([questSection()]); },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])).concat([['任務',ids().length+1]]),
+ return journal({cls:'notebook',title:'筆記本',page:go==='quest'?qStart():0,pages:()=>{ const P=pages(); P[0]+=reqSection()+bankNoteSection()+crNoteSection(); if(P.length%2) P.push(''); return P.concat(questPages()); },tabs:[['筆記',0]].concat(ids().map((id,k)=>[PASSENGERS[id].name,k+1])).concat([['任務',qStart()]]),
   onClick:(e,ov)=>{ const b=e.target.closest('[data-erase]'); if(!b) return; const [id,i]=b.dataset.erase.split(':'); state.notes[id]=notesOf(id).filter(x=>x!==+i); save(); ov.refresh(); }}); }
 /* 圖鑑：未整理的欄位顯示放入筆記的空格 */
 function fileSlot(id,k){ return `<div class="file-slot" data-who="${id}" data-sec="${k}"><button class="slot-btn" data-file="${id}:${k}">✎ 尚未整理・放入筆記</button></div>`; }
@@ -6438,7 +6446,7 @@ function seedIntro(){ if(state.storyFlags.seedTalk) return; state.storyFlags.see
  setTimeout(()=>dialogueScript([['self','（手心裡多了一顆小小的種子。）'],['self','回到列車之後，先把它收進森羅溫室的種子典藏櫃吧。'],
   ['self','稀有的種子，要先請守望藤看看是什麼，再用溫室中央的晶石，調成它喜歡的光。常見的種子，什麼光都可以。'],
   ['self','然後找一個空的培育艙種下去。停靠的時候常去陪陪它，就算光不對也會長。'],['self','航行一趟、兩趟……它就會開花了。']],()=>render()),900); }
-function gardenGrow(){ const nb=[]; (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; if(c.slow){ c.slow=0; return; }   /* 衰弱的種子：多等一趟才發芽 */ const P=PLANTS[c.p]; if(lightOk(c)||c.tk||voyBless()==='train'||(state.storyFlags.lastMods||{}).bloom){ c.st=P.rare?c.st+1:2; if(c.st>=2) nb.push(c.p); } c.tk=null; }); if(nb.length) setTimeout(()=>nb.forEach(p=>bloomCall(p)),6000); }
+function gardenGrow(){ const nb=[]; (state.pods||[]).forEach(c=>{ if(!c||c.st>=2) return; if(c.slow){ c.slow=0; return; }   /* 衰弱的種子：多等一趟才發芽 */ const P=PLANTS[c.p]; if(state.trainMoon&&P.light==='dawn'&&!c.tk) return;   /* 月界的列車：晨光植物只有被陪伴才會長 */ if(lightOk(c)||c.tk||voyBless()==='train'||(state.storyFlags.lastMods||{}).bloom){ c.st=P.rare?c.st+1:2; if(c.st>=2) nb.push(c.p); } c.tk=null; }); if(nb.length) setTimeout(()=>nb.forEach(p=>bloomCall(p)),6000); }
 function podLightNote(){ return ''; }
 function podLightNoteOld(){ const L=(state.pods||[]).map((c,k)=>c&&c.st<2?`${POD_N[k]}艙・${PLANTS[c.p].name}（${PLANTS[c.p].light==='any'?'什麼光都可以':'喜歡'+LIGHT_N[PLANTS[c.p].light]} ${lightOk(c)?'✓':'✗'}）`:null).filter(Boolean);
  return L.length?`<p class="envkv">${L.join('　')}</p>`:''; }
@@ -6554,7 +6562,7 @@ function gardenPanel(focus){ const ov=panel('','stage garden'), pn=ov.querySelec
     :meSay(`${POD_N[sel]}艙是空的，可是典藏櫃裡沒有能種的種子了。下車的時候，留意地上閃著微光的東西。`);
   } else if(c.st>=2){ side+=(say?'':meSay(`${P.name}開花了！`))+`<div class="row"><button class="btn" id="g-harvest">收成</button><button class="btn ghost" id="g-touch">陪它一下</button></div>`;
   } else { const ok=lightOk(c), tended=c.tk===stopKey(), nx=P.rare&&c.st===0?'長出葉子':'開花';
-   if(!say) side+=meSay(`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。它${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了，下一趟還是會長。':'光不對，這樣它不會長……去晶石那邊調一下光，或是陪它一下。'}${skyOf(c.p).length?`<br><small>聽說航行中遇到${skyOf(c.p).map(k=>SKY[k].name).join('或')}時，打開溫室的天窗，它會一下子開花。</small>`:''}`);
+   if(!say) side+=meSay(`${P.name}${c.st===1?'正在長葉子':'剛種下去'}。它${P.light==='any'?'什麼光都可以':`喜歡${LIGHT_N[P.light]}，現在是${LIGHT_N[m]}`}。${ok?`照這樣下去，航行一趟就會${nx}。`:tended?'光不對，不過今天陪過它了，下一趟還是會長。':'光不對，這樣它不會長……去晶石那邊調一下光，或是陪它一下。'}${state.trainMoon&&P.light==='dawn'?'月界的列車裡照不到晨光，要多陪陪它才會長。':''}${skyOf(c.p).length?`<br><small>聽說航行中遇到${skyOf(c.p).map(k=>SKY[k].name).join('或')}時，打開溫室的天窗，它會一下子開花。</small>`:''}`);
    side+=`<div class="row"><button class="btn ${tended?'ghost':''}" id="g-touch">陪它一下</button>${waterBtns(sel)}</div>`; }
   if(st&&st.g.t==='種下種子') side+=meSay('選一個空的培育艙，把種子放進去。常見的種子航行一趟就會開花；稀有的種子要兩趟，而且要照對光。<br>停靠的時候來陪陪它們，就算光不對也會長。');
   if(st&&st.g.t==='收成') side+=meSay('收成的時候，會拿到植物和新的種子。植物可以送給乘客，也可以擺進棲息車廂。');
@@ -8122,7 +8130,7 @@ function sofaRest(){ if(TAINT.used('p:vine')) return sense('（沙發還是暖�
  const f=document.createElement('div'); f.className='nap-fade'; f.innerHTML=`<img class="nap-me" src="${ME_SLEEP}" alt="">`; document.body.appendChild(f); SFX.tone(392,0,2.4,'sine',.012);
  setTimeout(()=>{ const t0=TAINT.val(); TAINT.purify('vine',PURIFY.vine.n,null,PURIFY.vine.log); hsRefresh();
   setTimeout(()=>{ f.classList.add('out'); setTimeout(()=>f.remove(),1300);
-   dialogueScript([['self','（在沙發上躺下來，閉上眼睛。）'],['self',t0>=10?'……睡了一會兒。守望藤的藤葉垂下來，輕輕蓋在身上。身上的沉重感，淡了一些。':'……睡了一會兒。醒來的時候，藤葉輕輕蓋在身上。']],()=>render()); },1400); },1300); }
+   dialogueScript([['self','（在沙發上躺下來，閉上眼睛。）']].concat(state.trainMoon?[['self','（月光很重。藤葉只能洗去一半的界染。）']]:[]).concat([['self',t0>=10?'……睡了一會兒。守望藤的藤葉垂下來，輕輕蓋在身上。身上的沉重感，淡了一些。':'……睡了一會兒。醒來的時候，藤葉輕輕蓋在身上。']]),()=>render()); },1400); },1300); }
 /* 接收者：沿用晨曦森林的古樹、星河浮島的星河 */
 HSDEF.forEach(h=>{ const r=Object.keys(RCV).find(k=>RCV[k].hs===h.id); if(!r) return; const oa=h.act, ol=h.layer, oimp=h.imp;
  h.act=el=>{ if(rcvAct(r)) return; if(typeof oa==='function') return oa(el); if(oa) return runAct(oa); whisper(el,typeof h.hint==='function'?h.hint():h.hint); };
@@ -10140,10 +10148,48 @@ function mainQuest(){ const f=state.storyFlags, j=state.journeyCount||0, op=k=>s
   {k:'ab',t:`前往逆生之境和無界迴廊，喚醒封存的種子（${ab}/2）`,done:ab>=2,sub:'可以在星月觀測車廂的導航裝置改航道'},
   {k:'c',t:'前往時隙之海，喚醒最後一枚封存種子',done:op('c')},
   {k:'end',t:`帶著乘客的紀念品（${Math.min(keeps,END_KEEPS)}/${END_KEEPS}），前往寂滅虛空`,done:ended,sub:'出發前，讓身上的界染度保持在 20 以下'}]; }
-function questSection(){ const G=goalNow(), Q=proOn()?[]:mainQuest(), cur=Q.findIndex(x=>!x.done);
- return `<h3 class="jr-h">任務</h3><p class="jr-sub">值勤精靈現在要做的事</p><h3 class="jr-h" style="margin-top:14px">現在的目標</h3><p class="jr-p qs-now">${G?G.t:'自由地旅行吧'}${G&&G.sub?`<br><small>${G.sub}</small>`:''}</p>`
-  +(Q.length?`<h3 class="jr-h" style="margin-top:14px">主線：封存的古種</h3><ul class="nb-list qs-list">${Q.map((x,i)=>i>cur&&cur>=0?`<li class="qs-lock"><span>……</span></li>`:`<li class="${x.done?'filed':''}"><span>${x.t.replace(/（.*?）$/,'')}</span><em>${x.done?'完成 ✦':'進行中'}</em></li>`).join('')}</ul>`:'')
-  ; }
+/* 筆記本的任務頁：分類 —— 主線／列車的日常／乘客的請求／栽培與收集／月界的事 */
+function questCats(){ const C=[], li=(t,st)=>({t,st:st||'on'});
+ if(!proOn()){ const Q=mainQuest(), cur=Q.findIndex(x=>!x.done); C.push({k:'main',n:'主線：封存的古種',L:Q.map((x,i)=>i>cur&&cur>=0?li('……','lock'):li(x.t,x.done?'done':'on'))}); }
+ const D=[]; if(state.introDone&&state.currentPhase==='docked'&&typeof dutyOn==='function'&&dutyOn()){ const left=DUTY_STEPS.filter(d=>!d[2]()).length; if(left) D.push(li(`出發前的值勤：還有 ${left} 項（駕駛室標著 ✦ 的裝置）`)); }
+ if(TAINT.val()>=20) D.push(li(`身上的界染度 ${TAINT.val()}：到溫室的沙發休息，或到棲息車廂的靈泉淨身`));
+ const pol=Object.entries(state.carPol||{}).filter(([k,v])=>v>0).map(([k])=>CARRIAGES[k]&&CARRIAGES[k].name).filter(Boolean); if(pol.length) D.push(li(`沾上界染的車廂：${pol.join('、')}（駕駛室的控制晶盤可以淨化）`));
+ (state.repairs||[]).filter(r=>!r.done).forEach(r=>D.push(li('待修復：'+r.t)));
+ if(D.length) C.push({k:'daily',n:'列車的日常',L:D});
+ const R=Object.keys(REQ).filter(id=>reqOf(id)).map(id=>{ const r=reqOf(id); return li(`${PASSENGERS[id].name}：${REQ[id].goal}`,r.st==='on'?'on':'done'); }); if(R.length) C.push({k:'req',n:'乘客的請求',L:R});
+ const G=[], pods=state.pods||[], seeds=Object.keys(PLANTS).filter(p=>seedN(p)>0);
+ if(pods.some(c=>c&&c.st>=2)) G.push(li('培育艙裡有花開了：去收成吧'));
+ if(seeds.length&&pods.some(c=>!c)&&HSDEF.find(h=>h.id==='nat-pod-a').show()) G.push(li(`種子典藏櫃裡有 ${seeds.length} 種種子可以種`));
+ if(!proOn()&&(state.grown||[]).length) G.push(li(`已經種出 ${(state.grown||[]).length} 種植物（植物樣本架、植物生命圖鑑）`,'done'));
+ if(!proOn()&&state.prologueDone) G.push(li(`乘客的紀念品：${Math.min(keepsHave().length,END_KEEPS)}/${END_KEEPS}`,keepsHave().length>=END_KEEPS?'done':'on'));
+ if(G.length) C.push({k:'grow',n:'栽培與收集',L:G});
+ const M=[]; if(state.trainMoon){ M.push(li('列車現在是月界的樣子：晨光照不進溫室、淨化效果減半、打開天窗偶爾會有月輝潮汐','on'));
+  if(pods.some(c=>c&&c.st<2&&PLANTS[c.p].light==='dawn')) M.push(li('培育艙裡的晨光植物，要多陪陪才會長'));
+  const tired=Object.keys(state.passengers||{}).filter(id=>{ const x=state.passengers[id]; return x.aboard&&!x.left&&homeRealm(id)==='sun'&&x.talks<PASSENGERS[id].talks.length; }); if(tired.length) M.push(li(`日界來的乘客（${tired.map(id=>PASSENGERS[id].name).join('、')}）在月光下會累，回到日界再聽他們說故事`)); }
+ if(M.length) C.push({k:'moon',n:'月界的事',L:M});
+ return C; }
+function questPages(){ const h=questSection(), k=h.indexOf('<h4 class="qs-cat">',h.indexOf('<h4 class="qs-cat">')+1); return k>0?[h.slice(0,k),h.slice(k)]:[h]; }
+function questSection(){ const G=goalNow(), C=questCats();
+ return `<h3 class="jr-h">任務</h3><p class="jr-sub">值勤精靈現在要做的事</p><p class="jr-p qs-now">${G?G.t:'自由地旅行吧'}${G&&G.sub?`<br><small>${G.sub}</small>`:''}</p>`
+  +C.map(c=>`<h4 class="qs-cat">${c.n}</h4><ul class="nb-list qs-list">${c.L.map(x=>`<li class="${x.st==='done'?'filed':x.st==='lock'?'qs-lock':''}"><span>${x.t.replace(/（[^）]*）$/,x.st==='on'?'$&':'')}</span>${x.st==='lock'?'':`<em>${x.st==='done'?'完成 ✦':'進行中'}</em>`}</li>`).join('')}</ul>`).join(''); }
+/* ================================================================
+   月界的列車（其餘四項）
+   ③ 月界時打開天窗、觀賞天象：偶爾會有月輝潮汐灌進來，界染增加
+   ④ 月界出身的乘客在月界比較有精神；日界出身的乘客會累，不說新的故事
+   ⑤ 映心鏡：月界時，鏡中的精靈是月光的樣子（只有外觀）
+   ================================================================ */
+const homeRealm=id=>{ const P=PASSENGERS[id], x=(state.passengers||{})[id]; let k=P&&P.home||x&&x.boardLoc;
+ if(!k&&x&&x.records){ const r=x.records.map(r=>(r.t.match(/於(.+?)登上列車/)||[])[1]).find(Boolean); if(r) k=Object.keys(LOCATIONS).find(l=>LOCATIONS[l].name===r); }   /* 出身：故鄉，或是在哪一站上車 */
+ const L=k&&LOCATIONS[k]; return L?(L.realm==='日界'?'sun':L.realm==='月界'?'moon':''):''; };
+function moonTide(){ if(!state.trainMoon||Math.random()>=.3) return; setTimeout(()=>{ TAINT.add(3); try{ trainTAdd(1); }catch(e){} save(); sense('（月輝像潮水一樣從天窗灌了進來……身上沾了一點界染。）'); },2600); }
+{ const sk=skylight; skylight=function(){ const r=sk.apply(this,arguments); if(skyNow()) moonTide(); return r; };
+  const sw=skyWatch; skyWatch=function(){ const r=sw.apply(this,arguments); moonTide(); return r; }; }
+{ const t0=talk; talk=function(id,next){ const s=state.passengers[id], P=PASSENGERS[id];
+  if(state.trainMoon&&P&&s&&!proOn()&&state.currentPhase!=='outside'){ const r=homeRealm(id), fresh=s.talks<P.talks.length;
+   if(r==='sun'&&fresh) return dialogue(id,[`（${P.name}揉了揉眼睛。）`,'……月光好重，我有點睏。等回到日界的光裡，再跟你說吧。'],null,()=>{ render(); next&&next(); });
+   if(r==='moon'&&!fresh) sense(`（${P.name}在月光裡，看起來很有精神，想多聊一下。）`); }
+  return t0.apply(this,arguments); }; }
+{ const sp=spiritPanel; spiritPanel=function(){ const r=sp.apply(this,arguments); const ov=document.querySelector('.ov.mirrorov'); if(ov&&state.trainMoon){ ov.classList.add('moonlook'); const f=ov.querySelector('.mir-feel'); if(f) f.insertAdjacentHTML('afterbegin','<span class="mir-moon">鏡子裡的你，是月光的樣子。</span><br>'); } return r; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
