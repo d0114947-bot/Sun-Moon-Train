@@ -4,7 +4,7 @@ R=[]
 def ok(n,c,x=''): R.append(bool(c)); print(('PASS ' if c else 'FAIL ')+n,'' if c else x,flush=True)
 BASE=open('tchap.py').read().split('BASE="')[1].split('"\n')[0]
 PAX="".join([f"state.discoveredLifeforms.push('{x}');state.passengers['{x}']={{stage:1,talks:1,records:[],aboard:true,left:false,boardedJourney:2,zone:PASSENGERS['{x}'].zone}};" for x in ['felinia','leviathaurora','cinder','pyro','vandora']])
-CH1="state.chap={said:{},arr:{},ended:[],shown:[1],legacy:0};"
+CH1="state.chap={said:{},arr:{},ended:[],shown:[1],legacy:0,crys1:1};"
 with sync_playwright() as p:
     b=p.chromium.launch(); pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
@@ -58,7 +58,7 @@ with sync_playwright() as p:
     ev("state.chap.ended=[1];state.chap.said[1]=1;state.chap.shown=[1];closeAll();state.currentCarriage='cab';render();chapCheck()"); W(1200)
     ok('I11 chapter two: card shown', '渡守的圓環' in (ev("document.querySelector('#layer .cine')?.innerText")or''))
     drain(); W(2000)
-    ok('I12 chapter two: the deck and telescope open, with a note', ev("HSDEF.find(h=>h.id==='obs-scope').show()") and ev("hsState(HSDEF.find(h=>h.id==='obs-front'))")!='locked' and '展望台' in ''.join(ev("BL.map?BL.map(x=>x.t||x[1]||'').join('|'):''") if False else [ev("(state.backlog||[]).map(x=>x.t).join('|')")]), ev("(state.backlog||[]).slice(-4)"))
+    ok('I12 chapter two: the deck and telescope open, with a note', ev("HSDEF.find(h=>h.id==='obs-scope').show()") and ev("hsState(HSDEF.find(h=>h.id==='obs-front'))")!='locked' and '望遠鏡' in ''.join(ev("BL.map?BL.map(x=>x.t||x[1]||'').join('|'):''") if False else [ev("(state.backlog||[]).map(x=>x.t).join('|')")]), ev("(state.backlog||[]).slice(-4)"))
     ok('I13 armillary waits for chapter three', not ev("HSDEF.find(h=>h.id==='mem-armillary').show()"))
     ev(BASE+"state.storyFlags.dragonLore=['dl_wall','dl_ferry','dl_dimming','dl_name'];state.clues=['clue_dragon'];delete state.chap;state.currentLocation='dawnForest';render()"); W(600)
     ok('I14 old save: everything up to its chapter is open', ev("sysOpen(2)&&sysOpen(3)&&sysOpen(4)"))

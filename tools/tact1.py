@@ -87,6 +87,7 @@ with sync_playwright() as p:
     W(2500); until("ACT1._dbg().P.vt<1",8000); pg.click('.a1-icon')
     ok('G5 success -> thought',until("document.querySelector('.a1-th.on')",15000) and 'water' in D()['got'])
     ok('G6 returns to idle',until("!ACT1._dbg().busy&&!ACT1._dbg().lock&&!document.querySelector('.a1-big.on')",30000))
+    until("ACT1._dbg().got.includes('still')",60000); until("!ACT1._dbg().saying&&!ACT1._dbg().busy&&!ACT1._dbg().lock",30000); W(1500)
     ok('G7 same condition not repeated',(pg.click('.a1-icon'),until("document.querySelector('.a1-say').textContent.includes('沒有任何感覺')",10000))[1] and D()['got'].count('water')==1)
     until("!ACT1._dbg().busy&&!ACT1._dbg().saying",10000)
     # passive: hover still long enough after first

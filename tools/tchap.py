@@ -15,6 +15,7 @@ with sync_playwright() as p:
             if ev("!!document.querySelector('#layer .cine')"): seen.append(cinetext()); ev("document.querySelector('#layer .cine').click()")
             elif ev("!!document.querySelector('#layer .dlg')"):
                 tx=pg.inner_text('#layer .dlg'); seen.append(tx)
+                if ev("!!document.querySelector('#layer .dlg .chs button')"): ev("[...document.querySelectorAll('#layer .dlg .chs button')].pop().click()"); W(300); continue
                 if seen.count(tx)>3: ev("document.querySelector('#layer .dlg').remove()"); continue
                 ev("document.querySelector('#layer .dlg .box')?.click();document.querySelector('#layer .dlg')?.click()")
             elif ev("!!document.querySelector('#layer .board')"): ev("document.querySelector('#layer .board #hi')?.click()")
@@ -27,7 +28,9 @@ with sync_playwright() as p:
     ev(BASE+"state.currentLocation='starIslands';state.currentCarriage='cab';save();PANO.active=null;RUNNING=true;render()"); W(1500)
     ok('C1 chapter one title card', '界壁的另一邊' in cinetext() and '第一章' in cinetext(), cinetext())
     drain()
-    ok('C2 goal names the chapter', '第一章' in ev("goalNow().sub") and '晨曦森林' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
+    ok('C2 goal names the chapter; first beat: the memory crystal', '第一章' in ev("goalNow().sub") and '回憶水晶' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
+    ev("HSDEF.find(h=>h.id==='mem-crystal').act();closeAll()"); W(300)
+    ok('C2b then: go to the forest', '晨曦森林' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
     ok('C3 only the first story is ready', ev("loreNext()&&loreNext().id")=='dl_wall')
     x4=ev("Array.from({length:40},()=>rollBoarders()).flat()");ok('C4 heroes never board at random', all(not x.startswith('board_treeling') for x in x4), x4)
     # 航行：聽故事
@@ -41,7 +44,12 @@ with sync_playwright() as p:
     ok('C8 the hero boards with the chapter line', ev("aboard('treeling')") and any('老樹' in x for x in seen), seen[:2])
     ok('C9 the hero glows', ev("hsState(HSDEF.find(h=>h.id==='hab-p-treeling'))")=='important')
     seen=drain()
-    ok('C10 hero tells the chapter story', any('界壁' in x for x in seen0) and ev("state.chap.said[1]===1"), seen[:3])
+    ok('C10 hero tells the chapter story and asks a favour', any('界壁' in x for x in seen0) and any('拓下來' in x for x in seen0) and ev("state.chap.said[1]===1"), seen[:3])
+    ok('C10b the deck opens for the favour', ev("hsState(HSDEF.find(h=>h.id==='obs-front'))")!='locked' and '刻紋' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
+    ev("state.engr=(state.engr||[]).concat('dawnForest');closeAll();render()"); W(300)
+    ok('C10c next: compare in the rubbing book', '拓本' in ev("goalNow().t"))
+    ev("HSDEF.find(h=>h.id==='mem-rubbing').act();closeAll();render()"); W(1500); seen0=drain()
+    ok('C10d thanks + a seed', any('渡守' in x for x in seen0) and ev("(state.seedBag||{}).sunfern")>=1 and ev("state.chap.heart[1]===1"), seen0[:3])
     W(1500); seen=seen0+drain()
     ok('C11 chapter end card, then chapter two card', any('第一章・完' in x for x in seen) and any('渡守的圓環' in x for x in seen), seen)
     ok('C12 the end of chapter one: ancient stage 2', ev("trainStage('ancient')")>=2)
@@ -57,10 +65,11 @@ with sync_playwright() as p:
     # 第四章：逆生之境
     ev("closeAll();state.currentPhase='voyage';state.voyage={from:'dawnForest',to:'reverseRealm',progress:1,evt:true,sky:null};sqSet('a',1);voyageArrive()"); drain()
     ok('C19 arriving at reverseRealm: titan waits', 'chb_4' in ev("state.boardQ||[]") and ev("state.chap.arr[4]===1"), ev("JSON.stringify([state.boardQ,state.chap])"))
-    ev("closeAll();state.currentCarriage='habitat';render();checkCarriageEvents()"); W(800); seen=drain()
-    ok('C20 titan tells about the reversed light', any('倒著流的光' in x for x in seen) and ev("state.chap.said[4]===1"))
-    ok('C21 goal now: wake the seed', '晨光' in ev("goalNow().t") or '窗' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
+    ev("closeAll();state.currentCarriage='habitat';render();checkCarriageEvents()"); W(800); seen=drain(45000)
+    ok('C20 titan tells about the reversed light, asks to see a dawn flower', any('倒著流的光' in x for x in seen) and any('花開' in x for x in seen) and ev("state.chap.said[4]===1"), [x[:30] for x in seen])
+    ok('C21 goal now: make a dawn plant bloom', '晨光的植物' in ev("goalNow().t"), ev("JSON.stringify(goalNow())"))
+    ev("state.grown=(state.grown||[]).concat('sunfern');render()"); W(300)
     ev("state.seedOpen=(state.seedOpen||[]).concat('seed_ancient_a');render()"); W(1500); seen=drain()
-    ok('C22 chapter four ends; nature grows', any('第四章・完' in x for x in seen) and ev("trainStage('nature')")>=2, seen[:3])
+    ok('C22 titan thanks you, then chapter four ends; nature grows', any('醒了' in x for x in seen) and any('第四章・完' in x for x in seen) and ev("trainStage('nature')")>=2 and ev("(state.seedBag||{}).mossgrass")>=1, seen[:5])
     ok('Z no page errors', not errs, errs)
     print('ALL PASS' if all(R) else 'SOME FAIL', len(R))
