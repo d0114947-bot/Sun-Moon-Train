@@ -1,0 +1,63 @@
+# 危機：乘客各自的解法／每趟航行一件當下要決定的事
+from playwright.sync_api import sync_playwright
+R=[]
+def ok(n,c,x=''): R.append(bool(c)); print(('PASS ' if c else 'FAIL ')+n,'' if c else x,flush=True)
+BASE=open('tchap.py').read().split('BASE="')[1].split('"\n')[0]
+def pax(ids,st=2): return "".join([f"state.discoveredLifeforms.push('{x}');state.passengers['{x}']={{stage:{st},talks:3,records:[],aboard:true,left:false,boardedJourney:2,zone:PASSENGERS['{x}'].zone}};" for x in ids])
+def solbtns(ev): return ev("[...document.querySelectorAll('.crov [data-pax]')].map(b=>b.textContent)")
+with sync_playwright() as p:
+    b=p.chromium.launch(); pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
+    pg.on('pageerror',lambda e:errs.append(str(e)))
+    pg.goto('http://127.0.0.1:8766/'); W(1000)
+    ev(BASE+pax(['felinia','leviathaurora'])+"state.currentPhase='voyage';state.voyage={from:'dawnForest',to:'starIslands',progress:.3,evt:true};save();PANO.active=null;RUNNING=true;render()"); W(600)
+    # 危機：解法跟著乘客走
+    ev("crStart('A01',{real:true,sev:2});state.crisis.intel=2;state.crisis.stage='W2';save();crPanel()"); W(600)
+    L1=solbtns(ev); print(L1)
+    ok('P1 each passenger offers its own solution', any('羽貓獸：聽風' in t for t in L1) and any('淵光巨：用身體擋著' in t for t in L1), L1)
+    ok('P2b no separate 詢問乘客 once everyone offers ideas', 'ask' not in ev("crActList().map(a=>a.k)"))
+    ok('P2 old generic header gone', '請乘客幫忙' not in ev("document.querySelector('.crov').textContent"))
+    ev("document.querySelector('.crov [data-pax=\"felinia\"]').click()"); W(400)
+    ok('P3 sense solution: passenger speaks and crisis becomes clear', '風在發抖' in ev("document.querySelector('.crov .cr-msg').textContent") and ev("state.crisis.intel")==3)
+    W(2000); r0=ev("state.crisis.reduce||0")
+    ev("document.querySelector('.crov [data-pax=\"leviathaurora\"]').click()"); W(400)
+    ok('P4 defend solution lowers the crisis', ev("state.crisis.reduce")==r0+1)
+    ev("closeAll();state.crisis=null;state.crCalm=0;"+pax(['pyro','titan'])+"state.passengers.felinia.aboard=false;state.passengers.leviathaurora.aboard=false;crStart('A01',{real:true,sev:2});state.crisis.intel=2;state.crisis.stage='W2';save()"); W(400)
+    ev("crPanel()"); W(600); L2=solbtns(ev)
+    ok('P5 different passengers → different solutions', any('苔淵巨靈：蹲下來當牆' in t for t in L2) and not any('羽貓獸' in t for t in L2), L2)
+    ev("closeAll();state.crisis=null;"+pax(['sola'])+"crStart('A01',{real:true,sev:2});state.crisis.intel=2;state.crisis.stage='W2';save()"); W(300)
+    r=ev("crPaxSol('sola')")
+    ok('P6 realm solution can steer around the danger', ev("state.crisis")==None and '潮水' in r['t'], r)
+    ev("state.crisis=null;"+pax(['vandora'],0)+"crStart('B01',{real:true,sev:3});state.crisis.intel=2;state.crisis.stage='W2';save()")
+    r=ev("crPaxSol('vandora')")
+    ok('P7 a passenger who barely knows you does not help', ev("(state.crisis.reduce||0)")==0 and '還不太認識你' in r['t'], r)
+    ev("closeAll();state.crisis=null;save()")
+    # 當下要決定
+    ev(pax(['skyfox'])+"state.materials=state.materials||{};state.materials.mosslight=0;save();decideNow('lights')"); W(500)
+    opts=ev("[...document.querySelectorAll('.decov [data-dec]')].map(b=>b.textContent)")
+    ok('D1 decision card with a passenger option', len(opts)==3 and any('藍羽雲狐' in o for o in opts), opts)
+    ok('D2 countdown bar is shown', ev("!!document.querySelector('.decov .dec-bar i')"))
+    t0=ev("state.passengers.skyfox.trust||0")
+    ev("document.querySelector('.decov [data-dec=\"pax\"]').click()"); W(300)
+    ok('D3 passenger option: trust + reward + result text', ev("state.passengers.skyfox.trust")==t0+1 and ev("matCount('mosslight')")==1 and '光群' in ev("document.querySelector('.decov .dec-res').textContent"))
+    ok('D4 voyage marked as decided', ev("state.voyage.dec")=='lights')
+    ev("closeAll()"); W(400)
+    p0=ev("state.voyage.progress"); ev("decideNow('short')"); W(300); ev("document.querySelector('.decov [data-dec=\"go\"]').click()"); W(300)
+    d5=ev("state.voyage.progress")-p0; ok('D5 shortcut moves the train ahead', .119<d5<.2, [d5,ev('state.voyage.fin')])
+    ev("closeAll()"); W(400)
+    tt=ev("TAINT.val()"); ev("decideNow('sos')"); W(300); ev("closeAll()"); W(900)
+    ok('D6 not deciding still has a consequence', ev("TAINT.val()")==tt+1, [tt,ev("TAINT.val()")])
+    ev("state.materials=state.materials||{};state.materials.mosslight=0;decideNow('lights')"); W(300); ev("document.querySelector('.decov [data-dec=\"slow\"]').click()"); W(200); ev("closeAll()"); W(300)
+    ok('D7 some consequences wait for the next stop', ev("!!state.decEcho"))
+    ev("voyageArrive()"); W(600)
+    ok('D8 next stop: the little lights leave moss', ev("matCount('mosslight')")==2 and not ev("state.decEcho"))
+    ok('D9 rotation skips the one just used', ev("decPick()")!=ev("state.decLast"))
+    # 航行中自動出現
+    ev("closeAll();window.DEC_TEST=1;state.currentPhase='voyage';state.journeyCount=3;state.crisis=null;state.voyage={from:'dawnForest',to:'starIslands',progress:.8,evt:true};PACE.last=0;save()")
+    found=False
+    for _ in range(20):
+        W(500)
+        if ev("!!document.querySelector('.decov')"): found=True; break
+    ok('D10 appears by itself during the voyage, once', found and ev("!!state.voyage.dec"))
+    ok('Z no page errors', not errs, errs)
+    b.close()
+print('TOTAL',sum(R),'/',len(R))

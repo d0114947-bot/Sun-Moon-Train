@@ -316,6 +316,19 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+.crov .cr-sol{display:flex;flex-direction:column;gap:6px}
+.crov .cr-sol .btn{text-align:left;justify-content:flex-start}
+.decov .panel{max-width:560px}
+.decov .dec-sit{font-size:17px;line-height:1.9;margin:6px 0 14px}
+.decov .dec-bar{height:4px;border-radius:4px;background:rgba(255,236,190,.18);overflow:hidden;margin:0 0 14px}
+.decov .dec-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ffe9a8,#f3c97a);transform-origin:left;animation:decT var(--dt,25s) linear forwards}
+@keyframes decT{to{transform:scaleX(0)}}
+.decov .dec-opts{display:flex;flex-direction:column;gap:8px}
+.decov .dec-opts .btn{text-align:left;justify-content:flex-start;line-height:1.5}
+.decov .dec-opts .btn small{display:block;opacity:.75;font-size:13px}
+.decov .dec-res{font-size:16px;line-height:1.9;margin-top:6px}
+@media (prefers-reduced-motion:reduce){.decov .dec-bar i{animation-duration:var(--dt,25s)}}
+
 .booknav{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:6;max-width:94vw}
 .booknav .bn-t{font:600 13px/1 var(--serif,serif);color:#f3e6c4;opacity:.75;align-self:center;margin-right:4px;letter-spacing:.08em}
 .booknav button{font:15px/1 inherit;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,236,190,.35);background:rgba(20,18,36,.78);color:#f6ecd2;cursor:pointer}
@@ -8451,7 +8464,7 @@ function crPanel(){ const C=state.crisis, D=state.disaster, T=trainStatus(), E=C
  else if(C&&!C.done&&(C.stage!=='W1'||C.intel>0)){ const L=crActList();
   body=`<h3 class="prep-h">${C.intel>=3?E.n:C.intel>=2?CR_CAT[E.cat]:'不對勁的感覺'}${C.intel>=3?`<small>・${CR_SEV['S'+C.sevN]}・${CR_PREV[E.prev]}</small>`:''}</h3><p class="prep-b">${CR_W[C.stage]}・${INTEL_N[C.intel]}${C.intel>=3?`<br>${E.inv}`:''}</p>${C.signs.length?`<p class="cs-rec">看到的徵兆：${C.signs.map(s=>s.replace(/[（）]/g,'')).join('／')}</p>`:''}
   <div class="cr-acts">${L.map(a=>`<button class="btn ${a.why?'ghost dis':'ghost'}" data-cr="${a.k}" ${a.why?'disabled':''} title="${esc(a.d)}">${a.hint}${a.n}${a.why?`<small>（${a.why}）</small>`:''}</button>`).join('')}</div>
-  ${C.stage==='W4'||C.intel>=2?`<h3 class="prep-h">請乘客幫忙</h3><div class="cr-acts">${Object.keys(PASSENGERS).filter(aboard).map(id=>{ const fit=(CR_ABIL[id]||[]).filter(t=>E.pax.includes(t)); const asked=C.pax.find(p=>p.id===id&&p.k!=='info'); return `<button class="btn ghost ${fit.length?'':'dis'}" data-pax="${id}" ${fit.length&&!asked?'':'disabled'}>${nm(id)}<small>${fit.length?'・'+fit.map(t=>ABIL_N[t]).join('、'):'・幫不上忙'}${paxSt(id)!=='ok'?'・'+PAX_ST_N[paxSt(id)]:''}${asked?'・'+({active:'協助中',agree:'協助中',calm:'協助中',refuse:'拒絕了'}[asked.k]||''):''}</small></button>`; }).join('')||'<small>車上沒有乘客。</small>'}</div>`:''}
+  ${C.stage==='W4'||C.intel>=2?crSolHtml(C,E):''}
   ${C.stage==='W4'?`<div class="zask"><button class="btn" data-cr-go>${C.acts.length?'就這樣應對':'什麼都不做，撐過去'}</button></div>`:''}<p class="cr-msg"></p>`; }
  else { const P=Object.entries(state.carPol||{}).filter(([c,v])=>v>0), R=(state.repairs||[]).map((r,i)=>[r,i]).filter(([r])=>!r.done), hurt=Object.keys(PASSENGERS).filter(id=>aboard(id)&&['hurt','care','polluted','scared'].includes(paxSt(id)));
   body=`<h3 class="prep-h">列車狀態</h3><p class="prep-b">${TRAIN_RUN_N[T.run]}${T.shield?'・防護結界受損':''}${T.energyBad?'・能源異常':''}${T.offroute?'・偏離航線':''}<br>列車狀態：${CR_TIER[crTier()][1]}（修復 ${repairPct()}%）・能源 ${Math.round(state.energy==null?80:state.energy)}</p>
@@ -8461,7 +8474,7 @@ function crPanel(){ const C=state.crisis, D=state.disaster, T=trainStatus(), E=C
  const ov=panel(`<div class="eyebrow">駕駛室・控制晶盤</div><h2>${D&&D.st<4?'緊急狀態':C&&!C.done?'應變':'列車狀態'}</h2>${body}`,'small crov'); const msg=t=>{ const m=ov.querySelector('.cr-msg'); if(m) m.textContent=t; };
  const re=()=>{ closeOv(ov); setTimeout(()=>{ if(state.crisis||state.disaster||(state.repairs||[]).some(r=>!r.done)||trainStatus().run!=='normal') crPanel(); },320); };
  ov.querySelectorAll('[data-cr]').forEach(b=>b.onclick=()=>{ const r=crDo(b.dataset.cr); if(!r) return; if(r.end){ closeOv(ov); return; } msg(r.t); setTimeout(re,1300); });
- ov.querySelectorAll('[data-pax]').forEach(b=>b.onclick=()=>{ const r=crAskPax(b.dataset.pax); msg(r.t); setTimeout(re,1500); });
+ ov.querySelectorAll('[data-pax]').forEach(b=>b.onclick=()=>{ const r=crPaxSol(b.dataset.pax); if(r.end){ closeOv(ov); return; } msg(r.t); setTimeout(re,1900); });
  const go=ov.querySelector('[data-cr-go]'); if(go) go.onclick=()=>{ const r=crResolve(); closeOv(ov); if(r) setTimeout(()=>dialogueScript([['self',{succ:'……撐過去了。',part:'危機控制住了。可是，留下了一些傷。',fail:'……沒能擋住。'}[r.res]]].concat(r.lines.map(t=>['self',t+'。'])),()=>{ if(r.res!=='succ') sense('（到駕駛室的列車核心，可以看到需要修復的地方。）'); render(); }),360); };
  ov.querySelectorAll('[data-dis]').forEach(b=>b.onclick=()=>{ const w=crDisAct(b.dataset.dis); if(w) return msg(w); re(); });
  ov.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>{ const w=crRepair(+b.dataset.rep); if(w) return msg(w); re(); });
@@ -10765,6 +10778,123 @@ function dustRun(why){ const ov=document.createElement('div'); ov.className='dus
   if(c) logJ(`危機中，在展望台接住了 ${c} 份星塵${good?'，補進了結界':''}。`,'find'); save(); ov.classList.add('end');
   ov.querySelector('.dg-t').innerHTML=c?`接住了 ${c} 份星塵。<br><small>${good?'星塵補進了結界的裂縫，這次的危機會輕一點。剩下的收進了種子典藏櫃。':'還不夠補好結界……接到的收進了種子典藏櫃。'}</small>`:'星塵從指縫間溜走了……';
   setTimeout(()=>{ ov.remove(); render(); },2800); },10400); }
+
+/* ================================================================
+   危機：車上的乘客，各自有自己的解法。同一個危機，車上有誰，解法就不一樣。
+   每位乘客依自己的兩種能力，各有一句話、一種做法；能力對得上這次的危機才會出現。
+   願不願意幫忙，還是看熟不熟（paxWill）。
+   ================================================================ */
+const CR_SOL={
+ sola:{care:['唱潮汐的歌','我來唱歌！大家聽著聽著，就不會那麼怕了。'],realm:['順著星潮走','星河的潮水在往那邊退……跟著它走，就不會撞上。']},
+ felinia:{sense:['聽風','……風在發抖。從左邊來的。我聽得見。'],realm:['找風的縫','山谷裡的風，總會留一條縫。我帶路。']},
+ leviathaurora:{defend:['用身體擋著','……我在前面。光，我替你們擋。'],realm:['沉到下面去','……往下。深一點的地方，比較安靜。']},
+ cinder:{combat:['張帆迎上去','哼，讓我來。我的帆，可不是只會好看。'],sense:['看火星飄的方向','火星往哪裡飄，危險就從哪裡來。我看得見。']},
+ aelis:{sense:['豎起耳朵','噓——你聽。那個聲音，越來越近了。'],know:['翻自己的筆記','我以前讀過！這種時候，要先……等我一下。']},
+ pyro:{combat:['用角頂回去','站到我後面。這種事，交給我。'],defend:['守住車門','我守著門。什麼都進不來。']},
+ vandora:{sense:['在暗處看','……暗的地方，我看得比較清楚。那裡，有東西。'],know:['小聲說出看過的事','我……我以前在夜裡看過這個。牠怕光。']},
+ frost:{defend:['結一道冰牆','……冰。夠厚了。'],combat:['冰住牠的腳','……別動。']},
+ sirenora:{care:['用霧包住大家','霧裡很安全。大家靠過來，慢慢呼吸。'],nature:['讓霧澆一澆','植物們口渴了。霧，可以讓它們安靜下來。']},
+ titan:{defend:['蹲下來當牆','……我，很大。躲在我後面。'],nature:['讓苔長出來','……苔，會把壞掉的地方，慢慢蓋住。']},
+ lynx:{combat:['撲上去','我去。你們待著。'],sense:['巡一圈','我巡過了。只有那邊，味道不對。']},
+ strider:{sense:['用鼻子追','交給我。這個味道，我追得到。'],realm:['找出走得通的路','我走過很多界。這條路，我認得。']},
+ windkoi:{realm:['逆著亂流游','亂流也是水。我知道怎麼游過去。'],sense:['讀風的鱗片','風的鱗片翻過來了……前面不對勁。']},
+ mnemo:{know:['想起熄滅的世界','我記得……有一個世界，也遇過這個。那時候，是這樣做的。'],nature:['把濁氣收進憶泡','把沉重的東西，交給我。我收得下。']},
+ yixi:{know:['說出森林的記憶','……我的森林，也碰過這種事。要先護住根。'],realm:['在界壁上點光','……我是光。界壁認得我。']},
+ cabbfrog:{nature:['叫醒葉子','呱。葉子們，醒醒！'],care:['唱蛙歌','呱、呱——大家一起唱，就不怕了。']},
+ skywhale:{defend:['用雲裹住列車','我，把雲，蓋上來。慢慢的，不會痛。'],care:['讓大家靠著牠','靠著我。我，很暖。']},
+ treeling:{nature:['跟植物說話','別怕，它們只是嚇到了。我跟它們說說話。'],repair:['用根抓住裂縫','根可以抓住裂開的地方。我試試看。']},
+ sandwyrm:{repair:['用砂填起來','砂……會流進每一條縫。填滿就好了。'],know:['聽砂的聲音','砂在唱。唱的是……前面有東西壞了。']},
+ moonwyrm:{combat:['正面迎擊','退後。這是我的事。'],realm:['撕開一條月光的路','月光走得到的地方，我們就走得到。']},
+ skyfox:{sense:['飛高一點看','我飛上去看！……看到了，在那邊！'],care:['一個一個去抱抱','沒事喔、沒事喔。我在這裡。']},
+ grinfox:{sense:['聞害怕的味道','嘿嘿……害怕的味道，是從那邊飄過來的。'],know:['吃掉大家的害怕','……我把大家的害怕吃掉一點。這樣，手就不會抖了。']},
+ dawnsail:{defend:['張開翅膀護著','翅膀張開，就是一面帆。也是一面盾。'],realm:['乘著霞光繞過去','霞光會指路。跟著我飛。']},
+ scythe:{realm:['割開時間的縫','……時間有縫。我替你們割開一條。'],know:['報出時刻','……還有七次心跳。往右。']}};
+/* 大家已經各自提出辦法的時候，就不再另外列「詢問乘客」 */
+{ const al0=crActList; crActList=function(){ const L=al0.apply(this,arguments), C=state.crisis; if(!C||!(C.intel>=2||C.stage==='W4')) return L; const E=CRISES[C.id]; if(Object.keys(PASSENGERS).some(id=>aboard(id)&&crSolOf(id,E))) return L.filter(a=>(a.k||a)!=='ask'); return L; }; }
+/* 這位乘客，這一次能提出的解法（只取第一個對得上的能力） */
+function crSolOf(id,E){ const t=(CR_ABIL[id]||[]).find(x=>(E.pax||[]).includes(x)); if(!t) return null; const S=(CR_SOL[id]||{})[t]||[ABIL_N[t]+'的辦法','……我試試看。']; return {t,n:S[0],line:S[1]}; }
+function crSolHtml(C,E){ const L=Object.keys(PASSENGERS).filter(aboard).map(id=>[id,crSolOf(id,E)]).filter(x=>x[1]);
+ return `<h3 class="prep-h">車上的大家想到的辦法</h3><div class="cr-acts cr-sol">${L.map(([id,S])=>{ const asked=C.pax.find(p=>p.id===id&&p.k!=='info');
+  return `<button class="btn ghost" data-pax="${id}" ${asked?'disabled':''}>${nm(id)}：${S.n}<small>・${ABIL_N[S.t]}${paxSt(id)!=='ok'?'・'+PAX_ST_N[paxSt(id)]:''}${asked?'・'+({active:'正在做',agree:'正在做',calm:'正在做',refuse:'沒有回應'}[asked.k]||''):''}</small></button>`; }).join('')||'<small>這一次，車上沒有誰想得到辦法。</small>'}</div>`; }
+function crPaxSol(id){ const C=state.crisis; if(!C||C.done) return {t:''}; const E=CRISES[C.id], S=crSolOf(id,E); if(!S) return crAskPax(id);
+ const r=crAskPax(id); if(!['active','agree','calm'].includes(r.k)) return r;
+ let t=`${nm(id)}：「${S.line}」`, W4=C.stage==='W4';
+ if(S.t==='care') C.evac=1;
+ if(W4){ t+=' '+({care:'大家都安靜下來了。',defend:'列車被護住了。',combat:'牠擋在最前面。',repair:'壞掉的地方先撐住了。',nature:'植物們穩下來了。'}[S.t]||''); save(); return {t}; }
+ if(S.t==='sense'||S.t==='know'){ if((C.intel||0)<3){ crIntel(3,nm(id)+'的'+S.n); if(!C.real){ crFalseEnd(); return {t:t+`……「${CR_FALSE[C.id]||'應該沒事。'}」`,end:1}; } t+=`<br>${E.inv}`; } else { C.reduce++; t+=' 大家照著牠說的先準備好了。'; } }
+ else if(S.t==='realm'&&(E.cat==='A'||E.cat==='D')&&(C.intel||0)>=2){ save(); return crAvoid(t+' ……列車從危險的旁邊滑了過去。'); }
+ else { C.reduce++; t+=' 就算真的發生，也不會那麼糟了。'; }
+ save(); return {t}; }
+/* ================================================================
+   每趟航行，一件「當下要決定」的事。時間到了還沒決定，事情就自己發生。
+   車上有誰，會多出不一樣的選擇。有些決定的後果，要到下一站才看得到。
+   state.voyage.dec：這趟已經出現過；state.decEcho：下一站要看到的後果
+   ================================================================ */
+const DEC_T=25000;
+const decPax=L=>L.find(aboard);
+const decSeat=()=>{ const L=Object.keys(PASSENGERS).filter(id=>aboard(id)&&state.passengers[id]&&(state.passengers[id].stage||0)>=1); if(L.length<2) return null; const k=(state.journeyCount||0)%L.length; return [L[k],L[(k+1)%L.length]]; };
+const decGive=(m,n)=>{ state.materials=state.materials||{}; state.materials[m]=Math.max(0,matCount(m)+n); };
+const decTrust=(id,t)=>{ const s=state.passengers[id]; if(!s) return; s.trust=(s.trust||0)+1; s.records=s.records||[]; s.records.push({j:state.journeyCount,t}); };
+const DECS={
+ lights:{sit:()=>'前方的光軌上，一群小小的光正慢慢橫越。<br>列車不減速的話，就會從牠們中間穿過去。',
+  opts:()=>{ const p=decPax(['skyfox','strider','windkoi','felinia']); return [
+   {k:'slow',n:'減速，等牠們過去',d:'會用掉一點能源',go:()=>{ state.energy=Math.max(0,(state.energy==null?80:state.energy)-8); state.decEcho={j:state.journeyCount,t:'（那群小光，一路跟到了月台。牠們在你身邊繞了一圈才散開，留下了兩片光苔。）',give:['mosslight',2]}; return '列車慢了下來。小光一顆一顆從車頭前面飄過去，有一顆還停在車窗上看了你一下。'; }},
+   {k:'horn',n:'鳴笛，請牠們讓開',d:'不會耽誤時間',go:()=>{ TAINT.add(1); return '笛聲響起，光群嚇得四散。……有一顆光，很久都沒有跟上。你心裡沉了一下。'; }},
+   p&&{k:'pax',n:`請${nm(p)}帶牠們走`,d:`${nm(p)}熟悉怎麼引路`,go:()=>{ decTrust(p,'在光軌上，替一群迷路的小光帶了路。'); decGive('mosslight',1); return `${nm(p)}跳上車頭，輕輕一叫，光群就跟著牠繞到了光軌旁邊。回來的時候，牠身上沾著一片光苔。`; }}].filter(Boolean); },
+  def:'horn',late:'還沒決定，列車已經開到光群前面了——'},
+ sos:{sit:()=>'航線外很遠的地方，有一點光一閃一閃——三短、三長、三短。<br>像是在求救。',
+  opts:()=>{ const p=decPax(['leviathaurora','skywhale','dawnsail','moonwyrm']); return [
+   {k:'go',n:'偏離航線，過去看看',d:'會用掉不少能源',go:()=>{ state.energy=Math.max(0,(state.energy==null?80:state.energy)-15); decGive('dew',1); state.decEcho={j:state.journeyCount,t:'（被你們救起來的小光蟲，在月台上對著列車閃了三下，才慢慢飛走。你身上好像輕了一點。）',taint:-2}; return '列車轉了一個大彎。光的下面，是一隻翅膀破掉的小光蟲。你把牠捧上車，牠身上還沾著一滴晨露。'; }},
+   {k:'mark',n:'記下位置，請下一站的生命幫忙',d:'不用繞路',go:()=>{ state.decEcho={j:state.journeyCount,t:'（你把那道光的位置告訴了月台上的生命。牠們說，會去找找看。……希望來得及。）'}; return '你把那道光的位置記在符牒上。光還在一閃一閃，越來越遠。'; }},
+   p&&{k:'pax',n:`請${nm(p)}飛過去`,d:'不用讓列車繞路',go:()=>{ decTrust(p,'航行中，飛去救了一隻迷路的小光蟲。'); decGive('dew',1); state.decEcho={j:state.journeyCount,t:'（被救起來的小光蟲，在月台上對著列車閃了三下，才慢慢飛走。你身上好像輕了一點。）',taint:-2}; return `${nm(p)}離開列車，往那道光游過去。過了一會兒，牠帶回了一隻翅膀破掉的小光蟲。`; }}].filter(Boolean); },
+  def:'none',late:'光一閃一閃的，你還在猶豫——',lateGo:()=>{ TAINT.add(1); state.decEcho=null; return '……那道光，慢慢暗下去了。'; }},
+ short:{need:()=>!dragonAway(),sit:()=>'曦淵的聲音從駕駛室傳過來：<br>「前面的界壁有一道很薄的縫。從那裡穿過去，可以早一點到。……可是會晃，也會沾上一點界染。走不走？」',
+  opts:()=>{ const p=decPax(['scythe','yixi','mnemo']); return [
+   {k:'go',n:'走捷徑',d:'早一點到，可是會沾上界染',go:()=>{ const v=state.voyage; if(v&&v.fin==null) v.progress=Math.min(.9,v.progress+.12); TAINT.add(2); trainTAdd(2); return '列車一頭鑽進了縫裡。車廂晃得好厲害，窗外的顏色一下子全部倒了過來。……出來的時候，已經快到了。'; }},
+   {k:'stay',n:'照原路走',d:'慢一點，比較安全',go:()=>'曦淵說：「好。慢一點也沒關係。」'},
+   p&&{k:'pax',n:`請${nm(p)}找一道安全的縫`,d:'牠認得界壁的紋路',go:()=>{ const v=state.voyage; if(v&&v.fin==null) v.progress=Math.min(.9,v.progress+.12); decTrust(p,'帶著列車，從界壁上一道安全的縫穿了過去。'); return `${nm(p)}看了看窗外，指著一個地方：「那裡。」列車輕輕滑了進去，一點也不晃。曦淵說：「……牠找得比我還準。」`; }}].filter(Boolean); },
+  def:'stay',late:'還沒回答，曦淵已經自己決定了——'},
+ seat:{need:()=>!!decSeat(),sit:()=>{ const [a,b]=decSeat(); return `${nm(a)}和${nm(b)}都想坐在最靠窗的位子，看外面的星河。<br>兩個都不肯讓。`; },
+  opts:()=>{ const [a,b]=decSeat(); return [
+   {k:'a',n:`讓${nm(a)}坐`,go:()=>{ decTrust(a,'你讓牠坐了靠窗的位子。'); state.passengers[b].records.push({j:state.journeyCount,t:'沒坐到靠窗的位子，嘟著嘴看了一整路。'}); return `${nm(a)}高高興興地貼在窗上。${nm(b)}嘟著嘴，坐到了另一邊。`; }},
+   {k:'b',n:`讓${nm(b)}坐`,go:()=>{ decTrust(b,'你讓牠坐了靠窗的位子。'); state.passengers[a].records.push({j:state.journeyCount,t:'沒坐到靠窗的位子，嘟著嘴看了一整路。'}); return `${nm(b)}高高興興地貼在窗上。${nm(a)}嘟著嘴，坐到了另一邊。`; }},
+   {k:'turn',n:'輪流，一人看一半的路',d:'你得在旁邊幫忙算時間',go:()=>{ [a,b].forEach(id=>state.passengers[id].records.push({j:state.journeyCount,t:'和別的乘客輪流坐了靠窗的位子。'})); return `你在旁邊數著時間。換位子的時候，${nm(a)}把看到的星星指給${nm(b)}看。……後來，兩個擠在同一個窗前了。`; }}]; },
+  def:'none',late:'你還沒開口——',lateGo:()=>{ const [a,b]=decSeat(); return `${nm(a)}和${nm(b)}吵了起來，最後誰也沒坐。窗邊的位子，空了一整路。`; }},
+ cold:{sit:()=>'溫室車廂的溫度一下子掉了好多。<br>培育艙的玻璃上結了一層霜，小苗在發抖。',
+  opts:()=>{ const p=decPax(['pyro','cinder','sirenora','titan']); return [
+   {k:'self',n:'用自己的光暖它',d:'你身上會沾上一點界染',go:()=>{ TAINT.add(1); return '你把手貼在玻璃上。霜一點一點化開，小苗慢慢站直了。你有一點累。'; }},
+   matCount('mosslight')>0&&{k:'moss',n:'燒一片光苔片',d:'用掉一片光苔片',go:()=>{ decGive('mosslight',-1); return '光苔片在培育艙旁邊安靜地燒著。溫室又暖起來了。'; }},
+   p&&{k:'pax',n:`請${nm(p)}${['pyro','cinder'].includes(p)?'暖一暖溫室':'守著小苗'}`,go:()=>{ decTrust(p,'航行中，替溫室的小苗擋住了寒氣。'); return ['pyro','cinder'].includes(p)?`${nm(p)}趴在溫室門口，身上的火光慢慢烘暖了整節車廂。`:`${nm(p)}把小苗圍在自己身邊。寒氣過去了，一株都沒有凍傷。`; }}].filter(Boolean); },
+  def:'none',late:'霜一路往上爬——',lateGo:()=>{ const pod=(state.pods||[]).find(c=>c&&c.st<2); if(pod){ pod.wilt=1; return '……一株小苗的葉子凍傷了。到溫室照顧它，還救得回來。'; } return '……幸好培育艙裡，現在沒有小苗。'; }},
+ frag:{sit:()=>'一塊發光的碎片從窗外漂過去。<br>裡面好像有聲音——是某個熄滅的世界，最後的一句話。',
+  opts:()=>{ const p=decPax(['mnemo','yixi','scythe']); return [
+   {k:'catch',n:'伸手把它撈進來',d:'碎片很冷，會沾上界染',go:()=>{ TAINT.add(2); decGive('stardust',1); logJ('撈起了一塊熄滅世界的碎片。裡面的聲音說：「……還有人記得我們嗎？」','find'); return '碎片冰得刺手。貼在耳邊，你聽見一句很小很小的話：「……還有人記得我們嗎？」碎片在你手裡化成了星塵。'; }},
+   {k:'let',n:'讓它漂走',go:()=>'碎片慢慢漂遠了，聲音也聽不見了。'},
+   p&&{k:'pax',n:`請${nm(p)}收下它`,d:'牠知道怎麼安放這種東西',go:()=>{ decTrust(p,'收下了一塊熄滅世界的碎片，好好地安放了。'); decGive('stardust',1); logJ(`${nm(p)}收下了一塊熄滅世界的碎片。裡面的聲音說：「……還有人記得我們嗎？」`,'find'); return `${nm(p)}把碎片捧在手心，對它說了一句你聽不懂的話。碎片安靜下來，化成了一小撮星塵。「……它說，謝謝。」`; }}].filter(Boolean); },
+  def:'let',late:'你還在看——'}};
+const DEC_ORDER=['lights','sos','short','seat','cold','frag'];
+function decPick(){ const n=state.journeyCount||0, last=state.decLast; for(let i=0;i<DEC_ORDER.length;i++){ const k=DEC_ORDER[(n+i)%DEC_ORDER.length], D=DECS[k]; if(k!==last&&(!D.need||D.need())) return k; } return null; }
+function decideNow(k){ k=k||decPick(); const D=DECS[k]; if(!D) return null; const v=state.voyage; if(v) v.dec=k; state.decLast=k; save();
+ const O=D.opts(), ov=panel(`<div class="eyebrow">航行中・當下要決定</div><h2>現在，要怎麼做？</h2><p class="dec-sit">${D.sit()}</p><div class="dec-bar" style="--dt:${DEC_T/1000}s"><i></i></div><div class="dec-opts">${O.map(o=>`<button class="btn ghost" data-dec="${o.k}">${o.n}${o.d?`<small>${o.d}</small>`:''}</button>`).join('')}</div><p class="dec-res"></p>`,'small decov');
+ let done=false; SFX.tone(740,0,.3,'sine',.03);
+ const fin=(o,late)=>{ if(done) return; done=true; clearTimeout(tm); const t=(late?D.late:'')+(o?o.go():(D.lateGo?D.lateGo():'')); save();
+  logJ(`航行中：${t.replace(/<br>/g,'')}`); if(!ov.isConnected) { toast(t.replace(/<br>/g,'')); render(); return; }
+  ov.querySelectorAll('[data-dec]').forEach(b=>b.disabled=true); const bar=ov.querySelector('.dec-bar'); if(bar) bar.remove(); ov.querySelector('.dec-res').innerHTML=t; render&&setTimeout(()=>{ hsRefresh(); },0); };
+ const lateO=()=>O.find(o=>o.k===D.def)||null;
+ const tm=setTimeout(()=>fin(lateO(),true),DEC_T);
+ ov.querySelectorAll('[data-dec]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); fin(O.find(o=>o.k===b.dataset.dec),false); });
+ const mo=setInterval(()=>{ if(!ov.isConnected){ clearInterval(mo); if(!done) fin(lateO(),true); } },400);
+ return ov; }
+setInterval(()=>{ if(navigator.webdriver&&!window.DEC_TEST) return; if(!RUNNING||state.currentPhase!=='voyage') return; const v=state.voyage; if(!v||v.dec||v.fin!=null) return;
+ if((state.journeyCount||0)<1||(typeof proHold==='function'&&proHold())) return;
+ const at=.3+((state.journeyCount||0)*13%30)/100; if(v.progress<at) return;
+ const C=state.crisis; if(C&&!C.done&&(C.stage==='W3'||C.stage==='W4')) return;
+ if(document.querySelector('#layer .ov:not(.closing),#layer .dlg,#layer .cine,#layer .board')) return; if(!paceOk(12000)) return;
+ paceMark(); decideNow(); },1500);
+/* 下一站才看到的後果 */
+{ const va=voyageArrive; voyageArrive=function(){ const E=state.decEcho, r=va.apply(this,arguments);
+  if(E&&E.j===state.journeyCount-1){ state.decEcho=null; if(E.give) decGive(E.give[0],E.give[1]); if(E.taint) TAINT.add(E.taint); save(); setTimeout(()=>sense(E.t),4200); } else if(E&&E.j<state.journeyCount-1){ state.decEcho=null; save(); }
+  return r; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
