@@ -37,6 +37,7 @@ with sync_playwright() as p:
     ev("talk('treeling')"); s=drain(); ok('D2 first story: the humming child', '哼歌的孩子' in J(s) and ev("state.chap.nick.treeling===1"), [x[:14] for x in s])
     ok('D3 notebook: the ferryman page lists the nickname', ev("(()=>{const c=questCats().find(x=>x.k==='ferry');return !!c&&c.L.some(x=>x.t.includes('哼歌的孩子'))&&c.L[0].t.includes('拾光')})()"))
     ev("talk('treeling')"); s=drain(); ok('D4 second story: hid as a tree', '最後一班' in J(s))
+    ok('D4b third story waits for a sketch', not ev("deepWait('treeling')")); ev("state.sketches=Object.assign({},state.sketches,{treeling:[0]});save()")
     ev("talk('treeling')"); s=drain(); ok('D5 third story: it was not wrong', '沒有躲錯' in J(s) and not ev("deepWait('treeling')"))
     ok('D6 life book shows the journey story (3 parts)', ev("journeyStory('treeling')").count('<p>')==3)
     ev("talk('mnemo')"); s=drain(); ok('D7 mnemo has not given its heart yet: no deep story', '說話的人' not in J(s))

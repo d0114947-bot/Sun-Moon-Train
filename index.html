@@ -316,6 +316,12 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+.booknav{position:absolute;top:18px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:6;max-width:94vw}
+.booknav .bn-t{font:600 13px/1 var(--serif,serif);color:#f3e6c4;opacity:.75;align-self:center;margin-right:4px;letter-spacing:.08em}
+.booknav button{font:15px/1 inherit;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,236,190,.35);background:rgba(20,18,36,.78);color:#f6ecd2;cursor:pointer}
+.booknav button.on{background:#f3e2b4;color:#2a2238;border-color:#f3e2b4}
+@media (max-width:640px){.booknav{top:auto;bottom:2px;left:8px;right:8px;transform:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;max-width:none;padding:2px}.booknav button{padding:7px 10px;font-size:13px;flex:none}.booknav .bn-t{flex:none}.ov.jr:has(.booknav) .jr-drag-hint{display:none}}
+
 .jr-book{position:relative;width:min(560px,94vw);height:min(calc(100vh - 150px),780px);margin-top:112px;perspective:2600px;user-select:none;-webkit-user-select:none;
  border-radius:8px;background:linear-gradient(135deg,#3b4a37,#26321f);box-shadow:0 34px 80px rgba(0,0,0,.6),inset 0 0 0 2px rgba(0,0,0,.25)}
 .jr-book.spread{width:min(1080px,96vw)}
@@ -1079,7 +1085,7 @@ body.taint-heavy .meimg{filter:saturate(.4) brightness(.78) contrast(.95)}
 .pano-turn.l{left:10px;border-radius:0 37px 37px 0}.pano-turn.r{right:10px;border-radius:37px 0 0 37px}
 .pano-turn:hover{background:rgba(30,32,64,.8)}
 .pano-turn span{display:block;font-size:10px;letter-spacing:.2em;margin-top:2px}
-/* ---------- 書本：全部和世界與生物圖鑑同一種書 ---------- */
+/* ---------- 書本：全部和生命誌同一種書 ---------- */
 .ov.jr.book{padding-top:0}
 .ov.jr .jr-book.tome{display:block;padding:0;width:min(560px,94vw);height:min(calc(100vh - 140px),780px);margin-top:96px}
 .ov.jr .jr-book.tome.jr-two{width:min(1160px,96vw)}
@@ -2701,7 +2707,7 @@ const PASSENGERS = {
   image:'assets/mnemo.webp',still:'assets/mnemo-still.webp',studies:['assets/mnemo-s1.webp','assets/mnemo-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'寂滅虛空邊緣的冰霧帶・熄滅世界留下的殘骸附近・沒有光也沒有熱的地方',
   intro:'列車停靠在星河浮島時，一團冰霧貼上了車窗。霧散開之後，靜謐結界裡多了一座直立的冰晶，正中央的幾顆藍色光泡，一明一暗地亮著。',
-  bio:'渡守時代流傳著一個說法：每當一個世界熄滅，那片虛空的邊緣就會凝結出一株霜憶晶絡，把那個世界最後的記憶收進牠的憶泡裡。渡守們稱牠為「世界的守靈者」，從不打擾牠。也有人說，列車的記憶典藏車廂，就是仿照牠的構造建成的。',
+  bio:'渡守時代流傳著一個說法：每當一個世界熄滅，那片虛空的邊緣就會凝結出一株霜憶晶絡，把那個世界最後的記憶收進牠的憶泡裡。渡守稱牠為「世界的守靈者」，從不打擾牠。也有人說，列車的記憶典藏車廂，就是仿照牠的構造建成的。',
   field:{alias:'守靈者、冰中的記憶',
    cls:'心象結晶生命・意識凝結體',
    danger:'低（長時間凝視憶泡，可能短暫迷失在別人的記憶裡）',
@@ -2714,7 +2720,7 @@ const PASSENGERS = {
   talks:[
    {lines:['（靜謐結界的冷霧裡，冰晶輕輕響了一聲，像風鈴。你靠近時，核心裡的一顆藍色光泡亮了起來。）','……你，是活著的記憶。','我住在很冷、很安靜的地方。寂滅虛空的邊緣。那裡沒有光，沒有熱，只有漂過來的記憶碎片。','我把它們收起來。'],choices:[{t:'收起來……收在哪裡？',r:'（核心裡的光泡一顆一顆亮了一下。）這裡。每一顆，都是一個人、一個地方，或是一個下午。'},{t:'（安靜地看著那些光泡）',r:'……你看得很仔細。謝謝。很少有人願意看。'}]},
    {lines:['（冰絲的末端掛著一滴水，慢慢地落下來。）','這裡……有一點暖。我的冰絲會化掉一點點。','沒關係。我不吃熱的東西。我吃的，是被忘記的事。','世界熄滅的時候，記憶會散開，像灰。沒有人接住的，我就接住。','所以我不移動。我只要等，它們會自己漂過來。'],choices:[{t:'要不要把結界調冷一點？',r:'……好。可是不要太冷。這裡的暖，我也想記住。'},{t:'被忘記的事，是什麼味道？',r:'冰冰的。……但是裡面，常常是暖的。'}]},
-   {lines:['（你不小心碰到了一顆光泡——眼前忽然出現一片陌生的草原，有人在笑，風很大。下一秒，你又站在車廂裡了。）','……對不起。那是一個已經沒有的世界，最後一個晴天。','渡守們叫我「守靈者」。他們說，我是替熄滅的世界守夜的。','你們的記憶典藏車廂，跟我長得很像。……也許建造它的人，見過我們。','如果有一天我也化掉了，那些光泡會留下來。……你願意幫我記得嗎？','……這裡的暖，我也想記住。'],choices:[{t:'我會記得。',r:'（核心裡最大的那顆光泡，亮得像一顆小小的月亮。）……嗯。那我就不怕了。'}]}
+   {lines:['（你不小心碰到了一顆光泡——眼前忽然出現一片陌生的草原，有人在笑，風很大。下一秒，你又站在車廂裡了。）','……對不起。那是一個已經沒有的世界，最後一個晴天。','渡守叫我「守靈者」。祂說，我是替熄滅的世界守夜的。','你們的記憶典藏車廂，跟我長得很像。……也許建造它的人，見過我們。','如果有一天我也化掉了，那些光泡會留下來。……你願意幫我記得嗎？','……這裡的暖，我也想記住。'],choices:[{t:'我會記得。',r:'（核心裡最大的那顆光泡，亮得像一顆小小的月亮。）……嗯。那我就不怕了。'}]}
   ],
   farewell:['冷霧在叫我。虛空的邊緣，又有一個世界要熄滅了。','我得去接住它最後的記憶。','……我收了一顆新的光泡，是這輛車。是你。以後在很冷的地方，它會替我記得溫暖。']
  },
@@ -2722,7 +2728,7 @@ const PASSENGERS = {
   image:'assets/yixi.webp',still:'assets/yixi-still.webp',studies:['assets/yixi-s1.webp','assets/yixi-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'一個在大熄滅中熄滅的世界・之後，寂滅虛空的正中央',
   intro:'寂滅虛空的正中央，一個由層層深色羽翼圍成的生命。羽翼中央那隻翠綠的大眼睛，認出了你身上的光。',
-  bio:'遺曦是大熄滅時，一個世界留下的最後一點光。它的世界熄滅那天，渡守趕到時列車已經滿了。最後一位渡守拾光對它說「列車會回來」，它就在虛空裡一直等，一直等。它把漂過身邊的記憶碎片收進羽翼，每收一片，羽翼上就多睜開一隻小小的眼睛。',
+  bio:'遺曦是大熄滅時，一個世界留下的最後一點光。它的世界熄滅那天，渡守趕到時列車已經滿了。渡守拾光對它說「列車會回來」，它就在虛空裡一直等，一直等。它把漂過身邊的記憶碎片收進羽翼，每收一片，羽翼上就多睜開一隻小小的眼睛。',
   field:{alias:'最後的晨光、等待的眼',
    cls:'失落生命・遺光體',
    danger:'無',
@@ -2933,9 +2939,9 @@ const CLUES = {
  clue_voyage:{title:'航行中亮起的符號',text:'首次穿越界壁時，車廂連接處浮現一列無法辨識的符號，持續七次心跳的時間後熄滅。'},
  
  clue_sola_legend:{title:'星河的傳說',text:'索拉轉述：星河的老水母說，有一列白色的車，會在世界快要熄滅的地方停下來。'},
- clue_moth:{title:'老蛾說的渡守',text:'見過渡守的老蛾說：渡守跟你很像——很忙、很溫柔、忘記休息。他們每天都在爭論誰去澆花。'},
+ clue_moth:{title:'老蛾說的渡守',text:'見過渡守的老蛾說：渡守跟你很像——很忙、很溫柔、忘記休息。祂每天都在跟曦淵爭論誰去澆花。'},
  clue_starseed:{title:'迷途的星種',text:'航行中撿到的星種，在溫室裡找到了落腳的地方。它落下的光，和渡守封存古種的光是同一種顏色。'},
- clue_echo:{title:'界壁的回聲',text:'界壁上留著渡守的聲音。他們每穿過一次界壁，就在上面留一句話，讓後來的人知道：這條路有人走過。'},
+ clue_echo:{title:'界壁的回聲',text:'界壁上留著渡守的聲音。祂每穿過一次界壁，就在上面留一句話，讓後來的人知道：這條路有人走過。'},
  clue_seed:{title:'無法開啟的封印',text:'種子保存櫃中有三枚守護者封存的古種。封印只回應某種條件，而列車目前尚未滿足。'}
 };
 /* ================================================================
@@ -2946,7 +2952,7 @@ const LOC_LORE={
  origin:'它不在日界，也不在月界，而是在界壁本身上——所有渡口的起點，所以座標是「０・００・００」。石造拱廊是渡守留下的城門。大熄滅之後，列車就停在這裡，和整座渡口一起沉睡。',
  dawnForest:'傳說第一道晨曦落下時，最先照到的就是這片森林。從那以後，晨光在這裡總是停留得特別久，所以有些生命只在光線最斜的那一刻才看得見。古樹是渡守種下的「渡口樹」，樹上的圓環是渡口印記，標記著日界少數能讓列車停靠的地方。人類一直沒有找到這裡，因為它藏在時間的一道皺褶裡。',
  starIslands:'浮島不是在星河裡長出來的。它們是熄滅的世界剝落下來的碎片，被星河的潮汐接住，在河面上漂流。島上的晶體吸收星光，是因為它們還記得自己原本那片天空的樣子。潮汐會把浮島送往新的地方——漂走的島，也許不是消失，而是被帶去了某個需要它的地方。',
- reverseRealm:'逆生之境原本也走到了盡頭。渡守趕到的時候，已經來不及帶走所有生命，於是他們做了一件從來沒做過的事：把這個世界的時間翻轉過來。從此它不再走向終點，而是一步一步走回起點。那裡的居民相信，等世界回到最初的那一天，渡守就會回來。',
+ reverseRealm:'逆生之境原本也走到了盡頭。渡守趕到的時候，已經來不及帶走所有生命，於是祂做了一件從來沒做過的事：把這個世界的時間翻轉過來。從此它不再走向終點，而是一步一步走回起點。那裡的居民相信，等世界回到最初的那一天，渡守就會回來。',
  boundlessCorridor:'這裡曾是渡守的工坊。列車的車廂、圓環印記、星河上的航道，都是在迴廊深處畫出來的。迴廊連接著每一個渡口，渡守透過它往返各個世界——直到大熄滅之後，迴廊的門一扇一扇關上，只剩下方向錯亂、走不到盡頭的長廊。',
  silentVoid:'大熄滅留下的空白。世界熄滅之後，它們的記憶不會立刻消失，而是在這裡慢慢漂流，像海面上的泡沫。這裡不是邪惡的地方，而是世界們安息的所在。只是，有些記憶還沒準備好被遺忘；有些生命，還在等一列車來接它們。',
  timeriftSea:'所有世界的時間，最後都會流進這片海。渡守相信，在時隙之海裡沒有真正的結束——只要找到對的那一道浪，就能回到某一個時刻。星空裡的古列車座指向這裡；存檔水晶裡那段訊息的後半句，也指向這裡。'
@@ -2954,14 +2960,14 @@ const LOC_LORE={
 /* 領頭龍在航行時會聊起往事（每段一次，依旅程數解鎖） */
 const DRAGON_LORE=[
  {id:'dl_wall',need:()=>state.journeyCount>=1,lines:[['dragon','你知道列車剛才穿過的是什麼嗎？'],['self','……界壁？'],['dragon','嗯。每個世界都被一層看不見的膜包著，守住它自己的規則。穿過去的時候，另一個世界的規則會沾在你身上。'],['dragon','那就是界染。積得太深，你會被那個世界慢慢改寫。所以每次出發前，我才會請你量一量。'],['self','原來不只是例行公事。'],['dragon','列車上沒有例行公事。每一件事，都是有人用很久的時間想出來的。']]},
- {id:'dl_ferry',need:()=>state.journeyCount>=2,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的人，叫自己「渡守」。他們在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……他們不屬於日界，也不屬於月界。他們誕生在界壁上，是光與倒影交界的地方長出來的生命。'],['dragon','他們的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
- {id:'dl_dimming',need:()=>state.journeyCount>=3,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……他們走了。我不知道去了哪裡。']]},
- {id:'dl_name',need:()=>state.journeyCount>=4,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們之中，最後離開的那一位，叫做拾光。渡守們叫祂「最後一道晨曦」。'],['dragon','祂沒有跟其他渡守一起去撐界壁。祂說要回沉睡之地，睡一覺。'],['self','……沉睡之地？'],['dragon','你醒來的地方。'],['dragon','…………'],['dragon','沒什麼。你醒來的時候，身上有一點光。……和祂的光，有點像。']]}
+ {id:'dl_ferry',need:()=>state.journeyCount>=2,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的，叫自己「渡守」。祂在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……祂不屬於日界，也不屬於月界。祂從沉睡之地來，所以能在兩邊之間來去。'],['dragon','祂的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
+ {id:'dl_dimming',need:()=>state.journeyCount>=3,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……祂累了。說要去睡一覺。'],['dragon','我一直在旁邊守著，等祂醒來。']]},
+ {id:'dl_name',need:()=>state.journeyCount>=4,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，還有好多好多乘客，車廂裡很熱鬧。'],['dragon','渡守的名字，叫做拾光。我叫祂「最後一道晨曦」。'],['dragon','祂把最後的力量都拿去穩住界壁，然後說要回沉睡之地，睡一覺。'],['self','……沉睡之地？'],['dragon','你醒來的地方。'],['dragon','…………'],['dragon','沒什麼。你醒來的時候，身上有一點光。……和祂的光，有點像。']]}
 ];
 const LORE_CLUES={
- clue_ferrykeepers:{title:'渡守',text:'曦淵・蒼龍說，建造列車的古代守護者自稱「渡守」。他們誕生在界壁上，在每個渡口留下圓環印記，並在世界將要熄滅時趕到那裡，帶走來不及離開的生命和種子。'},
+ clue_ferrykeepers:{title:'渡守',text:'曦淵・蒼龍說，建造列車的古代守護者自稱「渡守」。祂來自沉睡之地，在每個渡口留下圓環印記，並在世界將要熄滅時趕到那裡，帶走來不及離開的生命和種子。'},
  clue_dimming:{title:'大熄滅',text:'很久以前，無數世界在同一個紀元相繼熄滅，留下的空白連成了寂滅虛空。渡守用盡力量穩住界壁，列車從此停在沉睡之地。'},
- clue_dragon:{title:'最後一道晨曦',text:'曦淵是第一個登上列車的生命。最後一位渡守「拾光」沒有去撐界壁，而是回到沉睡之地睡著了，渡守們叫祂「最後一道晨曦」。曦淵說，你醒來時身上的那一點光，和祂有點像。'},
+ clue_dragon:{title:'最後一道晨曦',text:'曦淵是第一個登上列車的生命。渡守「拾光」用最後的力量穩住界壁之後，回到沉睡之地睡著了，曦淵叫祂「最後一道晨曦」。曦淵說，你醒來時身上的那一點光，和祂有點像。'},
  clue_ash:{title:'熄滅的世界',text:'灰燼蕨標本的採集日期，屬於一個已經不存在的曆法。渡守會在世界熄滅之前，帶走那裡最後的植物。三枚封存種子，也許也是這樣來的。'},
  clue_island:{title:'浮島的來歷',text:'星河浮島是熄滅的世界剝落下來的碎片，被星河的潮汐接住。浮島漂走，也許是被送往新的地方。'},
  clue_wall:{title:'界壁在呼吸',text:'界壁極光出現時，界壁會像呼吸一樣一明一暗。光變薄的那一瞬間，就是渡口打開的時候。'},
@@ -3003,12 +3009,12 @@ function lorePages(){ const has=id=>state.clues.includes(id), any=(...a)=>a.some
    ${sec(true,`${GLYPH.ring}渡口`,'<p>界壁並不是到處一樣厚。少數變薄的地方叫作渡口，列車只能在渡口停靠。建造列車的人在每個渡口都留下了圓環印記——晨曦森林古樹上的圓環，就是其中之一。</p>','（找到古樹上的圓環之後，這一段才會顯現。）')}
    ${sec(true,`${GLYPH.moon}界壁的呼吸`,'<p>界壁不是靜止的。它會像呼吸一樣一明一暗，變薄的那一瞬間，渡口就打開了。界壁極光，是人們唯一能用眼睛看見的呼吸。</p>','（觀賞過界壁極光之後，這一段才會顯現。）')}
    <h5>${GLYPH.leaf}星河</h5><p>在月界的領域之間，流著一條由光組成的長河。它是所有倒影彼此相連的地方，也是列車航道最早的樣子。星河有潮汐，潮水會把流落的東西帶往新的地方。</p>`],
-  ['渡守',`${sec(any('clue_ring','clue_lumi_tale','clue_ferrykeepers'),`${GLYPH.ring}建造列車的人`,'<p>建造列車的古代守護者，自稱「渡守」。他們不屬於日界，也不屬於月界——據說他們誕生在界壁上，是光與倒影交界處長出來的生命。</p>','（讀到更多關於古代守護者的線索後，這一段才會顯現。）')}
+  ['渡守',`${sec(any('clue_ring','clue_lumi_tale','clue_ferrykeepers'),`${GLYPH.ring}建造列車的人`,'<p>建造列車的古代守護者，自稱「渡守」。祂不屬於日界，也不屬於月界——祂從沉睡之地來，所以能在兩邊之間穿梭。</p>','（讀到更多關於古代守護者的線索後，這一段才會顯現。）')}
    ${sec(any('clue_sola_legend','clue_ash','clue_ferrykeepers'),`${GLYPH.leaf}熄滅之前`,'<p>每一個世界都會走到盡頭，這不是誰的錯。但在熄滅之前，總有來不及離開的生命、還沒說完的故事，和一顆還想發芽的種子。渡守會在那之前趕到，列車就是為了把它們帶走而造的。</p>','（墨跡模糊。只看得出「熄滅」兩個字。）')}
    ${sec(has('clue_dimming'),`${GLYPH.moon}大熄滅`,'<p>很久以前，無數領域在同一個紀元裡相繼熄滅，留下的空白連成一片，成為寂滅虛空。渡守把剩下的力量都用來穩住界壁，讓空白不再擴大。列車在那之後，停在了沉睡之地。</p>','（墨跡模糊。這一頁似乎記著一場很大的災難。）')}
-   ${sec(has('clue_wake2'),`${GLYPH.sun}時間的另一端`,'<p>渡守最後去了哪裡，沒有任何紀錄。古樹說他們離開時「看起來不難過」；星空裡留著一座古列車座；存檔水晶裡的訊息還有後半句——他們也許沒有消失，只是去了時間的另一端，在那裡等著。</p>','（最後一段的墨跡還沒有顯現。）')}`],
+   ${sec(has('clue_wake2'),`${GLYPH.sun}時間的另一端`,'<p>渡守最後去了哪裡，只有曦淵知道一點：祂說要回沉睡之地睡一覺。古樹說祂離開時「看起來不難過」；星空裡留著一座古列車座；存檔水晶裡的訊息還有後半句——祂也許沒有消失，只是睡得很久、很久。</p>','（最後一段的墨跡還沒有顯現。）')}`],
   ['曦淵與值勤精靈',`${sec(any('clue_dragon'),`${GLYPH.sun}曦淵`,'<p>「曦」是晨光，「淵」是深淵。蒼龍一半出生在日界的黎明，一半出生在月界最深的黑暗。牠是第一個登上列車的生命；渡守離開後，牠獨自守著沉睡的列車。</p>','（航行時多和領頭聊聊，這一段才會顯現。）')}
-   ${sec(any('clue_dragon'),`${GLYPH.ring}值勤精靈`,'<p>你在沉睡之地醒來。那裡的生命不屬於日界，也不屬於月界，所以你能在兩邊之間穿梭。醒來的那一刻，有一點光落在你身上。曦淵說，那道光和最後一位渡守「拾光」有點像——可是你什麼都不記得。</p>','（墨跡模糊。這一頁好像在寫你自己。）')}
+   ${sec(any('clue_dragon'),`${GLYPH.ring}值勤精靈`,'<p>你在沉睡之地醒來。那裡的生命不屬於日界，也不屬於月界，所以你能在兩邊之間穿梭。醒來的那一刻，有一點光落在你身上。曦淵說，那道光和渡守「拾光」有點像——可是你什麼都不記得。</p>','（墨跡模糊。這一頁好像在寫你自己。）')}
    <h5>${GLYPH.leaf}列車</h5><ul class="facts"><li>由渡守建造，能穿越日界與月界，在渡口停靠。</li><li>沉睡多年，如今重新啟動。</li><li>由值勤精靈負責巡視、維護與探索。</li><li>不同領域的生命會自行登車，短暫停留後各自離開。</li></ul>`]
  ]; }
 Object.assign(CLUES,LORE_CLUES);
@@ -3166,8 +3172,7 @@ const TIPS=[
  {k:'nav',t:'選航線',m:h=>h.id==='obs-nav',when:()=>state.currentPhase==='docked'&&state.journeyCount>=1},
  {k:'const',t:'連星座',m:h=>h.id==='obs-const',when:()=>!!skyHere()},
  {k:'skylight',t:'打開天窗',m:h=>h.id==='nat-skylight',when:()=>!!skyNow()},
- {k:'dust',t:'接住星塵',m:h=>h.id==='ot-dust',when:()=>true},
- {k:'sky',t:'觀賞天象',m:h=>h.id==='ot-sky',when:()=>!!skyNow()},
+  {k:'sky',t:'觀賞天象',m:h=>h.id==='ot-sky',when:()=>!!skyNow()},
  {k:'invite',t:'邀請乘客',m:h=>h.id==='ot-invite',when:()=>true},
  {k:'engr',t:'拓下刻紋',m:h=>h.id==='ot-floor',when:()=>state.currentPhase==='docked'&&!ENGR_OK(state.currentLocation)},
  {k:'vine',t:'休息淨化',m:h=>h.id==='nat-special',when:()=>TAINT.val()>=20},
@@ -3385,7 +3390,7 @@ const HOME_C={
   point:'那條往上彎的線，是一條逆風游的魚。山上的人叫它「御風座」，看見它，就知道暴風雨要來了。',
   story:['御風座！你連好了。','暴風雨要來的時候，我們會逆著風往上游。……原來天上也有一條。','它一直往上游，從來沒停過。……我也要像它一樣。']},
  mnemo:{name:'守靈座',S:[[200,30],[200,80],[160,120],[240,120],[200,140],[160,170],[240,170],[200,230]],E:[[0,1],[1,2],[1,3],[2,4],[3,4],[4,5],[4,6],[5,7],[6,7]],
-  point:'那幾顆排成冰晶形狀的星。渡守們叫它「守靈座」。……他們說，每熄滅一個世界，它就會亮一點。',
+  point:'那幾顆排成冰晶形狀的星。渡守叫它「守靈座」。……祂說，每熄滅一個世界，它就會亮一點。',
   story:['守靈座。你連好了。','它最近又亮了一點。……又有一個世界熄滅了吧。','可是你把它連起來了。這樣，它就不是一個人在守夜了。']},
  cabbfrog:{name:'圓葉座',S:[[200,60],[150,90],[250,90],[130,150],[270,150],[150,205],[250,205],[200,225]],E:[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,7]],
   point:'那一圈圓圓的星星，看到了嗎？像一顆甘藍。菜園的老爺爺叫它「圓葉座」。它亮的時候，就是該播種的季節了。',
@@ -3397,8 +3402,8 @@ const HOME_C={
   point:'（中間的鳥）那一根直直的，是指針。（右邊的鳥）兩邊交叉的，是我們的鐮。……時隙之海的漁人，叫它「晷針座」。',
   story:['（左邊的鳥）晷針座。（中間的鳥）你連好了。','（右邊的鳥）……它從來不停。不管我們切了多少時間，它都在走。','……原來，我們也被它守著。']},
  dawnsail:{name:'領航座',S:[[60, 180], [130, 150], [200, 130], [270, 150], [340, 180], [200, 80], [200, 40]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6]],
-  point:'那兩邊張開的，是翅膀。中間往上的，是帆。……渡守們叫它「領航座」。列車出發前，都會先找它。',
-  story:['領航座。你連好了。','……渡守們找它，我們飛在它下面。','原來，列車一直都知道怎麼找到我們。']},
+  point:'那兩邊張開的，是翅膀。中間往上的，是帆。……渡守叫它「領航座」。列車出發前，都會先找它。',
+  story:['領航座。你連好了。','……渡守找它，我們飛在它下面。','原來，列車一直都知道怎麼找到我們。']},
  grinfox:{name:'三步座',S:[[200, 60], [150, 110], [250, 110], [200, 150], [120, 200], [200, 200], [280, 200]],E:[[0, 1], [0, 2], [1, 3], [2, 3], [3, 4], [3, 5], [3, 6]],
   point:'……那一顆，後面跟著三顆小的。旅人叫它「三步座」。……說是一個人走夜路，後面跟著一個影子。',
   story:['三步座。你連好了。','……原來天上也有影子在送人回家。','（那排白牙咧開了。）……我不是一個人。']},
@@ -3507,11 +3512,11 @@ const END_KEEPS=6;
 function endingType(){ const d=state.storyFlags.departTaint, t=typeof d==='number'?d:TAINT.val(), k=keepsHave().length; return t>=35?'night':(t<20&&(k+(typeof heartN==='function'&&chapOn()?heartN():0))>=(chapOn()?8:END_KEEPS)?'dawn':'return'); }
 const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩車尾的星光，照亮一小圈。','漂浮的碎片從光圈邊緣經過。每一片，都是一個世界最後的那一刻。','你沒有去修好它們。你只是看著。碎片就一片一片安靜下來。',
  '空白的正中央，有一點很小、很暗的光。它在等。','光的周圍，是層層疊疊的深色羽翼。羽翼的正中央，一隻翠綠的大眼睛慢慢睜開。','羽翼上的小眼睛，一隻一隻跟著睜開。每一隻裡面，都映著一點光——和你身上的一模一樣。','「列車會回來。」……它等的，就是這一句話。','它展開羽翼，帶著你穿過碎片，走到空白的邊緣。',
- '那裡站著一排身影，手按在看不見的牆上。','是渡守。他們還活著。','「你來了。」','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
+ '那裡，看不見的牆上，按著一排光做的手印。','很久很久以前，有誰在這裡撐住了牆。手印到現在還亮著。','手印的形狀和你不一樣。可是它的溫度，和你身上的光一模一樣。','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
 const ENDINGS={
- dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。他們已經替你放了。','樹亮了。界壁穩住了。渡守一個一個放下了手。','空白裡，長出了一片新的晨曦森林。','渡守和遺曦登上列車。車廂第一次像從前那樣熱鬧。','「這次，換你當渡守了。」','曦淵看了你很久，最後輕輕說了一句：「……歡迎回來。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
- return:{title:'歸光',lines:['你知道還差的是什麼。','你身上的那道晨曦，是你自己的光。現在，你把它交給界壁。','樹亮了。界壁穩住了。渡守一個一個放下了手。','你覺得自己變得很輕，很睏。','渡守們登上列車，替你把它開了回去。','……你回到沉睡之地，睡著了。','很久很久以後，會有一個值勤精靈在那裡醒來。它不會記得你。可是它的光，和你很像。']},
- night:{title:'長夜',lines:['可是光不夠。','樹亮了一下，又暗了下去。渡守的手，還按在牆上。','一道熟悉的龍影從黑暗裡衝過來，把列車拉回了界壁外。','「還不是時候。」曦淵說。「先去把身上的重量放下吧。」']}
+ dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。乘客們已經替你放了。','樹亮了。界壁穩住了。牆上的手印，一個一個放下了光。','空白裡，長出了一片新的晨曦森林。','遺曦登上列車。車廂第一次像從前那樣熱鬧。','曦淵說：「列車需要一位渡守。……這次，換你了。」','曦淵看了你很久，最後輕輕說了一句：「……歡迎回來。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
+ return:{title:'歸光',lines:['你知道還差的是什麼。','你身上的那道晨曦，是你自己的光。現在，你把它交給界壁。','樹亮了。界壁穩住了。牆上的手印，一個一個放下了光。','你覺得自己變得很輕，很睏。','曦淵替你把列車開了回去。','……你回到沉睡之地，睡著了。','很久很久以後，會有一個值勤精靈在那裡醒來。它不會記得你。可是它的光，和你很像。']},
+ night:{title:'長夜',lines:['可是光不夠。','樹亮了一下，又暗了下去。牆上的手印，還按在那裡。','一道熟悉的龍影從黑暗裡衝過來，把列車拉回了界壁外。','「還不是時候。」曦淵說。「先去把身上的重量放下吧。」']}
 };
 function playFinale(next){
  /* 還在車上的乘客，也在這時放下自己的紀念品 */
@@ -3521,7 +3526,7 @@ function playFinale(next){
   if(type==='night'){ state.storyFlags.finaleTried=(state.storyFlags.finaleTried||0)+1; logJ('在寂滅虛空裡，光還不夠。曦淵把列車拉了回來。'); save(); render(); next&&next(); return; }
   state.ending=type; complete('finale'); logJ(`旅程的終點：${E.title}。`); save();
   cine([`<span class="big">結局・${E.title}</span><span class="sub">${type==='dawn'?'列車會繼續航行':'一點光，落在新的旅程上'}</span>`],once1(()=>{
-   if(type==='dawn'){ if(!aboard('yixi')) return boarding('yixi','渡守們一個一個登上列車。最後上車的，是那對深色的羽翼。翠綠的大眼睛看了看車廂裡的燈，慢慢地，彎了一下。',()=>{ render(); next&&next(); }); render(); next&&next(); return; }
+   if(type==='dawn'){ if(!aboard('yixi')) return boarding('yixi','光從空白的每一個角落聚過來。最後上車的，是那對深色的羽翼。翠綠的大眼睛看了看車廂裡的燈，慢慢地，彎了一下。',()=>{ render(); next&&next(); }); render(); next&&next(); return; }
    const ov=panel(`<div class="eyebrow">旅程的終點</div><h2>歸光</h2>${meSay('……很久很久以後，有一點光，落在一列沉睡的列車裡。')}<div class="row" style="margin-top:14px"><button class="btn" id="ngp">再一次醒來</button></div>`,'small');
    ov.querySelector('#ngp').onclick=()=>newGamePlus(); }),null,true); }))));
 }
@@ -4120,7 +4125,7 @@ const INTERACT = {
  'obs:chart'(){ panel(`<div class="eyebrow">懸浮星圖</div><h2>目前位置</h2>
   <p>星圖分成兩個體系。內圈是<b>日界</b>，只有一個光點：地球。外圈是<b>月界</b>，光點彼此之間沒有連線，有些甚至不在同一個平面上。</p>
   <p>${state.currentPhase==='voyage'?`列車正航行於${LOCATIONS[state.voyage.from].name}與${LOCATIONS[state.voyage.to].name}之間。`:`列車此刻停靠於 <span class="tag">${LOCATIONS[state.currentLocation].realm}</span> ${LOCATIONS[state.currentLocation].name}，座標 ${LOCATIONS[state.currentLocation].coord}。`}</p>
-  <p style="color:var(--mute)">已觀測領域 ${state.visitedLocations.length} / ${LOC_ORDER.length}</p>`); },
+  <p style="color:var(--mute)">已經去過 ${state.visitedLocations.length} 個領域</p>`); },
  'obs:coord'(){ panel(`<div class="eyebrow">空間座標顯示器</div><h2>${LOCATIONS[state.currentLocation].coord}</h2>${meSay(`座標有三段數字。前兩段跟著停靠站改變……第三段每航行一次就會變大，現在是 ${String(state.journeyCount*7+5).padStart(3,'0')}。它好像在數著什麼剩下的東西。`)}`); },
  'obs:anomaly'(){ addItem('anomaly_rift'); TAINT.add(TAINT_GAIN.anomaly); logJ('在觀測窗外記錄到空間異象「界壁的折光」。'); panel(`<div class="eyebrow">特殊異象</div><h2>界壁的折光</h2>${meSay(`${COLLECTIBLES.anomaly_rift.desc}<br>……咦，光痕的弧度，和列車車頂的金色圓弧一模一樣。`)}`); render(); },
  'obs:nav'(){ navPanel(); },
@@ -4254,14 +4259,14 @@ function talismanEffect(dest){ return LOCATIONS[dest].realm==='日界'?'晨曦�
 /* 整備前廊：符文鎖提示 */
 function prepGate(){ const d=state.duty;
  panel(`<div class="eyebrow">駕駛室門・符文鎖</div><h2>尚未完成值勤準備</h2><p>符文鎖只為準備完成的值勤者開啟。</p>
- <ul class="checks">${[['身體污染值量測',d.scan],['領取航程裝備',equipAll()],['核對星途符牒',d.briefing]].map(([t,o])=>`<li class="${o?'ok':''}">${t}</li>`).join('')}</ul>`); }
+ <ul class="checks">${[['量測身上的界染',d.scan],['領取航程裝備',equipAll()],['核對星途符牒',d.briefing]].map(([t,o])=>`<li class="${o?'ok':''}">${t}</li>`).join('')}</ul>`); }
 
 /* 3-1 身體污染值量測 */
 function scanResult(r){ const verdict=r.value<20?'可以值勤':r.value<50?'可以值勤・建議盡快淨化':'不得值勤・請先淨化到 50 以下再重新量測';
  return `<div class="rune-res lv-${r.value<20?'ok':r.value<50?'mild':'heavy'}"><span class="rune-dot"></span><div><b>界染度 ${r.value} / 100</b><br>判定：${r.level}・${verdict}</div></div>
  ${r.value>=20?'<p class="scan-tip">可以到溫室的沙發休息（守望藤會照看）、棲息車廂的靈泉淨化，或是請會安撫心神的乘客陪陪我。</p>':''}`; }
 function scanPanel(){ const c=state.spirit.contamination, did=state.duty.scan;
- const ov=panel(`<div class="eyebrow">駕駛室・淨界晶環</div><h2>身體污染值量測</h2>
+ const ov=panel(`<div class="eyebrow">駕駛室・淨界晶環</div><h2>量測身上的界染</h2>
  <div class="scan scan2"><svg viewBox="0 0 300 360" class="scan-svg ${did?'ok':''}" aria-hidden="true">
   <ellipse cx="150" cy="335" rx="80" ry="12" fill="#9a8cff" opacity=".35"/>
   <image class="scan-me meimg" href="${ME_IMG}" x="20" y="78" width="260" height="262" preserveAspectRatio="xMidYMax meet"/>
@@ -4581,7 +4586,7 @@ function dragonTalk(){
  const d=state.duty, miss=[];
  if(dutyAutoOk()&&!d.autoNo&&!(d.scan&&d.briefing&&d.signal&&d.doors)) return dutyAutoAsk(intro);
  { const wn=wallDragonNote(); if(wn) return dialogueScript(intro.concat(wn),()=>{ logJ('向曦淵回報了界壁的觀測結果，曦淵說會繞到最薄的地方。'); render(); }); }
- if(!d.scan) miss.push('身體污染值量測'); if(!equipAll()) miss.push('航程裝備'); if(!d.briefing) miss.push('星途符牒的資訊核對');
+ if(!d.scan) miss.push('量測身上的界染'); if(!equipAll()) miss.push('航程裝備'); if(!d.briefing) miss.push('星途符牒的資訊核對');
  if(!d.signal) miss.push('前方星光號誌'); if(outsideList().length) miss.push(outsideList().map(id=>PASSENGERS[id].name).join('、')+'還在車外'); if(!d.doors) miss.push('車門聯鎖安全燈');
  if(miss.length) return dialogueScript(intro.concat([['self','曦淵，我們出發吧！'],['dragon',`欸，等等。${miss.join('、')}，你好像還沒確認喔。`],['dragon','弄好了再來找我。航道不會跑掉，慢慢來。']]));
  const L=LOCATIONS[nextStop()], c=state.spirit.contamination, back=first?[]:[['dragon','（曦淵收起翅膀落在火車頭前，身上還帶著晨光。）我回來了。日界那邊的界壁有一處變薄，我去補了一下。']];
@@ -4938,7 +4943,7 @@ const XRUN={
  /* 3 界壁的回聲：共鳴 → 映心鏡 → 望遠鏡 → 乘客聽出來 → 曦淵的說明 → 線索 */
  x_wallecho(h){ const who=presentSkill('sense')||Object.keys(PASSENGERS).find(id=>aboard(id)&&skillOf(id)==='sense');
   const sc=[['self','映心鏡的鏡面上，浮出一圈一圈的光紋。'],['self','從望遠鏡看出去，界壁上有一道裂開的光。光裡，有聲音。']].concat(who?[[who,'……那個聲音，我聽過。是界壁另一邊的人，在說話。']]:[])
-   .concat([['dragon','你也聽見了嗎？那是渡守留在界壁上的聲音。'],['dragon','很久以前，他們每穿過一次界壁，就在上面留一句話。……讓後來的人知道，這條路有人走過。'],['self','……這條路，有人走過。']]);
+   .concat([['dragon','你也聽見了嗎？那是渡守留在界壁上的聲音。'],['dragon','很久以前，祂每穿過一次界壁，就在上面留一句話。……讓後來的人知道，這條路有人走過。'],['self','……這條路，有人走過。']]);
   dialogueScript(sc,()=>{ addClue('clue_echo'); constRecAdd(voyBless(),'obs'); resFind('wall_echo','共鳴的時候，聽見了界壁上渡守留下的聲音。'); if(who) state.passengers[who].records.push({j:state.journeyCount,t:'和你一起聽見了界壁的回聲。'}); logJ('航行中，聽見了界壁上渡守留下的聲音。','find'); xevGive('x_wallecho',1); render(); }); },
  /* 4 同行者的秘密：兩位信任彼此的乘客，說出共同的過去 → 特殊羈絆 */
  x_secret(h){ const p=secretPair(); if(!p){ xevGive('x_secret',0); return render(); } const [[a,b]]=p, Oa=OMEN[a]||{}, Ob=OMEN[b]||{};
@@ -5324,7 +5329,7 @@ function reunion(id){ const p=PASSENGERS[id], s=state.passengers[id];
 function dialogue(id,lines,choices,onEnd){
  const p=id&&PASSENGERS[id]; const el=document.createElement('div'); el.className='dlg'; if(p) el.dataset.who=id;
  const canSk=p&&state.currentCarriage==='habitat'&&state.currentPhase!=='outside'&&!atDeck(id)&&!sketchDone(id);
- el.innerHTML=`${p?`<div class="who">${portraitOf(p,1)}</div>`:''}<div class="box">${canSk?`<button class="dsk" aria-label="觀察速寫"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L16.5 4.1a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#f3d9a0" stroke="#5a4632" stroke-width="1.2" stroke-linejoin="round"/><path d="M14.8 5.8l3.4 3.4" stroke="#5a4632" stroke-width="1.2"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#3b2f25"/></svg>觀察速寫 ${sketchesOf(id).length}/2</button>`:''}<div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
+ el.innerHTML=`${p?`<div class="who">${portraitOf(p,1)}</div>`:''}<div class="box">${canSk?`<button class="dsk" aria-label="觀察速寫"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.2-4.6L16.5 4.1a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z" fill="#f3d9a0" stroke="#5a4632" stroke-width="1.2" stroke-linejoin="round"/><path d="M14.8 5.8l3.4 3.4" stroke="#5a4632" stroke-width="1.2"/><path d="M4 20l1.2-4.6 3.4 3.4z" fill="#3b2f25"/></svg>觀察速寫</button>`:''}<div class="nm">${p?p.name:'精靈'}</div><div class="tx"></div><div class="chs"></div><div class="nx">▼</div></div>`;
  $('#layer').appendChild(el);
  if(canSk) el.querySelector('.dsk').onclick=ev=>{ ev.stopPropagation(); el.remove(); render(); setTimeout(()=>sketchPanel(id),200); }; let i=0; const tx=el.querySelector('.tx'), chs=el.querySelector('.chs'), nx=el.querySelector('.nx');
  let picked=null, warned=-1;
@@ -5345,7 +5350,7 @@ function dialogue(id,lines,choices,onEnd){
 }
 /* ================================================================
    聆聽筆記：乘客說話時，關鍵字句會發光，點一下記進精靈的筆記本。
-   回到記憶典藏車廂，在「世界與生物圖鑑」把筆記放進對應的欄位，該欄位的完整內容才會出現。
+   回到記憶典藏車廂，在「生命誌」把筆記放進對應的欄位，該欄位的完整內容才會出現。
    - k：這則筆記屬於哪個欄位（habitat 棲息環境・habits 生物習性・abilities 特殊能力・bio 生態故事）；null 是閒聊，放不進任何欄位
    - p：對話裡要發光的原句（必須和台詞完全一致）
    - n：精靈寫進筆記本的內容
@@ -5453,7 +5458,7 @@ const NOTES={
   {k:'habits',p:'所以我不移動',n:'幾乎不移動，靜靜漂浮'},
   {k:'abilities',p:'沒有人接住的，我就接住',n:'能把記憶凝成憶泡保存下來（封憶）'},
   {k:'abilities',p:'眼前忽然出現一片陌生的草原',n:'碰到憶泡的人能看見裡面的景象（憶泡共鳴）'},
-  {k:'bio',p:'渡守們叫我「守靈者」',n:'渡守稱牠為「世界的守靈者」'},
+  {k:'bio',p:'渡守叫我「守靈者」',n:'渡守稱牠為「世界的守靈者」'},
   {k:'bio',p:'也許建造它的人，見過我們',n:'記憶典藏車廂可能是仿照牠的構造建成的'},
   {k:null,p:'這裡的暖，我也想記住',n:'想記住車廂裡的溫暖'}]},
  cabbfrog:{secs:['habitat','habits','abilities','bio'],thanks:'……呱。你都記下來了。（頭頂的花苞，啵地一聲，全開了。）',list:[
@@ -5560,13 +5565,13 @@ function takeNote(id,i,mk){ const N=NOTES[id]; if(!N) return; state.notes=state.
 /* 筆記本（HUD 的 🗒️） */
 function notebookPanel(go){ const qStart=()=>{ const n=ids().length+1; return n+(n%2); };
  const ids=()=>Object.keys(NOTES).filter(id=>state.discoveredLifeforms.includes(id));
- const pages=()=>[`<h3 class="jr-h">筆記本</h3><p class="jr-sub">值勤精靈的隨身筆記</p><p class="jr-p">聽乘客說話的時候，發光的字句點一下，就會記在這裡。</p><p class="jr-p">回到記憶典藏車廂，在「世界與生物圖鑑」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>${ids().length?'':'<p class="nb-empty">還沒有遇見任何乘客。</p>'}`]
+ const pages=()=>[`<h3 class="jr-h">筆記本</h3><p class="jr-sub">值勤精靈的隨身筆記</p><p class="jr-p">聽乘客說話的時候，發光的字句點一下，就會記在這裡。</p><p class="jr-p">回到記憶典藏車廂，在「生命誌」把筆記放進對應的欄位。閒聊放不進圖鑑，可以擦掉。</p>${ids().length?'':'<p class="nb-empty">還沒有遇見任何乘客。</p>'}`]
   .concat(ids().map(id=>{ const a=notesOf(id), f=filedOf(id), used=Object.values(f), sc=NOTES[id].secs, fd=sc.filter(k=>f[k]!==undefined).length;
    const ps=state.passengers[id]||{}, on=aboard(id);
    return `<section class="nb-who"><figure class="nb-pic"><img src="${PASSENGERS[id].still||PASSENGERS[id].image}" alt="${PASSENGERS[id].name}"><i class="tape"></i></figure><h3 class="jr-h">${PASSENGERS[id].name}</h3>
     <p class="nb-st">${on?(atDeck(id)?'在火車尾展望台':'住在'+ZONES[zoneOf(id)].name):ps.left?'已經下車了':'不在車上'}・${STAGE_NAMES[ps.stage||0]}</p>
     ${on&&!atDeck(id)&&CARE[id]?`<p class="nb-st ${careOk(id)?'ok':''}">${careOk(id)?'在這裡很自在 ✦':'好像有點不自在……'}</p>`:''}
-    <p class="jr-sub">筆記 ${a.length} 則・圖鑑 ${fd}/${sc.length}・速寫 ${sketchesOf(id).length}/2${fullDone(id)?'・完整 ✦':''}</p>
+    <p class="jr-sub">筆記 ${a.length} 則${sketchesOf(id).length?'・畫過速寫':''}</p>
     ${a.length?`<ul class="nb-list">${a.map(i=>{ const fl=used.includes(i), x=NOTES[id].list[i];
      return `<li class="${fl?'filed':''}"><span>${x.n}</span>${fl?`<em>已整理・${NOTE_SEC[Object.keys(f).find(k=>f[k]===i)]}</em>`:`<button class="nb-x" data-erase="${id}:${i}" aria-label="擦掉這則">擦掉</button>`}</li>`; }).join('')}</ul>`
      :`<p class="nb-empty">${state.passengers[id]&&state.passengers[id].aboard?'還沒有筆記。去和牠說說話吧。':'沒有留下筆記。'}</p>`}</section>`; }));
@@ -5600,8 +5605,8 @@ function sketchArt(id,k){ const p=PASSENGERS[id]; return p.studies?`<img src="${
 function sketchPicker(){ if(state.currentCarriage!=='habitat'||state.currentPhase==='outside') return tipOnce('t_sketch','✍️ 到棲息車廂點乘客，就能觀察速寫');
  const ids=Object.keys(PASSENGERS).filter(id=>aboard(id)&&!atDeck(id));
  if(!ids.length) return toast('棲息車廂目前沒有乘客');
- const ov=panel(`<div class="eyebrow">棲息車廂</div><h2>✍️ 觀察速寫</h2><p>選一位乘客，靜靜觀察牠，在牠做出動作的瞬間落筆。每位乘客可以畫兩張速寫，會收進世界與生物圖鑑。</p>
-  <div class="grid">${ids.map(id=>`<button class="card" data-sk="${id}"><div class="art">${portraitOf(PASSENGERS[id])}</div><div class="t">${PASSENGERS[id].name}</div><div class="s">速寫 ${sketchesOf(id).length} / 2</div></button>`).join('')}</div>`);
+ const ov=panel(`<div class="eyebrow">棲息車廂</div><h2>✍️ 觀察速寫</h2><p>選一位乘客，靜靜觀察牠，在牠做出動作的瞬間落筆。每位乘客可以畫兩張速寫，會收進生命誌。</p>
+  <div class="grid">${ids.map(id=>`<button class="card" data-sk="${id}"><div class="art">${portraitOf(PASSENGERS[id])}</div><div class="t">${PASSENGERS[id].name}</div><div class="s">${sketchesOf(id).length?'畫過了':'還沒畫'}</div></button>`).join('')}</div>`);
  ov.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{ closeAll(); setTimeout(()=>sketchPanel(b.dataset.sk),260); }); }
 function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.querySelector('.panel'); let raf=0, pos=0, t0=performance.now(), zone=null;
  const newZone=()=>{ const w=24; zone={a:12+Math.random()*(76-w),w}; };
@@ -5609,7 +5614,7 @@ function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.q
   pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">棲息車廂・觀察速寫</div><h2>✍️ ${p.name}</h2>
   <div class="sk-wrap"><div class="sk-live">${p.sprite?`<img src="${p.image}" alt="${p.name}">`:portraitOf(p)}</div>
    <div class="sk-sheets">${[0,1].map(x=>`<div class="sk-sheet ${have.includes(x)?'drawn':''}" data-x="${x}">${have.includes(x)?sketchArt(id,x):'<span>✍️<br>尚未速寫</span>'}</div>`).join('')}</div></div>
-  ${k===undefined?`<p class="sk-msg">兩張速寫都畫好了。它們已經收進世界與生物圖鑑。</p>`:
+  ${k===undefined?`<p class="sk-msg">兩張速寫都畫好了。它們已經收進生命誌。</p>`:
    `<p class="sk-msg" id="skm">${k===0?'先畫一張全身。':'再畫一張動作。'}牠會不時動一下——指針走進金色區段的那一刻，按下「落筆」。</p>
    <div class="sk-bar"><i class="zone"></i><b class="ptr"></b></div><div class="row"><button class="btn" id="skgo">✍️ 落筆</button></div>`}`;
   if(k===undefined) return;
@@ -5619,7 +5624,7 @@ function sketchPanel(id){ const p=PASSENGERS[id], ov=panel('','sketch'), pn=ov.q
    if(!hit){ SFX.tone(330,0,.3,'sine',.02); m.textContent='牠剛好動了一下，線條歪掉了。再等下一個瞬間。'; bar.classList.remove('shake'); void bar.offsetWidth; bar.classList.add('shake'); newZone(); z.style.left=zone.a+'%'; return; }
    state.sketches=state.sketches||{}; const a=state.sketches[id]=state.sketches[id]||[]; if(!a.includes(k)) a.push(k); save(); SFX.tone(1568,0,.5,'triangle',.03);
    const sh=pn.querySelector(`.sk-sheet[data-x="${k}"]`); sh.innerHTML=sketchArt(id,k); sh.classList.add('drawn','fresh');
-   toast(`✍️ 畫下了${p.name}的${k===0?'全身':'動作'}速寫（${a.length}/2）`); checkComplete(id);
+   toast(`✍️ 畫下了${p.name}的${k===0?'全身':'動作'}速寫`); sketchBond(id); checkComplete(id);
    cancelAnimationFrame(raf); setTimeout(()=>{ if(ov.isConnected) draw(); },1500); }; };
  draw(); }
 
@@ -5814,7 +5819,7 @@ function engravePanel(){ const loc=state.currentLocation;
  const ob=new MutationObserver(()=>{ if(!ov.isConnected){ window.removeEventListener('pointermove',mv); window.removeEventListener('pointerup',up); ob.disconnect(); } }); ob.observe(document.getElementById('layer'),{childList:true});
  paint(); }
 function rubbingPanel(){ const ids=['origin',...LOC_ORDER];
- return floatField({cls:'rubs',title:'刻紋拓本',sub:()=>`在展望台拓下的刻紋 ${ids.filter(ENGR_OK).length} / ${ids.length}`,
+ return floatField({cls:'rubs',title:'刻紋拓本',sub:()=>'在展望台拓下的刻紋',
   items:ids.map(id=>({id,have:ENGR_OK(id),cls:'gem rub',inner:engrSvg(id,new Set(engrEdges(id).map((_,i)=>i)),null,''),lockInner:engrBlank(),label:ENGR[id][2]})),
   view:id=>`<h2>${ENGR[id][2]}</h2><div style="width:min(360px,70vw);margin:0 auto">${engrSvg(id,new Set(engrEdges(id).map((_,i)=>i)),null,'eg-board done')}</div>${meSay(`在${LOCATIONS[id].name}停靠的時候，展望台的地板上浮現的刻紋。`)}`}); }
 
@@ -5903,7 +5908,7 @@ const CONSTS=[
  {id:'train',name:'古列車座',sky:'moon',S:[[50,170],[110,170],[170,170],[230,170],[290,170],[345,140],[300,110],[50,130]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,4],[0,7]],lore:'一列由星星組成的列車，沿著天空的軌道行駛。它的形狀，和你所在的這列車一模一樣。',clue:'clue_const_train'},
  {id:'bloom',name:'花冠座',sky:'sun',S:[[200,60],[160,95],[240,95],[150,150],[250,150],[200,130],[200,215]],E:[[0,1],[0,2],[1,3],[2,4],[1,5],[2,5],[5,6]],lore:'溫室裡第一朵花開的那天，天上的花冠座也會亮一點。種花的人都這麼說。'},
  {id:'bell',name:'風鈴座',sky:'sun',S:[[200,40],[200,80],[160,110],[240,110],[150,180],[250,180],[200,210]],E:[[0,1],[1,2],[1,3],[2,4],[3,5],[4,6],[5,6]],lore:'風吹過的時候，風鈴座的星星會一閃一閃，像是在叮噹作響。'},
- {id:'eye',name:'守望之眼座',sky:'moon',S:[[60,130],[130,85],[200,70],[270,85],[340,130],[270,175],[200,190],[130,175],[200,130]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[2,8]],lore:'一隻永遠睜著的眼睛。渡守們說，它在看著每一列還在路上的列車。'},
+ {id:'eye',name:'守望之眼座',sky:'moon',S:[[60,130],[130,85],[200,70],[270,85],[340,130],[270,175],[200,190],[130,175],[200,130]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0],[2,8]],lore:'一隻永遠睜著的眼睛。渡守說，它在看著每一列還在路上的列車。'},
  {id:'river',name:'星河座',sky:'moon',S:[[30,200],[90,170],[150,180],[210,140],[260,150],[320,100],[370,60]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]],lore:'一條斜斜流過天空的星河。順著它往上看，盡頭就是下一個界域。'}
 ];
 /* 星座不是一開始就全部看得到：旅途走得越遠，盤面上浮現的星座越多 */
@@ -5920,10 +5925,10 @@ function constPanel(sel){ const sky=skyHere(), ov=panel('','stage csov'), pn=ov.
  const POS=[[50,17],[79,33],[79,67],[50,83],[21,67],[21,33]];
  let face=sky==='sun'?0:1;
  const disc=sk=>{ const L=CONSTS.filter(c=>c.sky===sk); return `<div class="cs-disc ${sk}">${L.map((c,k)=>{ const ok=constDone(c.id), op=constOpen(c.id), can=c.sky===sky&&op; return op?`<button class="cs-slot ${ok?'got':''}" data-cs="${c.id}" style="left:${POS[k%6][0]}%;top:${POS[k%6][1]}%" ${!can&&!ok?'disabled':''}>${constRound(c,ok)}<span>${ok||can?c.name:'？？？'}</span>${ok?'':`<small>${can?'可以連線':`要在${sk==='sun'?'日界':'月界'}的天空下`}</small>`}</button>`:`<div class="cs-slot veil" style="left:${POS[k%6][0]}%;top:${POS[k%6][1]}%"><i></i><small>${CONST_OPEN[c.id][1]}</small></div>`; }).join('')}
-   <div class="cs-hub">${sk==='sun'?'日界':'月界'}的天空<br>${L.filter(c=>constDone(c.id)).length} / ${L.length}</div></div>`; };
+   <div class="cs-hub">${sk==='sun'?'日界':'月界'}的天空</div></div>`; };
  /* 星座盤：日界、月界，之後每六個「乘客指給你看的星座」再多一面盤 */
  const homeDisc=k=>{ const H=homeList(), L=H.slice(k*6,k*6+6); return `<div class="cs-disc home">${L.map((c,i)=>{ const ok=constDone(c.id); return `<button class="cs-slot ${ok?'got':''}" data-cs="${c.id}" style="left:${POS[i][0]}%;top:${POS[i][1]}%">${constRound(c,ok)}<span>${c.name}</span></button>`; }).join('')}
-   <div class="cs-hub">乘客的星空${Math.ceil(H.length/6)>1?' '+(k+1):''}<br>${L.filter(c=>constDone(c.id)).length} / ${L.length}</div></div>`; };
+   <div class="cs-hub">乘客的星空${Math.ceil(H.length/6)>1?' '+(k+1):''}</div></div>`; };
  const discN=()=>2+Math.ceil(homeList().length/6), discAt=k=>k===0?disc('sun'):k===1?disc('moon'):homeDisc(k-2), discName=k=>k===0?'日界':k===1?'月界':'乘客的星空'+(discN()>3?' '+(k-1):'');
  const list=()=>{ const N=discN(); face=Math.min(face,N-1); pn.innerHTML=`<button class="close" aria-label="關閉">✕</button><div class="eyebrow">星月觀測車廂</div><h2>星座盤</h2>
   <div class="cs-3d"><div class="cs-flip" style="transform:rotateY(0deg)"><div class="cs-face f0">${discAt(face)}</div><div class="cs-face f1">${discAt(face===0?1:0)}</div></div></div>
@@ -6024,7 +6029,7 @@ const MATS={
  mosslight:{name:'光苔片',color:'#d8ffb0',use:'purify',desc:'林間光苔掉下的碎片。在守望藤旁點燃，柔光能淨化界染度。'},
  auroramoss:{name:'極光苔',color:'#b8ffe6',use:'purify',desc:'界壁極光的時候，長在幽夜培育艙玻璃上的苔。在守望藤旁點燃，會散出一整片極光。'},
  pollen:{name:'花粉',color:'#fff0a8',use:'purify',desc:'收成時從花心抖落的花粉。在守望藤旁點燃，花香能淨化界染度。'},
- stardust:{name:'星塵',color:'#e2d6ff',use:'purify',grow:1,desc:'從浮島邊緣掃起、或在流星雨時接住的星塵。在守望藤旁點燃，星光能淨化界染度；灑進培育艙，植物會多長一段。'}
+ stardust:{name:'星塵',color:'#e2d6ff',use:'purify',grow:1,desc:'從浮島邊緣掃起、或在危機時從展望台接住的星塵。在守望藤旁點燃，星光能淨化界染度；灑進培育艙，植物會多長一段。'}
 };
 const FORAGE={
  dawnForest:{spots:[[30,80],[84,86],[90,56],[14,64]],pool:[['dew',5],['mosslight',4],['sd:bell',3],['sd:mossgrass',3],['sd:goldreed',2],['sd:emberkern',1],['sd:spirepod',1],['sd:owlbur',1],['sd:duskchest',1],['sd:nightcap',1],['sd:hearthnut',1],['sd:deeproot',1],['sd:fuzzhusk',1],['sd:pearlgrain',1],['seed_sunfern',1]]},
@@ -7063,7 +7068,7 @@ const ATLAS_ME={
  reverseRealm:'重力朝上、河水倒流……光是想像就頭暈。不過，如果時間也能倒著走，是不是就能回到誰還在的時候？',
  boundlessCorridor:'門的後面還是門。羅盤說要相信它，我就相信它。在這裡我才知道，迷路的時候有一個方向可以依靠，有多重要。',
  silentVoid:'沒有光，也沒有聲音。光是寫下這個名字，筆就變得好重。可是這裡曾經也是某個世界吧，曾經也有誰在這裡笑過。',
- timeriftSea:'所有世界的時間，最後都流到這裡。如果渡守真的在時間的另一端，他們會不會也正看著這片海？'};
+ timeriftSea:'所有世界的時間，最後都流到這裡。如果渡守真的在時間的另一端，祂會不會也正看著這片海？'};
 function atlasPages(){ const ids=['origin',...LOC_ORDER], R=[-4,3,-2,5,-3,2,-5];
  return ids.map((id,k)=>{ const s=locStatus(id), L=LOCATIONS[id];
   /* 兩頁一個地點：左頁是圖，右頁是文字 */
@@ -7078,13 +7083,13 @@ function atlasBook(page){ const ids=['origin',...LOC_ORDER];
 /* 線索解讀筆記：讀到的片段，和我自己的推想 */
 const CLUE_ME={clue_const_train:'星座裡也有一列火車。是誰把它畫上天空的？',clue_wake:'「願醒來的那一位……」那一位，是我嗎？',clue_ring:'古樹上和車身上，都有同一個圓環。這列車以前一定來過這裡。',
  clue_voyage:'那些符號亮了七次心跳。我數過了，真的是七次。',clue_sola_legend:'索拉說這個傳說的時候，難得沒有笑。',
- clue_seed:'打不開的封印……也許不是打不開，只是時候還沒到。',clue_ferrykeepers:'渡守。終於知道他們的名字了。',clue_dimming:'那麼多世界一起熄滅……光是想像就覺得好冷。',
+ clue_seed:'打不開的封印……也許不是打不開，只是時候還沒到。',clue_ferrykeepers:'渡守。終於知道祂的名字了。',clue_dimming:'那麼多世界一起熄滅……光是想像就覺得好冷。',
  clue_dragon:'我是從列車的光裡醒來的。原來，我一直都在這裡。',clue_ash:'熄滅的世界留下了灰。灰裡，還有沒說完的故事。',clue_island:'浮島是碎片，卻被星河接住了。被接住，真好。',
  clue_wall:'界壁會呼吸。下次看到極光，我要跟著它一起呼吸看看。',clue_wake2:'「我們在時間的另一端。」——我會把剩下的路走完的。'};
 /* 有場景圖的線索：把那一幕的圖貼進筆記裡 */
 const CLUE_IMG={clue_const_train:'assets/train-main.jpg',clue_wake:'assets/memory-front.jpg',clue_ring:'assets/sky-dawn.jpg',clue_voyage:'assets/voyage-symbol.jpg',clue_sola_legend:'assets/sky-stars.jpg',clue_moth:'assets/memory.jpg',clue_starseed:'assets/nature-front.jpg',clue_echo:'assets/sky-voy2.jpg',clue_seed:'assets/nature-back.jpg'};
 function clueBook(){ const ids=CLUE_ORDER, per=2, pages=[], R=[-1.5,1.2,-.8,1.6,-1.2,.9], rp=null;   /* 異象研究只在星月觀測車廂的異象紀錄晶石 */
- for(let k=0;k<ids.length;k+=per) pages.push((k===0?`<h3 class="jr-h">線索解讀筆記</h3><p class="jr-sub">已解讀 ${state.clues.length} / ${ids.length} 個片段</p>`:`<p class="jr-no">線索解讀筆記・${k/per+1}</p>`)+
+ for(let k=0;k<ids.length;k+=per) pages.push((k===0?`<h3 class="jr-h">線索解讀筆記</h3><p class="jr-sub">旅途中讀到的片段</p>`:`<p class="jr-no">線索解讀筆記・${k/per+1}</p>`)+
   ids.slice(k,k+per).map((id,j)=>state.clues.includes(id)?`<div class="jr-clue" style="--r:${R[(k+j)%R.length]}deg">${pencil(PENCIL_KEYS[ids.indexOf(id)%PENCIL_KEYS.length],'',(k+j)%2?'pr sm':'pl sm')}<h4>${CLUES[id].title}</h4>${CLUE_IMG[id]?`<figure class="jr-scene" style="--r:${R[(k+j+2)%R.length]*1.6}deg"><img src="${CLUE_IMG[id]}" alt="" loading="lazy"></figure>`:''}<p class="jr-p">${CLUES[id].text}</p>${CLUE_ME[id]?penNote('jr-me',CLUE_ME[id]):''}</div>`:`<div class="jr-clue unk"><h4>？</h4><p class="jr-p">（還沒讀到的片段）</p></div>`).join(''));
  const tabOf=k=>{ const id=ids.slice(k*per,k*per+per).find(x=>state.clues.includes(x)); return id?CLUES[id].title.slice(0,5):'？'; };
  const tabs=pages.map((_,k)=>[tabOf(k),k+(rp?1:0)]); if(rp){ pages.unshift(rp); tabs.unshift(['異象研究',0]); }
@@ -7298,7 +7303,7 @@ function compassRead(){ const voy=state.currentPhase==='voyage', to=voy?state.vo
   ['self',state.spirit.equipment.compass?'我身上的隨身羅盤，也指著同一個方向。':'對了，我還沒領隨身的星軌羅盤，等一下去裝備台拿。']]); }
 /* 控制晶盤右側：列車界染。點一下滑出「把光注入水晶」；有危機或需要修復時，打開應變面板 */
 function discTaintHTML(){ const t=trainT(), st=trainStage('repair'), cr=typeof crActive==='function'&&crActive();
- return `<div class="disc-taint ${cr?'alert':''}"><button class="dt-btn" id="dtt" aria-expanded="false"><span>列車界染</span><b>${t}</b><small>${cr?'需要應變':EVO_K.repair.stages[st-1]}</small></button><div class="dt-drawer" id="dtd"></div></div>`; }
+ return `<div class="disc-taint ${cr?'alert':''}"><button class="dt-btn" id="dtt" aria-expanded="false"><span>列車修復</span><b>${repairPct()}%</b><small>${cr?'需要應變':EVO_K.repair.stages[st-1]}</small></button><div class="dt-drawer" id="dtd"></div></div>`; }
 function discTaintBind(ov){ const b=ov.querySelector('#dtt'), d=ov.querySelector('#dtd'); if(!b) return;
  const fill=()=>{ const used=TAINT.used('p:core'), mats=Object.entries(MATS).filter(([m,M])=>M.use==='purify'&&matCount(m)>0), cr=typeof crActive==='function'&&crActive();
   d.innerHTML=cr?`<button class="btn" id="dt-cr">打開應變面板</button>`:used?'<p>今天已經把光注入過水晶了。</p>':mats.length?mats.map(([m,M])=>`<button class="btn ghost matb" data-core="${m}">${itemImg(m)?`<img class="mbi" src="${itemImg(m)}" alt="">`:''}把${M.name}的光注入水晶<small>剩 ${matCount(m)}</small></button>`).join(''):'<p>身上沒有可以注入的光。<br>光苔片、花粉、星塵都可以。</p>';
@@ -7389,13 +7394,13 @@ const GLYPH={
  leaf:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19C5 10 11 5 20 4c-1 9-6 15-15 15z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5 19l9-9" stroke="currentColor" stroke-width="1"/></svg>'
 };
 const specNo=i=>String(i+1).padStart(2,'0');
-/* 世界與生物圖鑑：書籤＝序章＋四類生命；序章收著所有已遇見的生命（小小的、可以重疊） */
+/* 生命誌：書籤＝序章＋四類生命；序章收著所有已遇見的生命（小小的、可以重疊） */
 const LIFE_ORDER=['other','mind','domain','lost'];
 const LIFE_TYPE_D={other:'來自其他世界、星球、宇宙或平行領域的生命。',domain:'由某個空間、自然現象或特殊維度孕育而生的生命。',mind:'由思想、記憶、夢境、情緒或意識凝成的生命，不一定具有實體。',lost:'因災難、世界崩壞或領域消失，失去原本居所的生命。'};
 function lifeData(){ const all=CODEX_LIFE.map(codexEntry), known=all.filter(e=>e.known), two=innerWidth>=860;
  const pages=[], index={}, tabs=[['序章',0]]; const pad=()=>{ if(two&&pages.length%2) pages.push('<p class="end">　</p>'); };
  const rot=k=>((k*47)%23)-11;
- pages.push(`<h3>世界與生物圖鑑</h3>${RULE}<p>旅途中遇見的生命，各自從不同的界域而來。這裡記下牠們的模樣、來處與習性。乘客下車之後，記錄也不會消失。</p><p class="tally"><span class="no">已記錄 ${known.length} 種</span>・尚待相遇 ${all.length-known.length} 種</p>
+ pages.push(`<h3>生命誌</h3>${RULE}<p>旅途中遇見的生命，各自從不同的界域而來。這裡記下牠們的模樣、來處與習性。乘客下車之後，記錄也不會消失。</p><p class="tally"><span class="no">已遇見 ${known.length} 種</span></p>
   <div class="life-collage">${known.length?known.map((e,k)=>`<button class="lc" data-life="${e.id}" style="--r:${rot(k)}deg;z-index:${(k*7)%11+1}" title="${esc(e.name)}" aria-label="${esc(e.name)}">${portraitOf(e)}</button>`).join(''):'<p class="end">還沒有遇見任何生命。</p>'}</div>`);
  LIFE_ORDER.forEach(t=>{ const L=all.filter(e=>e.type===t); pad(); tabs.push([LIFE_TYPES[t],pages.length]);
   const head=`<h3>${LIFE_TYPES[t]}</h3>${RULE}<p class="tdesc">${LIFE_TYPE_D[t]}</p>`;
@@ -7409,14 +7414,14 @@ function lifeData(){ const all=CODEX_LIFE.map(codexEntry), known=all.filter(e=>e
 function loreData(){ const met=new Set(state.discoveredLifeforms.map(id=>PASSENGERS[id]&&PASSENGERS[id].type).filter(Boolean));
  const TYPES={other:'來自其他世界、星球、宇宙或平行領域的生命。',domain:'由某個空間、自然現象或特殊維度孕育而生的生命。',mind:'由思想、記憶、夢境、情緒或意識凝成的生命，不一定具有實體。',lost:'因災難、世界崩壞或領域消失，失去原本居所的生命。'};
  const L=lorePages().concat([['四類生命',`<div class="types">${Object.entries(LIFE_TYPES).map(([k,n])=>`<div><b>${n}</b><span>${TYPES[k]}</span></div>`).join('')}</div>`]]);
- const SCRIB=['← 這段要再問問曦淵','是真的嗎？','（畫了一顆小星星）','記住這個！','渡守……他們現在在哪裡呢','下次停靠時再確認','這裡的字跡好舊','好像在哪裡聽過','↑ 很重要','我也想親眼看看'];
+ const SCRIB=['← 這段要再問問曦淵','是真的嗎？','（畫了一顆小星星）','記住這個！','渡守……祂現在在哪裡呢','下次停靠時再確認','這裡的字跡好舊','好像在哪裡聽過','↑ 很重要','我也想親眼看看'];
  return {pages:L.map((p,k)=>`<h3>${p[0]}</h3>${RULE}${pencil(LORE_SK[k%LORE_SK.length],'',k%2?'pr':'pl')}${p[1]}${penNote('scrib '+(k%2?'l':''),SCRIB[k%SCRIB.length])}`),tabs:L.map((p,k)=>[p[0].replace(/^序・/,'').split('・')[0].slice(0,5),k]),index:{}}; }
 function openBook(ch,sub){
  if(ch==='atlas') return atlasBook();
  const lore=ch==='lore', cls=lore?'lorebook':'lifebook', D=()=>lore?loreData():lifeData(); BOOK.ch=lore?'lore':'life';
  let ov=document.querySelector(`#layer .ov.jr.${cls}:not(.closing)`);
  if(ov) ov.refresh();
- else ov=journal({cls:cls+' book',title:lore?'月界典籍':'世界與生物圖鑑',pages:()=>D().pages,tabs:D().tabs,page:lore?(BOOK.lp||0)*2:0,onClick:(e,o)=>{ const t=e.target;
+ else ov=journal({cls:cls+' book',title:lore?'月界典籍':'生命誌',pages:()=>D().pages,tabs:D().tabs,page:lore?(BOOK.lp||0)*2:0,onClick:(e,o)=>{ const t=e.target;
    const l=t.closest('[data-life]'); if(l){ const k=lifeData().index[l.dataset.life]; if(k!=null) o.jump(k); return; }
    if(t.closest('[data-bk]')) return o.jump(0);
    const fb=t.closest('[data-file]'); if(fb) return fileChooser(fb.closest('.file-slot'));
@@ -7435,7 +7440,7 @@ function bookLifeIndex(){
  const all=CODEX_LIFE.map(codexEntry), known=all.filter(e=>e.known).length;
  const pages=[{head:true,items:all.slice(0,1)}]; for(let i=1;i<all.length;i+=2) pages.push({items:all.slice(i,i+2)}); if(pages.length%2) pages.push({items:[],tail:true});
  const spreads=pages.length/2; BOOK.page=Math.max(0,Math.min(BOOK.page,spreads-1));
- const head=`<h3>世界與生物圖鑑</h3>${RULE}<p>旅途中遇見的生命，各自從不同的界域而來。這裡記下牠們的模樣、來處與習性。乘客下車之後，記錄也不會消失。</p><p class="tally"><span class="no">已記錄 ${known} 種</span>・尚待相遇 ${all.length-known} 種</p>`;
+ const head=`<h3>生命誌</h3>${RULE}<p>旅途中遇見的生命，各自從不同的界域而來。這裡記下牠們的模樣、來處與習性。乘客下車之後，記錄也不會消失。</p><p class="tally"><span class="no">已遇見 ${known} 種</span></p>`;
  const pg=(p,side,n)=>`<section class="page ${side}">${p.head?head:''}<div class="specs">${p.items.map(e=>specCard(e,all.indexOf(e))).join('')}</div>${p.tail?'<p class="end">後面的頁面還是空白的。</p>':''}
   <div class="folio">${side==='l'&&BOOK.page>0?`<button data-pg="${BOOK.page-1}">‹ 前頁</button>`:'<span></span>'}<span>${n}</span>${side==='r'&&BOOK.page<spreads-1?`<button data-pg="${BOOK.page+1}">後頁 ›</button>`:'<span></span>'}</div></section>`;
  return pg(pages[BOOK.page*2],'l',BOOK.page*2+1)+pg(pages[BOOK.page*2+1],'r',BOOK.page*2+2); }
@@ -7443,7 +7448,7 @@ function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=
  const i=all.indexOf(e), s=e.rec||{}, stage=s.stage||0;
  return `<section class="page l"><p class="no">No. ${specNo(i)}・${e.species}</p><div class="plate big"><div class="wash" style="background:${e.wash}"></div>${portraitOf(e)}</div><p class="caption">${e.name}・田野速寫</p>
   <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>NOTES[e.id]&&!sketchesOf(e.id).includes(k)?`<div class="sk blank" style="--rot:${r}deg"><span>✍️<br>尚未速寫</span></div>`:`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div>${NOTES[e.id]&&!sketchDone(e.id)?'<p class="caption">在棲息車廂用 ✍️ 觀察牠，就能畫下速寫。</p>':''}</section>
- <section class="page r"><h3>${e.name}</h3>${RULE}${NOTES[e.id]?`<p class="cmp ${fullDone(e.id)?'done':''}">${fullDone(e.id)?'完整紀錄 ✦':`欄位 ${NOTES[e.id].secs.filter(k=>filedOf(e.id)[k]!==undefined).length} / ${NOTES[e.id].secs.length}・速寫 ${sketchesOf(e.id).length} / 2`}</p>`:''}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
+ <section class="page r"><h3>${e.name}</h3>${RULE}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
   <dt>偏好棲息</dt><dd>${ZONES[e.zone].name}</dd><dt>目前狀態</dt><dd>${s.aboard?'乘車中':s.left?'已下車・紀錄保留':'—'}</dd>
   <dt>相遇程度</dt><dd><span class="bond">${STAGE_NAMES.map((n,k)=>`<i class="${k<=stage?'on':''}" title="${n}"></i>`).join('')}<span>${STAGE_NAMES[stage]}</span></span></dd></dl>
   ${e.field&&e.field.nameNote?`<h5>${GLYPH.ring}名稱由來</h5><p>${e.field.nameNote}</p>`:''}${e.field?`<h5>${GLYPH.ring}外觀特徵</h5><p>${e.field.looks}</p><h5>${GLYPH.sun}棲息環境</h5>${secShown(e.id,'habitat')?`<p>${e.field.habitat}</p>`:fileSlot(e.id,'habitat')}<h5>${GLYPH.moon}生物習性</h5>${secShown(e.id,'habits')?`<ul class="notes">${e.field.habits.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'habits')}<h5>${GLYPH.leaf}特殊能力</h5>${secShown(e.id,'abilities')?`<ul class="notes">${e.field.abilities.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'abilities')}`:''}
@@ -7454,7 +7459,7 @@ function bookLore(){
  const met=new Set(state.discoveredLifeforms.map(id=>PASSENGERS[id]&&PASSENGERS[id].type).filter(Boolean));
  const TYPES={other:'來自其他世界、星球、宇宙或平行領域的生命。',domain:'由某個空間、自然現象或特殊維度孕育而生的生命。',mind:'由思想、記憶、夢境、情緒或意識凝成的生命，不一定具有實體。',lost:'因災難、世界崩壞或領域消失，失去原本居所的生命。'};
  const pages=lorePages().concat([['四類生命',`<div class="types">${Object.entries(LIFE_TYPES).map(([k,n])=>`<div><b>${n}</b><span>${TYPES[k]}</span></div>`).join('')}</div>
-  <p class="tally">已讀取的線索 ${state.clues.length} / ${CLUE_ORDER.length} 片段，保存在記憶典藏車廂的線索解讀台。讀到的線索越多，這本書的墨跡就顯現得越多。</p>`]]);
+  <p class="tally">讀到的線索越多，這本書的墨跡就顯現得越多。線索收在筆記本的「線索」分頁。</p>`]]);
  const spreads=Math.ceil(pages.length/2); BOOK.lp=Math.max(0,Math.min(BOOK.lp||0,spreads-1));
  const roman=['i','ii','iii','iv','v','vi','vii','viii'];
  const pg=(i,side)=>{ const p=pages[i]; return `<section class="page ${side}">${p?`<h3>${p[0]}</h3>${RULE}${p[1]}`:''}<div class="folio">${side==='l'&&BOOK.lp>0?`<button data-lp="${BOOK.lp-1}">‹ 前頁</button>`:'<span></span>'}<span>${roman[i]||''}</span>${side==='r'&&BOOK.lp<spreads-1?`<button data-lp="${BOOK.lp+1}">後頁 ›</button>`:'<span></span>'}</div></section>`; };
@@ -7556,7 +7561,7 @@ const HSDEF=[
  {id:'hab-door',scene:'habitat',name:'前往星月觀測車廂',shape:'door',at:{x:50,y:51},act:'go:observation'},
  {id:'hab-back',scene:'habitat',name:'返回森羅溫室車廂',shape:'back',at:{x:50,y:46},act:'go:nature'},
  /* 記憶典藏車廂（360° 環景，柱面座標） */
- {id:'mem-book',scene:'memory',name:'世界與生物圖鑑',at:{x:9.5,y:37.5},layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
+ {id:'mem-book',scene:'memory',name:'生命誌',at:{x:9.5,y:37.5},layer:3,act:()=>openBook('life'),ver:()=>state.discoveredLifeforms.length+'/'+state.visitedLocations.length,
   imp:()=>seenOf('mem-book')===undefined&&state.discoveredLifeforms.length>0},
  {id:'mem-crystal',scene:'memory',name:'回憶水晶',at:{x:10,y:69},layer:3,act:()=>memoryPanel(),ver:()=>memsHave().length},
  {id:'mem-atlas',scene:'memory',name:'界域地誌',at:{x:94,y:56},layer:3,act:()=>atlasBook(),ver:()=>state.visitedLocations.length},
@@ -7582,7 +7587,7 @@ const HSDEF=[
   get sx(){ return PASSENGERS[id].sprite?`;--sh:${PASSENGERS[id].place==='outside'?26:17}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; }, get at(){ return roamSlot(id); },layer:4,track:false,show:()=>aboard(id)&&['nature','observation','outside'].includes(state.passengers[id].place),act:()=>roamTalk(id)})),
  {id:'ot-cross',scene:'observatory',name:'光軌上的小生命',at:{x:60,y:30},layer:3,track:false,show:()=>delayOn('life'),imp:()=>true,act:()=>lifeGame()},
  {id:'ot-invite',scene:'observatory',name:'邀請乘客來看天空',at:{x:50,y:80},layer:3,track:false,show:()=>Object.keys(PASSENGERS).some(aboard),act:()=>deckInvite()},
- {id:'ot-dust',scene:'observatory',name:'接住星塵',at:{x:34,y:22},layer:3,track:false,show:()=>{ const k=skyNow(); return !!(k&&k.type==='meteor'&&k.watched&&!k.dust); },imp:()=>true,act:()=>dustGame()},
+ {id:'ot-dust',scene:'observatory',name:'接住星塵',at:{x:34,y:22},layer:3,track:false,show:()=>false,imp:()=>true,act:()=>dustGame()},
  {id:'ot-sky',scene:'observatory',name:()=>skyNow()?'觀賞：'+SKY[skyNow().type].name:'星象',at:{x:50,y:14},layer:3,track:false,show:()=>!!skyNow(),imp:()=>!!skyNow()&&!skyNow().watched,act:()=>skyWatch()},
  {id:'ot-back',scene:'observatory',name:'返回星月觀測車廂',shape:'back',at:{x:7,y:94},show:()=>false,act:'go:observation'},
  /* 列車外 */
@@ -7645,11 +7650,11 @@ const EVO=[
   hint:['連出星座、看一次星象……','連出更多星座，多看幾種星象。','讀懂星座完整的故事……',''],
   calc:()=>{ const c=(state.consts||[]).filter(id=>CONSTS.some(x=>x.id===id)).length, s=(state.skySeen||[]).length, deep=CONSTS.some(x=>constDeep(x.id)); return c>=7&&(deep||s>=4)?4:c>=4&&s>=2?3:c+s>=2?2:1; },
   prog:()=>`連出 ${(state.consts||[]).filter(id=>CONSTS.some(x=>x.id===id)).length} 座星座・看過 ${(state.skySeen||[]).length} 種星象`},
- {k:'repair',n:'界染修復',car:'cab',col:'#bff4ff',tone:[1046,1318,1568],stages:['受染','初步淨化','能量恢復','完整修復'],
+ {k:'repair',n:'列車修復',car:'cab',col:'#bff4ff',tone:[1046,1318,1568],stages:['受染','初步淨化','能量恢復','完整修復'],
   got:['車窗暗暗的，水晶混濁，金色的裝飾失去了光澤。','車窗慢慢變透明，水晶裡出現了微弱的光。','車廂裡的光變亮了；穿越界壁時，列車替你擋下了一點界染。','車窗清澈，水晶恢復了原本的光澤。古代的能量重新在列車裡流動。'],
   hint:['列車也需要淨化：駕駛室的核心水晶在等。','淨化、日界的晨光、會吸收界染的生命，都會幫列車恢復。','',''],
   calc:()=>{ const t=trainT(); return t<7?4:t<17?3:t<27?2:1; },   /* 門檻跟著新的起始值（30）等比例調整 */
-  prog:()=>`列車界染 ${trainT()}`},
+  prog:()=>`修復 ${repairPct()}%`},
  {k:'guard',n:'渡守記憶',car:'memory',col:'#ffd6a0',tone:[392,523,784],stages:['模糊的記憶','記憶回聲','隱藏空間開啟','列車真相'],
   got:['典藏車廂裡，有一處不尋常的空間痕跡。','封印的門扉浮現了輪廓，會回應你身上的光；映心鏡偶爾映出陌生的身影。','渡守的值勤室打開了。','值勤室裡更深的紀錄亮了起來：這列車真正的用途。'],
   hint:['找回渡守留下的線索……','還要再多一些記憶，也要讀懂牆上的古代文字。','當界壁的回聲、星座和渡守的話都連在一起……',''],
@@ -7660,6 +7665,8 @@ const EVO_K=Object.fromEntries(EVO.map(e=>[e.k,e]));
 const ancientN=()=>(state.engr||[]).length+Object.entries(state.hiddenFound||{}).filter(([k])=>HID_ALL.some(h=>h.id===k&&h.carve)).length+(typeof anomFound==='function'?anomFound().filter(a=>ANOM_RES[a.id]&&resDone(a.id)).length:0)+(state.clues.includes('clue_ring')?1:0);
 /* 列車自己的界染（和精靈的界染分開；兩者會互相影響） */
 const trainT=()=>Math.round(state.trainTaint==null?60:state.trainTaint);
+/* 玩家看到的是「列車修復」：起始值 30 是 0%，0 是 100%（界染只剩精靈身上的那一個） */
+const repairPct=()=>Math.max(0,Math.min(100,Math.round((30-trainT())/30*100)));
 function trainTAdd(n,why){ state.trainTaint=Math.max(0,Math.min(100,trainT()+n)); if(why&&n<0){ state.trainLog=state.trainLog||[]; state.trainLog.push({j:state.journeyCount,t:why,k:'repair'}); if(state.trainLog.length>60) state.trainLog.shift(); } }
 /* 到站時列車界染的變化：航道、晨光、會吸收界染的生命、開花的晨光植物、精靈自己乾不乾淨 */
 function trainArrive(dest){ let n=realmKey(dest)==='moon'?3:1, why=[]; if(realmKey(dest)==='sun'){ n-=3; why.push('晨光'); }
@@ -7694,7 +7701,7 @@ function evoSync(){ if(!state.introDone) return; const silent=!state.trainEvo; s
 function evoLog(k,s){ state.trainLog=state.trainLog||[]; state.trainLog.push({j:state.journeyCount,k,s,t:`${EVO_K[k].n}・${EVO_K[k].stages[s-1]}：${EVO_K[k].got[s-1]}`}); if(state.trainLog.length>60) state.trainLog.shift(); logJ(`列車的變化：${EVO_K[k].n}進入「${EVO_K[k].stages[s-1]}」。`,'find'); }
 /* 方向之間的影響：古代裝置恢復讓列車修復；生命的溫度讓列車修復一點 */
 function evoBonus(k,s,quiet){ state.evoBonus=state.evoBonus||{}; const key=k+s; if(state.evoBonus[key]) return; state.evoBonus[key]=1;
- if(k==='ancient'&&s>=3) trainTAdd(-6,quiet?null:'古代裝置恢復了能量，列車的界染淡了一些。'); if(k==='sanct'&&s>=3) trainTAdd(-3,quiet?null:'生命的溫度，讓列車恢復了一點。'); if(k==='nature'&&s>=3) trainTAdd(-3,quiet?null:'溫室的植物，替列車吸收了一點界染。'); }
+ if(k==='ancient'&&s>=3) trainTAdd(-6,quiet?null:'古代裝置恢復了能量，列車又修好了一些。'); if(k==='sanct'&&s>=3) trainTAdd(-3,quiet?null:'生命的溫度，讓列車恢復了一點。'); if(k==='nature'&&s>=3) trainTAdd(-3,quiet?null:'溫室的植物，替列車修好了一點。'); }
 /* 曦淵或場景的一句話：符合世界觀，不跳教學視窗 */
 const EVO_SAY={
  nature2:[['self','溫室角落的空花架上，冒出了第一株小小的植物。'],['dragon','溫室在醒過來了。……以前，這裡整片都是花。']],
@@ -7762,19 +7769,19 @@ function glyphRow(r){ const ch=[...r.t], n=ch.length, ang=r.v?0:Math.atan2(r.b[1
 function natDisplay(){ const g=[...new Set(state.grown||[])]; panel(`<div class="eyebrow">森羅溫室・${EVO_K.nature.stages[trainStage('nature')-1]}</div><h2>植物展示架</h2><p>${EVO_K.nature.got[trainStage('nature')-1]}</p><div class="disp-list">${g.map(p=>`<div class="disp-i">${PLANT_IMG[p]?`<img src="${PLANT_IMG[p]}" alt="">`:''}<b>${PLANTS[p].name}</b><small>${PLANTS[p].lang||''}</small></div>`).join('')}</div>`,'care growov'); }
 function habHome(){ const L=Object.keys(PASSENGERS).filter(id=>state.passengers[id]&&((state.passengers[id].stage||0)>=2||state.passengers[id].left));
  panel(`<div class="eyebrow">棲息車廂・${EVO_K.sanct.stages[trainStage('sanct')-1]}</div><h2>歸宿之燈</h2><p>每一盞燈，都是一位陪伴過的生命。有的還在車上，有的已經回到了自己的地方。</p><ul class="who-list">${L.map(id=>{ const s=state.passengers[id]; return `<li><b><i class="ldot" style="background:${PASSENGERS[id].color}"></i>${PASSENGERS[id].name}</b><span>${s.left?`在${s.leftAt&&LOCATIONS[s.leftAt]?LOCATIONS[s.leftAt].name:'旅途中'}找到了歸宿`:STAGE_NAMES[s.stage||0]}</span></li>`; }).join('')}</ul>`,'care growov'); }
-const ANCIENT_TEXT=['渡守在此','我們在界壁上出生，也在界壁上老去。每一個渡口，都留著我們的圓環。','這列車是渡船。世界要熄滅的時候，它就開過去，把來不及離開的生命和種子，一個一個載走。','車上的每一節車廂，都照著一個熄滅的世界蓋成：溫室留著它們的花，棲息車廂留著它們的風與水。','大熄滅來的時候，我們用盡力量撐住界壁。列車停在起點，我們把最後一道晨曦留給它。','若有一日列車再次醒來——'];
+const ANCIENT_TEXT=['渡守在此','我從沉睡之地來，在界壁之間來去。每一個渡口，都留著我的圓環。','這列車是渡船。世界要熄滅的時候，它就開過去，把來不及離開的生命和種子，一個一個載走。','車上的每一節車廂，都照著一個熄滅的世界蓋成：溫室留著它們的花，棲息車廂留著它們的風與水。','大熄滅來的時候，我用盡力量撐住界壁。列車停在起點，曦淵替我守著它。我回沉睡之地，睡一覺。','若有一日列車再次醒來——'];
 function memWall(){ const a=trainStage('ancient'), n=a>=4?6:a>=3?4:2; panel(`<div class="eyebrow">記憶典藏車廂・${EVO_K.ancient.stages[a-1]}</div><h2>牆上的古代文字</h2>${ANCIENT_TEXT.map((t,i)=>i<n?`<p class="anc-l">${t}</p>`:`<p class="anc-l blur">${t.replace(/[^，。—\s]/g,'◌')}</p>`).join('')}${a>=4?'<p class="pur-done">文字之間打開了一個小格子，裡面的紀錄已經收進了「渡守的值勤室」。</p>':`<p class="cs-rec">${EVO_K.ancient.hint[a-1]}</p>`}`,'care growov'); }
 function otProj(){ const st=trainStage('sky'), done=CONSTS.filter(x=>constDone(x.id)), home=Object.keys(HOME_C||{}).filter(id=>constDone('h_'+id));
  panel(`<div class="eyebrow">火車尾展望台・${EVO_K.sky.stages[st-1]}</div><h2>星空投影</h2><p>${st>=3?'連出的星座，完整地投影在天空上。':'投影的星光還很少。連出更多星座，它會慢慢亮起來。'}</p><div class="proj-grid">${done.map(c=>`<div class="pj">${constRound(c,true)}<b>${c.name}</b></div>`).join('')}${home.map(id=>`<div class="pj home"><b>${HOME_C[id].name}</b><small>${PASSENGERS[id].name}的家鄉</small></div>`).join('')}</div>${st>=4?`<p class="pur-done">投影跟著列車轉動。在${CONSTS.find(c=>constDeep(c.id))?CONSTS.find(c=>constDeep(c.id)).name:'星座'}的旁邊，有一條沒有走過的光：它指向月界很深的地方。</p>`:''}`,'care growov');
  if(st>=4&&!state.clues.includes('clue_r_wait')&&state.currentPhase==='voyage') setTimeout(()=>sense('（投影裡那條光……好像通往寂滅虛空的中央。）'),800); }
 function cabCore(){ const t=trainT(), st=trainStage('repair'), used=TAINT.used('p:core'), mats=Object.entries(MATS).filter(([m,M])=>M.use==='purify'&&matCount(m)>0);
- const ov=panel(`<div class="eyebrow">駕駛室・控制晶盤</div><h2>核心水晶</h2><p>${EVO_K.repair.got[st-1]}</p><p class="cs-rec">列車界染：${t}（${EVO_K.repair.stages[st-1]}）<br>精靈自己的界染：${TAINT.val()}</p>
+ const ov=panel(`<div class="eyebrow">駕駛室・控制晶盤</div><h2>核心水晶</h2><p>${EVO_K.repair.got[st-1]}</p><p class="cs-rec">列車修復：${repairPct()}%（${EVO_K.repair.stages[st-1]}）<br>你身上的界染：${TAINT.val()}</p>
   ${used?'<p class="pur-done">今天已經把光注入過核心了。</p>':mats.length?`<div class="zask">${mats.map(([m,M])=>`<button class="btn ghost" data-core="${m}">把${M.name}的光注入核心（剩 ${matCount(m)}）</button>`).join('')}</div>`:'<p class="cs-rec">身上沒有可以注入的光。光苔片、花粉、星塵都可以。</p>'}`,'care growov');
  ov.querySelectorAll('[data-core]').forEach(b=>b.onclick=()=>{ if(!TAINT.once('p:core')) return; const m=b.dataset.core; state.materials[m]=matCount(m)-1; trainTAdd(-4,`把${MATS[m].name}的光注入了列車核心。`); save(); SFX.tone(1046,0,1,'sine',.03); fxBurstAt(b,'#bff4ff'); closeOv(ov); sense('（核心水晶把光吸了進去。車窗好像亮了一點點。）'); evoSync(); render(); }); }
 const GUARD_REC=[
  ['值勤日誌・最後一頁','今天又有一個世界熄滅了。我們趕到的時候，只來得及帶走一盆花、和一隻在樹洞裡睡著的小東西。……下一次，要再快一點。'],
  ['列車的設計圖','一張畫在薄金箔上的圖。列車的每一節車廂下面，都寫著一個世界的名字。最後一節的下面，寫著：「給還沒出生的世界」。'],
- ['給醒來的那一位','若有一日列車再次醒來，願醒來的那一位，替我們把剩下的生命帶回家。不用急。界壁會等，我們也會等。——拾光'],
+ ['給醒來的那一位','若有一日列車再次醒來，願醒來的那一位，替我把剩下的生命帶回家。不用急。界壁會等，曦淵也會等。——拾光'],
  ['渡守的羅盤','一只停住的羅盤。指針沒有指向任何渡口，而是指著寂滅虛空的正中央——那裡有一點和你身上一樣的晨光。']];
 /* 渡守的值勤室：是一個場景（不是視窗）；桌上的日誌、設計圖、信、羅盤是裡面的熱點 */
 const GUARD_AT=[{x:44,y:73},{x:68,y:79},{x:91,y:74},{x:64,y:67.5}];
@@ -7968,7 +7975,7 @@ const VISITORS={
   story:[['self','觀測窗上，貼著一個透明的小生命。'],['tidewisp','……你有沒有看到，一顆藍色的星星？它以前，就在這裡。'],['self','……我沒有看過。'],['tidewisp','嗯。它熄掉很久了。我還是每次潮水來的時候，都來看一下。'],['self','牠在窗上停了一會兒，跟著退潮離開了。']],give:['sand',2],gname:'潮汐晶砂 ×2'},
  elder:{name:'見過渡守的老蛾',type:'古老生命',realm:'不明（自稱來自渡口）',looks:'一隻翅膀像舊羊皮紙的大蛾，翅膀上的花紋是圓環。',car:'memory',at:{x:46,y:30},col:['#ffe08a','#c8a85e'],shape:'wide',important:1,
   cond:()=>trainStage('ancient')>=3||state.clues.includes('clue_ferrykeepers'),why:'讀懂了牆上的古代文字、或知道了渡守的事',
-  story:[['self','典藏車廂的燈下，停著一隻很大的蛾。翅膀上的花紋，是圓環。'],['elder','……啊。車又在跑了。'],['elder','我小的時候，渡守會在這裡點燈。我就是被那盞燈引來的。'],['elder','他們很吵喔。每天都在爭論誰去澆花。'],['self','……渡守，是什麼樣子的？'],['elder','跟你很像。很忙，很溫柔，忘記休息。'],['self','說完，牠拍拍翅膀，從天窗飛走了。窗上留下一片發光的鱗粉。']],give:'clue_moth',gname:'線索：老蛾說的渡守'},
+  story:[['self','典藏車廂的燈下，停著一隻很大的蛾。翅膀上的花紋，是圓環。'],['elder','……啊。車又在跑了。'],['elder','我小的時候，渡守會在這裡點燈。我就是被那盞燈引來的。'],['elder','祂和那條龍很吵喔。每天都在爭論誰去澆花。'],['self','……渡守，是什麼樣子的？'],['elder','跟你很像。很忙，很溫柔，忘記休息。'],['self','說完，牠拍拍翅膀，從天窗飛走了。窗上留下一片發光的鱗粉。']],give:'clue_moth',gname:'線索：老蛾說的渡守'},
  voidshape:{name:'不屬於任何地方的影子',type:'異常生命',realm:'無法判斷',looks:'一個沒有固定形狀的影子，像是從畫面裡少了一塊。',car:'observation',at:{x:62,y:28},col:['#8a7fa8','#2a2440'],shape:'tall',important:1,
   cond:()=>state.currentPhase==='voyage'&&resStage()>=2,why:'深層共鳴的時候，在航行中',
   story:[['self','觀測窗的角落……少了一塊。不是黑色，是「沒有」。'],['voidshape','…… …… ……'],['self','它沒有聲音，可是我聽得懂：它在問，自己是誰。'],['self','我不知道。……可是我說：你在這裡，我看見你了。'],['self','影子停了一下，然後慢慢淡掉。觀測窗上，留下一個很小的、像問號的光痕。']],give:null,gname:'（什麼都沒有留下）'},
@@ -8007,11 +8014,11 @@ const OLD={
  water:{n:'誰去澆花',kind:'日常',cond:()=>trainStage('nature')>=2,where:'溫室甦醒之後',lines:['「……今天輪到誰澆花？」','「上次是我。」','「上上次也是你說的。」','「……那這次一起去吧。」','（笑聲，然後是水壺碰到玻璃的聲音。）']},
  lazy:{n:'展望台的午睡',kind:'日常',cond:()=>trainStage('sky')>=2,where:'展望台的星空投影醒來之後',lines:['「你又在展望台睡著了。」','「我在觀測。」','「眼睛閉著觀測？」','「……星星，用心看就好。」']},
  harbor:{n:'找一個安全的渡口',kind:'守護',cond:()=>state.visitedLocations.includes('starIslands'),where:'經過星河浮島',lines:['「這座島太小了，牠們住不下。」','「下一座呢？」','「會漂走。」','「那就再找。找到為止。我們有的是時間。」'],clue:'clue_island'},
- mend:{n:'修補界壁',kind:'守護',cond:()=>state.clues.includes('clue_wall')||state.clues.includes('clue_echo'),where:'聽見界壁的聲音之後',lines:['「手再往這邊一點。」','「撐住了嗎？」','「撐住了。……可是另一邊，還有人在撐。」','「那我們也不能放手。」'],clue:'clue_r_hands'},
+ mend:{n:'修補界壁',kind:'守護',cond:()=>state.clues.includes('clue_wall')||state.clues.includes('clue_echo'),where:'聽見界壁的聲音之後',lines:['「手再往這邊一點。」','「撐住了嗎？」','「撐住了。……可是另一邊，還在裂。」','「那我們也不能放手。」'],clue:'clue_r_hands'},
  dimming:{n:'熄滅的那一天',kind:'大熄滅',important:1,cond:()=>state.visitedLocations.includes('silentVoid')||state.clues.includes('clue_dimming')||trainStage('guard')>=2,where:'寂滅虛空、或想起大熄滅的時候',lines:['「……那邊的光，一盞一盞熄了。」','「還有多少人沒上車？」','「數不清了。」','「那就能載多少，載多少。」','（車門關上的聲音。很久很久，沒有人說話。）'],clue:'clue_dimming'},
  regret:{n:'沒有趕上的世界',kind:'大熄滅',cond:()=>trainStage('guard')>=3,where:'渡守的值勤室打開之後',lines:['「我們到的時候，已經什麼都沒有了。」','「……一盆花都沒有？」','「只有一隻小東西，躲在樹洞裡睡著了。」','「那就帶牠走。……至少，帶牠走。」']},
  origin:{n:'為什麼要造這列車',kind:'列車起源',important:1,cond:()=>trainStage('ancient')>=3,where:'古代的文字甦醒之後',lines:['「為什麼要造成列車？船不是比較快嗎？」','「船只能載一個世界的人。」','「列車呢？」','「列車可以一節一節加上去。每一個世界，都有自己的車廂。」'],clue:'clue_ferrykeepers'},
- lastdawn:{n:'最後一道晨曦',kind:'列車起源',important:1,cond:()=>state.clues.includes('clue_dragon')&&trainStage('repair')>=3,where:'列車的能量恢復之後',lines:['「我回沉睡之地，睡一覺。」','「那我們呢？」','「你們撐住界壁。我會醒過來的。」','「……醒過來的時候，你還會記得我們嗎？」','「大概不會吧。可是我會回來。」']},
+ lastdawn:{n:'最後一道晨曦',kind:'列車起源',important:1,cond:()=>state.clues.includes('clue_dragon')&&trainStage('repair')>=3,where:'列車的能量恢復之後',lines:['「我回沉睡之地，睡一覺。」','「那我呢？」','「你守著列車。界壁我撐好了，會撐很久。」','「……醒過來的時候，你還會記得我嗎？」','「大概不會吧。可是我會回來。」']},
  name:{n:'聽不清的名字',kind:'未完成',cond:()=>state.clues.includes('clue_wake'),where:'讀到沉睡的紀錄之後',lines:['「若有一日列車再次醒來，願醒來的那一位……」','「……你要把名字寫上去嗎？」','「寫什麼名字？」','「◌◌◌◌。」','（聲音斷掉了。）'],full:()=>trainStage('guard')>=4,fullLines:['「……你要把名字寫上去嗎？」','「不用了。醒來的那一位，會有自己的名字。」']},
  ferry:{n:'渡口的鐘聲',kind:'日常',cond:()=>state.currentLocation==='origin'&&trainStage('sky')>=2,where:'回到沉睡之地（古代渡口），而且星空投影已經醒來',lines:['（遠遠的鐘聲，敲了三下。）','「各位旅客，本列車即將由渡口出發。」','「……這次，車上有幾位？」','「很多很多。都坐好了。」']}};
 const OLD_CD=2, OLD_MINJ=8;
@@ -8075,7 +8082,7 @@ function bankLostCheck(){ const B=bank(); if(B.stage>=2||B.ev.lost||!(state.grow
 const BANK_SAY={
  lost:p=>[['self','種子典藏櫃裡，有一顆種子變灰了。'],['self',`是${PLANTS[p].seed}。……摸起來，冷冷的。`],['vine','種子也是活的。'],['vine','放太久、光不對，它就會睡著。睡得太深，就醒不過來了。'],['self','……那要怎麼保存？'],['vine','每一種種子，喜歡的光不一樣。你看櫃子，我教你。']],
  cant:()=>[['vine','你種過很多植物了。'],['vine','可是有些植物，在列車裡永遠長不大。'],['vine','它們的根，記得自己的土地。……要回到那裡，才算真的活下來。'],['self','回到那裡……是誰帶它們回去？'],['vine','你。或者，你遇見的那些生命。']],
- ark:()=>[['vine','你知道嗎。'],['vine','很久以前，這節車廂叫做「方舟」。'],['vine','渡守把每一個熄滅的世界裡，最後的一顆種子，都放在這裡。'],['vine','現在，換你了。'],['self','……我只是喜歡收集不同世界的植物。'],['vine','我知道。一開始，他們也是。']]};
+ ark:()=>[['vine','你知道嗎。'],['vine','很久以前，這節車廂叫做「方舟」。'],['vine','渡守把每一個熄滅的世界裡，最後的一顆種子，都放在這裡。'],['vine','現在，換你了。'],['self','……我只是喜歡收集不同世界的植物。'],['vine','我知道。一開始，祂也是。']]};
 /* ---------- 第二個事件：乘客認出故鄉已經消失的植物 ---------- */
 function homePlantMatch(){ for(const id of Object.keys(HOME_NAME||{})){ if(!aboard(id)||(state.passengers[id].stage||0)<2) continue; const p=Object.keys(HOME_NAME[id]).find(x=>seedN(x)>0||plantN(x)>0||(state.grown||[]).includes(x)); if(p) return [id,p]; } return null; }
 function bankHomeTry(H){ const B=bank(); if(B.stage!==2||B.ev.home) return false; const m=homePlantMatch(); if(!m||!H.includes(m[0])) return false; const [id,p]=m, hn=HOME_NAME[id][p];
@@ -8124,7 +8131,7 @@ const VINE_TOPIC=[
  {k:'keep',n:'保存建議',s:2,t:()=>{ const weak=Object.keys(PLANTS).filter(p=>seedN(p)>0&&vitOf(p)<=1); return weak.length?`${weak.slice(0,3).map(p=>`${PLANTS[p].seed}想要${KEEP_NEED[PLANTS[p].light||'any']}`).join('；')}。<br>把晶石的光調過去，下一站它們就會好一點。`:'櫃子裡的種子都睡得很好。……你很細心。'; }},
  {k:'rare',n:'特殊的植物',s:2,t:()=>'變種的植物，是兩株植物的花粉自己決定的。我也猜不到它們會長成什麼。<br>還有櫃子裡那三顆封著的古種……它們在等的，不是光。'},
  {k:'cross',n:'跨界復育',s:3,t:()=>{ const c=bank().comm.filter(x=>x.st==='on'); return c.length?`${c.map(x=>`${RCV[x.rcv].name}在等${PLANTS[x.p].name}`).join('；')}。<br>開過花的植物最好。種子的話，要有活力的。`:'你可以去問問那些失去植物的地方。古樹記得森林以前的樣子，星河的守潮者記得漂走的島。<br>我不能替你去。……我的根，在這裡。'; }},
- {k:'story',n:'植物的記憶',s:5,t:()=>'我是這節車廂的第一株植物。渡守把我種下的時候，說：「如果哪天我們不在了，你就幫忙記得。」<br>我記得。每一顆經過這裡的種子，我都記得。'}];
+ {k:'story',n:'植物的記憶',s:5,t:()=>'我是這節車廂的第一株植物。渡守把我種下的時候，說：「如果哪天我不在了，你就幫忙記得。」<br>我記得。每一顆經過這裡的種子，我都記得。'}];
 function vineTopicsRow(){ const L=VINE_TOPIC.filter(x=>bankOn(x.s)); return L.length?`<div class="row vine-topics">${L.map(x=>`<button class="btn ghost" data-vt="${x.k}">${x.n}</button>`).join('')}</div>`:''; }
 function vineTopicsBind(bub){ bub.querySelectorAll('[data-vt]').forEach(b=>b.onclick=()=>{ const T=VINE_TOPIC.find(x=>x.k===b.dataset.vt); let o=bub.querySelector('.vine-say'); if(!o){ bub.insertAdjacentHTML('beforeend','<p class="vine-say"></p>'); o=bub.querySelector('.vine-say'); } o.innerHTML=T.t(); SFX.tone(784,0,.4,'sine',.02); }); }
 /* ---------- 植物生命圖鑑（沿用筆記本的書頁設計）：欄位依階段開放 ---------- */
@@ -8174,8 +8181,8 @@ HSDEF.forEach(h=>{ const r=Object.keys(RCV).find(k=>RCV[k].hs===h.id); if(!r) re
    ================================================================ */
 const CR_SEV={S1:'輕微異常',S2:'中度危機',S3:'重大危機',S4:'災變級危機'}, CR_W={W1:'細微徵兆',W2:'危險徵兆',W3:'危機迫近',W4:'危機爆發'};
 const CR_PREV={P1:'可完全避免',P2:'可降低損失',P3:'部分不可預測',P4:'不可預防'};
-const CR_CAT={A:'星際與界域意外',B:'異界生物襲擊',C:'列車自身故障',D:'界染與污染'};
-const CR_TIER=[[0,'正常'],[20,'輕微界染'],[40,'中度界染'],[60,'高度界染'],[80,'危險界染'],[100,'界染失控']];
+const CR_CAT={A:'星際與界域意外',B:'異界生物襲擊',C:'列車自身故障',D:'車廂混濁'};
+const CR_TIER=[[0,'正常'],[20,'輕微受損'],[40,'中度受損'],[60,'嚴重受損'],[80,'危險'],[100,'失控']];
 const crTier=v=>{ v=v==null?trainT():v; let i=0; CR_TIER.forEach((t,k)=>{ if(v>=t[0]) i=k; }); return i; };
 const CAR_N=id=>CARRIAGES[id]?CARRIAGES[id].name:id;
 /* ---------- 精靈能做的事（每一種都有使用條件與成本；不適用的會標示原因） ---------- */
@@ -8403,7 +8410,7 @@ function crScore(){ const C=state.crisis, E=CRISES[C.id]; let s=0; C.acts.forEac
  C.pax.filter(p=>p.k!=='info'&&p.k!=='refuse'&&p.k!=='none').forEach(p=>s+=Math.min(2,p.v||1)); if(C.pax.some(p=>p.k==='info')) s+=.5;
  if(C.xi) s+=E.eff.xiyuan||2; if((state.energy==null?80:state.energy)<20) s-=1; if(crTier()>=3) s-=1; if(trainStage('repair')>=3) s+=1; s-=(C.wrong||0)*.5; return s; }
 function crResolve(){ const C=state.crisis; if(!C||C.done) return null; const E=CRISES[C.id], s=crScore(), need=2+C.sevN*1.5; const res=s>=need?'succ':s>=need-2.5?'part':'fail';
- C.done=1; C.result=res; document.body.classList.remove('cr-alert'); const [lo,hi]=E.out[res[0]]; const d=Math.round(lo+(hi-lo)*Math.min(1,C.sevN/4)); trainTAdd(d,d<0?`${E.n}解決之後，列車的界染淡了一些。`:null);
+ C.done=1; C.result=res; document.body.classList.remove('cr-alert'); const [lo,hi]=E.out[res[0]]; const d=Math.round(lo+(hi-lo)*Math.min(1,C.sevN/4)); trainTAdd(d,d<0?`${E.n}解決之後，列車又修好了一些。`:null);
  const dm=res==='succ'?[]:(E.dmg[res==='part'?'p':'f']||[]); const T=trainStatus(), lines=[];
  dm.forEach(x=>{ if(x==='stop'){ T.run='stop'; lines.push('列車緊急停駛'); } else if(x==='slow'){ T.slow=1; if(T.run==='normal') T.run='slow'; lines.push('列車減速'); } else if(x==='shield'){ T.shield=1; lines.push('防護結界受損'); } else if(x==='energy'){ T.energyBad=1; state.energy=Math.max(0,(state.energy||80)-25); lines.push('能源異常'); }
   else if(x==='seal'){ crSeal(E.where); lines.push(`${CAR_N(E.where)}暫時封鎖`); } else if(x.startsWith('pol:')){ const c=x.slice(4); state.carPol=state.carPol||{}; state.carPol[c]=Math.min(100,(state.carPol[c]||0)+(res==='fail'?45:25)); lines.push(`${CAR_N(c)}受到污染`); }
@@ -8426,7 +8433,7 @@ function crCare(id){ const s=state.passengers[id]; if(!s||!['hurt','care','pollu
 /* ---------- 界染 100%：不是遊戲結束，而是可以搶救的重大災變 ---------- */
 function crDisaster(){ const D=state.disaster={st:1,core:(crPolCars(0).sort((a,b)=>(state.carPol[b]||0)-(state.carPol[a]||0))[0])||'nature',j:state.journeyCount}; const T=trainStatus(); T.run='stop'; state.crisis=null; state.crChain=[];
  Object.keys(PASSENGERS).filter(aboard).forEach(id=>{ if(state.passengers[id].place!=='outside') state.passengers[id].place=undefined; }); ['nature','observation','memory'].forEach(c=>{ if((state.carPol||{})[c]>=40) crSeal(c); });
- logJ('列車的界染失控了。進入緊急狀態。','find'); save(); document.body.classList.add('cr-disaster'); if(!(navigator.webdriver&&!window.CRISIS_TEST)) setTimeout(()=>dialogueScript([['self','車廂的光一盞一盞變暗。列車停了下來。'],['dragon','界染失控了。……還來得及。先找到污染最重的地方。'],['self','大家都先到棲息車廂。我去找。']],()=>crPanel()),600); }
+ logJ('列車失控了。進入緊急狀態。','find'); save(); document.body.classList.add('cr-disaster'); if(!(navigator.webdriver&&!window.CRISIS_TEST)) setTimeout(()=>dialogueScript([['self','車廂的光一盞一盞變暗。列車停了下來。'],['dragon','界染失控了。……還來得及。先找到污染最重的地方。'],['self','大家都先到棲息車廂。我去找。']],()=>crPanel()),600); }
 const DIS_STEP=['','找出主要的污染源','淨化污染核心','穩定列車、分區恢復'];
 function crDisAct(k){ const D=state.disaster; if(!D) return '沒有災變。';
  if(D.st===1){ const h=crHelpers(['sense']).filter(id=>paxSt(id)!=='hurt'); if(!h.length&&k!=='search') return '需要感知能力的乘客幫忙，或者自己一節一節去找。'; D.st=2; D.found=h[0]||'self'; save(); return null; }
@@ -8434,21 +8441,21 @@ function crDisAct(k){ const D=state.disaster; if(!D) return '沒有災變。';
  if(D.st===3){ state.repairs=(state.repairs||[]).concat([{t:'分區淨化',done:0,need:{purify:1}},{t:'修復防護結界',done:0,need:{stardust:1}}]); document.body.classList.remove('cr-disaster'); D.st=4; logJ('災變搶救成功。接下來，要一節一節修好。','find'); crRecord('rescue',['主要污染源已淨化','還需要分區修復']); save(); return null; } return null; }
 /* ---------- 事件紀錄（整合進既有筆記本） ---------- */
 function crRecord(res,lines,d){ const C=state.crisis||{}, E=CRISES[C.id]||{n:'界染災變'}; state.crHist=state.crHist||[];
- state.crHist.push({id:C.id||'DIS',n:E.n,j:state.journeyCount,sev:C.sevN?'S'+C.sevN:'S4',cause:C.cause||'界染失控',signs:(C.signs||[]).slice(0,3),acts:(C.acts||[]).map(k=>CR_ACT[k]?CR_ACT[k].n:k),pax:(C.pax||[]).map(p=>`${nm(p.id)}（${{active:'主動協助',agree:'同意協助',calm:'安撫後協助',info:'提供情報',refuse:'拒絕',none:'無法協助'}[p.k]}）`),xi:!!C.xi,res,d:d||0,lines:lines||[]});
+ state.crHist.push({id:C.id||'DIS',n:E.n,j:state.journeyCount,sev:C.sevN?'S'+C.sevN:'S4',cause:C.cause||'列車失控',signs:(C.signs||[]).slice(0,3),acts:(C.acts||[]).map(k=>CR_ACT[k]?CR_ACT[k].n:k),pax:(C.pax||[]).map(p=>`${nm(p.id)}（${{active:'主動協助',agree:'同意協助',calm:'安撫後協助',info:'提供情報',refuse:'拒絕',none:'無法協助'}[p.k]}）`),xi:!!C.xi,res,d:d||0,lines:lines||[]});
  if(state.crHist.length>40) state.crHist.shift(); logJ(`危機紀錄：${E.n}・${{succ:'成功',part:'部分成功',fail:'失敗',avoid:'事前避開',false:'虛驚一場',rescue:'搶救成功'}[res]}。`,'find'); }
 const RES_N={succ:'成功',part:'部分成功',fail:'失敗',avoid:'事前避開',false:'虛驚一場',rescue:'搶救成功'};
-function crNoteSection(){ const H=(state.crHist||[]); if(!H.length&&!state.repairs?.length) return ''; return `<h3 class="jr-h" style="margin-top:22px">危機紀錄</h3><ul class="nb-list">${H.slice(-8).reverse().map(h=>`<li class="filed"><span><b>第 ${h.j} 趟・${h.n}</b>（${h.sev}）<br><small>原因：${esc(h.cause)}${h.signs.length?`；徵兆：${esc(h.signs.map(s=>s.replace(/[（）]/g,'')).join('／'))}`:''}${h.acts.length?`；行動：${h.acts.join('、')}`:''}${h.pax.length?`；乘客：${h.pax.join('、')}`:''}${h.xi?'；曦淵介入':''}${h.lines.length?`；結果：${esc(h.lines.join('、'))}`:''}${h.d?`；列車界染 ${h.d>0?'+':''}${h.d}`:''}</small></span><em>${RES_N[h.res]}</em></li>`).join('')}</ul>${(state.repairs||[]).some(r=>!r.done)?`<p class="jr-p"><b>還需要修復：</b>${state.repairs.filter(r=>!r.done).map(r=>r.t).join('、')}</p>`:''}`; }
+function crNoteSection(){ const H=(state.crHist||[]); if(!H.length&&!state.repairs?.length) return ''; return `<h3 class="jr-h" style="margin-top:22px">危機紀錄</h3><ul class="nb-list">${H.slice(-8).reverse().map(h=>`<li class="filed"><span><b>第 ${h.j} 趟・${h.n}</b>（${h.sev}）<br><small>原因：${esc(h.cause)}${h.signs.length?`；徵兆：${esc(h.signs.map(s=>s.replace(/[（）]/g,'')).join('／'))}`:''}${h.acts.length?`；行動：${h.acts.join('、')}`:''}${h.pax.length?`；乘客：${h.pax.join('、')}`:''}${h.xi?'；曦淵介入':''}${h.lines.length?`；結果：${esc(h.lines.join('、'))}`:''}${h.d?`；${h.d<0?'列車修好了一點':'列車受損了一點'}`:''}</small></span><em>${RES_N[h.res]}</em></li>`).join('')}</ul>${(state.repairs||[]).some(r=>!r.done)?`<p class="jr-p"><b>還需要修復：</b>${state.repairs.filter(r=>!r.done).map(r=>r.t).join('、')}</p>`:''}`; }
 /* ---------- 應變面板（沿用駕駛室的「列車核心」；不新增大型設備） ---------- */
 function crPanel(){ const C=state.crisis, D=state.disaster, T=trainStatus(), E=C&&CRISES[C.id]; let body='';
- if(D&&D.st<4){ body=`<h3 class="prep-h">界染失控・搶救</h3><p class="prep-b">第 ${D.st} 步：${DIS_STEP[D.st]}。污染最重的地方：${CAR_N(D.core)}。</p><div class="zask"><button class="btn" data-dis="go">${D.st===1?'請感知的乘客幫忙找':D.st===2?'淨化污染核心（兩份淨化材料）':'穩定列車，開始分區修復'}</button>${D.st===1?'<button class="btn ghost" data-dis="search">自己一節一節找</button>':''}${D.st===2&&!CR_ACT.xiyuan.need()?'<button class="btn ghost" data-dis="xiyuan">請曦淵穩住污染</button>':''}</div>`; }
+ if(D&&D.st<4){ body=`<h3 class="prep-h">列車失控・搶救</h3><p class="prep-b">第 ${D.st} 步：${DIS_STEP[D.st]}。污染最重的地方：${CAR_N(D.core)}。</p><div class="zask"><button class="btn" data-dis="go">${D.st===1?'請感知的乘客幫忙找':D.st===2?'淨化污染核心（兩份淨化材料）':'穩定列車，開始分區修復'}</button>${D.st===1?'<button class="btn ghost" data-dis="search">自己一節一節找</button>':''}${D.st===2&&!CR_ACT.xiyuan.need()?'<button class="btn ghost" data-dis="xiyuan">請曦淵穩住污染</button>':''}</div>`; }
  else if(C&&!C.done&&(C.stage!=='W1'||C.intel>0)){ const L=crActList();
   body=`<h3 class="prep-h">${C.intel>=3?E.n:C.intel>=2?CR_CAT[E.cat]:'不對勁的感覺'}${C.intel>=3?`<small>・${CR_SEV['S'+C.sevN]}・${CR_PREV[E.prev]}</small>`:''}</h3><p class="prep-b">${CR_W[C.stage]}・${INTEL_N[C.intel]}${C.intel>=3?`<br>${E.inv}`:''}</p>${C.signs.length?`<p class="cs-rec">看到的徵兆：${C.signs.map(s=>s.replace(/[（）]/g,'')).join('／')}</p>`:''}
   <div class="cr-acts">${L.map(a=>`<button class="btn ${a.why?'ghost dis':'ghost'}" data-cr="${a.k}" ${a.why?'disabled':''} title="${esc(a.d)}">${a.hint}${a.n}${a.why?`<small>（${a.why}）</small>`:''}</button>`).join('')}</div>
   ${C.stage==='W4'||C.intel>=2?`<h3 class="prep-h">請乘客幫忙</h3><div class="cr-acts">${Object.keys(PASSENGERS).filter(aboard).map(id=>{ const fit=(CR_ABIL[id]||[]).filter(t=>E.pax.includes(t)); const asked=C.pax.find(p=>p.id===id&&p.k!=='info'); return `<button class="btn ghost ${fit.length?'':'dis'}" data-pax="${id}" ${fit.length&&!asked?'':'disabled'}>${nm(id)}<small>${fit.length?'・'+fit.map(t=>ABIL_N[t]).join('、'):'・幫不上忙'}${paxSt(id)!=='ok'?'・'+PAX_ST_N[paxSt(id)]:''}${asked?'・'+({active:'協助中',agree:'協助中',calm:'協助中',refuse:'拒絕了'}[asked.k]||''):''}</small></button>`; }).join('')||'<small>車上沒有乘客。</small>'}</div>`:''}
   ${C.stage==='W4'?`<div class="zask"><button class="btn" data-cr-go>${C.acts.length?'就這樣應對':'什麼都不做，撐過去'}</button></div>`:''}<p class="cr-msg"></p>`; }
  else { const P=Object.entries(state.carPol||{}).filter(([c,v])=>v>0), R=(state.repairs||[]).map((r,i)=>[r,i]).filter(([r])=>!r.done), hurt=Object.keys(PASSENGERS).filter(id=>aboard(id)&&['hurt','care','polluted','scared'].includes(paxSt(id)));
-  body=`<h3 class="prep-h">列車狀態</h3><p class="prep-b">${TRAIN_RUN_N[T.run]}${T.shield?'・防護結界受損':''}${T.energyBad?'・能源異常':''}${T.offroute?'・偏離航線':''}<br>列車界染 ${trainT()}（${CR_TIER[crTier()][1]}）・能源 ${Math.round(state.energy==null?80:state.energy)}</p>
-  ${P.length?`<p class="cs-rec">局部污染：${P.map(([c,v])=>`${CAR_N(c)} ${v}${crSealed(c)?'（封鎖中）':''}`).join('、')}</p><div class="cr-acts">${P.map(([c])=>`<button class="btn ghost" data-pur="${c}">淨化${CAR_N(c)}</button>`).join('')}${(state.sealed||[]).map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:(state.sealed||[]).length?`<div class="cr-acts">${state.sealed.map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:''}
+  body=`<h3 class="prep-h">列車狀態</h3><p class="prep-b">${TRAIN_RUN_N[T.run]}${T.shield?'・防護結界受損':''}${T.energyBad?'・能源異常':''}${T.offroute?'・偏離航線':''}<br>列車狀態：${CR_TIER[crTier()][1]}（修復 ${repairPct()}%）・能源 ${Math.round(state.energy==null?80:state.energy)}</p>
+  ${P.length?`<p class="cs-rec">混濁的車廂：${P.map(([c,v])=>`${CAR_N(c)}（${v>=60?'很重':v>=30?'有點重':'一點點'}）${crSealed(c)?'（封鎖中）':''}`).join('、')}</p><div class="cr-acts">${P.map(([c])=>`<button class="btn ghost" data-pur="${c}">淨化${CAR_N(c)}</button>`).join('')}${(state.sealed||[]).map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:(state.sealed||[]).length?`<div class="cr-acts">${state.sealed.map(c=>`<button class="btn ghost" data-unseal="${c}">解除${CAR_N(c)}的封鎖</button>`).join('')}</div>`:''}
   ${R.length?`<h3 class="prep-h">需要修復</h3><div class="cr-acts">${R.map(([r,i])=>`<button class="btn ghost" data-rep="${i}">${r.t}<small>（${Object.entries(r.need).map(([k,v])=>k==='purify'?'淨化材料':MATS[k].name+' ×'+v).join('、')}）</small></button>`).join('')}</div>`:''}
   ${hurt.length?`<h3 class="prep-h">需要照護的乘客</h3><div class="cr-acts">${hurt.map(id=>`<button class="btn ghost" data-care="${id}">${nm(id)}<small>・${PAX_ST_N[paxSt(id)]}</small></button>`).join('')}</div>`:''}<p class="cr-msg"></p>`; }
  const ov=panel(`<div class="eyebrow">駕駛室・控制晶盤</div><h2>${D&&D.st<4?'緊急狀態':C&&!C.done?'應變':'列車狀態'}</h2>${body}`,'small crov'); const msg=t=>{ const m=ov.querySelector('.cr-msg'); if(m) m.textContent=t; };
@@ -9986,7 +9993,7 @@ setInterval(()=>{ try{ act4Tick(); }catch(e){ console.error(e); } },700);
    第四幕結束後，一團會發光的小生命從世界縫隙漂進車廂：星汐水母・索拉（第一位乘客）。
    讓玩家認識：乘客不是任務道具，而是各自有目的的生命。
    教學：對話（登車後的第一次聊天，發光的字句可以記下）、互動（調整牠住的那一區結界）、
-        筆記本（右上角）、乘客資料（記憶典藏車廂「世界與生物圖鑑」：把筆記整理進牠的欄位）
+        筆記本（右上角）、乘客資料（記憶典藏車廂「生命誌」：把筆記整理進牠的欄位）
    引導：設備上的 ✦ 徽章＋精靈的念頭；順序不限（只有「打開筆記本」要先記下一句話）
    存檔：state.act5＝{boarded, nb, said:{}, done}
    ===================================================================== */
@@ -10037,7 +10044,7 @@ function act5Tick(){ if(!state||!state.act4||!state.act4.finished) return; if(!s
  /* 對話與筆記 */
  if(!A5.noted()&&!a.said.note&&c==='habitat'&&idle>1500) return a5say('note',[['self','剛才那些發光的字……還沒有記下來。'],['self','再找牠聊聊吧。']]);
  if(A5.noted()&&!a.said.noted&&!A5.filed()) return a5say('noted',[['self','記下來了。'],['self','筆記本……在右上角。剛才記下的話，會留在裡面。']]);
- if(ACT5P.nbJust){ ACT5P.nbJust=0; if(A5.filed()) return; return a5say('nbx',[['self','筆記可以帶回記憶典藏車廂，整理進「世界與生物圖鑑」。'],['self','那裡，就是每一位乘客的資料。']]); }
+ if(ACT5P.nbJust){ ACT5P.nbJust=0; if(A5.filed()) return; return a5say('nbx',[['self','筆記可以帶回記憶典藏車廂，整理進「生命誌」。'],['self','那裡，就是每一位乘客的資料。']]); }
  /* 乘客資料 */
  if(A5.filed()&&!a.said.filed) return a5say('filed',[['self','索拉的資料……一點一點，變得完整了。'],['self','牠不是一件要完成的事。牠有自己的家，有自己想去的地方。']]);
  /* 完成：牠想回家 → 接第六幕 */
@@ -10222,7 +10229,7 @@ function mainQuest(){ const f=state.storyFlags, j=state.journeyCount||0, op=k=>s
  const ab=(op('a')?1:0)+(op('b')?1:0);
  return [
   {k:'seal',t:'到森羅溫室的種子典藏櫃，看看那三枚封存的種子',done:!!f.sealSeen||ab>0,sub:'它們是渡守留下的古種，封印還沒有解開'},
-  {k:'lore',t:`到駕駛室找曦淵聊聊，聽列車的故事（${(f.dragonLore||[]).length}/${DRAGON_LORE.length}）`,done:state.clues.includes('clue_dragon'),sub:loreNext()?'航行中，或出發前報備完之後，點曦淵就會說':'下一段故事，要再開一趟車才會說'},
+  {k:'lore',t:'到駕駛室找曦淵聊聊，聽列車的故事',done:state.clues.includes('clue_dragon'),sub:loreNext()?'航行中，或出發前報備完之後，點曦淵就會說':'下一段故事，要再開一趟車才會說'},
   {k:'a',t:SEEDQ.a.goal[Math.min(sq('a'),2)],done:op('a'),sub:SEEDQ.a.sub[Math.min(sq('a'),2)]},
   {k:'b',t:SEEDQ.b.goal[Math.min(sq('b'),2)],done:op('b'),sub:SEEDQ.b.sub[Math.min(sq('b'),2)]},
   {k:'c',t:SEEDQ.c.goal[Math.min(sq('c'),2)],done:op('c'),sub:SEEDQ.c.sub[Math.min(sq('c'),2)]},
@@ -10241,7 +10248,7 @@ function questCats(){ const C=[], li=(t,st)=>({t,st:st||'on'});
  if(pods.some(c=>c&&c.st>=2)) G.push(li('培育艙裡有花開了：去收成吧'));
  if(seeds.length&&pods.some(c=>!c)&&HSDEF.find(h=>h.id==='nat-pod-a').show()) G.push(li(`種子典藏櫃裡有 ${seeds.length} 種種子可以種`));
  if(!proOn()&&(state.grown||[]).length) G.push(li(`已經種出 ${(state.grown||[]).length} 種植物（植物樣本架、植物生命圖鑑）`,'done'));
- if(!proOn()&&state.prologueDone) G.push(li(chapOn()?`紀念品＋心意：${Math.min(endHave(),endNeed())}/${endNeed()}`:`乘客的紀念品：${Math.min(keepsHave().length,END_KEEPS)}/${END_KEEPS}`,endHave()>=endNeed()?'done':'on'));
+ if(!proOn()&&state.prologueDone) G.push(li(chapOn()?`收到的紀念品和心意：${endHave()} 份${endHave()>=endNeed()?'（已經夠了）':''}`:`乘客的紀念品：${keepsHave().length} 份${keepsHave().length>=END_KEEPS?'（已經夠了）':''}`,endHave()>=endNeed()?'done':'on'));
  if(G.length) C.push({k:'grow',n:'栽培與收集',L:G});
  const M=[]; if(state.trainMoon){ M.push(li('列車現在是月界的樣子：晨光照不進溫室、淨化效果減半、打開天窗偶爾會有月輝潮汐','on'));
   if(pods.some(c=>c&&c.st<2&&PLANTS[c.p].light==='dawn')) M.push(li('培育艙裡的晨光植物，要多陪陪才會長'));
@@ -10351,10 +10358,10 @@ const CHAP=[
  {n:2,title:'渡守的圓環',to:'starIslands',hero:'skywhale',lore:['dl_ferry'],evo:['sky',2],
   start:['古樹的圓環，牆上的字。','寫下它們的人，到底是誰？','曦淵好像知道。這一趟，牠的話比平常多。'],
   board:'列車停靠的時候，整片天空忽然暗了一下。一道巨大的灰色身影從星河下方的雲海裡浮上來，繞著列車慢慢游了一圈，然後輕輕地靠了過來。',
-  heroL:[['skywhale','…………這艘船。我，認得。'],['self','你見過這列車？'],['skywhale','很久，很久以前。我還，很小。'],['skywhale','那時候，船上，有很多人。穿著，長長的衣服。他們會，對我揮手。'],['self','……渡守。'],['skywhale','他們，在船尾，看星星。把星星，連成線。'],['skywhale','說那是，地圖。回家的，地圖。'],['skywhale','……船尾的那個台子，好暗。我，唱一首歌給它，好嗎？'],['self','（巨鯨低低地唱了起來。車廂的地板，跟著輕輕地震。）']],
-  end:['車尾的展望台上，亮起了第一批星光。','那是渡守們，回家的地圖。']},
+  heroL:[['skywhale','…………這艘船。我，認得。'],['self','你見過這列車？'],['skywhale','很久，很久以前。我還，很小。'],['skywhale','那時候，船上，有一個人。穿著，長長的衣服。祂會，對我揮手。'],['self','……渡守。'],['skywhale','祂，在船尾，看星星。把星星，連成線。'],['skywhale','說那是，地圖。回家的，地圖。'],['skywhale','……船尾的那個台子，好暗。我，唱一首歌給它，好嗎？'],['self','（巨鯨低低地唱了起來。車廂的地板，跟著輕輕地震。）']],
+  end:['車尾的展望台上，亮起了第一批星光。','那是渡守，回家的地圖。']},
  {n:3,title:'曦與淵',to:'dawnForest',hero:'sirenora',lore:['dl_dimming','dl_name'],evo:['sanct',2],
-  start:['巨鯨的歌，在車廂裡繞了好久才散。','渡守們離開了。可是，為什麼？','這一趟，曦淵會說一個很長的故事。'],
+  start:['巨鯨的歌，在車廂裡繞了好久才散。','渡守離開了。可是，為什麼？','這一趟，曦淵會說一個很長的故事。'],
   board:'列車停靠的時候，月台起了一片濃得化不開的霧。霧裡有一抹溫柔的粉白光暈，跟著車燈，一點一點靠了過來。',
   heroL:[['sirenora','……你身上的光，好像港口的燈。'],['sirenora','我在霧裡，聽過一首歌。很老、很老的歌。'],['sirenora','歌裡說，有一段時間，世界一個一個熄掉了。像吹熄蠟燭一樣。'],['self','……大熄滅。曦淵說過。'],['sirenora','歌的最後一段，是一條龍。一半是晨光，一半是深淵。'],['sirenora','祂守著一列不會熄的車，等最後一道光醒過來。'],['sirenora','……你身上的光，和歌裡的一樣暖。'],['self','（牠的觸鬚輕輕碰了一下你的手。很冰，可是很溫柔。）'],['sirenora','我可以待在這裡嗎？車上的燈，讓我覺得……不會迷路。']],
   end:['棲息車廂的上方，亮起了第一盞歸宿之燈。','日月儀轉了起來。兩個新的座標，正在發光。']},
@@ -10362,7 +10369,7 @@ const CHAP=[
   start:['日月儀指向的第一個地方：逆生之境。','那裡的花往下開，雨往上落。','溫室裡第一枚封存的種子，在微微發熱。'],
   board:'列車停靠的時候，月台輕輕震了一下，又一下。倒著長的樹林裡，一座長滿苔蘚與蕨葉的小山緩緩站起，倒退著走進了車門。',
   heroL:[['titan','……嗯。'],['titan','……我……睡了一下子。醒來的時候，森林……倒過來了。'],['self','你一直住在這裡嗎？'],['titan','……很久以前，這裡是……順著長的。'],['titan','有人……從列車上下來。手裡……拿著一顆種子。說要……等它醒。'],['titan','祂說……「等倒著流的光」。'],['self','封印上的刻紋……！'],['titan','……倒著流的光……是早上的光。從地上，回到天上。'],['titan','帶種子……去曬曬晨光吧。……我，也想……跟著看。']],
-  end:['溫室裡，第一朵花開了。','那是渡守們，留給下一個時代的春天。']},
+  end:['溫室裡，第一朵花開了。','那是渡守，留給下一個時代的春天。']},
  {n:5,title:'影子走廊',to:'boundlessCorridor',hero:'grinfox',seed:'b',evo:['repair',2],
   start:['日月儀指向的第二個地方：無界迴廊。','曦淵說，那條航道上有影子。','被影子看見的列車，會沾上很重的界染。'],
   board:'列車停靠在一條沒有燈的走廊裡。一道黑影一直跟在你身後三步遠的地方，你回頭——一張咧著白牙的笑臉，飄進了車門。',
@@ -10421,7 +10428,7 @@ EVO.forEach(e=>{ const oc=e.calc; e.calc=()=>{ let v=oc(); ((state.chap||{}).fl|
 function chapCheck(){ if(!RUNNING||!chapOn()) return; if(document.querySelector('#layer .cine,#layer .dlg,#layer .board,#layer .ov,#mainscreen,#mainscreen-out')) return chapSoon(2500);
  const S=chapS();
  for(let n=1;n<=6;n++){ if(S.ended.includes(n)||!chapOwn(n)) continue; const C=CHAP[n-1]; S.ended.push(n); S.fl=S.fl||[]; S.fl.push(n); if(!S.shown.includes(n)) S.shown.push(n);
-  if(C.evo&&C.evo[0]==='repair') trainTAdd(-6,'穿過影子之後，列車的界染淡了一層。'); logJ(`${chapLabel(n)}「${C.title}」結束了。`); save();
+  if(C.evo&&C.evo[0]==='repair') trainTAdd(-6,'穿過影子之後，列車又修好了一層。'); logJ(`${chapLabel(n)}「${C.title}」結束了。`); save();
   return cine([`<span class="big">${C.title}</span><span class="sub">${chapLabel(n)}・完</span>`].concat(C.end),()=>{ evoSync(); render(); },LOC_IMG[C.to],true); }
  const c=chapCur(); if(c&&!S.shown.includes(c)){ const C=CHAP[c-1]; S.shown.push(c); save(); logJ(`${chapLabel(c)}「${C.title}」。`);
   return cine([`<span class="big">${C.title}</span><span class="sub">${chapLabel(c)}</span>`].concat(C.start),()=>render(),LOC_IMG[C.to],true); } }
@@ -10485,7 +10492,7 @@ const reqGateOk=()=>sysOpen(3);
 const HEART={
  1:{ask:[['treeling','……呵呵。我說話慢，你別急。'],['treeling','列車尾巴的那個台子，地板上會浮出停靠地的刻紋。老樹的圓環，也會在那裡浮現。'],['treeling','拓下來，拿到你們的牆前面對照看看。看懂了，你就知道是誰寫的了。'],['self','（火車尾的展望台……門好像開了。）']],
   thx:[['treeling','……一樣的字。對吧？'],['treeling','寫字的人，叫做「渡守」。這個名字，你去問那條龍，牠會告訴你更多。'],['treeling','謝謝你陪我這個老頭子跑一趟。這個給你——是老樹落下來的種子。'],['self','（收到了晨曦蕨種。它喜歡晨光。）']],seed:'sunfern'},
- 2:{ask:[['skywhale','……我小時候，渡守，指給我看過，一群星星。'],['skywhale','長得，像我。他們說，那是，我的，星座。'],['skywhale','月亮那邊的天，才看得到。……你，幫我，找找？'],['self','（星月觀測車廂的星座盤。星鯨座在月界的天空。）']],
+ 2:{ask:[['skywhale','……我小時候，渡守，指給我看過，一群星星。'],['skywhale','長得，像我。祂說，那是，我的，星座。'],['skywhale','月亮那邊的天，才看得到。……你，幫我，找找？'],['self','（星月觀測車廂的星座盤。星鯨座在月界的天空。）']],
   thx:[['skywhale','…………在那裡。'],['skywhale','我，以為，再也，看不到了。'],['skywhale','這個，給你。我的背上，長出來的，星星的孢子。'],['self','（收到了星塵孢子。只有星輝能叫醒它。）']],seed:'starspore'},
  3:{ask:[['sirenora','……這裡好亮。可是我待的那一角，有點不太舒服。'],['sirenora','還有……如果可以的話，能不能為我點一盞燈？'],['sirenora','在霧裡，只要看得見一盞燈，我就不會迷路。'],['self','（棲息車廂的帷幔區，還有休息處的歸宿之燈。）']],
   thx:[['sirenora','……好溫暖。'],['sirenora','我想起那首歌的最後一句了。「燈亮著的地方，就是歸途。」'],['sirenora','這是我在港口撿到的花種。風吹過，它會響。'],['self','（收到了晨鈴花種。）']],seed:'bell'},
@@ -10494,7 +10501,7 @@ const HEART={
  5:{ask:[['grinfox','嘻……你聽，有潮聲。'],['grinfox','明明沒有海。那是你們車上的種子在叫。'],['grinfox','要用月亮那邊的光。……打開溫室的天窗，讓月光進來。'],['grinfox','我、我陪你。我不怕。……大概。']],
   thx:[['grinfox','……它醒了。嘻、嘻嘻。'],['grinfox','影子們剛剛也聽見了。它們……好像沒那麼餓了。'],['grinfox','這個給你。只在有月亮的地方開的花。'],['self','（收到了潮汐花種。在月界開花之後，列車的保護會更強。）']],seed:'tidebloom'},
  6:{ask:[['mnemo','……鑰匙，分成了兩半。'],['mnemo','一半在晨曦森林的老樹上。一半，在這片海底下。'],['mnemo','到車尾的展望台，把這裡的刻紋拓下來。再拿到記憶車廂，和老樹的那一半放在一起。'],['self','（晨光之星……和這裡的時潮之紋。）']],
-  thx:[['mnemo','……合起來了。'],['mnemo','渡守說：「門後面，是我們留下的全部。」'],['mnemo','我把碎片還給列車。……我不需要謝禮。你記得，就夠了。']],seed:null}};
+  thx:[['mnemo','……合起來了。'],['mnemo','渡守說：「門後面，是我留下的全部。」'],['mnemo','我把碎片還給列車。……我不需要謝禮。你記得，就夠了。']],seed:null}};
 /* 在望遠鏡裡先認出牠的話，上車時多一句 */
 const RECOG={sirenora:'……是你。望遠鏡的另一頭，有一道光一直看著霧裡。原來是你。',titan:'……有人……從很遠的地方……看我睡覺。……是你吧。',grinfox:'嘻！我知道你。你在望遠鏡裡找到過我。……被找到，好丟臉。',mnemo:'……你在望遠鏡裡看過我一次。那個瞬間，我也記住了。'};
 const NEXT_SHADOW={2:['sirenora'],3:['titan','grinfox'],4:['grinfox','mnemo'],5:['mnemo','titan']};
@@ -10625,7 +10632,7 @@ function finaleExtra(){ if(!chapOn()) return []; const H=heartHeroes().map(h=>`$
    ================================================================ */
 const NICK={treeling:'哼歌的孩子',skywhale:'揮手的人',sirenora:'寫歌的人',titan:'拿種子的人',grinfox:'不怕黑的人',mnemo:'說話的人'};
 const DEEP={
- treeling:[[['treeling','我還是小樹苗的時候，列車第一次停在這裡。'],['treeling','一個很年輕的渡守蹲在老樹下，一邊哼歌，一邊刻那個圓環。'],['treeling','我躲在旁邊，假裝自己是一棵小樹，聽了一整個下午。'],['treeling','我叫祂「哼歌的孩子」。……祂從來沒發現我。呵呵。'],['self','（……那首歌，好像在哪裡聽過。）']],
+ treeling:[[['treeling','我還是小樹苗的時候，列車第一次停在這裡。'],['treeling','很年輕的渡守蹲在老樹下，一邊哼歌，一邊刻那個圓環。'],['treeling','我躲在旁邊，假裝自己是一棵小樹，聽了一整個下午。'],['treeling','我叫祂「哼歌的孩子」。……祂從來沒發現我。呵呵。'],['self','（……那首歌，好像在哪裡聽過。）']],
   [['treeling','大熄滅那年，列車最後一次經過森林。'],['treeling','車上的人朝森林喊：還有誰要上車？'],['treeling','我怕。我又變成一棵樹，站著不動。……列車就開走了。'],['treeling','後來我才知道，那是最後一班。'],['treeling','我一直覺得，我躲起來了。']],
   [['treeling','可是你拓下刻紋的那天，我想通了。'],['treeling','那個孩子刻圓環，是要讓列車找得到回來的路。'],['treeling','我留在森林裡，剛好替祂守著這個記號。……我沒有躲錯，對吧？'],['self','（你點點頭。牠頭頂的枝葉，輕輕晃了很久。）'],['treeling','「老樹會一直在那裡，等列車再經過。」……這句話，是祂告訴我的。']]],
  skywhale:[[['skywhale','我很小的時候，遇到，很大的風暴。'],['skywhale','家人們，不見了。雲，很黑。'],['skywhale','然後，有一排燈，在動。是這艘船。'],['skywhale','船尾，有一個人，一直揮手。一直，一直。我跟著祂，飛出了風暴。'],['skywhale','我叫祂，「揮手的人」。']],
@@ -10634,10 +10641,10 @@ const DEEP={
  sirenora:[[['sirenora','組成我的思念裡，有一份特別溫暖。'],['sirenora','一個人在霧裡哼著一首搖籃曲。歌裡唱一條龍，一半晨光，一半深淵。'],['sirenora','那是寫給曦淵的歌。……我叫祂「寫歌的人」。'],['sirenora','祂沒有回家。所以祂想家的那一份，也變成了我。']],
   [['sirenora','我常常想……我是不是只是很多人的想家？'],['sirenora','沒有一樣東西，是我自己的。'],['sirenora','所以我總是說「不要追」。……因為我覺得，沒有誰真的會追我。']],
   [['sirenora','可是你為我點了燈。'],['sirenora','「燈亮著的地方，就是歸途。」……那首歌的最後一句，不是誰的思念。'],['sirenora','是我自己想起來的。'],['sirenora','……所以，我好像也有一點點，是我自己了。']]],
- titan:[[['titan','……很久以前……這裡……順著長。'],['titan','有一個渡守……拿著一顆種子……來找我。'],['titan','祂說……「你活得最久……替我們看著……等它醒來」。'],['titan','……我叫祂……「拿種子的人」。']],
+ titan:[[['titan','……很久以前……這裡……順著長。'],['titan','渡守……拿著一顆種子……來找我。'],['titan','祂說……「你活得最久……替我看著……等它醒來」。'],['titan','……我叫祂……「拿種子的人」。']],
   [['titan','……我點頭了。'],['titan','……然後……我睡著了。'],['titan','……只是翻了一個身。……醒來……森林倒過來了……渡守……都不見了。'],['titan','……我答應要看著……卻什麼都……沒看到。']],
   [['titan','……所以我說話……很慢。'],['titan','……怕再錯過什麼。……每一個字……都想好好放下。'],['titan','……可是種子……醒了。……我看到了。'],['titan','……拿種子的人……答應你的事……我做到了。']]],
- grinfox:[[['grinfox','大熄滅之後，岔路口多了好多影子。'],['grinfox','我、我嚇壞了。躲了好久好久。'],['grinfox','有一個渡守經過，在我旁邊坐下來。祂一點都不怕。'],['grinfox','祂教我變成月亮那邊的顏色。……我叫祂「不怕黑的人」。嘻。']],
+ grinfox:[[['grinfox','大熄滅之後，岔路口多了好多影子。'],['grinfox','我、我嚇壞了。躲了好久好久。'],['grinfox','渡守經過，在我旁邊坐下來。祂一點都不怕。'],['grinfox','祂教我變成月亮那邊的顏色。……我叫祂「不怕黑的人」。嘻。']],
   [['grinfox','……我可以告訴你一個秘密嗎？'],['grinfox','我一直怕……那些影子，是我吃不完的害怕變成的。'],['grinfox','如果是那樣……那我是不是，也是影子？'],['grinfox','還有……給我墜飾的那個孩子，牠的世界後來也熄滅了。我不知道牠有沒有搭上列車。']],
   [['grinfox','潮種醒的時候，影子們沒那麼餓了。'],['grinfox','原來牠們也在找光。不是我害的。'],['grinfox','我能做的，就是陪人安靜地走過去。……三步，不多不少。'],['grinfox','嘻。這樣，就夠了。']]],
  mnemo:[[['mnemo','我是第一個熄滅的世界留下的。'],['mnemo','我收著很多片……同一個人的記憶。'],['mnemo','老樹下哼歌的年輕人。風暴裡揮手的人。霧裡寫歌的人。交出種子的人。陪狐狸坐著的人。'],['mnemo','還有，在駕駛室對龍說話的人。……我叫祂「說話的人」。'],['self','（……他們說的，好像是同一個人。）']],
@@ -10670,11 +10677,11 @@ HSDEF.forEach(h=>{ const m=/^(hab-p-|rm-p-)(.+)$/.exec(h.id); if(!m||!DEEP[m[2]]
   return d0.apply(this,arguments); }; }
 /* 生命誌：旅途中的故事 */
 const STORY={
- treeling:['和晨曦森林最老的樹一起長大。小時候躲在樹後，聽一個年輕的渡守一邊哼歌一邊刻圓環。','大熄滅時牠變成樹躲起來，沒有搭上最後一班車，一直以為自己躲錯了。','拓下刻紋之後，牠明白自己替那個孩子守住了回程的記號。'],
+ treeling:['和晨曦森林最老的樹一起長大。小時候躲在樹後，聽年輕的渡守一邊哼歌一邊刻圓環。','大熄滅時牠變成樹躲起來，沒有搭上最後一班車，一直以為自己躲錯了。','拓下刻紋之後，牠明白自己替那個孩子守住了回程的記號。'],
  skywhale:['小時候在風暴裡和家人走散，跟著一排列車的燈和一個揮手的人飛了出來。','雲海一年比一年薄，牠怕有一天只剩自己，也沒人記得星鯨座。','星鯨座還在。牠要回去教小鯨們抬頭找星星。'],
  sirenora:['由沒能回家的航海者的思念凝成。其中有一份，是一個人在霧裡哼給一條龍的搖籃曲。','牠怕自己只是很多人的想家，沒有一樣屬於自己的東西。','為牠點的燈，讓牠想起了歌的最後一句。那一句，是牠自己的。'],
- titan:['大熄滅之前，一個渡守把種子的事託付給牠：「替我們看著，等它醒來。」','牠只是翻了一個身，醒來時森林已經倒過來，渡守都不見了。','甲種醒來的那一刻，牠終於完成了答應的事。'],
- grinfox:['大熄滅之後，一個不怕黑的渡守教牠變成月亮那邊的顏色，躲開影子。','牠一直怕影子是自己吃不完的害怕變成的；也不知道送給牠墜飾的孩子有沒有搭上列車。','原來影子也在找光。牠能做的，是陪人安靜地走過去。'],
+ titan:['大熄滅之前，渡守把種子的事託付給牠：「替我看著，等它醒來。」','牠只是翻了一個身，醒來時森林已經倒過來，渡守都不見了。','甲種醒來的那一刻，牠終於完成了答應的事。'],
+ grinfox:['大熄滅之後，不怕黑的渡守教牠變成月亮那邊的顏色，躲開影子。','牠一直怕影子是自己吃不完的害怕變成的；也不知道送給牠墜飾的孩子有沒有搭上列車。','原來影子也在找光。牠能做的，是陪人安靜地走過去。'],
  mnemo:['第一個熄滅的世界留下的守靈者，收著很多片同一個人的記憶。','擁有幾千個別人的記憶，卻沒有一個是自己的。','這輛車、你，是牠第一顆只屬於自己的憶泡。']};
 function journeyStory(id){ if(!chapOn()||!STORY[id]||!state.chap) return ''; const n=heroCh(id), S=state.chap; if(!n) return '';
  const k=Math.min(3,(S.said&&S.said[n]?1:0)+(S.ended.includes(n)?1:0)+(deepAt(id)>=3?1:0)); if(!k) return '';
@@ -10683,12 +10690,81 @@ function journeyStory(id){ if(!chapOn()||!STORY[id]||!state.chap) return ''; con
 { const q1=questCats; questCats=function(){ const C=q1.apply(this,arguments); if(!chapOn()||!state.chap) return C; const S=state.chap, li=(t,st)=>({t,st:st||'on'}), L=[];
   const heard=HERO_IDS().filter(id=>(S.nick||{})[id]); const named=(state.storyFlags.dragonLore||[]).includes('dl_name');
   if(!heard.length&&!named) return C;
-  if(named) L.push(li('曦淵說：最後一位渡守，叫做拾光。祂回到沉睡之地睡著了。','done'));
+  if(named) L.push(li('曦淵說：渡守的名字，叫做拾光。祂回到沉睡之地睡著了。','done'));
   HERO_IDS().forEach(id=>L.push((S.nick||{})[id]?li(`${PASSENGERS[id].name}叫祂「${NICK[id]}」`,'done'):li('……','lock')));
   if(S.ended.includes(6)&&(S.nick||{}).mnemo) L.push(li('這些稱呼，說的都是同一個人——拾光。','done'));
   C.push({k:'ferry',n:'那位渡守',L}); return C; }; }
 /* 索拉的彩蛋：晨曦結局 */
 { const E=ENDINGS.dawn, base=E.lines.slice(); Object.defineProperty(E,'lines',{configurable:true,get:()=>{ if(!state.discoveredLifeforms.includes('sola')) return base; const L=base.slice(); L.splice(L.length-1,0,'星河的邊緣，漂回了一座小小的浮島。上面有一團光，對著列車揮了揮觸手。'); return L; }}); }
+
+/* ================================================================
+   看故事的地方收成兩本：筆記本（筆記、任務、線索、月界典籍、值勤室紀錄、回憶）
+   與生命誌（生命、界域地誌、植物、星座與星象）。每一本的上方都有一排分頁，可以互相切換。
+   月界典籍、界域地誌、觀星紀錄本、線索解讀台不再是車廂裡的獨立熱點。
+   ================================================================ */
+function guardBook(){ const rd=state.storyFlags.guardRead||{};
+ const pages=[`<h3 class="jr-h">值勤室紀錄</h3><p class="jr-sub">渡守的值勤室裡讀到的東西</p>`].concat(GUARD_REC.map((r,i)=>rd[i]?`<p class="jr-no">${r[0]}</p><p class="jr-p">${r[1]}</p>`:`<p class="jr-no">……</p><p class="jr-p">還沒讀到。</p>`));
+ if(pages.length%2) pages.push('');
+ return journal({cls:'guardbook',title:'值勤室紀錄',pages,tabs:[['紀錄',0]]}); }
+const BOOKS={
+ note:{n:'筆記本',L:[['筆記與任務',()=>notebookPanel()],['線索',()=>clueBook(),()=>state.clues.length>0],['月界典籍',()=>openBook('lore')],['值勤室紀錄',()=>guardBook(),()=>Object.keys(state.storyFlags.guardRead||{}).length>0],['回憶',()=>memoryPanel(),()=>memsHave().length>0||Object.keys(state.oldEcho||{}).length>0]]},
+ life:{n:'生命誌',L:[['生命',()=>openBook('life')],['界域地誌',()=>atlasBook()],['植物',()=>codexPanel()],['星座與星象',()=>skyBook(),()=>sysOpen(2)]]}};
+function bookNav(fam,idx){ const ovs=[...document.querySelectorAll('#layer .ov:not(.closing)')], ov=ovs[ovs.length-1]; if(!ov||ov.querySelector('.booknav')) return;
+ const B=BOOKS[fam], nav=document.createElement('nav'); nav.className='booknav'; nav.setAttribute('aria-label',B.n);
+ nav.innerHTML=`<span class="bn-t">${B.n}</span>`+B.L.map(([t,,ok],k)=>(!ok||ok())?`<button type="button" data-bn="${k}" class="${k===idx?'on':''}">${t}</button>`:'').join('');
+ nav.addEventListener('click',e=>{ const b=e.target.closest('[data-bn]'); if(!b) return; e.stopPropagation(); const k=+b.dataset.bn; if(k===idx) return; closeAll(); B.L[k][1](); });
+ ov.appendChild(nav); }
+{ const wrap=(name,fam,idx,cond)=>{ const f0=window[name]; if(typeof f0!=='function') return; window[name]=function(){ const r=f0.apply(this,arguments); if(!cond||cond.apply(this,arguments)) setTimeout(()=>bookNav(fam,idx),0); return r; }; };
+  wrap('notebookPanel','note',0); wrap('clueBook','note',1); wrap('guardBook','note',3); wrap('memoryPanel','note',4);
+  wrap('atlasBook','life',1); wrap('codexPanel','life',2); wrap('skyBook','life',3);
+  const ob=openBook; openBook=function(ch){ const r=ob.apply(this,arguments); if(ch==='lore') setTimeout(()=>bookNav('note',2),0); else if(ch==='life'||!ch) setTimeout(()=>bookNav('life',0),0); return r; }; }
+HSDEF.forEach(h=>{ if(['mem-lore','mem-atlas','obs-skybook','mem-clues'].includes(h.id)) h.show=()=>false; });
+
+/* ================================================================
+   必做與收藏：任務分成兩區。必做＝章節、列車的日常（值勤）；收藏＝其餘全部，不用做完
+   ================================================================ */
+const QS_REQ=['main','daily'];
+{ const q2=questCats; questCats=function(){ const C=q2.apply(this,arguments);
+  const A=C.filter(c=>QS_REQ.includes(c.k)), B=C.filter(c=>!QS_REQ.includes(c.k));
+  A.forEach(c=>{ c.req=1; }); B.forEach(c=>{ c.col=1; });
+  const H=deepSketchWait(); if(H.length) B.unshift({k:'deep',col:1,n:'想聽完的故事',L:H.map(id=>({t:`${PASSENGERS[id].name}還有最後一段故事：先畫一張牠的速寫`,st:'on'}))});
+  return A.concat(B); }; }
+{ const qs=questSection; questSection=function(){ const h=qs.apply(this,arguments), C=questCats(), c=C.find(x=>x.col); if(!c) return h;
+  const k=h.indexOf(`<h4 class="qs-cat">${c.n}</h4>`); if(k<0) return h;
+  return h.slice(0,k)+`<p class="jr-p qs-col"><b>收藏</b>：以下都不用全部完成，想做再做。</p>`+h.slice(k); };
+  const qp=questPages; questPages=function(){ const h=questSection(), k=h.indexOf('<p class="jr-p qs-col">'); return k>0?[h.slice(0,k),h.slice(k)]:qp.apply(this,arguments); }; }
+/* ================================================================
+   速寫影響乘客的深度：每畫好一張新的速寫，相遇程度＋1（最多到「熟悉」）；
+   主角的第三段深層故事，要先畫過一張牠的速寫
+   ================================================================ */
+function sketchBond(id){ const s=state.passengers[id]; if(!s) return; if((s.stage||0)<2){ s.stage=(s.stage||0)+1; s.records=s.records||[]; s.records.push({j:state.journeyCount,t:'畫速寫的時候，牠一直看著你。關係：'+STAGE_NAMES[s.stage]}); save(); setTimeout(()=>toast(`${PASSENGERS[id].name}・${STAGE_NAMES[s.stage]}`),900); } }
+const deepSketchGate=id=>DEEP[id]&&deepAt(id)===2&&DEEP[id].length>2&&!sketchesOf(id).length;
+const deepSketchWait=()=>typeof chapOn==='function'&&chapOn()&&state.chap?HERO_IDS().filter(id=>aboard(id)&&deepSketchGate(id)&&state.chap.ended.includes(heroCh(id))):[];
+{ const dw=deepWait; deepWait=function(id){ if(deepSketchGate(id)) return false; return dw.apply(this,arguments); }; }
+{ const t3=talk; talk=function(id,next){ const r=t3.apply(this,arguments);
+  if(chapOn()&&state.chap&&deepSketchGate(id)&&state.chap.ended.includes(heroCh(id))&&!((state.chap.skHint||{})[id])){ state.chap.skHint=Object.assign({},state.chap.skHint,{[id]:1}); save();
+   setTimeout(()=>sense(`（${PASSENGERS[id].name}好像還有一段故事，可是不知道從哪裡開始說。……先靜靜地畫一張牠的速寫吧。對話框上的筆，就是速寫。）`),1600); }
+  return r; }; }
+/* ================================================================
+   星塵接上危機：危機進行中，可以到展望台外接住落下的星塵。
+   接到的星塵會補進結界（危機減輕一級），也收進種子典藏櫃。每次危機一次。
+   ================================================================ */
+CR_ACT.stardust={n:'接住星塵',d:'界壁裂開的地方，會落下星塵。到展望台接住它們，補進結界。接得越多越好。',cost:{},need:()=>state.currentPhase==='outside'?'要在列車上才接得到':null};
+{ const al=crActList; crActList=function(){ const L=al.apply(this,arguments), C=state.crisis; if(!C||C.done||(C.id==='T01'&&(C.intel||0)<2&&C.stage!=='W4')) return L;
+  if((C.intel||0)>=2||C.stage==='W4'){ const A=CR_ACT.stardust, why=(A.need&&A.need())||(C.acts.includes('stardust')?'已經接過了':null); L.push({k:'stardust',n:A.n,d:A.d,why,hint:''}); } return L; };
+  const cd=crDo; crDo=function(k){ if(k!=='stardust') return cd.apply(this,arguments); const C=state.crisis; if(!C) return null; const A=CR_ACT.stardust, why=(A.need&&A.need())||(C.acts.includes('stardust')?'已經接過了':null); if(why) return {t:why,bad:1};
+   C.acts.push('stardust'); save(); setTimeout(()=>dustRun('crisis'),360); return {t:'',end:1}; }; }
+function dustRun(why){ const ov=document.createElement('div'); ov.className='dustgame'; ov.innerHTML='<p class="dg-t">界壁裂開的地方，落下了星塵……</p><p class="dg-n">0</p>'; $('#layer').appendChild(ov);
+ let got=0, n=0; const spawn=()=>{ if(n>=14) return; n++; const d=document.createElement('button'); d.className='dg-mote'; d.type='button'; d.setAttribute('aria-label','星塵');
+  d.style.left=(8+Math.random()*84)+'%'; d.style.animationDuration=(3.2+Math.random()*1.6).toFixed(2)+'s';
+  d.onpointerdown=e=>{ e.stopPropagation(); if(d.dataset.c) return; d.dataset.c=1; got++; ov.querySelector('.dg-n').textContent=got; d.classList.add('got'); SFX.tone(1100+got*70,0,.25,'sine',.03); setTimeout(()=>d.remove(),320); };
+  d.addEventListener('animationend',()=>{ if(!d.dataset.c) d.remove(); }); ov.appendChild(d); };
+ let iv=0; setTimeout(()=>{ ov.querySelector('.dg-t').textContent='接住它！'; iv=setInterval(spawn,600); spawn(); },1600);
+ setTimeout(()=>{ clearInterval(iv); const c=Math.min(got,6), C=state.crisis, good=got>=5&&C&&!C.done; state.materials=state.materials||{}; state.materials.stardust=matCount('stardust')+c;
+  if(good) C.reduce=(C.reduce||0)+1;
+  if(c) logJ(`危機中，在展望台接住了 ${c} 份星塵${good?'，補進了結界':''}。`,'find'); save(); ov.classList.add('end');
+  ov.querySelector('.dg-t').innerHTML=c?`接住了 ${c} 份星塵。<br><small>${good?'星塵補進了結界的裂縫，這次的危機會輕一點。剩下的收進了種子典藏櫃。':'還不夠補好結界……接到的收進了種子典藏櫃。'}</small>`:'星塵從指縫間溜走了……';
+  setTimeout(()=>{ ov.remove(); render(); },2800); },10400); }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>

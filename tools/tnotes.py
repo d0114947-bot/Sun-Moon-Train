@@ -72,7 +72,7 @@ with sync_playwright() as p:
     ok('S3 missing the moment does not count', len(ev("state.sketches.felinia"))==n0 and '歪掉' in pg.inner_text('#skm'))
     draw_one(); ok('S4 two sketches done', len(ev("state.sketches.felinia"))==2 and ev("fullDone('felinia')") and ev("state.log.some(l=>/圖鑑整理完成/.test(l.t))"))
     ev("closeAll()"); W(400); ev("openBook('life','felinia')"); W(1200)
-    ok('N13c codex shows sketches and complete seal', ev("document.querySelectorAll('.studies .sk.blank').length")==0 and '完整紀錄' in pg.inner_text('.ov.jr'))
+    ok('N13c codex shows sketches and no completion seal', ev("document.querySelectorAll('.studies .sk.blank').length")==0 and '完整紀錄' not in pg.inner_text('.ov.jr'))
     pg.screenshot(path=S+'/cx2.png'); ev("closeAll()"); W(400)
     ok('N13d now ready to leave', ev("readyToLeave('felinia')"))
     # replay when a section is still missing (vandora, all talks already heard, no notes)

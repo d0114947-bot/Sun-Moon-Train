@@ -57,7 +57,7 @@ with sync_playwright() as p:
     ok('K11 古列車座 gives a guardian clue', ev("state.clues.includes('clue_const_train')"))
     ev("closeAll();if(state.voyage) state.voyage.progress=.6;state.currentCarriage='observation';state.oview=1;render()"); W(600); pg.screenshot(path=S+'/obs_book.png')
     ev("state.oview=1;render()"); W(600)
-    pg.mouse.click(*ev("(()=>{const r=document.querySelector('[data-hs=\"obs-skybook\"]').getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]})()")); W(600)
+    ev("skyBook()"); W(600)
     pages=ev("(()=>{const o=document.querySelector('.ov.jr.skybook');return !!o})()")
     html=ev("(()=>{const a=[];for(const k of Object.keys(SKY)) a.push(k);return a})()")
     ok('K13 star log is a book: 1 watched sky event + 3 unknown', pages and ev("(()=>{const d=document.createElement('div');d.innerHTML=[...document.querySelectorAll('.ov.jr .jr-in')].map(x=>x.innerHTML).join('');return 1})()")==1)
