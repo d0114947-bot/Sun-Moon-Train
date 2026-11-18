@@ -2722,7 +2722,7 @@ const PASSENGERS = {
   image:'assets/yixi.webp',still:'assets/yixi-still.webp',studies:['assets/yixi-s1.webp','assets/yixi-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'一個在大熄滅中熄滅的世界・之後，寂滅虛空的正中央',
   intro:'寂滅虛空的正中央，一個由層層深色羽翼圍成的生命。羽翼中央那隻翠綠的大眼睛，認出了你身上的光。',
-  bio:'遺曦是大熄滅時，一個世界留下的最後一點光。它的世界熄滅那天，渡守趕到時列車已經滿了。最後一位渡守對它說「列車會回來」，它就在虛空裡一直等，一直等。它把漂過身邊的記憶碎片收進羽翼，每收一片，羽翼上就多睜開一隻小小的眼睛。',
+  bio:'遺曦是大熄滅時，一個世界留下的最後一點光。它的世界熄滅那天，渡守趕到時列車已經滿了。最後一位渡守拾光對它說「列車會回來」，它就在虛空裡一直等，一直等。它把漂過身邊的記憶碎片收進羽翼，每收一片，羽翼上就多睜開一隻小小的眼睛。',
   field:{alias:'最後的晨光、等待的眼',
    cls:'失落生命・遺光體',
    danger:'無',
@@ -2730,7 +2730,7 @@ const PASSENGERS = {
    looks:'<b>羽翼：</b>六片深紫灰的羽翼上下張開，層層疊疊，羽尖帶著墨色，像被夜色浸過。羽翼之間纏著細細的光絲，散著一點一點藍綠色的微光。<br><b>主眼：</b>羽翼中央是一隻巨大的翠綠眼睛——那是它的世界最後一片森林的顏色。它多半時候閉著，只有認出熟悉的光時才睜開。<br><b>小眼：</b>羽翼上排列著許多小小的眼睛。每一隻，都映著一段它收下的記憶碎片。',
    habitat:'原本的世界已經熄滅。之後一直待在寂滅虛空的正中央，守著那一點微光。',
    habits:[['等待','不移動，不睡。在虛空裡等了很久很久，等一列說好會回來的列車。'],['收集','把漂過身邊的記憶碎片收進羽翼裡取暖。'],['語言','不說話。用羽翼上的眼睛一明一暗、一睜一閉來回應。']],
-   abilities:[['認光','能分辨每一道光的來歷。它一眼就認出，精靈身上的光是渡守留下的那一道晨曦。'],['引路','在什麼都沒有的空白裡，它看得見路。']]},
+   abilities:[['認光','能分辨每一道光的來歷。……只有精靈身上的那一道，它分辨不出來。只覺得很熟悉，熟悉得讓它睜開了眼睛。'],['引路','在什麼都沒有的空白裡，它看得見路。']]},
   talks:[
    {lines:['（休憩區的角落，那對深色的羽翼輕輕收攏。你走近時，羽翼上的小眼睛一隻一隻睜開，全都看著你。）','（中央那隻翠綠的大眼睛，慢慢眨了一下。）','（……像是在說：你來了。）'],choices:[{t:'嗯，我來了。',r:'（羽翼上的光，一明一暗，亮了很久。）'},{t:'（靜靜地坐在它旁邊）',r:'（一片羽翼輕輕蓋過來，像一條很輕的毯子。）'}]},
    {lines:['（你問它，等了多久。）','（羽翼上的小眼睛一隻接一隻地閉上，又一隻接一隻地睜開。很多、很多次。）','（……你數不完。它好像也數不完了。）','（可是最後，大眼睛看著車廂的燈，彎了一下。）'],choices:[{t:'現在不用再等了。',r:'（大眼睛閉上了。這一次，它好像睡著了。）'}]},
@@ -2956,12 +2956,12 @@ const DRAGON_LORE=[
  {id:'dl_wall',need:()=>state.journeyCount>=1,lines:[['dragon','你知道列車剛才穿過的是什麼嗎？'],['self','……界壁？'],['dragon','嗯。每個世界都被一層看不見的膜包著，守住它自己的規則。穿過去的時候，另一個世界的規則會沾在你身上。'],['dragon','那就是界染。積得太深，你會被那個世界慢慢改寫。所以每次出發前，我才會請你量一量。'],['self','原來不只是例行公事。'],['dragon','列車上沒有例行公事。每一件事，都是有人用很久的時間想出來的。']]},
  {id:'dl_ferry',need:()=>state.journeyCount>=2,clue:'clue_ferrykeepers',lines:[['dragon','古樹上的圓環，你看過了吧。'],['dragon','建造這列車的人，叫自己「渡守」。他們在每一個界壁變薄的地方留下圓環，那些地方叫作渡口。列車只能在渡口停靠。'],['self','渡守是什麼樣的人？'],['dragon','……他們不屬於日界，也不屬於月界。他們誕生在界壁上，是光與倒影交界的地方長出來的生命。'],['dragon','他們的工作，是在世界快要熄滅的時候趕到那裡，把來不及離開的生命和種子帶走。']]},
  {id:'dl_dimming',need:()=>state.journeyCount>=3,clue:'clue_dimming',lines:[['dragon','很久以前，有一個紀元，叫作大熄滅。'],['dragon','無數的世界在同一段時間裡相繼熄滅。熄滅後留下的空白連成一片，越來越大。'],['self','那片空白……是寂滅虛空？'],['dragon','嗯。渡守把剩下的力量都拿去穩住界壁，讓空白不再擴大。'],['dragon','然後，列車就停在沉睡之地，睡了很久、很久。我一直在旁邊守著。'],['self','渡守呢？'],['dragon','……他們走了。我不知道去了哪裡。']]},
- {id:'dl_name',need:()=>state.journeyCount>=4,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們走之前，把最後一道晨曦留在了列車裡。'],['self','……最後一道晨曦？'],['dragon','你醒來的時候，有一點光落在你身上。記得嗎？'],['dragon','那就是了。']]}
+ {id:'dl_name',need:()=>state.journeyCount>=4,clue:'clue_dragon',lines:[['self','曦淵，你的名字是什麼意思？'],['dragon','「曦」是晨光，「淵」是深淵。我一半出生在日界的黎明，一半出生在月界最深的黑暗。'],['dragon','我是第一個登上這列車的生命。那時候，車上還有渡守，車廂裡很熱鬧。'],['dragon','他們之中，最後離開的那一位，叫做拾光。渡守們叫他「最後一道晨曦」。'],['dragon','他沒有跟其他渡守一起去撐界壁。他說要回沉睡之地，睡一覺。'],['self','……沉睡之地？'],['dragon','你醒來的地方。'],['dragon','…………'],['dragon','沒什麼。你醒來的時候，身上有一點光。……和他的光，有點像。']]}
 ];
 const LORE_CLUES={
  clue_ferrykeepers:{title:'渡守',text:'曦淵・蒼龍說，建造列車的古代守護者自稱「渡守」。他們誕生在界壁上，在每個渡口留下圓環印記，並在世界將要熄滅時趕到那裡，帶走來不及離開的生命和種子。'},
  clue_dimming:{title:'大熄滅',text:'很久以前，無數世界在同一個紀元相繼熄滅，留下的空白連成了寂滅虛空。渡守用盡力量穩住界壁，列車從此停在沉睡之地。'},
- clue_dragon:{title:'最後一道晨曦',text:'曦淵是第一個登上列車的生命。渡守離開前，把最後一道晨曦留在了列車裡——值勤精靈醒來時落在身上的那一點光，就是它。'},
+ clue_dragon:{title:'最後一道晨曦',text:'曦淵是第一個登上列車的生命。最後一位渡守「拾光」沒有去撐界壁，而是回到沉睡之地睡著了，渡守們叫他「最後一道晨曦」。曦淵說，你醒來時身上的那一點光，和他有點像。'},
  clue_ash:{title:'熄滅的世界',text:'灰燼蕨標本的採集日期，屬於一個已經不存在的曆法。渡守會在世界熄滅之前，帶走那裡最後的植物。三枚封存種子，也許也是這樣來的。'},
  clue_island:{title:'浮島的來歷',text:'星河浮島是熄滅的世界剝落下來的碎片，被星河的潮汐接住。浮島漂走，也許是被送往新的地方。'},
  clue_wall:{title:'界壁在呼吸',text:'界壁極光出現時，界壁會像呼吸一樣一明一暗。光變薄的那一瞬間，就是渡口打開的時候。'},
@@ -3008,7 +3008,7 @@ function lorePages(){ const has=id=>state.clues.includes(id), any=(...a)=>a.some
    ${sec(has('clue_dimming'),`${GLYPH.moon}大熄滅`,'<p>很久以前，無數領域在同一個紀元裡相繼熄滅，留下的空白連成一片，成為寂滅虛空。渡守把剩下的力量都用來穩住界壁，讓空白不再擴大。列車在那之後，停在了沉睡之地。</p>','（墨跡模糊。這一頁似乎記著一場很大的災難。）')}
    ${sec(has('clue_wake2'),`${GLYPH.sun}時間的另一端`,'<p>渡守最後去了哪裡，沒有任何紀錄。古樹說他們離開時「看起來不難過」；星空裡留著一座古列車座；存檔水晶裡的訊息還有後半句——他們也許沒有消失，只是去了時間的另一端，在那裡等著。</p>','（最後一段的墨跡還沒有顯現。）')}`],
   ['曦淵與值勤精靈',`${sec(any('clue_dragon'),`${GLYPH.sun}曦淵`,'<p>「曦」是晨光，「淵」是深淵。蒼龍一半出生在日界的黎明，一半出生在月界最深的黑暗。牠是第一個登上列車的生命；渡守離開後，牠獨自守著沉睡的列車。</p>','（航行時多和領頭聊聊，這一段才會顯現。）')}
-   ${sec(any('clue_dragon'),`${GLYPH.ring}值勤精靈`,'<p>你醒來的那一刻，有一點光落在你身上。那是渡守離開前，留在列車裡的最後一道晨曦。所以你不知道自己從哪裡來——你是從列車自己的光裡醒來的。</p>','（墨跡模糊。這一頁好像在寫你自己。）')}
+   ${sec(any('clue_dragon'),`${GLYPH.ring}值勤精靈`,'<p>你在沉睡之地醒來。那裡的生命不屬於日界，也不屬於月界，所以你能在兩邊之間穿梭。醒來的那一刻，有一點光落在你身上。曦淵說，那道光和最後一位渡守「拾光」有點像——可是你什麼都不記得。</p>','（墨跡模糊。這一頁好像在寫你自己。）')}
    <h5>${GLYPH.leaf}列車</h5><ul class="facts"><li>由渡守建造，能穿越日界與月界，在渡口停靠。</li><li>沉睡多年，如今重新啟動。</li><li>由值勤精靈負責巡視、維護與探索。</li><li>不同領域的生命會自行登車，短暫停留後各自離開。</li></ul>`]
  ]; }
 Object.assign(CLUES,LORE_CLUES);
@@ -3509,8 +3509,8 @@ const FINALE=['窗外全黑了。車廂的燈，一盞一盞熄滅。','只剩�
  '空白的正中央，有一點很小、很暗的光。它在等。','光的周圍，是層層疊疊的深色羽翼。羽翼的正中央，一隻翠綠的大眼睛慢慢睜開。','羽翼上的小眼睛，一隻一隻跟著睜開。每一隻裡面，都映著一點光——和你身上的一模一樣。','「列車會回來。」……它等的，就是這一句話。','它展開羽翼，帶著你穿過碎片，走到空白的邊緣。',
  '那裡站著一排身影，手按在看不見的牆上。','是渡守。他們還活著。','「你來了。」','三枚古種落進空白。乘客們留下的東西，一件一件放在種子旁邊。','像第一道晨曦落進渾沌之海那樣，空白裡長出了一棵樹。','樹亮了一下。……還差一點光。'];
 const ENDINGS={
- dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。他們已經替你放了。','樹亮了。界壁穩住了。渡守一個一個放下了手。','空白裡，長出了一片新的晨曦森林。','渡守和遺曦登上列車。車廂第一次像從前那樣熱鬧。','「這次，換你當渡守了。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
- return:{title:'歸光',lines:['你知道還差的是什麼。','你身上的那道晨曦，是渡守留下的最後一道光。現在，你把它還回去。','樹亮了。界壁穩住了。渡守一個一個放下了手。','你覺得自己變得很輕，很亮。','渡守們登上列車，替你把它開了回去。','……很久很久以後，在一列沉睡的列車裡，','有一點光，落在一個新的值勤精靈身上。']},
+ dawn:{title:'晨曦',lines:['可是光沒有停。羽毛、鱗片、霜晶、一滴星河的潮水……每一件紀念品都亮了起來。','你不用把自己放進去。他們已經替你放了。','樹亮了。界壁穩住了。渡守一個一個放下了手。','空白裡，長出了一片新的晨曦森林。','渡守和遺曦登上列車。車廂第一次像從前那樣熱鬧。','「這次，換你當渡守了。」','渡守們看著你，沒有人認出你。只有曦淵看了你很久，最後輕輕說了一句：「……歡迎回來。」','曦淵回到日界，繼續淨化地球。列車，繼續航行。']},
+ return:{title:'歸光',lines:['你知道還差的是什麼。','你身上的那道晨曦，是你自己的光。現在，你把它交給界壁。','樹亮了。界壁穩住了。渡守一個一個放下了手。','你覺得自己變得很輕，很睏。','渡守們登上列車，替你把它開了回去。','……你回到沉睡之地，睡著了。','很久很久以後，會有一個值勤精靈在那裡醒來。它不會記得你。可是它的光，和你很像。']},
  night:{title:'長夜',lines:['可是光不夠。','樹亮了一下，又暗了下去。渡守的手，還按在牆上。','一道熟悉的龍影從黑暗裡衝過來，把列車拉回了界壁外。','「還不是時候。」曦淵說。「先去把身上的重量放下吧。」']}
 };
 function playFinale(next){
@@ -7448,7 +7448,7 @@ function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=
   <dt>相遇程度</dt><dd><span class="bond">${STAGE_NAMES.map((n,k)=>`<i class="${k<=stage?'on':''}" title="${n}"></i>`).join('')}<span>${STAGE_NAMES[stage]}</span></span></dd></dl>
   ${e.field&&e.field.nameNote?`<h5>${GLYPH.ring}名稱由來</h5><p>${e.field.nameNote}</p>`:''}${e.field?`<h5>${GLYPH.ring}外觀特徵</h5><p>${e.field.looks}</p><h5>${GLYPH.sun}棲息環境</h5>${secShown(e.id,'habitat')?`<p>${e.field.habitat}</p>`:fileSlot(e.id,'habitat')}<h5>${GLYPH.moon}生物習性</h5>${secShown(e.id,'habits')?`<ul class="notes">${e.field.habits.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'habits')}<h5>${GLYPH.leaf}特殊能力</h5>${secShown(e.id,'abilities')?`<ul class="notes">${e.field.abilities.map(([k,v])=>`<li><b>${k}</b>：${v}</li>`).join('')}</ul>`:fileSlot(e.id,'abilities')}`:''}
   <h5>${GLYPH.leaf}${e.field?'生態故事':'田野筆記'}</h5>${secShown(e.id,'bio')?`<p>${e.bio}</p>`:fileSlot(e.id,'bio')}<h5>${GLYPH.ring}初見</h5><p>${e.intro}</p>
-  ${s.records&&s.records.length?`<h5>${GLYPH.moon}旅程紀錄</h5><ul class="recs">${s.records.map(r=>`<li><span class="no">No.${r.j}</span><span>${r.t}</span></li>`).join('')}</ul>`:''}
+  ${typeof journeyStory==='function'?journeyStory(e.id):''}${s.records&&s.records.length?`<h5>${GLYPH.moon}旅程紀錄</h5><ul class="recs">${s.records.map(r=>`<li><span class="no">No.${r.j}</span><span>${r.t}</span></li>`).join('')}</ul>`:''}
   <button class="backlink" data-bk="life">‹ 返回生命誌</button></section>`; }
 function bookLore(){
  const met=new Set(state.discoveredLifeforms.map(id=>PASSENGERS[id]&&PASSENGERS[id].type).filter(Boolean));
@@ -7774,7 +7774,7 @@ function cabCore(){ const t=trainT(), st=trainStage('repair'), used=TAINT.used('
 const GUARD_REC=[
  ['值勤日誌・最後一頁','今天又有一個世界熄滅了。我們趕到的時候，只來得及帶走一盆花、和一隻在樹洞裡睡著的小東西。……下一次，要再快一點。'],
  ['列車的設計圖','一張畫在薄金箔上的圖。列車的每一節車廂下面，都寫著一個世界的名字。最後一節的下面，寫著：「給還沒出生的世界」。'],
- ['給醒來的那一位','若有一日列車再次醒來，願醒來的那一位，替我們把剩下的生命帶回家。不用急。界壁會等，我們也會等。'],
+ ['給醒來的那一位','若有一日列車再次醒來，願醒來的那一位，替我們把剩下的生命帶回家。不用急。界壁會等，我們也會等。——拾光'],
  ['渡守的羅盤','一只停住的羅盤。指針沒有指向任何渡口，而是指著寂滅虛空的正中央——那裡有一點和你身上一樣的晨光。']];
 /* 渡守的值勤室：是一個場景（不是視窗）；桌上的日誌、設計圖、信、羅盤是裡面的熱點 */
 const GUARD_AT=[{x:44,y:73},{x:68,y:79},{x:91,y:74},{x:64,y:67.5}];
@@ -8011,7 +8011,7 @@ const OLD={
  dimming:{n:'熄滅的那一天',kind:'大熄滅',important:1,cond:()=>state.visitedLocations.includes('silentVoid')||state.clues.includes('clue_dimming')||trainStage('guard')>=2,where:'寂滅虛空、或想起大熄滅的時候',lines:['「……那邊的光，一盞一盞熄了。」','「還有多少人沒上車？」','「數不清了。」','「那就能載多少，載多少。」','（車門關上的聲音。很久很久，沒有人說話。）'],clue:'clue_dimming'},
  regret:{n:'沒有趕上的世界',kind:'大熄滅',cond:()=>trainStage('guard')>=3,where:'渡守的值勤室打開之後',lines:['「我們到的時候，已經什麼都沒有了。」','「……一盆花都沒有？」','「只有一隻小東西，躲在樹洞裡睡著了。」','「那就帶牠走。……至少，帶牠走。」']},
  origin:{n:'為什麼要造這列車',kind:'列車起源',important:1,cond:()=>trainStage('ancient')>=3,where:'古代的文字甦醒之後',lines:['「為什麼要造成列車？船不是比較快嗎？」','「船只能載一個世界的人。」','「列車呢？」','「列車可以一節一節加上去。每一個世界，都有自己的車廂。」'],clue:'clue_ferrykeepers'},
- lastdawn:{n:'最後一道晨曦',kind:'列車起源',important:1,cond:()=>state.clues.includes('clue_dragon')&&trainStage('repair')>=3,where:'列車的能量恢復之後',lines:['「把最後一道晨曦留給它吧。」','「那我們呢？」','「我們撐住界壁。它會醒過來的。」','「……醒過來的時候，會有人在嗎？」','「會的。一定會有。」']},
+ lastdawn:{n:'最後一道晨曦',kind:'列車起源',important:1,cond:()=>state.clues.includes('clue_dragon')&&trainStage('repair')>=3,where:'列車的能量恢復之後',lines:['「我回沉睡之地，睡一覺。」','「那我們呢？」','「你們撐住界壁。我會醒過來的。」','「……醒過來的時候，你還會記得我們嗎？」','「大概不會吧。可是我會回來。」']},
  name:{n:'聽不清的名字',kind:'未完成',cond:()=>state.clues.includes('clue_wake'),where:'讀到沉睡的紀錄之後',lines:['「若有一日列車再次醒來，願醒來的那一位……」','「……你要把名字寫上去嗎？」','「寫什麼名字？」','「◌◌◌◌。」','（聲音斷掉了。）'],full:()=>trainStage('guard')>=4,fullLines:['「……你要把名字寫上去嗎？」','「不用了。醒來的那一位，會有自己的名字。」']},
  ferry:{n:'渡口的鐘聲',kind:'日常',cond:()=>state.currentLocation==='origin'&&trainStage('sky')>=2,where:'回到沉睡之地（古代渡口），而且星空投影已經醒來',lines:['（遠遠的鐘聲，敲了三下。）','「各位旅客，本列車即將由渡口出發。」','「……這次，車上有幾位？」','「很多很多。都坐好了。」']}};
 const OLD_CD=2, OLD_MINJ=8;
@@ -10356,7 +10356,7 @@ const CHAP=[
  {n:3,title:'曦與淵',to:'dawnForest',hero:'sirenora',lore:['dl_dimming','dl_name'],evo:['sanct',2],
   start:['巨鯨的歌，在車廂裡繞了好久才散。','渡守們離開了。可是，為什麼？','這一趟，曦淵會說一個很長的故事。'],
   board:'列車停靠的時候，月台起了一片濃得化不開的霧。霧裡有一抹溫柔的粉白光暈，跟著車燈，一點一點靠了過來。',
-  heroL:[['sirenora','……你身上的光，好像港口的燈。'],['sirenora','我在霧裡，聽過一首歌。很老、很老的歌。'],['sirenora','歌裡說，有一段時間，世界一個一個熄掉了。像吹熄蠟燭一樣。'],['self','……大熄滅。曦淵說過。'],['sirenora','歌的最後一段，是一條龍。一半是晨光，一半是深淵。'],['sirenora','祂守著一列不會熄的車，等最後一道光醒過來。'],['sirenora','……原來，是你啊。'],['self','（她的觸鬚輕輕碰了一下你的手。很冰，可是很溫柔。）'],['sirenora','我可以待在這裡嗎？車上的燈，讓我覺得……不會迷路。']],
+  heroL:[['sirenora','……你身上的光，好像港口的燈。'],['sirenora','我在霧裡，聽過一首歌。很老、很老的歌。'],['sirenora','歌裡說，有一段時間，世界一個一個熄掉了。像吹熄蠟燭一樣。'],['self','……大熄滅。曦淵說過。'],['sirenora','歌的最後一段，是一條龍。一半是晨光，一半是深淵。'],['sirenora','祂守著一列不會熄的車，等最後一道光醒過來。'],['sirenora','……你身上的光，和歌裡的一樣暖。'],['self','（她的觸鬚輕輕碰了一下你的手。很冰，可是很溫柔。）'],['sirenora','我可以待在這裡嗎？車上的燈，讓我覺得……不會迷路。']],
   end:['棲息車廂的上方，亮起了第一盞歸宿之燈。','日月儀轉了起來。兩個新的座標，正在發光。']},
  {n:4,title:'倒著長的森林',to:'reverseRealm',hero:'titan',seed:'a',evo:['nature',2],
   start:['日月儀指向的第一個地方：逆生之境。','那裡的花往下開，雨往上落。','溫室裡第一枚封存的種子，在微微發熱。'],
@@ -10371,7 +10371,7 @@ const CHAP=[
  {n:6,title:'時間的縫',to:'timeriftSea',hero:'mnemo',seed:'c',evo:['guard',3],
   start:['兩枚古種都醒了。','日月儀上，多了一片會起伏的海。','最後一枚種子在等。它等的，是日與月交換的那一瞬間。'],
   board:'列車停靠的時候，停在半空中的浪花忽然落了下來。一團冰霧從時隙的海面上漂過來，貼著車身滑進了車門。',
-  heroL:[['mnemo','……你，是活著的記憶。'],['mnemo','我收集漂過來的記憶碎片。這片海，碎片特別多。'],['mnemo','其中有一片……是一個人。他站在列車的駕駛室，對著一條龍說話。'],['self','渡守……和曦淵？'],['mnemo','他說：「把最後一道晨曦留在車上。等它醒過來，就讓它決定要去哪裡。」'],['self','……'],['mnemo','你醒來了。所以，現在是你決定。'],['mnemo','記憶車廂裡，有一道門。這片碎片……是鑰匙。我把它放回去。']],
+  heroL:[['mnemo','……你，是活著的記憶。'],['mnemo','我收集漂過來的記憶碎片。這片海，碎片特別多。'],['mnemo','其中有一片……是一個人。他站在列車的駕駛室，對著一條龍說話。'],['self','渡守……和曦淵？'],['mnemo','他說：「我回沉睡之地睡一覺。等我醒過來，就換我決定要去哪裡。」'],['self','……'],['mnemo','現在醒著的，是你。所以，現在是你決定。'],['mnemo','記憶車廂裡，有一道門。這片碎片……是鑰匙。我把它放回去。']],
   end:['記憶車廂的牆後面，那道門打開了一條縫。','渡守的記憶，回到了列車上。']},
  {n:7,title:'歸途',to:'silentVoid',
   start:['七個符號，亮了六個。','最後一個，指向一片什麼都沒有的地方。','曦淵說：「準備好了，就出發吧。乘客們的心意，會照亮那裡。」']}];
@@ -10616,6 +10616,79 @@ const END_NEED_CH=8;
 const endHave=()=>keepsHave().length+(chapOn()?heartN():0), endNeed=()=>chapOn()?END_NEED_CH:END_KEEPS;
 function finaleExtra(){ if(!chapOn()) return []; const H=heartHeroes().map(h=>`${PASSENGERS[h].name}的心意，亮了起來。`), K=(state.consts||[]).length;
  return H.concat(K?[`窗外，你連起來的 ${K} 個星座，一個一個亮起。`,'最後亮起的，是古列車座。']:[]); }
+
+/* ================================================================
+   主角的深層故事（給了心意之後解鎖，一次聊一段）、那位渡守的七個稱呼、
+   曦淵的試探（半信半疑）、生命誌的「旅途中的故事」、索拉的彩蛋
+   精靈＝最後一位渡守「拾光」轉生；外表全然不同，沒有任何生命認得出來。
+   存檔：state.chap.deep{id:n}、nick[id]、hunch{n}
+   ================================================================ */
+const NICK={treeling:'哼歌的孩子',skywhale:'揮手的人',sirenora:'寫歌的人',titan:'拿種子的人',grinfox:'不怕黑的人',mnemo:'說話的人'};
+const DEEP={
+ treeling:[[['treeling','我還是小樹苗的時候，列車第一次停在這裡。'],['treeling','一個很年輕的渡守蹲在老樹下，一邊哼歌，一邊刻那個圓環。'],['treeling','我躲在旁邊，假裝自己是一棵小樹，聽了一整個下午。'],['treeling','我叫他「哼歌的孩子」。……他從來沒發現我。呵呵。'],['self','（……那首歌，好像在哪裡聽過。）']],
+  [['treeling','大熄滅那年，列車最後一次經過森林。'],['treeling','車上的人朝森林喊：還有誰要上車？'],['treeling','我怕。我又變成一棵樹，站著不動。……列車就開走了。'],['treeling','後來我才知道，那是最後一班。'],['treeling','我一直覺得，我躲起來了。']],
+  [['treeling','可是你拓下刻紋的那天，我想通了。'],['treeling','那個孩子刻圓環，是要讓列車找得到回來的路。'],['treeling','我留在森林裡，剛好替他守著這個記號。……我沒有躲錯，對吧？'],['self','（你點點頭。牠頭頂的枝葉，輕輕晃了很久。）'],['treeling','「老樹會一直在那裡，等列車再經過。」……這句話，是他告訴我的。']]],
+ skywhale:[[['skywhale','我很小的時候，遇到，很大的風暴。'],['skywhale','家人們，不見了。雲，很黑。'],['skywhale','然後，有一排燈，在動。是這艘船。'],['skywhale','船尾，有一個人，一直揮手。一直，一直。我跟著他，飛出了風暴。'],['skywhale','我叫他，「揮手的人」。']],
+  [['skywhale','雲海，一年比一年，薄了。'],['skywhale','家人，一年比一年，少了。'],['skywhale','我怕，有一天，雲海裡，只剩我。'],['skywhale','也沒有人，記得，星鯨座。']],
+  [['skywhale','可是，你連起來了。'],['skywhale','地圖，還在。'],['skywhale','我回去以後，要教小鯨們，抬頭。'],['skywhale','……迷路的時候，找星星。找到了，就有人，在等你。']]],
+ sirenora:[[['sirenora','組成我的思念裡，有一份特別溫暖。'],['sirenora','一個人在霧裡哼著一首搖籃曲。歌裡唱一條龍，一半晨光，一半深淵。'],['sirenora','那是寫給曦淵的歌。……我叫他「寫歌的人」。'],['sirenora','他沒有回家。所以他想家的那一份，也變成了我。']],
+  [['sirenora','我常常想……我是不是只是很多人的想家？'],['sirenora','沒有一樣東西，是我自己的。'],['sirenora','所以我總是說「不要追」。……因為我覺得，沒有誰真的會追我。']],
+  [['sirenora','可是你為我點了燈。'],['sirenora','「燈亮著的地方，就是歸途。」……那首歌的最後一句，不是誰的思念。'],['sirenora','是我自己想起來的。'],['sirenora','……所以，我好像也有一點點，是我自己了。']]],
+ titan:[[['titan','……很久以前……這裡……順著長。'],['titan','有一個渡守……拿著一顆種子……來找我。'],['titan','他說……「你活得最久……替我們看著……等它醒來」。'],['titan','……我叫他……「拿種子的人」。']],
+  [['titan','……我點頭了。'],['titan','……然後……我睡著了。'],['titan','……只是翻了一個身。……醒來……森林倒過來了……渡守……都不見了。'],['titan','……我答應要看著……卻什麼都……沒看到。']],
+  [['titan','……所以我說話……很慢。'],['titan','……怕再錯過什麼。……每一個字……都想好好放下。'],['titan','……可是種子……醒了。……我看到了。'],['titan','……拿種子的人……答應你的事……我做到了。']]],
+ grinfox:[[['grinfox','大熄滅之後，岔路口多了好多影子。'],['grinfox','我、我嚇壞了。躲了好久好久。'],['grinfox','有一個渡守經過，在我旁邊坐下來。他一點都不怕。'],['grinfox','他教我變成月亮那邊的顏色。……我叫他「不怕黑的人」。嘻。']],
+  [['grinfox','……我可以告訴你一個秘密嗎？'],['grinfox','我一直怕……那些影子，是我吃不完的害怕變成的。'],['grinfox','如果是那樣……那我是不是，也是影子？'],['grinfox','還有……給我墜飾的那個女孩，她的世界後來也熄滅了。我不知道她有沒有搭上列車。']],
+  [['grinfox','潮種醒的時候，影子們沒那麼餓了。'],['grinfox','原來牠們也在找光。不是我害的。'],['grinfox','我能做的，就是陪人安靜地走過去。……三步，不多不少。'],['grinfox','嘻。這樣，就夠了。']]],
+ mnemo:[[['mnemo','我是第一個熄滅的世界留下的。'],['mnemo','我收著很多片……同一個人的記憶。'],['mnemo','老樹下哼歌的年輕人。風暴裡揮手的人。霧裡寫歌的人。交出種子的人。陪狐狸坐著的人。'],['mnemo','還有，在駕駛室對龍說話的人。……我叫他「說話的人」。'],['self','（……他們說的，好像是同一個人。）']],
+  [['mnemo','我有幾千個別人的記憶。'],['mnemo','可是沒有一個，是我自己的。'],['mnemo','我怕化掉之後，什麼都不剩。']],
+  [['mnemo','……可是我收了一顆新的憶泡。'],['mnemo','是這輛車。是你。'],['mnemo','這是第一顆，只屬於我的記憶。'],['mnemo','……謝謝你。']]]};
+/* 墜飾的線索：影狐給過心意之後，霜憶晶絡會多讓你看一顆憶泡 */
+const PENDANT=[['self','（你碰到一顆小小的憶泡。）'],['self','（畫面裡，一個小女孩抱著行李，跑上了列車。她的脖子上空空的。）'],['mnemo','……她上車了。最後一班。'],['mnemo','她一直跟渡守說：「有一隻笑臉狐狸，送我回家。」']];
+/* 曦淵：半信半疑。每章結束後，第一次找牠聊會多一句試探 */
+const HUNCH={1:[['dragon','你拓刻紋的手勢……'],['dragon','……算了，大概是我想多了。']],2:[['dragon','巨鯨說的那個揮手的人……他揮手的樣子，跟你剛剛跟我打招呼一樣。'],['dragon','……我在說什麼呢。']],3:[['dragon','你剛才哼的那首歌，誰教你的？'],['self','……我有在哼歌嗎？'],['dragon','……嗯。沒事。']],4:[['dragon','拾光以前也老是把種子放在口袋裡。'],['dragon','……你也是。']],5:[['dragon','你不怕黑。'],['dragon','……他也不怕。']],6:[['dragon','門後面的東西，你好像早就知道放在哪裡。'],['dragon','…………']],7:[['dragon','……我一直不敢問。'],['dragon','現在也不問了。不管你是誰，你都是我等到的那一位。']]};
+const HERO_IDS=()=>CHAP.filter(C=>C.n<=6).map(C=>C.hero);
+const heroCh=id=>(CHAP.find(C=>C.hero===id)||{}).n;
+const deepAt=id=>((state.chap||{}).deep||{})[id]||0;
+function deepWait(id){ if(!chapOn()||!state.chap||!DEEP[id]||!aboard(id)) return false; const n=heroCh(id); if(!n||!state.chap.ended.includes(n)) return false;
+ if(deepAt(id)<DEEP[id].length) return true; return id==='mnemo'&&!state.chap.pendant&&state.chap.ended.includes(5); }
+{ const t2=talk; talk=function(id,next){ if(!chapOn()||chapHeroWait(id)) return t2.apply(this,arguments); const S=CS();
+  if(chapCur()===7&&heartHeroes().includes(id)&&!(S.bye7||{})[id]) return t2.apply(this,arguments);
+  if(CROSS.some(x=>x.who===id&&chapReached(x.n)&&!chapDone(x.n+1)&&aboard(x.to)&&!(S.cross||{})[x.k])) return t2.apply(this,arguments);   /* 這一章的呼應先說，深層故事等下次 */
+  if(deepWait(id)){ S.deep=S.deep||{}; const i=deepAt(id);
+   if(i<DEEP[id].length) return dialogueScript(DEEP[id][i],()=>{ S.deep[id]=i+1; if(i===0){ S.nick=Object.assign({},S.nick,{[id]:1}); setTimeout(()=>noteTop(`✦ 筆記本：那位渡守——${PASSENGERS[id].name}叫他「${NICK[id]}」`),400); }
+    const s=state.passengers[id]; if(s&&i===DEEP[id].length-1){ s.records=s.records||[]; s.records.push({j:state.journeyCount,t:'說完了自己的故事。'}); } save(); render(); next&&next(); });
+   const L=PENDANT.concat(aboard('grinfox')?[['grinfox','…………嘻。嘻嘻。'],['self','（那排白牙抖了很久。這一次，你分得出來——牠是真的在笑。）']]:[]);
+   return dialogueScript(L,()=>{ S.pendant=1; save(); render(); next&&next(); }); }
+  return t2.apply(this,arguments); }; }
+HSDEF.forEach(h=>{ const m=/^(hab-p-|rm-p-)(.+)$/.exec(h.id); if(!m||!DEEP[m[2]]) return; const oi=h.imp; h.imp=()=>deepWait(m[2])||(oi?oi():false); });
+{ const pg2=paxGlowTop; paxGlowTop=function(){ const r=pg2.apply(this,arguments).slice(); HERO_IDS().filter(deepWait).slice(0,1).forEach(id=>{ ['hab-p-'+id,'rm-p-'+id].forEach(k=>{ if(!r.includes(k)) r.push(k); }); }); return r.slice(0,3); }; }
+/* 曦淵的試探 */
+{ const d0=dragonTalk; dragonTalk=function(){ if(chapOn()&&state.chap&&!loreNext()&&(state.currentPhase==='voyage'||state.duty.reported)){ const S=CS(); S.hunch=S.hunch||{};
+   const n=[7,6,5,4,3,2,1].find(k=>(k===7?chapCur()===7&&heartHeroes().every(h=>!aboard(h)||(S.bye7||{})[h]):S.ended.includes(k))&&!S.hunch[k]);
+   if(n&&!(state.chap.legacy&&n<Math.max(...S.ended,0))) return dialogueScript(HUNCH[n],()=>{ S.hunch[n]=1; save(); render(); }); }
+  return d0.apply(this,arguments); }; }
+/* 生命誌：旅途中的故事 */
+const STORY={
+ treeling:['和晨曦森林最老的樹一起長大。小時候躲在樹後，聽一個年輕的渡守一邊哼歌一邊刻圓環。','大熄滅時牠變成樹躲起來，沒有搭上最後一班車，一直以為自己躲錯了。','拓下刻紋之後，牠明白自己替那個孩子守住了回程的記號。'],
+ skywhale:['小時候在風暴裡和家人走散，跟著一排列車的燈和一個揮手的人飛了出來。','雲海一年比一年薄，牠怕有一天只剩自己，也沒人記得星鯨座。','星鯨座還在。牠要回去教小鯨們抬頭找星星。'],
+ sirenora:['由沒能回家的航海者的思念凝成。其中有一份，是一個人在霧裡哼給一條龍的搖籃曲。','她怕自己只是很多人的想家，沒有一樣屬於自己的東西。','為她點的燈，讓她想起了歌的最後一句。那一句，是她自己的。'],
+ titan:['大熄滅之前，一個渡守把種子的事託付給牠：「替我們看著，等它醒來。」','牠只是翻了一個身，醒來時森林已經倒過來，渡守都不見了。','甲種醒來的那一刻，牠終於完成了答應的事。'],
+ grinfox:['大熄滅之後，一個不怕黑的渡守教牠變成月亮那邊的顏色，躲開影子。','牠一直怕影子是自己吃不完的害怕變成的；也不知道送給牠墜飾的女孩有沒有搭上列車。','原來影子也在找光。牠能做的，是陪人安靜地走過去。'],
+ mnemo:['第一個熄滅的世界留下的守靈者，收著很多片同一個人的記憶。','擁有幾千個別人的記憶，卻沒有一個是自己的。','這輛車、你，是牠第一顆只屬於自己的憶泡。']};
+function journeyStory(id){ if(!chapOn()||!STORY[id]||!state.chap) return ''; const n=heroCh(id), S=state.chap; if(!n) return '';
+ const k=Math.min(3,(S.said&&S.said[n]?1:0)+(S.ended.includes(n)?1:0)+(deepAt(id)>=3?1:0)); if(!k) return '';
+ return `<h5>${GLYPH.leaf}旅途中的故事</h5>${STORY[id].slice(0,k).map(t=>`<p>${t}</p>`).join('')}`; }
+/* 筆記本：那位渡守 */
+{ const q1=questCats; questCats=function(){ const C=q1.apply(this,arguments); if(!chapOn()||!state.chap) return C; const S=state.chap, li=(t,st)=>({t,st:st||'on'}), L=[];
+  const heard=HERO_IDS().filter(id=>(S.nick||{})[id]); const named=(state.storyFlags.dragonLore||[]).includes('dl_name');
+  if(!heard.length&&!named) return C;
+  if(named) L.push(li('曦淵說：最後一位渡守，叫做拾光。他回到沉睡之地睡著了。','done'));
+  HERO_IDS().forEach(id=>L.push((S.nick||{})[id]?li(`${PASSENGERS[id].name}叫他「${NICK[id]}」`,'done'):li('……','lock')));
+  if(S.ended.includes(6)&&(S.nick||{}).mnemo) L.push(li('這些稱呼，說的都是同一個人——拾光。','done'));
+  C.push({k:'ferry',n:'那位渡守',L}); return C; }; }
+/* 索拉的彩蛋：晨曦結局 */
+{ const E=ENDINGS.dawn, base=E.lines.slice(); Object.defineProperty(E,'lines',{configurable:true,get:()=>{ if(!state.discoveredLifeforms.includes('sola')) return base; const L=base.slice(); L.splice(L.length-1,0,'星河的邊緣，漂回了一座小小的浮島。上面有一團光，對著列車揮了揮觸手。'); return L; }}); }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
