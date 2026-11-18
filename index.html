@@ -11070,11 +11070,11 @@ setInterval(()=>{ if(!RUNNING||(navigator.webdriver&&!window.ARC_TEST)) return; 
   if(!L.length) return C; const k=C.findIndex(c=>c.col); const cat={k:'arc',col:1,n:'乘客的小故事',L}; if(k<0) C.push(cat); else C.splice(k,0,cat); return C; }; }
 
 /* ================================================================
-   曦淵的近照：兩張近照，對話時一句換一張；近照的下緣貼著對話框的上緣
+   曦淵的近照：兩張近照，每一段對話換一張（同一段對話裡不換）；近照的下緣貼著對話框的上緣
    ================================================================ */
 const XY_FACES=['assets/xiyuan-face.webp','assets/xiyuan-face2.webp']; let XY_K=-1;
 Object.defineProperty(NPCS.dragon,'image',{configurable:true,get:()=>XY_FACES[((XY_K%2)+2)%2]});
-{ const vs=VOICE.say; VOICE.say=function(who){ if(who==='dragon') XY_K++; return vs.apply(this,arguments); }; }
+{ const ds=dialogueScript; dialogueScript=function(sc){ if(Array.isArray(sc)&&sc.some(x=>x&&x[0]==='dragon')) XY_K++; return ds.apply(this,arguments); }; }   /* 一段對話用同一張；下一段對話換另一張 */
 function xyFit(){ document.querySelectorAll('#layer .dlg').forEach(d=>{ const im=d.querySelector('.who img[src*="xiyuan-face"]'), bx=d.querySelector('.box'); if(!im||!bx) return; const w=im.closest('.who');
   w.classList.add('xyface'); const b=Math.max(0,innerHeight-bx.getBoundingClientRect().top-1)+'px'; if(w.style.bottom!==b) w.style.bottom=b; }); }
 new MutationObserver(()=>xyFit()).observe(document.documentElement,{childList:true,subtree:true}); addEventListener('resize',xyFit);

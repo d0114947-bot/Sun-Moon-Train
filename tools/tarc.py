@@ -55,8 +55,11 @@ with sync_playwright() as p:
     ev("closeAll();dialogueScript([['dragon','一'],['dragon','二']])"); W(500)
     a=ev("document.querySelector('.dlg .who img').getAttribute('src')"); bt=ev("[Math.round(document.querySelector('.dlg .who img').getBoundingClientRect().bottom),Math.round(document.querySelector('.dlg .box').getBoundingClientRect().top)]")
     ev("document.querySelector('.dlg .box').click()"); W(500); c=ev("document.querySelector('.dlg .who img').getAttribute('src')")
-    ok('X1 two close-ups alternate', a!=c and 'xiyuan-face' in a and 'xiyuan-face' in c, [a,c])
+    ok('X1 same close-up within one conversation', a==c and 'xiyuan-face' in a, [a,c])
     ok('X2 close-up sits on the dialogue box', abs(bt[0]-bt[1])<=3, bt)
+    ev("document.querySelector('.dlg .box').click()"); W(400)
+    ev("dialogueScript([['dragon','三']])"); W(500); d=ev("document.querySelector('.dlg .who img').getAttribute('src')")
+    ok('X3 next conversation uses the other close-up', d!=a and 'xiyuan-face' in d, [a,d])
     ev("document.querySelector('.dlg .box').click()"); W(400)
     # 同行者的秘密：影片
     ev("closeAll();xevVid('xev-secret.mp4','xev-secret.jpg');dialogueScript([['aelis','……這件事，我沒有跟別人說過。']])"); W(900)
