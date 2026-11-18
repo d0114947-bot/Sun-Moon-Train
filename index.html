@@ -10997,6 +10997,68 @@ function decChapKey(){ if(typeof chapOn!=='function'||!chapOn()||!state.chap) re
 { const js=journeyStory; journeyStory=function(id){ const r=js.apply(this,arguments); const n=typeof heroCh==='function'?heroCh(id):0, t=n&&state.chap&&(state.chap.dec||{})[n];
   if(!t) return r; return (r||`<h5>${GLYPH.leaf}旅途中的故事</h5>`)+`<p>${t}</p>`; }; }
 { const va2=voyageArrive; voyageArrive=function(){ const E=state.decEcho, r=va2.apply(this,arguments); if(E&&E.seed&&E.j===state.journeyCount-1) setTimeout(()=>decSeed(E.seed[0],E.seed[1]),4400); return r; }; }
+
+/* ================================================================
+   一般乘客的小故事線：挑五位一般乘客，各有一條跨章節的小故事（四段）。
+   每一段要到某個章節進度才會出現；在棲息車廂和牠說話時播出。故事沒說完以前，牠不會下車；
+   說完最後一段，牠會在適合的地方下車（照原本的道別與紀念品）。其他乘客維持原本的輕量。
+   req：要結束幾章以後才會出現；board：這位乘客在章節模式裡固定上車的地方
+   ================================================================ */
+const ARC={
+ sola:{req:[0,1,3,5],B:[
+  {t:'冷笑話的理由',s:'我跟祂說了實話：我講笑話，是因為安靜的時候，會想起我的島。',L:[['sola','欸，你知道水母為什麼不會迷路嗎？'],['self','為什麼？'],['sola','……因為我們本來就不知道要去哪裡。哈哈。'],['sola','…………'],['sola','其實，我講笑話，是因為安靜的時候，會想起我的島。'],['sola','如果你在窗外看到一圈一圈的潮汐痕跡，可以告訴我嗎？我不會哭的。我只會講更多笑話。']]},
+  {t:'老水母的故事',s:'我想起老水母故事的後半段了：白色的車，會把來不及走的生命帶走。可是我是自己游上車的。',L:[['sola','我想起老水母故事的後半段了！'],['sola','「白色的車停下來，是為了把來不及走的生命帶走。」'],['sola','……那我，也是來不及走的那一個嗎？'],['self','你是自己游上車的。'],['sola','對耶！我是自己游上來的！那我不是被救的，我是……搭便車的！'],['sola','嘿嘿。這樣聽起來，好多了。']]},
+  {t:'潮汐的痕跡',s:'我在窗外看到了我的島留下的潮汐痕跡。找得到吧。可是，我還沒想好。',L:[['sola','……你看窗外。'],['self','（星河上，有一圈一圈很淡的光紋，像潮水退去以後留下的。）'],['sola','是我的島。它從這裡經過過。'],['sola','如果我順著痕跡去找，大概找得到。'],['sola','……可是，找到了以後，我還會想下車嗎？'],['self','你不用現在決定。'],['sola','嗯。我先在這裡，多看一下。']]},
+  {t:'搭便車的水母',s:'我決定回星河，把老水母的故事講完。講這列車是真的，講車上有一個很溫柔的精靈。',L:[['sola','我決定了！'],['sola','我不找島了。島很聰明，它會自己找到我。'],['sola','我要回星河，把老水母的故事講完——講給下一團小水母聽。'],['sola','講這列白色的車是真的。講車上有一個很忙、很溫柔的精靈。'],['sola','……還有，講我是第一個搭便車的水母。這個最重要。'],['self','好。'],['sola','到了適合的地方，我就下車囉。不要難過，我會留一個笑話給你。']]}]},
+ aelis:{req:[0,2,3,5],B:[
+  {t:'牆在說話',s:'列車的牆在說話。我聽得見，可是聽不懂。我請祂帶我一起去拓刻紋。',L:[['aelis','噓——你聽。'],['self','……什麼都沒有啊。'],['aelis','有喔。牆上那些刻紋，在很小聲、很小聲地說話。'],['aelis','我們耳廓狐，是替沙漠傳話的。可是這些話，我聽不懂。'],['aelis','你去拓刻紋的時候，可以帶我一起嗎？我想把它們記下來。']]},
+  {t:'圓環',s:'我讀懂了第一個字：圓環，是「渡口」。',L:[['aelis','我發現了！'],['aelis','每一個刻紋裡，都有一個圓環。圓環在說的，是同一個字。'],['aelis','「渡口」。……是可以從這邊，到那邊的地方。'],['self','你怎麼知道？'],['aelis','因為每次我唸出來，耳朵就會癢。耳朵癢，就是對了。']]},
+  {t:'替我看著',s:'有一句話刻在好多地方：「替我看著。」我問祂是誰寫的。祂說，祂也不知道。',L:[['aelis','有一句話，在好多個地方都刻著。'],['aelis','「替我看著。」'],['aelis','刻這句話的，是誰呢？祂想要誰，替祂看著什麼？'],['self','……'],['aelis','你的表情好奇怪。……你也不知道嗎？'],['self','嗯。我也不知道。'],['aelis','那我們一起不知道。一起不知道，也是一種知道。']]},
+  {t:'給沙漠的信',s:'我把牆上的話抄成了一本書。一本留在車上，一本要帶回沙漠。',L:[['aelis','我把聽到的話，抄成了一本小小的書。'],['aelis','一本放在典藏車廂。給下一個聽得見牆的人。'],['aelis','另一本，我要帶回沙漠。耳廓狐要替大家傳話——這次，傳的是渡守的話。'],['aelis','風開始唱歌的時候，我就下車。'],['self','謝謝你，艾莉絲。'],['aelis','嘿嘿。謝謝你帶我去聽。']],end:()=>logJ('艾莉絲把刻紋上的話抄成了一本小書，放在記憶典藏車廂。','find')}]},
+ pyro:{req:[1,2,4,5],board:{loc:'starIslands',ended:1},B:[
+  {t:'不戰鬥？',s:'我問祂，不打架，遇到危險要怎麼辦。祂說，先看清楚，再請大家幫忙。麻煩。',L:[['pyro','有什麼東西要打，叫我。'],['self','精靈不戰鬥喔。'],['pyro','……不戰鬥？那你遇到危險怎麼辦？'],['self','先看清楚，再想辦法。還有，請大家幫忙。'],['pyro','哼。麻煩。'],['pyro','……不過，你需要的話，我還是會在。']]},
+  {t:'衝在最前面',s:'我跟祂說了我那一群的事。我衝在最前面，回頭的時候，後面一個都沒有了。',L:[['pyro','……我以前，有一群。'],['pyro','大地震的那天，我第一個衝出去。我以為衝在最前面，就能保護牠們。'],['pyro','我回頭的時候，後面一個都沒有了。'],['self','……'],['pyro','我不是要你說什麼。我只是……想說一次。']]},
+  {t:'站在後面',s:'我今天沒有往前衝。小傢伙們在我的影子裡，睡得很好。',L:[['self','（棲息車廂裡，幾個小乘客躲在燼角巨獸的影子裡打盹。）'],['pyro','……別吵醒牠們。'],['pyro','我今天沒有往前衝。我就站在這裡。'],['pyro','原來，站著不動，比衝出去難多了。'],['pyro','……可是，牠們睡得很好。']]},
+  {t:'用來擋的角',s:'我的角，是用來擋的。我要回去找我的那一群。這次，我走在最後面。',L:[['pyro','我的角，是用來擋的。不是用來衝的。'],['pyro','我現在知道了。'],['pyro','地底還有熔岩的聲音。也許，那一群裡，還有誰在等。'],['pyro','我要回去找。這次，我會走在最後面。'],['self','嗯。'],['pyro','……這輛車，我記住了。']]}]},
+ strider:{req:[1,2,4,5],board:{loc:'starIslands',ended:1},B:[
+  {t:'風裡的味道',s:'我在找走散那天，風裡的草味。這列車走過很多界，總有一個地方會有。',L:[['strider','我在找一個味道。'],['strider','我們那一群走散的時候，風裡有一種草的味道。只要聞到它，就找得到牠們。'],['strider','這列車走過很多界。我想，總有一個地方會有那種風。'],['self','找到的話，跟我說。'],['strider','嗯。我的鼻子，從來沒有錯過。']]},
+  {t:'典藏櫃裡的味道',s:'溫室的種子典藏櫃裡，有我們荒原的草。這列車，連草都會救。',L:[['strider','……等一下。'],['strider','是這個味道。從溫室那邊傳過來的。'],['self','（灰角靈犬站在種子典藏櫃前，角冠一動也不動。）'],['strider','這顆種子……是我們荒原的草。它怎麼會在這裡？'],['self','也許是很久以前，有誰把它帶上車的。'],['strider','……你們的車，連草都會救。']],end:()=>{ const sd=typeof decSeed==='function'?decSeed(['goldreed','mossgrass'],'灰角靈犬認出來的荒原的草'):null; }},
+  {t:'種下去',s:'我把荒原的草種下去了。它長出來了，是那個味道。',L:[['strider','我想把它種下去。'],['strider','我會守著它。風太大的時候，我替它擋。'],['self','（之後的好幾趟航行，灰角靈犬都趴在培育艙旁邊，角冠朝著風來的方向。）'],['strider','它長出來了。是那個味道。……沒有錯。']]},
+  {t:'前面的路',s:'我要帶一株荒原的草回去，種在丘陵上。同伴們聞到了，就會回來。',L:[['strider','風變了。'],['strider','荒原那邊，有一陣很熟悉的風在叫我。是這種草的味道。'],['strider','我要帶一株回去，種在丘陵上。同伴們聞到了，就會回來。'],['strider','……你也是。哪天迷路了，就找這種草。'],['self','好。'],['strider','前面的路，是好的。']]}]},
+ vandora:{req:[2,3,4,5],board:{loc:'dawnForest',ended:2},B:[
+  {t:'小小的晶石',s:'我每天在祂站的地方放一顆晶石。祂發現了。祂說謝謝。',L:[['self','（你常站的地方，又多了一顆小小的翡翠色晶石。）'],['self','（夜行獸躲在葉子後面，金色的眼睛一眨也不眨。）'],['self','……謝謝。'],['self','（觸鬚抖了一下。牠把頭縮了回去。）']]},
+  {t:'第一句話',s:'我第一次跟祂說話。祂說，那祂看窗外。',L:[['vandora','……'],['vandora','……謝、謝謝。'],['self','你說話了。'],['vandora','……晶石。是謝謝你。讓我上車。'],['vandora','我……很少說話。說話的時候，大家都會看我。'],['self','那我不看你。我看窗外。'],['vandora','……嗯。那樣，比較好。']]},
+  {t:'暗的地方',s:'暗的地方，我看得最清楚。那天，我走在最前面帶路。',L:[['vandora','外面……好暗。'],['vandora','大家都很怕。可是，暗的地方，我看得最清楚。'],['vandora','……我可以帶路。'],['self','你不怕嗎？'],['vandora','怕。……可是，我更怕大家迷路。'],['self','（那天，夜行獸走在最前面。牠一句話也沒說，可是所有人都跟得上。）']]},
+  {t:'大聲說再見',s:'我想回雨林，跟大家說，外面的光不可怕。我還大聲地說了謝謝。',L:[['vandora','我想……回雨林了。'],['vandora','我要跟家裡的大家說——外面的光，不可怕。'],['vandora','還有。'],['vandora','……謝謝你！'],['self','（那是你聽過牠說得最大聲的一句話。）'],['vandora','……說出來了。']]}]}};
+const ARC_IDS=Object.keys(ARC);
+const arcAt=id=>((state.chap||{}).arc||{})[id]?state.chap.arc[id].b:0;
+function arcWait(id){ if(typeof chapOn!=='function'||!chapOn()||!state.chap||!ARC[id]||!aboard(id)) return false; const A=ARC[id], b=arcAt(id); if(b>=A.B.length) return false;
+ const s=state.passengers[id]||{}, last=((state.chap.arc||{})[id]||{}).j; if(state.journeyCount<=(last!=null?last:(s.boardedJourney||0))) return false;   /* 每段之間，至少隔一趟航行 */
+ return (state.chap.ended||[]).length>=A.req[b]; }
+/* 說故事 */
+{ const ta=talk; talk=function(id,next){ if(!arcWait(id)) return ta.apply(this,arguments); const A=ARC[id], b=arcAt(id), B=A.B[b];
+  return dialogueScript(B.L,()=>{ const S=state.chap; S.arc=Object.assign({},S.arc,{[id]:{b:b+1,j:state.journeyCount}}); const s=state.passengers[id];
+   if(s){ s.records=s.records||[]; s.records.push({j:state.journeyCount,t:`說了「${B.t}」的事。`}); if(b===A.B.length-1) s.stage=Math.max(s.stage||0,3); }
+   logJ(`${PASSENGERS[id].name}：「${B.t}」`,'life'); try{ B.end&&B.end(); }catch(e){} save(); render(); next&&next(); }); }; }
+/* 有話想說的時候，牠會亮起來；每一段第一次可以說的時候，精靈會感覺到 */
+HSDEF.forEach(h=>{ const m=/^(hab-p-|rm-p-)(.+)$/.exec(h.id); if(!m||!ARC[m[2]]) return; const oi=h.imp; h.imp=()=>arcWait(m[2])||(oi?oi():false); });
+{ const pg3=paxGlowTop; paxGlowTop=function(){ const r=pg3.apply(this,arguments).slice(); ARC_IDS.filter(arcWait).slice(0,1).forEach(id=>{ const k='hab-p-'+id; if(!r.includes(k)) r.push(k); }); return r.slice(0,3); }; }
+setInterval(()=>{ if(!RUNNING||(navigator.webdriver&&!window.ARC_TEST)) return; ARC_IDS.forEach(id=>{ if(!arcWait(id)) return; const S=state.chap, key=id+':'+arcAt(id); S.arcSensed=S.arcSensed||{}; if(S.arcSensed[key]) return; S.arcSensed[key]=1; save();
+  if(!document.querySelector('#layer .dlg,#layer .cine')) sense(`（${PASSENGERS[id].name}好像有話想跟你說。在棲息車廂找找牠吧。）`); }); },6000);
+/* 故事沒說完以前，牠不會下車 */
+ARC_IDS.forEach(id=>{ const P=PASSENGERS[id]; if(!P) return; const o=P.stay; Object.defineProperty(P,'stay',{configurable:true,get:()=>(typeof chapOn==='function'&&chapOn()&&state.chap&&arcAt(id)<ARC[id].B.length)?9999:o}); });
+/* 章節模式：固定上車的地方 */
+{ const rb2=rollBoarders; rollBoarders=function(){ const out=rb2.apply(this,arguments); if(typeof chapOn!=='function'||!chapOn()||!state.chap) return out;
+  ARC_IDS.forEach(id=>{ const A=ARC[id], e='board_'+id; if(!A.board||!EVENTS[e]||done(e)||state.discoveredLifeforms.includes(id)||(state.boardQ||[]).includes(e)||out.includes(e)) return;
+   if(state.currentLocation===A.board.loc&&(state.chap.ended||[]).length>=A.board.ended) out.push(e); }); return out; }; }
+/* 生命誌：旅途中的故事 */
+{ const js2=journeyStory; journeyStory=function(id){ const r=js2.apply(this,arguments); if(!ARC[id]||!state.chap) return r; const b=arcAt(id); if(!b) return r;
+  return (r||`<h5>${GLYPH.leaf}旅途中的故事</h5>`)+ARC[id].B.slice(0,b).map(B=>`<p>${B.s}</p>`).join(''); }; }
+/* 筆記本（收藏）：乘客的小故事 */
+{ const qa=questCats; questCats=function(){ const C=qa.apply(this,arguments); if(typeof chapOn!=='function'||!chapOn()||!state.chap) return C;
+  const L=ARC_IDS.filter(id=>state.discoveredLifeforms.includes(id)).map(id=>{ const b=arcAt(id), n=ARC[id].B.length, nm0=PASSENGERS[id].name;
+   if(b>=n) return {t:`${nm0}的故事說完了`,st:'done'}; if(arcWait(id)) return {t:`${nm0}好像有話想說`,st:'on'}; if(!aboard(id)) return null; return b?{t:`${nm0}：「${ARC[id].B[b-1].t}」……還沒說完`,st:'on'}:null; }).filter(Boolean);
+  if(!L.length) return C; const k=C.findIndex(c=>c.col); const cat={k:'arc',col:1,n:'乘客的小故事',L}; if(k<0) C.push(cat); else C.splice(k,0,cat); return C; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
