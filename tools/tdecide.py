@@ -30,6 +30,9 @@ with sync_playwright() as p:
     ev("state.crisis=null;"+pax(['vandora'],0)+"crStart('B01',{real:true,sev:3});state.crisis.intel=2;state.crisis.stage='W2';save()")
     r=ev("crPaxSol('vandora')")
     ok('P7 a passenger who barely knows you does not help', ev("(state.crisis.reduce||0)")==0 and '還不太認識你' in r['t'], r)
+    ev("state.crisis=null;"+pax(['pyro'],0)+"crStart('B01',{real:true,sev:3});state.crisis.intel=2;state.crisis.stage='W2';save()")
+    r=ev("crPaxSol('pyro')")
+    ok('P8 an eager passenger steps up even as a stranger', ev("(state.crisis.reduce||0)")==1 and ev("state.crisis.pax.some(p=>p.id==='pyro'&&p.k==='agree')"), r)
     ev("closeAll();state.crisis=null;save()")
     # 當下要決定
     ev(pax(['skyfox'])+"state.materials=state.materials||{};state.materials.mosslight=0;save();decideNow('lights')"); W(500)

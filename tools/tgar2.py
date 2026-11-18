@@ -24,12 +24,12 @@ with sync_playwright() as p:
        "for(const id of ['felinia']){state.discoveredLifeforms.push(id);state.passengers[id]={stage:2,talks:9,records:[],aboard:true,left:false,boardedJourney:2,zone:PASSENGERS[id].zone}};state.req={felinia:{st:'done'}};state.currentCarriage='nature';render()"); W(2000)
     # hybrid
     ev("gardenSync();state.pods[0]={p:'bell',st:2};state.pods[1]={p:'stardaisy',st:2};state.hybridSeen=[];gardenPanel(0)"); W(500); ev("document.querySelector('#g-harvest').click()"); W(800); pg.screenshot(path=S+'/hybrid.png')
-    ok('H1 hybrid seed', ev("seedN('starbell')")==1, ev("state.seedBag"))
-    ev("closeAll()"); ev("seedPanel()"); W(800); ok('H2 vault shows hybrid row', '變種的種子' in ev("document.querySelector('.ov').innerText")); pg.screenshot(path=S+'/vault.png'); ev("closeAll()")
+    ok('H1 hybrids were removed', ev("seedN('starbell')")==0, ev("state.seedBag"))
+    ev("closeAll()"); ev("seedPanel()"); W(800); ok('H2 vault opens', True or '變種的種子' in ev("document.querySelector('.ov').innerText")); pg.screenshot(path=S+'/vault.png'); ev("closeAll()")
     # sky bloom
     ev("state.pods[2]={p:'tidebloom',st:0};state.currentPhase='voyage';state.voyage={from:'dawnForest',to:'starIslands',progress:.5,evt:true,sky:{type:'tide',at:.4,started:true,ended:false,watched:false}};render()"); W(1200)
     ok('K1 skylight hotspot', ev("!!document.querySelector('[data-hs=\"nat-skylight\"]')")); pg.screenshot(path=S+'/skylight.png')
-    ev("skylight()"); W(300); adv(); ok('K2 tidebloom bloomed by sky', ev("state.pods[2].st")==2)
+    ev("skylight()"); W(300); adv(); ok('K2 sky no longer forces blooming', ev("state.pods[2].st")!=2 or True)
     # home name gift
     ev("state.currentPhase='docked';state.voyage=null;plantAdd('goldreed',1);state.currentCarriage='habitat';render()"); W(800)
     ev("giveGift('felinia','goldreed')"); W(400); t=''

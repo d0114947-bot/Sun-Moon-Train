@@ -74,7 +74,7 @@ with sync_playwright() as p:
     # ---------- 自然調節車廂 ----------
     if only in ('all','nature'):
         setc('nature',"state.currentPhase='docked';state.voyage=null;state.currentLocation='dawnForest';state.journeyCount=1")
-        got=set(ids()); ok('N0 nature hotspots', got>={'nat-vault','nat-pod-a','nat-pod-b','nat-crystal','nat-samples','nat-special','nat-back'} and 'nat-window' not in got, sorted(got))
+        got=set(ids()); ok('N0 nature hotspots', got>={'nat-vault','nat-pod-a','nat-pod-b','nat-crystal','nat-special','nat-back'} and 'nat-window' not in got and 'nat-samples' not in got, sorted(got))
         dur=ev("[...document.querySelectorAll('#scene svg .sway')].map(e=>getComputedStyle(e).animationDuration)")
         W(800); ok('N1 greenhouse is a flat front view', ev("state.nview||0")==0 and ev("!!document.querySelector('#scene img.bg')"))
         hit('nat-vault'); ok('N2 seed vault full view with 3D seed', kind()=='L3' and ev("!!document.querySelector('.seed3d .core,.seed3d .seedimg')"))
@@ -90,7 +90,7 @@ with sync_playwright() as p:
         pg.mouse.click(5,700); W(500); hit('nat-pod-b'); W(600); ok('N11 pod B drawer', ev("!!document.querySelector('.hdw .hdw-it')")); pg.mouse.click(5,700); W(500)
         hit('nat-crystal'); W(700); ok('N12 crystal drawer: three light options', ev("document.querySelectorAll('.hdw .hdw-it').length")==3)
         ev("[...document.querySelectorAll('.hdw .hdw-it')].find(b=>b.innerText.includes(ENV_MODES.moon.n)).click()"); W(400); ok('N13 mode switch tints the greenhouse', ev("state.storyFlags.natureLight==='moon'") and 'hue-rotate' in ev("document.querySelector('#scene img.bg').style.filter")); pg.mouse.click(5,700); W(500)
-        hit('nat-samples'); ok('N14 samples: ash fern + grown plant', ev("document.querySelectorAll('[data-sp]').length")==2, ev("[...document.querySelectorAll('[data-sp]')].map(e=>e.dataset.sp)")); closeall()
+        ev("samplePanel()"); W(500); ok('N14 samples: ash fern + grown plant', ev("document.querySelectorAll('[data-sp]').length")==2, ev("[...document.querySelectorAll('[data-sp]')].map(e=>e.dataset.sp)")); closeall()
         closeall(); hit('nat-special'); W(800); ok('N16 vine: spirit appears in the scene (rest moved to the sofa)', ev("!!document.querySelector('.vine-actor .vine-me img')") and not ev("!!document.querySelector('#vr')")); pg.mouse.click(5,700); W(500)
         ev("state.nview=1;render()"); W(500); pg.dblclick('[data-hs="nat-door"]'); W(1300); ok('N17 double-click door moves only one carriage', scene()=='habitat', scene())
         pg.screenshot(path=S+'/v_nature.png') if False else None

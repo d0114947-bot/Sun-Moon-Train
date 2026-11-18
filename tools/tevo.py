@@ -65,7 +65,7 @@ with sync_playwright() as p:
     ev("state.clues=['clue_ring','clue_wake','clue_voyage','clue_dragon','clue_echo','clue_seed','clue_dimming'];state.consts=['deer','wing','jelly','fox'];evoSync();guardRoom()"); W(300)
     ok('G6 列車真相 at stage 4',ev("trainStage('guard')")==4 and ev("document.querySelector('.growov').textContent").find('願意繼續值勤')>=0); ev("closeAll()")
     # record panel
-    ev("growthPanel()"); W(300); ok('P1 growth record shows six directions + changes',ev("document.querySelectorAll('.evo-row').length")==6 and ev("document.querySelectorAll('.evoov .who-list li').length")>=3); ev("closeAll()")
+    ev("growthPanel()"); W(300); ok('P1 growth record shows three lines + changes',ev("document.querySelectorAll('.evo-row').length")==3 and ev("document.querySelectorAll('.evoov .who-list li').length")>=3); ev("closeAll()")
     # presentation
     ev("window.STORY_TEST=1;state.trainEvo.nature=3;state.grown=['bell','sunfern','dewmoss','tidebloom','stardaisy','glowcap','starbell','goldreed'];state.hybridSeen=['tidelotus'];state.currentCarriage='nature';render();evoSync()"); W(1600)
     ok('V1 unlock presentation: glow + line',ev("!!document.querySelector('.dlg')")); t=drain(); ev("window.STORY_TEST=0")
