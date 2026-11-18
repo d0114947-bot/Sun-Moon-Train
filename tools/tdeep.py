@@ -42,7 +42,7 @@ with sync_playwright() as p:
     ev("talk('mnemo')"); s=drain(); ok('D7 mnemo has not given its heart yet: no deep story', '說話的人' not in J(s))
     # 墜飾
     go(BASE+chap('[1,2,3,4,5,6]','{1:1,2:1,3:1,4:1,5:1,6:1}',",deep:{mnemo:3},bye7:{mnemo:1,grinfox:1}")+LORE+pax(['grinfox','mnemo'])+"state.currentLocation='dawnForest';state.currentCarriage='habitat';save();render()",1200); drain()
-    ev("talk('mnemo')"); s=drain(); ok('D8 the pendant memory: the girl got on the train; the fox laughs', '她上車了' in J(s) and '嘻嘻' in J(s) and ev("state.chap.pendant===1"), [x[:14] for x in s])
+    ev("talk('mnemo')"); s=drain(); ok('D8 the pendant memory: the girl got on the train; the fox laughs', '牠上車了' in J(s) and '嘻嘻' in J(s) and ev("state.chap.pendant===1"), [x[:14] for x in s])
     ok('D9 after chapter six + mnemo nickname: all names are one person', ev("(()=>{state.chap.nick={mnemo:1};const c=questCats().find(x=>x.k==='ferry');return c.L.some(x=>x.t.includes('同一個人'))})()"))
     # 曦淵的試探
     go(BASE+chap('[1,2]','{1:1,2:1,3:1}')+LORE+"state.currentLocation='dawnForest';state.currentCarriage='cab';state.duty.reported=true;save();render()",1200); drain()

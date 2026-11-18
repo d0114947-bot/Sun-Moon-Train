@@ -89,7 +89,7 @@ with sync_playwright() as p:
         if ev("!!document.querySelector('#layer .ov.crov')"): break
         if ev("!!document.querySelector('#layer .dlg,#layer .cine')"): n0=ev("state.backlog.length"); adv(2); s+='|'.join(x['t'] for x in ev("state.backlog")[n0:])
         else: W(400)
-    ok('B1 dragon: spirit does not fight; ask passengers', '精靈不戰鬥' in s and '問問她' in s, s)
+    ok('B1 dragon: spirit does not fight; ask passengers', '精靈不戰鬥' in s and '問問牠' in s, s)
     ok('B2 outbreak: crisis panel opens', ev("!!document.querySelector('#layer .ov.crov')") and ev("state.crisis.stage")=='W4')
     ok('B3 索拉 can help (realm/care)', ev("!document.querySelector('#layer [data-pax=\"sola\"]').disabled"))
     ev("crAskPax('sola')"); ev("crDo('purify')")
