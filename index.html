@@ -316,6 +316,27 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+@keyframes crShakeBig{0%,100%{transform:translate(0,0)}10%{transform:translate(-14px,6px) rotate(-.6deg)}20%{transform:translate(12px,-8px) rotate(.5deg)}30%{transform:translate(-10px,4px)}40%{transform:translate(9px,7px) rotate(-.3deg)}55%{transform:translate(-6px,-4px)}70%{transform:translate(4px,3px)}85%{transform:translate(-2px,-1px)}}
+@keyframes crShakeSmall{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
+@keyframes crSway{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(-4px,1px) rotate(-.35deg)}70%{transform:translate(4px,-1px) rotate(.35deg)}}
+@keyframes crFlicker{0%,100%{filter:none}12%{filter:brightness(.45)}16%{filter:brightness(1.1)}22%{filter:brightness(.3) saturate(.6)}30%{filter:none}}
+body.cr-shake-big #scene{animation:crShakeBig .75s cubic-bezier(.36,.07,.19,.97)}
+body.cr-shake-small #scene{animation:crShakeSmall .45s ease-in-out}
+body.cr-sway #scene{animation:crSway 1.6s ease-in-out}
+body.cr-flick #scene{animation:crFlicker 1.1s steps(1,end)}
+#crfog{position:absolute;inset:-6%;pointer-events:none;z-index:2;opacity:0;transition:opacity 2.4s ease;
+ background:radial-gradient(ellipse 60% 45% at 20% 70%,rgba(8,6,14,.95),transparent 70%),radial-gradient(ellipse 55% 50% at 75% 30%,rgba(14,8,20,.9),transparent 70%),radial-gradient(ellipse 70% 40% at 50% 95%,rgba(4,4,8,.95),transparent 70%),radial-gradient(ellipse 50% 60% at 90% 80%,rgba(10,6,16,.85),transparent 70%),rgba(4,3,9,.6);
+ animation:crFogDrift 18s ease-in-out infinite alternate}
+#crfog::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 45% 35% at 35% 40%,rgba(14,9,22,.85),transparent 72%),radial-gradient(ellipse 40% 45% at 65% 65%,rgba(4,3,8,.9),transparent 72%),radial-gradient(ellipse 35% 30% at 50% 20%,rgba(10,7,16,.8),transparent 70%);animation:crFogDrift2 13s ease-in-out infinite alternate}
+@keyframes crFogDrift{from{transform:translate(-3%,1%) scale(1)}to{transform:translate(3%,-2%) scale(1.06)}}
+@keyframes crFogDrift2{from{transform:translate(4%,-2%)}to{transform:translate(-4%,3%)}}
+#crfog.f1{opacity:.5}#crfog.f2{opacity:.78}#crfog.f3{opacity:.96}
+.cine.crext>img{animation:crFlicker 1.6s steps(1,end) infinite !important}
+.cine.crext::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 60%,transparent 40%,rgba(160,20,10,.45));animation:cralert 1.4s ease-in-out infinite}
+.cine.crext::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:radial-gradient(5px 5px at 38% 52%,#ffd27a,transparent),radial-gradient(4px 4px at 42% 48%,#ffb04a,transparent),radial-gradient(6px 6px at 47% 55%,#fff1c0,transparent),radial-gradient(4px 4px at 52% 50%,#ff9a3a,transparent),radial-gradient(5px 5px at 35% 58%,#ffe2a0,transparent),radial-gradient(4px 4px at 44% 60%,#ffc060,transparent),radial-gradient(3px 3px at 56% 53%,#fff,transparent);animation:crSpark .9s linear infinite}
+@keyframes crSpark{0%{opacity:0;transform:translate(0,0)}20%{opacity:1}100%{opacity:0;transform:translate(30px,-50px)}}
+@media (prefers-reduced-motion:reduce){body.cr-shake-big #scene,body.cr-shake-small #scene,body.cr-sway #scene{animation:none}body.cr-shake-big #scene{filter:brightness(.8)}#crfog,#crfog::after{animation:none}.cine.crext>img{animation:none !important}}
+
 .dlg .who.xyface{animation:fin .3s ease}
 .dlg .who.xyface img{animation:none;object-position:50% 100%}
 .xevvid{position:fixed;inset:0;z-index:31;background:#05060f;animation:fin .8s ease}
@@ -8426,7 +8447,7 @@ function crPaxReport(H){ const C=state.crisis; if(!C||C.done||C.stage==='W1'||C.
  setTimeout(()=>dialogueScript([[id,'……等一下。'],[id,C.real?(C.intel>=3?E.inv:`我感覺到……是${CR_CAT[E.cat]}那一類的東西。要小心。`):CR_FALSE[C.id]||'……應該沒事。']],()=>{ if(!C.real) crFalseEnd(); render(); }),600); return true; }
 /* ---------- 爆發與應變 ---------- */
 function crOutbreak(){ const C=state.crisis; if(!C||C.done) return; if(!C.real){ return crFalseEnd(); } C.stage='W4'; C.burst=Math.max(1,state.journeyCount); save();   /* 第 0 趟（序章第一趟）爆發也要記成「已爆發」 */ document.body.classList.add('cr-alert');
- const E=CRISES[C.id]; if(navigator.webdriver&&!window.CRISIS_TEST) return; setTimeout(()=>{ SFX.tone(220,0,1.2,'square',.02); dialogueScript([['self',`——${E.n}。`],['self',E.inv],['dragon',C.sevN>=3?'冷靜。告訴我你要怎麼做。':'先不要慌。']],()=>crPanel()); },400); }
+ const E=CRISES[C.id]; if(navigator.webdriver&&!window.CRISIS_TEST) return; setTimeout(()=>crBurstFx(E,()=>{ SFX.tone(220,0,1.2,'square',.02); dialogueScript([['self',`——${E.n}。`],['self',E.inv],['dragon',C.sevN>=3?'冷靜。告訴我你要怎麼做。':'先不要慌。']],()=>crPanel()); }),400); }
 function crScore(){ const C=state.crisis, E=CRISES[C.id]; let s=0; C.acts.forEach(k=>{ const e=E.eff[k]; s+=typeof e==='number'?e:e==='reduce'||e==='avoid'?2:0; }); s+=C.reduce;
  C.pax.filter(p=>p.k!=='info'&&p.k!=='refuse'&&p.k!=='none').forEach(p=>s+=Math.min(2,p.v||1)); if(C.pax.some(p=>p.k==='info')) s+=.5;
  if(C.xi) s+=E.eff.xiyuan||2; if((state.energy==null?80:state.energy)<20) s-=1; if(crTier()>=3) s-=1; if(trainStage('repair')>=3) s+=1; s-=(C.wrong||0)*.5; return s; }
@@ -11085,6 +11106,33 @@ function xevVid(src,poster){ const v=document.createElement('div'); v.className=
  let seen=false; const iv=setInterval(()=>{ if(document.querySelector('#layer .dlg')) seen=true; else if(seen){ clearInterval(iv); v.classList.add('out'); setTimeout(()=>v.remove(),750); } },300);
  setTimeout(()=>{ if(!seen){ clearInterval(iv); v.remove(); } },8000); return v; }
 { const xs=XRUN.x_secret; XRUN.x_secret=function(h){ if(secretPair()) xevVid('assets/xev-secret.mp4','assets/xev-secret.jpg'); return xs.apply(this,arguments); }; }
+
+/* ================================================================
+   危機的畫面效果
+   ・異界生物襲擊（B）：爆發的那一刻，畫面大力震動；之後每隔一陣子，還會小震一下
+   ・星際與界域意外（A）：車廂左右搖晃
+   ・列車自身故障（C）：爆發時切到列車外面看一下（火花、警示紅光、燈光閃爍）；之後車廂的燈偶爾閃一下
+   ・車廂混濁（D）：黑色霧氣慢慢漫進車廂，看不清楚；越嚴重越濃，出事的那節車廂最濃
+     危機結束後，污染很重的車廂（還沒淨化）也會留著一層薄霧
+   ================================================================ */
+function crFx(k){ const c='cr-'+k; document.body.classList.remove('cr-shake-big','cr-shake-small','cr-sway','cr-flick'); void document.body.offsetWidth; document.body.classList.add(c); setTimeout(()=>document.body.classList.remove(c),k==='sway'?1700:k==='flick'?1200:800); }
+const CR_EXT={C01:'列車外面，能源核心的光，一明一滅。',C02:'包著列車的光膜，一片一片剝落。',C03:'車頭的燈，照向了完全不對的方向。',C04:'兩節車廂的連接處，迸出了一串火花。',C05:'溫室的玻璃穹頂上，結滿了奇怪的霜，裡面的光忽冷忽熱。'};
+function crBurstFx(E,go){ const cat=E.cat;
+ if(cat==='B'){ crFx('shake-big'); SFX.tone(70,0,.7,'sawtooth',.05); setTimeout(go,900); return; }
+ if(cat==='A'){ crFx('sway'); setTimeout(go,900); return; }
+ if(cat==='D'){ crFogSync(true); setTimeout(go,1600); return; }
+ if(cat==='C'){ crFx('flick'); setTimeout(()=>{ cine.cls='crext'; cine([`${CR_EXT[state.crisis&&state.crisis.id]||'列車的某個地方，冒出了火花。'}<span class="sub">——列車外面</span>`,'……回到車廂裡。'],once1(go),'assets/voyage.jpg'); cine.cls=null; },700); return; }
+ go(); }
+function crFogLv(){ const C=state.crisis, car=state.currentCarriage; let lv=0;
+ if(C&&!C.done&&CRISES[C.id]&&CRISES[C.id].cat==='D'&&state.currentPhase!=='outside'){ const here=CRISES[C.id].where===car; lv=C.stage==='W4'?(here?3:2):C.stage==='W3'?(here?2:1):C.stage==='W2'&&here?1:0; }
+ const pol=((state.carPol||{})[car])||0; if(state.currentPhase!=='outside'&&pol>=60) lv=Math.max(lv,1);
+ return lv; }
+function crFogSync(){ const st=document.getElementById('stage'); if(!st) return; let f=document.getElementById('crfog'); const lv=crFogLv();
+ if(!f){ if(!lv) return; f=document.createElement('div'); f.id='crfog'; st.appendChild(f); void f.offsetWidth; }
+ f.className=lv?'f'+lv:''; }
+setInterval(()=>{ if(!RUNNING) return; crFogSync(); },1200);
+{ let t=0; setInterval(()=>{ if(!RUNNING) return; const C=state.crisis; if(!C||C.done||C.stage!=='W4'||state.currentPhase==='outside') return; if(document.querySelector('#layer .cine')) return; t++;
+  const cat=(CRISES[C.id]||{}).cat; if(cat==='B'&&t%8===0) crFx('shake-small'); else if(cat==='A'&&t%11===0) crFx('sway'); else if(cat==='C'&&t%9===0) crFx('flick'); },1000); }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
