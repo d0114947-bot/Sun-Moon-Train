@@ -310,6 +310,28 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+.decov .panel{max-width:840px}
+body:has(#layer .decov) #sense{opacity:0;pointer-events:none}
+.dec-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
+.dec-cards.n2{grid-template-columns:repeat(2,1fr)}
+.dec-card{display:flex;flex-direction:column;text-align:left;border-radius:14px;overflow:hidden;border:1px solid rgba(255,236,190,.22);background:rgba(22,19,38,.9);color:#f6ecd2;padding:0;cursor:pointer;font:inherit;transition:transform .2s ease,border-color .2s ease,opacity .3s ease,box-shadow .2s ease}
+.dec-card:hover:not(:disabled),.dec-card:focus-visible{transform:translateY(-3px);border-color:rgba(255,236,190,.7);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.dec-card .dc-art{aspect-ratio:4/3;display:grid;place-items:center;position:relative;overflow:hidden}
+.dec-card .dc-art img{width:100%;height:100%;object-fit:cover;display:block}
+.dec-card .dc-art i{width:46px;height:46px;opacity:.85;color:#fff6dc}
+.dec-card .dc-art i svg{width:100%;height:100%}
+.dec-card.t-self .dc-art{background:radial-gradient(circle at 50% 60%,rgba(255,210,140,.55),transparent 60%),linear-gradient(160deg,#3a2414,#6a3e1c)}
+.dec-card.t-all .dc-art{background:radial-gradient(circle at 50% 60%,rgba(160,240,210,.45),transparent 60%),linear-gradient(160deg,#12302c,#1f4f46)}
+.dec-card.t-let .dc-art{background:radial-gradient(circle at 50% 60%,rgba(190,180,255,.45),transparent 60%),linear-gradient(160deg,#1b1838,#2e2a5c)}
+.dec-card.t-none .dc-art{background:linear-gradient(160deg,#25213a,#3a3354)}
+.dec-card .dc-n{padding:10px 12px 2px;font-size:16px;line-height:1.5;font-weight:600}
+.dec-card .dc-d{padding:2px 12px 0;opacity:.72;font-size:13px;line-height:1.5}
+.dec-card .dc-t{margin:auto 12px 10px;padding-top:8px;font-size:12px;opacity:.75;display:flex;gap:5px;align-items:center;letter-spacing:.06em}
+.dec-card .dc-t svg{width:14px;height:14px}
+.dec-card:disabled{cursor:default;opacity:.4}
+.dec-card.picked{opacity:1;border-color:#f3e2b4;box-shadow:0 0 0 2px rgba(243,226,180,.8)}
+@media (max-width:640px){.dec-cards,.dec-cards.n2{grid-template-columns:1fr;gap:8px}.dec-card{flex-direction:row;align-items:stretch}.dec-card .dc-art{aspect-ratio:auto;width:34%;min-height:84px;flex:none}.dec-card .dc-body{display:flex;flex-direction:column}.dec-card .dc-n{font-size:15px;padding:8px 10px 0}.dec-card .dc-t{margin:auto 10px 8px}}
+
 @keyframes crShakeBig{0%,100%{transform:translate(0,0)}10%{transform:translate(-14px,6px) rotate(-.6deg)}20%{transform:translate(12px,-8px) rotate(.5deg)}30%{transform:translate(-10px,4px)}40%{transform:translate(9px,7px) rotate(-.3deg)}55%{transform:translate(-6px,-4px)}70%{transform:translate(4px,3px)}85%{transform:translate(-2px,-1px)}}
 @keyframes crShakeSmall{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
 @keyframes crSway{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(-4px,1px) rotate(-.35deg)}70%{transform:translate(4px,-1px) rotate(.35deg)}}
@@ -3560,9 +3582,9 @@ function playFinale(next){
  cine(FINALE.concat(finaleExtra()),once1(()=>cine(E.lines,once1(()=>{
   if(type==='night'){ state.storyFlags.finaleTried=(state.storyFlags.finaleTried||0)+1; logJ('在寂滅虛空裡，光還不夠。曦淵把列車拉了回來。'); save(); render(); next&&next(); return; }
   state.ending=type; complete('finale'); logJ(`旅程的終點：${E.title}。`); save();
-  cine([`<span class="big">結局・${E.title}</span><span class="sub">${type==='dawn'?'列車會繼續航行':'一點光，落在新的旅程上'}</span>`],once1(()=>{
+  cine([`<span class="big">結局・${E.title}</span><span class="sub">${type==='dawn'?'列車會繼續航行':type==='watch'?'有誰守著，世界就能安心地睡':'一點光，落在新的旅程上'}</span>`],once1(()=>{
    if(type==='dawn'){ if(!aboard('yixi')) return boarding('yixi','光從空白的每一個角落聚過來。最後上車的，是那對深色的羽翼。翠綠的大眼睛看了看車廂裡的燈，慢慢地，彎了一下。',()=>{ render(); next&&next(); }); render(); next&&next(); return; }
-   const ov=panel(`<div class="eyebrow">旅程的終點</div><h2>歸光</h2>${meSay('……很久很久以後，有一點光，落在一列沉睡的列車裡。')}<div class="row" style="margin-top:14px"><button class="btn" id="ngp">再一次醒來</button></div>`,'small');
+   const ov=panel(`<div class="eyebrow">旅程的終點</div><h2>${E.title}</h2>${meSay(type==='watch'?'……界壁旁的小站，燈一直亮著。偶爾，會有迷路的光在月台上停一停，再繼續往前走。':'……很久很久以後，有一點光，落在一列沉睡的列車裡。')}<div class="row" style="margin-top:14px"><button class="btn" id="ngp">再一次醒來</button></div>`,'small');
    ov.querySelector('#ngp').onclick=()=>newGamePlus(); }),null,true); }))));
 }
 /* 二周目：從開場重來，開場文字不變，之後多一張畫面 */
@@ -4135,7 +4157,7 @@ function hintPush(kind,t){ if(!t) return; const last=HINTQ.q[HINTQ.q.length-1]; 
 const INFO_ON=()=>!(navigator.webdriver&&!window.INFO_TEST)&&!!state&&!!state.prologueDone&&!proOn();
 const SENSE_GAP=40000;
 const arrSenses=id=>INFO_ON()?(SENSES[id]||[]).slice(0,2):(SENSES[id]||[]);
-function hintNext(){ if(HINTQ.busy||!HINTQ.q.length) return; if(document.querySelector('#layer .cine:not(.clear)')||(INFO_ON()&&document.querySelector('#layer .dlg,#layer .cine'))){ clearTimeout(hintNext.w); hintNext.w=setTimeout(hintNext,600); return; }
+function hintNext(){ if(HINTQ.busy||!HINTQ.q.length) return; if(document.querySelector('#layer .cine:not(.clear),#layer .decov')||(INFO_ON()&&document.querySelector('#layer .dlg,#layer .cine'))){ clearTimeout(hintNext.w); hintNext.w=setTimeout(hintNext,600); return; }
  let ix=0; if(INFO_ON()&&HINTQ.q[0].kind==='sense'&&performance.now()-(hintNext.ls||-1e9)<SENSE_GAP){ ix=HINTQ.q.findIndex(x=>x.kind!=='sense'); if(ix<0){ clearTimeout(hintNext.w); hintNext.w=setTimeout(hintNext,SENSE_GAP-(performance.now()-hintNext.ls)+50); return; } }
  const h=HINTQ.q.splice(ix,1)[0]; if(h.kind==='sense') hintNext.ls=performance.now(); HINTQ.busy=true; const dur=h.kind==='sense'?3600:2400; if(h.kind==='sense') senseShow(h.t); else toastShow(h.t);
  setTimeout(()=>{ HINTQ.busy=false; setTimeout(hintNext,350); },dur); }
@@ -10898,11 +10920,11 @@ const DECS={
 const DEC_ORDER=['lights','sos','short','seat','cold','frag'];
 function decPick(){ const ck=decChapKey(); if(ck) return ck; const n=state.journeyCount||0, last=state.decLast; for(let i=0;i<DEC_ORDER.length;i++){ const k=DEC_ORDER[(n+i)%DEC_ORDER.length], D=DECS[k]; if(k!==last&&(!D.need||D.need())) return k; } return null; }
 function decideNow(k){ k=k||decPick(); const D=DECS[k]; if(!D) return null; const v=state.voyage; if(v) v.dec=k; state.decLast=k; save();
- const O=D.opts(), ov=panel(`<div class="eyebrow">${D.ch?`第 ${D.ch<7?D.ch:'終'} 章・${CHAP[D.ch-1].title}`:'航行中'}・當下要決定</div><h2>現在，要怎麼做？</h2><p class="dec-sit">${D.sit()}</p><div class="dec-bar" style="--dt:${DEC_T/1000}s"><i></i></div><div class="dec-opts">${O.map(o=>`<button class="btn ghost" data-dec="${o.k}">${o.n}${o.d?`<small>${o.d}</small>`:''}</button>`).join('')}</div><p class="dec-res"></p>`,'small decov');
+ const O=decLeanTag(k,D.opts()), ov=panel(`<div class="eyebrow">${D.ch?`第 ${D.ch<7?D.ch:'終'} 章・${CHAP[D.ch-1].title}`:'航行中'}・當下要決定</div><h2>現在，要怎麼做？</h2><p class="dec-sit">${D.sit()}</p><div class="dec-bar" style="--dt:${DEC_T/1000}s"><i></i></div>${decCardsHtml(k,O)}<p class="dec-res"></p>`,'small decov');
  let done=false; SFX.tone(740,0,.3,'sine',.03);
- const fin=(o,late)=>{ if(done) return; done=true; clearTimeout(tm); const t=(late?D.late:'')+(o?o.go():(D.lateGo?D.lateGo():'')); if(D.ch&&state.chap){ state.chap.dec=Object.assign({},state.chap.dec,{[D.ch]:(o&&o.s)||D.lateS||''}); } save();
+ const fin=(o,late)=>{ if(done) return; done=true; clearTimeout(tm); const t=(late?D.late:'')+(o?o.go():(D.lateGo?D.lateGo():'')); if(D.ch&&state.chap){ state.chap.dec=Object.assign({},state.chap.dec,{[D.ch]:(o&&o.s)||D.lateS||''}); } decLean(o,late); save();
   logJ(`航行中：${t.replace(/<br>/g,'')}`); if(!ov.isConnected) { toast(t.replace(/<br>/g,'')); render(); return; }
-  ov.querySelectorAll('[data-dec]').forEach(b=>b.disabled=true); const bar=ov.querySelector('.dec-bar'); if(bar) bar.remove(); ov.querySelector('.dec-res').innerHTML=t; render&&setTimeout(()=>{ hsRefresh(); },0); };
+  ov.querySelectorAll('[data-dec]').forEach(b=>{ b.disabled=true; if(o&&!late&&b.dataset.dec===o.k) b.classList.add('picked'); }); const bar=ov.querySelector('.dec-bar'); if(bar) bar.remove(); ov.querySelector('.dec-res').innerHTML=t; render&&setTimeout(()=>{ hsRefresh(); },0); };
  const lateO=()=>O.find(o=>o.k===D.def)||null;
  const tm=setTimeout(()=>fin(lateO(),true),DEC_T);
  ov.querySelectorAll('[data-dec]').forEach(b=>b.onclick=e=>{ e.stopPropagation(); fin(O.find(o=>o.k===b.dataset.dec),false); });
@@ -11127,6 +11149,43 @@ function crFogSync(){ const st=document.getElementById('stage'); if(!st) return;
 setInterval(()=>{ if(!RUNNING) return; crFogSync(); },1200);
 { let t=0; setInterval(()=>{ if(!RUNNING) return; const C=state.crisis; if(!C||C.done||C.stage!=='W4'||state.currentPhase==='outside') return; if(document.querySelector('#layer .cine')) return; t++;
   const cat=(CRISES[C.id]||{}).cat; if(cat==='B'&&t%8===0) crFx('shake-small'); else if(cat==='A'&&t%11===0) crFx('sway'); else if(cat==='C'&&t%9===0) crFx('flick'); },1000); }
+
+/* ================================================================
+   當下要決定：選項是一張一張的卡片。每張卡片屬於一種傾向——
+   自己伸手（self）／交給大家（all）／放手（let）。
+   一路上選了什麼，會慢慢累積；光夠的時候，最多的那一種傾向決定結局：
+   交給大家 → 晨曦；自己伸手 → 歸光；放手 → 守望。光不夠（界染太高、紀念品和心意太少）→ 長夜。
+   傾向不顯示數字；卡片下方有小圖示，曦淵偶爾也會說一句。
+   ================================================================ */
+const LEAN_N={self:'自己伸手',all:'交給大家',let:'放手'};
+const LEAN_ICON={self:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V6.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 10V4.5a1.5 1.5 0 0 1 3 0V10"/><path d="M13 10V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M16 11V8.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L4 15a1.6 1.6 0 0 1 2.6-1.8L8 15"/></svg>',
+ all:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 20c.6-3.6 2.8-6 5.5-6s4.9 2.4 5.5 6"/><path d="M13.5 15.2c.9-.8 1.9-1.2 3-1.2 2.4 0 4.3 2.1 4.8 5.2"/></svg>',
+ let:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></svg>'};
+const DEC_LEAN={lights:{slow:'self',horn:'let',pax:'all'},sos:{go:'self',mark:'let',pax:'all'},short:{go:'self',stay:'let',pax:'all'},seat:{turn:'self'},cold:{self:'self',pax:'all'},frag:{catch:'self',let:'let',pax:'all'}};
+const DEC_IMG={};   /* 卡片插圖：之後拿到圖，填成 ch1-catch → dec-ch1-catch 這樣的對照 */
+function decLeanTag(k,O){ const m=DEC_LEAN[k]||{}; O.forEach(o=>{ if(!o.t&&m[o.k]) o.t=m[o.k]; }); return O; }
+function decCardsHtml(k,O){ return `<div class="dec-cards n${O.length}">${O.map(o=>{ const img=DEC_IMG[k+'-'+o.k];
+  return `<button type="button" class="dec-card t-${o.t||'none'}" data-dec="${o.k}"><span class="dc-art">${img?`<img src="${img}" alt="">`:`<i aria-hidden="true">${LEAN_ICON[o.t]||GLYPH.ring}</i>`}</span><span class="dc-body" style="display:flex;flex-direction:column;flex:1"><b class="dc-n">${o.n}</b>${o.d?`<small class="dc-d">${o.d}</small>`:''}${o.t?`<span class="dc-t">${LEAN_ICON[o.t]}${LEAN_N[o.t]}</span>`:''}</span></button>`; }).join('')}</div>`; }
+const LEAN_SAY={self3:'你又自己伸手了。……那樣會累的。',self6:'很久以前，也有誰總是這樣，什麼都自己扛。……你們真像。',
+ all3:'你很會請大家幫忙。……這列車，好久沒有這麼熱鬧了。',all6:'大家都願意站到你旁邊。這是你一路走來換到的。',
+ let3:'你不是什麼都要抓住。……這也是一種勇氣。',let6:'有些東西，讓它安靜地走，也是一種送別。'};
+function decLean(o,late){ const L=state.lean=Object.assign({self:0,all:0,let:0},state.lean); const t=late?'let':o&&o.t; if(!t) return; L[t]+=late?.5:1;
+ state.leanSaid=state.leanSaid||{}; [3,6].forEach(n=>{ const key=t+n; if(L[t]>=n&&!state.leanSaid[key]){ state.leanSaid[key]=1; state.leanQ=(state.leanQ||[]).concat([key]); } }); }
+setInterval(()=>{ if(navigator.webdriver&&!window.DEC_TEST) return; if(!RUNNING||!(state.leanQ||[]).length) return; if(typeof dragonAway==='function'&&dragonAway()) return;
+ if(document.querySelector('#layer .ov:not(.closing),#layer .dlg,#layer .cine')) return; const key=state.leanQ.shift(); save(); dialogueScript([['dragon',LEAN_SAY[key]]]); },2000);
+/* 章節的決定：主角不在車上時，也有一張「交給大家」的卡片（請車上熟悉的乘客幫忙） */
+const CH_SEED={1:[['sunfern','goldreed'],'和大家一起救下的小樹留下的'],2:[['starspore','stardaisy'],'走散的小雲鯨送的'],3:[['tidebloom','shellbloom'],'霧裡的聲音留下的'],4:[['mossgrass','glowcap'],'倒著長的樹送的'],5:[['glowcap','mossgrass'],'影子走廊的小影子留下的'],6:[['shellbloom','dewmoss'],'最後一個早晨的憶泡留下的'],7:[['dewmoss','sunfern'],'寂滅虛空裡的綠光留下的']};
+Object.entries(CH_DEC).forEach(([n,C])=>{ n=+n; const D=DECS['ch'+n]; if(!D) return; C.O[0].t='self'; C.O[1].t='let';
+ D.opts=()=>{ const h=decHeroOpt(C.hero,C.H.n,C.H.go); if(h) return C.O.concat([Object.assign(h,{s:C.H.s,t:'all'})]);
+  const p=Object.keys(PASSENGERS).find(id=>id!==C.hero&&aboard(id)&&((state.passengers[id]||{}).stage||0)>=1); if(!p) return C.O.slice();
+  return C.O.concat([{k:'hero',t:'all',n:`請${nm(p)}一起想辦法`,d:'交給車上的大家',s:C.O[0].s,go:()=>{ decTrust(p,'航行中，和你一起想了辦法。'); const sd=decSeed(CH_SEED[n][0],CH_SEED[n][1]); return `你請${nm(p)}一起想辦法。${nm(p)}想了一會兒，用牠自己的方式，把事情處理好了。……回來的時候，牠把一顆${sd}交給了你。`; }}]); }; });
+/* 結局：光夠的時候，由傾向決定 */
+ENDINGS.watch={title:'守望',lines:['你看著那棵樹。它亮著，可是很小。','空白太大了。……也許，它不需要被填滿。','熄滅的世界，只是睡著了。就像很久很久以前的某個誰。','你把三枚古種，輕輕放在樹根旁邊。等它們自己醒來。','牆上的手印，一個一個放下了光。這一次，牆不需要誰撐著——它只需要有誰看著。','曦淵在你旁邊落下來。「……我陪你。」','列車停在界壁旁，成了一座亮著燈的小站。']};
+function leanTop(){ const L=state.lean||{}, a=L.all||0, s=L.self||0, l=L.let||0; if(a+s+l<3) return null; const m=Math.max(a,s,l); return [a===m&&'dawn',s===m&&'return',l===m&&'watch'].filter(Boolean); }
+{ const et=endingType; endingType=function(){ const base=et(); if(base==='night'||typeof chapOn!=='function'||!chapOn()) return base; const tops=leanTop(); if(!tops) return base;
+  const have=keepsHave().length+(typeof heartN==='function'?heartN():0); if(have<4) return 'night'; return tops.includes(base)?base:tops[0]; }; }
+{ const fe=finaleExtra; finaleExtra=function(){ const r=fe.apply(this,arguments)||[], tops=leanTop(); if(!tops) return r; const t=tops[0];
+  return r.concat([t==='dawn'?'你想起一路上，大家一次又一次，站到你身邊。':t==='return'?'你想起一路上，你總是自己伸出手。':'你想起一路上，你學會了讓一些東西，安靜地離開。']); }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
