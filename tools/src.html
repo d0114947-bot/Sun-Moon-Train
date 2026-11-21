@@ -310,13 +310,19 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+.xevvid.memimg{background:#0b0a14}
+.xevvid.memimg img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.75) brightness(.9) contrast(.95);animation:memDrift 30s ease-in-out infinite alternate}
+.xevvid.memimg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(10,8,20,.7));pointer-events:none}
+@keyframes memDrift{from{transform:scale(1.02)}to{transform:scale(1.09) translate(-1%,-1%)}}
+@media (prefers-reduced-motion:reduce){.xevvid.memimg img{animation:none}}
+
 .decov .panel{max-width:840px}
 body:has(#layer .decov) #sense{opacity:0;pointer-events:none}
 .dec-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px}
 .dec-cards.n2{grid-template-columns:repeat(2,1fr)}
 .dec-card{display:flex;flex-direction:column;text-align:left;border-radius:14px;overflow:hidden;border:1px solid rgba(255,236,190,.22);background:rgba(22,19,38,.9);color:#f6ecd2;padding:0;cursor:pointer;font:inherit;transition:transform .2s ease,border-color .2s ease,opacity .3s ease,box-shadow .2s ease}
 .dec-card:hover:not(:disabled),.dec-card:focus-visible{transform:translateY(-3px);border-color:rgba(255,236,190,.7);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.dec-card .dc-art{aspect-ratio:4/3;display:grid;place-items:center;position:relative;overflow:hidden}
+.dec-card .dc-art{aspect-ratio:16/7;display:grid;place-items:center;position:relative;overflow:hidden}
 .dec-card .dc-art img{width:100%;height:100%;object-fit:cover;display:block}
 .dec-card .dc-art i{width:46px;height:46px;opacity:.85;color:#fff6dc}
 .dec-card .dc-art i svg{width:100%;height:100%}
@@ -330,7 +336,7 @@ body:has(#layer .decov) #sense{opacity:0;pointer-events:none}
 .dec-card .dc-t svg{width:14px;height:14px}
 .dec-card:disabled{cursor:default;opacity:.4}
 .dec-card.picked{opacity:1;border-color:#f3e2b4;box-shadow:0 0 0 2px rgba(243,226,180,.8)}
-@media (max-width:640px){.dec-cards,.dec-cards.n2{grid-template-columns:1fr;gap:8px}.dec-card{flex-direction:row;align-items:stretch}.dec-card .dc-art{aspect-ratio:auto;width:34%;min-height:84px;flex:none}.dec-card .dc-body{display:flex;flex-direction:column}.dec-card .dc-n{font-size:15px;padding:8px 10px 0}.dec-card .dc-t{margin:auto 10px 8px}}
+@media (max-width:640px){.dec-cards,.dec-cards.n2{grid-template-columns:1fr;gap:8px}.dec-card .dc-art{aspect-ratio:16/5}.dec-card .dc-art i{width:32px;height:32px}.dec-card .dc-n{font-size:15px;padding:7px 10px 0}.dec-card .dc-d{padding:0 10px}.dec-card .dc-t{margin:auto 10px 7px;padding-top:4px}}
 
 @keyframes crShakeBig{0%,100%{transform:translate(0,0)}10%{transform:translate(-14px,6px) rotate(-.6deg)}20%{transform:translate(12px,-8px) rotate(.5deg)}30%{transform:translate(-10px,4px)}40%{transform:translate(9px,7px) rotate(-.3deg)}55%{transform:translate(-6px,-4px)}70%{transform:translate(4px,3px)}85%{transform:translate(-2px,-1px)}}
 @keyframes crShakeSmall{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,2px)}80%{transform:translate(2px,-1px)}}
@@ -3698,7 +3704,7 @@ addEventListener('resize',oskyPut);
 /* 各界域的場景插畫：下車探索的畫面、回憶水晶、星圖 */
 const LOC_IMG={dawnForest:'loc-dawnForest.jpg',starIslands:'loc-starIslands.jpg',reverseRealm:'loc-reverseRealm.jpg',boundlessCorridor:'loc-boundlessCorridor.jpg',silentVoid:'loc-silentVoid.jpg',timeriftSea:'loc-timeriftSea.jpg'};
 /* 第二張景：兩張輪流（第二張疊在上面，慢慢淡入淡出） */
-const LOC_IMG2={boundlessCorridor:'loc-boundlessCorridor-2.jpg',timeriftSea:'loc-timeriftSea-2.jpg'};
+const LOC_IMG2={boundlessCorridor:'loc-boundlessCorridor-2.jpg',timeriftSea:'loc-timeriftSea-2.jpg',starIslands:'loc-starIslands-2.jpg'};
 const locImg=id=>LOC_IMG[id];
 const LOC_ALT_S=30, locAltDelay=()=>`animation-delay:-${((performance.now()/1000)%LOC_ALT_S).toFixed(2)}s`;   /* 重畫畫面時接著原本的節奏，不會從頭開始 */
 function renderOutside(){ const L=LOCATIONS[state.currentLocation], im=locImg(state.currentLocation); return (im?`<img class="bg" src="${im}" alt="${L.name}">${LOC_IMG2[state.currentLocation]?`<img class="bg loc-alt" src="${LOC_IMG2[state.currentLocation]}" alt="" style="${locAltDelay()}">`:''}`:svgScene(L.art()))+dust(20)+'<div class="vignette"></div>'+hsRender('out:'+state.currentLocation); }
@@ -11162,7 +11168,7 @@ const LEAN_ICON={self:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
  all:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 20c.6-3.6 2.8-6 5.5-6s4.9 2.4 5.5 6"/><path d="M13.5 15.2c.9-.8 1.9-1.2 3-1.2 2.4 0 4.3 2.1 4.8 5.2"/></svg>',
  let:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></svg>'};
 const DEC_LEAN={lights:{slow:'self',horn:'let',pax:'all'},sos:{go:'self',mark:'let',pax:'all'},short:{go:'self',stay:'let',pax:'all'},seat:{turn:'self'},cold:{self:'self',pax:'all'},frag:{catch:'self',let:'let',pax:'all'}};
-const DEC_IMG={};   /* 卡片插圖：之後拿到圖，填成 ch1-catch → dec-ch1-catch 這樣的對照 */
+const DEC_IMG={'ch1-catch':'dec-ch1-catch.jpg','ch1-let':'dec-ch1-let.jpg','ch1-hero':'dec-ch1-hero.jpg','ch2-guide':'dec-ch2-guide.jpg','ch2-go':'dec-ch2-go.jpg','ch2-hero':'dec-ch2-hero.jpg'};   /* 卡片插圖（16:7）；還沒有圖的卡片，用顏色＋小圖示 */
 function decLeanTag(k,O){ const m=DEC_LEAN[k]||{}; O.forEach(o=>{ if(!o.t&&m[o.k]) o.t=m[o.k]; }); return O; }
 function decCardsHtml(k,O){ return `<div class="dec-cards n${O.length}">${O.map(o=>{ const img=DEC_IMG[k+'-'+o.k];
   return `<button type="button" class="dec-card t-${o.t||'none'}" data-dec="${o.k}"><span class="dc-art">${img?`<img src="${img}" alt="">`:`<i aria-hidden="true">${LEAN_ICON[o.t]||GLYPH.ring}</i>`}</span><span class="dc-body" style="display:flex;flex-direction:column;flex:1"><b class="dc-n">${o.n}</b>${o.d?`<small class="dc-d">${o.d}</small>`:''}${o.t?`<span class="dc-t">${LEAN_ICON[o.t]}${LEAN_N[o.t]}</span>`:''}</span></button>`; }).join('')}</div>`; }
@@ -11186,6 +11192,27 @@ function leanTop(){ const L=state.lean||{}, a=L.all||0, s=L.self||0, l=L.let||0;
   const have=keepsHave().length+(typeof heartN==='function'?heartN():0); if(have<4) return 'night'; return tops.includes(base)?base:tops[0]; }; }
 { const fe=finaleExtra; finaleExtra=function(){ const r=fe.apply(this,arguments)||[], tops=leanTop(); if(!tops) return r; const t=tops[0];
   return r.concat([t==='dawn'?'你想起一路上，大家一次又一次，站到你身邊。':t==='return'?'你想起一路上，你總是自己伸出手。':'你想起一路上，你學會了讓一些東西，安靜地離開。']); }; }
+
+/* ================================================================
+   新的插圖與影片
+   ・終幕與四個結局、古種解封：過場的背景圖（用過場的第一句來認）
+   ・舊日回聲「最後一道晨曦」：對話時背景是拾光與曦淵的回憶
+   ・航行交會事件（迷途的星種、溫室的特殊開花、界壁的回聲、故鄉的星座、跟著列車的小光）與溫室花見：對話時背景播影片
+   ================================================================ */
+const CINE_IMG={};
+{ const add=(lines,img)=>{ if(lines&&lines[0]) CINE_IMG[lines[0]]=img; };
+  add(FINALE,'end-finale.jpg'); add(ENDINGS.return.lines,'end-return.jpg'); add(ENDINGS.night.lines,'end-night.jpg'); add(ENDINGS.watch.lines,'end-watch.jpg'); add(ENDINGS.dawn.lines,'end-dawn.jpg');
+  CINE_IMG['森羅溫室的方向，傳來很輕的一聲「喀」。']='seed-unseal.jpg';
+  const c0=cine; cine=function(lines,onDone,img,titleCard){ if(!img&&Array.isArray(lines)&&CINE_IMG[lines[0]]) img=CINE_IMG[lines[0]]; c0.cls=cine.cls; try{ return c0.call(this,lines,onDone,img,titleCard); } finally{ c0.cls=null; } }; }
+function memBg(src){ const v=document.createElement('div'); v.className='xevvid memimg'; v.innerHTML=`<img src="${src}" alt="">`; $('#layer').appendChild(v);
+ let seen=false; const iv=setInterval(()=>{ if(document.querySelector('#layer .dlg')) seen=true; else if(seen){ clearInterval(iv); v.classList.add('out'); setTimeout(()=>v.remove(),750); } },300);
+ setTimeout(()=>{ if(!seen){ clearInterval(iv); v.remove(); } },8000); return v; }
+{ const op=oldPlay; oldPlay=function(){ const had=!!((state.oldEcho||{}).lastdawn); const r=op.apply(this,arguments); if(r&&!had&&(state.oldEcho||{}).lastdawn) memBg('mem-lastdawn.jpg'); return r; }; }
+/* 事件真的開始說話時，才播影片 */
+function xevVidWhenTalk(src,poster){ let n=0; const iv=setInterval(()=>{ n++; if(document.querySelector('#layer .xevvid')){ clearInterval(iv); return; } if(document.querySelector('#layer .dlg')){ clearInterval(iv); xevVid(src,poster); } else if(n>30) clearInterval(iv); },100); }
+const XEV_VID={x_starseed:['xev-starseed.mp4','xev-starseed.jpg'],x_bloom:['xev-bloom.mp4','xev-bloom.jpg'],x_wallecho:['xev-wallecho.mp4','xev-wallecho.jpg'],x_homestar:['xev-homestar.mp4','xev-homestar.jpg'],x_lostlight:['xev-lostlight.mp4','xev-lostlight.jpg']};
+Object.entries(XEV_VID).forEach(([k,[v,po]])=>{ const f=XRUN[k]; if(typeof f!=='function') return; XRUN[k]=function(){ xevVidWhenTalk(v,po); return f.apply(this,arguments); }; });
+{ const hn=hanami; hanami=function(){ const r=hn.apply(this,arguments); if(r) xevVidWhenTalk('xev-bloom.mp4','xev-bloom.jpg'); return r; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
