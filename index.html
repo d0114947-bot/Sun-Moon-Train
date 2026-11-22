@@ -316,6 +316,17 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+.hs.emblem{width:auto;height:auto;padding:0;background:none;border:0;transform:translate(-50%,-50%);perspective:900px;z-index:1}
+.hs.emblem .em{display:block;height:var(--emh,12vh);aspect-ratio:1;transform:rotateX(var(--rx,0deg)) rotateY(calc(var(--ry,0deg) + var(--dry,0deg)));transform-style:preserve-3d;transition:transform .35s ease-out,filter .4s ease;transform-origin:50% 50%}
+.hs.emblem .em img{width:100%;height:100%;object-fit:contain;display:block;opacity:var(--eo,.6);filter:grayscale(var(--eg,0)) drop-shadow(0 0 1px rgba(48,28,6,1)) drop-shadow(0 0 1.5px rgba(48,28,6,.9)) drop-shadow(0 0 10px rgba(255,214,140,var(--eglow,.5))) saturate(1.3) contrast(1.15);pointer-events:none}
+.hs.emblem .mk{display:none}
+.hs.emblem .lb{opacity:0;transition:opacity .25s ease;position:absolute;left:50%;top:100%;transform:translateX(-50%);white-space:nowrap}
+.hs.emblem:hover .lb,.hs.emblem:focus-visible .lb{opacity:1}
+.hs.emblem:hover .em,.hs.emblem:focus-visible .em{filter:brightness(1.35)}
+
+@media (hover:none){.hs.emblem .lb{opacity:.85}}
+@media (prefers-reduced-motion:reduce){.hs.emblem .em{transition:none}}
+
 .xevvid.memimg{background:#0b0a14}
 .xevvid.memimg img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.75) brightness(.9) contrast(.95);animation:memDrift 30s ease-in-out infinite alternate}
 .xevvid.memimg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(10,8,20,.7));pointer-events:none}
@@ -10181,7 +10192,7 @@ function act6Tick(){ if(!state||!state.act5||!state.act5.done) return; if(!state
  const a=state.act6, c=state.currentCarriage, ph=state.currentPhase, v=state.voyage, C=A6C();
  if(!a.woke){ if(c!=='cab'&&!a.said.go&&idle>1500) return a6say('go',[['self','……去駕駛室看看吧。'],['self','也許，有辦法讓列車動起來。']]); return; }
  /* 界染度（值勤的第一步之後） */
- if(state.duty.scan&&!a.said.taint&&ph==='docked') return a6say('taint',[['dragon','界染度，是被界域的氣息沾染的程度。'],['dragon','你身上的，和列車本身的，是分開算的。太高的話，身體和列車都會出問題。'],['dragon','累了，就去溫室的沙發休息。守望藤會幫你淨化。記住這件事。']]);
+ if(state.duty.scan&&!a.said.taint&&ph==='docked') return a6say('taint',[['dragon','界染，是被界域的氣息沾染的程度。你身上，現在就有一點。'],['dragon','太高的話，身體會撐不住。……列車壞掉的地方，是另一回事，我們叫它「修復」。'],['dragon','累了，就去溫室的沙發休息。守望藤會幫你淨化。記住這件事。']]);
  if(ph!=='voyage'||!v) return;
  /* 第一趟航行：月輝潮汐 */
  if(!a.started&&v.progress>=.12){ a.started=true; crStart('T01',{sev:1,real:true,cause:'月界的月輝潮汐'}); save();
@@ -11226,6 +11237,34 @@ Object.entries(XEV_VID).forEach(([k,[v,po]])=>{ const f=XRUN[k]; if(typeof f!=='
 const VIS_IMG={tidewisp:'assets/vis-tidewisp.webp',elder:'assets/vis-elder.webp',voidshape:'assets/vis-voidshape.webp',flicker:'assets/vis-flicker.webp',petaldrift:'assets/vis-petaldrift.webp',lostborder:'assets/vis-lostborder.webp',lightling:'assets/vis-lightling.webp'};
 Object.entries(VIS_IMG).forEach(([id,im])=>{ if(NPCS[id]) NPCS[id].image=im; if(VISITORS[id]&&!VISITORS[id].img) VISITORS[id].img=im; const h=HSDEF.find(x=>x.id==='vis-'+id); if(h){ h.sprite=im; h.sx=';--sh:15vh'; } });
 NPCS.vine.image='assets/vine.webp';
+
+/* ================================================================
+   車廂裡的金色徽章（UI 圖標）：像貼在牆上、地上的徽紋，跟著車廂的透視傾斜；
+   越遠越小。可以拖曳轉動的車廂裡，徽章離畫面中心越遠，斜得越多。
+   亮度跟著那一條變化的進度；點了打開對應的面板。
+   h：徽章高度（佔畫面高的 %）；rx／ry：貼在哪一面（地板、左牆、右牆）
+   ================================================================ */
+const EMB=[
+ {id:'em-repair',scene:'cab',img:'assets/em-repair.webp',name:'界染修復',at:{x:27,y:76},h:13,rx:18,ry:22,lv:()=>trainStage('repair'),go:()=>growthPanel()},
+ {id:'em-prep',scene:'cab',img:'assets/em-prep.webp',name:'到站準備',at:{x:73,y:76},h:13,rx:18,ry:-22,lv:()=>4,go:()=>act('arrprep','open')},
+ {id:'em-ancient',scene:'memory',img:'assets/em-ancient.webp',name:'古代復甦',at:{x:26.5,y:34},h:13,ry:52,lv:()=>trainStage('ancient'),go:()=>growthPanel()},
+ {id:'em-growth',scene:'memory',img:'assets/em-growth.webp',name:'列車的變化',at:{x:50,y:30},h:9,lv:()=>evoLineStage(EVO_LINE[2]),go:()=>growthPanel()},
+ {id:'em-guard',scene:'memory',img:'assets/em-guard.webp',name:'渡守記憶',at:{x:73.5,y:34},h:13,ry:-52,lv:()=>trainStage('guard'),go:()=>growthPanel()},
+ {id:'em-notes',scene:'memory',img:'assets/em-notes.webp',name:'筆記本',at:{x:50,y:73},h:19,rx:66,floor:1,lv:()=>4,go:()=>act('notes','open')},
+ {id:'em-nature',scene:'nature',img:'assets/em-nature.webp',name:'自然復甦',at:{x:50,y:31},h:10,lv:()=>trainStage('nature'),go:()=>growthPanel()},
+ {id:'em-sanct',scene:'habitat',img:'assets/em-sanct.webp',name:'生命歸宿',at:{x:13,y:24},h:14,ry:40,lv:()=>trainStage('sanct'),go:()=>growthPanel()},
+ {id:'em-pax',scene:'habitat',img:'assets/em-pax.webp',name:'乘客',at:{x:43,y:87},h:17,rx:66,floor:1,lv:()=>Object.keys(PASSENGERS).some(aboard)?4:1,go:()=>{ if(Object.keys(PASSENGERS).some(aboard)) act('who','open'); else sense('（車上現在還沒有乘客。）'); }},
+ {id:'em-sky',scene:'observatory',img:'assets/em-sky.webp',name:'星界擴展',at:{x:36,y:80},h:24,rx:66,floor:1,lv:()=>trainStage('sky'),go:()=>growthPanel()}];
+const EMB_BY={}; EMB.forEach(e=>{ EMB_BY[e.id]=e; HSDEF.push({id:e.id,scene:e.scene,name:e.name,at:e.at,shape:'emblem',track:false,layer:2,act:e.go}); });
+const embL=e=>Math.max(1,Math.min(4,e.lv()||1)), embO=e=>(.82+.06*(embL(e)-1)).toFixed(2);
+{ const hb=hsBtn; hsBtn=function(h,pano){ const e=EMB_BY[h.id]; if(!e) return hb.apply(this,arguments);
+  const st=`${pano?'visibility:hidden':`left:${h.at.x}%;top:${h.at.y}%`};--emh:${e.h}vh;--rx:${e.rx||0}deg;--ry:${e.ry||0}deg;--eo:${embO(e)};--eg:${embL(e)<=1?.35:0};--eglow:${(.15+.2*(embL(e)-1)).toFixed(2)}`;
+  return `<button class="hs emblem ${e.floor?'floor':''}" data-hs="${h.id}"${pano?` data-hid="${h.id}"`:''} style="${st}" aria-label="${esc(e.name)}"><span class="em"><img src="${e.img}" alt="" draggable="false"></span><span class="lb">${esc(e.name)}</span></button>`; }; }
+/* 拖曳轉動的車廂：徽章的大小跟著畫面放大縮小；離中心越遠，牆面斜得越多 */
+{ const pp=panoPlace; panoPlace=function(){ const r=pp.apply(this,arguments); const L=$('#phs'); if(!L||!PANO.active) return r; const d=PANO.dims&&PANO.dims[PANO.active]; const ih=d?d.h*(PANO.k||1):innerHeight;
+  L.querySelectorAll('.hs.emblem').forEach(el=>{ const e=EMB_BY[el.dataset.hs]; if(!e) return; el.style.setProperty('--emh',(e.h*ih/100).toFixed(1)+'px'); const x=parseFloat(el.style.left)||0; const off=(x/(PANO.w||innerWidth)-.5); el.style.setProperty('--dry',(-off*38).toFixed(1)+'deg'); }); return r; }; }
+/* 固定畫面的車廂：滑鼠移動時，徽章跟著一點點轉，像在看一面真的牆 */
+addEventListener('pointermove',e=>{ if(PANO.active) return; const dx=(e.clientX/innerWidth-.5); document.querySelectorAll('#scene .hs.emblem').forEach(el=>el.style.setProperty('--dry',(-dx*14).toFixed(1)+'deg')); },{passive:true});
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>

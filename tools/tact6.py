@@ -61,7 +61,7 @@ with sync_playwright() as p:
     ok('W7 has something to purify with', ev("Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)"))
     W(600); b=badge(); ok('W8 duty steps appear (numbered), step 1 on 淨界晶環', any(x.startswith('cab-scan:1') for x in b), b)
     ok('W9 step numbers are bigger', ev("(()=>{const e=document.querySelector('#scene .step b');return e?getComputedStyle(e).width:''})()")=='34px')
-    ev("state.duty.scan=true;save();render()"); s=talk(); ok('K1 what 界染度 is (spirit vs train)', '沾染' in s and '分開' in s, s)
+    ev("state.duty.scan=true;save();render()"); s=talk(); ok('K1 what 界染度 is (spirit vs train)', '沾染' in s and '修復' in s, s)
     # ---- 出發
     ev("closeAll();startDeparture()"); talk(2000,10000)
     ok('V1 first departure: toward 星河浮島', ev("state.currentPhase")=='voyage' and ev("state.voyage.to")=='starIslands')
