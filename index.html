@@ -11219,6 +11219,13 @@ function xevVidWhenTalk(src,poster){ let n=0; const iv=setInterval(()=>{ n++; if
 const XEV_VID={x_starseed:['assets/xev-starseed.mp4','assets/xev-starseed.jpg'],x_bloom:['assets/xev-bloom.mp4','assets/xev-bloom.jpg'],x_wallecho:['assets/xev-wallecho.mp4','assets/xev-wallecho.jpg'],x_homestar:['assets/xev-homestar.mp4','assets/xev-homestar.jpg'],x_lostlight:['assets/xev-lostlight.mp4','assets/xev-lostlight.jpg']};
 Object.entries(XEV_VID).forEach(([k,[v,po]])=>{ const f=XRUN[k]; if(typeof f!=='function') return; XRUN[k]=function(){ xevVidWhenTalk(v,po); return f.apply(this,arguments); }; });
 { const hn=hanami; hanami=function(){ const r=hn.apply(this,arguments); if(r) xevVidWhenTalk('assets/xev-bloom.mp4','assets/xev-bloom.jpg'); return r; }; }
+
+/* ================================================================
+   過路生命與守望藤的立繪（去背）：對話時的立繪、車廂裡出現的樣子、時光匣裡的收藏
+   ================================================================ */
+const VIS_IMG={tidewisp:'assets/vis-tidewisp.webp',elder:'assets/vis-elder.webp',voidshape:'assets/vis-voidshape.webp',flicker:'assets/vis-flicker.webp',petaldrift:'assets/vis-petaldrift.webp',lostborder:'assets/vis-lostborder.webp',lightling:'assets/vis-lightling.webp'};
+Object.entries(VIS_IMG).forEach(([id,im])=>{ if(NPCS[id]) NPCS[id].image=im; if(VISITORS[id]&&!VISITORS[id].img) VISITORS[id].img=im; const h=HSDEF.find(x=>x.id==='vis-'+id); if(h){ h.sprite=im; h.sx=';--sh:15vh'; } });
+NPCS.vine.image='assets/vine.webp';
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
 boot();
 </script>
