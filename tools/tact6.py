@@ -12,7 +12,7 @@ with sync_playwright() as p:
         try: pg.wait_for_function(js,timeout=ms); return True
         except Exception: return False
     dlg=lambda: ev("(document.querySelector('#layer .dlg')||{}).innerText||''")
-    def adv(n=40):
+    def adv(n=110):
         seen=''
         for _ in range(n):
             if ev("!!document.querySelector('#layer .dlg')"):
@@ -50,7 +50,7 @@ with sync_playwright() as p:
     ok('W3 disc no longer locked (can be touched)', ev("HSDEF.find(h=>h.id==='cab-disc').lock()") in (None,''))
     hs('cab-disc'); s=''
     for _ in range(60):
-        if ev("!!document.querySelector('#layer .cine')"): s+=ev("document.querySelector('#layer .cine').innerText")+'|'
+        if ev("!!document.querySelector('#layer .cine')"): W(1200); s+=ev("(document.querySelector('#layer .cine')||{}).innerText||''")+'|'
         if ev("!!document.querySelector('#layer .dlg,#layer .cine')"): s+=adv(3)
         else:
             W(400)

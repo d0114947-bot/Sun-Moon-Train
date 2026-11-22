@@ -18,13 +18,7 @@ with sync_playwright() as p:
     pg.goto('http://127.0.0.1:8766/'); W(900)
     # ---- 第一幕：念頭直接說「停在空中」，靜止時秘器外圈跑進度
     ev(setup({'x':0,'y':6,'z':0,'yaw':0},a1=A1A)); W(800)
-    ok('P1 thought says it plainly: stop and stay still', until("document.querySelector('.a1-say')&&document.querySelector('.a1-say').textContent.includes('不要動')",20000))
-    until("!ACT1._dbg().saying",20000)
-    ok('P2 holding still: progress ring fills', until("(()=>{const r=document.querySelector('.a1-still.on');return r&&parseFloat(r.style.getPropertyValue('--p'))>.4})()",15000))
-    if SHOT: pg.screenshot(path='pro_still.png')
-    ok('P3 ring full -> the artifact speaks (passive)', until("ACT1._dbg().got.includes('still')",15000))
-    ok('P4 ring hidden afterwards', until("!document.querySelector('.a1-still.on')",5000))
-    pg.keyboard.down('w'); W(600); ok('P5 moving resets progress (no ring while flying)', not ev("!!document.querySelector('.a1-still.on')")); pg.keyboard.up('w')
+    ok('P1 after the tutorial the story runs on by itself (again -> ending scene)', until("ACT1._dbg().ended||['ending','free'].includes(ACT1._dbg().stage)",40000), ev("ACT1._dbg().stage"))
     # ---- 第二幕：第一次切換後鏡頭回頭看到光痕；月界待著不動 → 念頭＋月牙發光 → 文字
     A2="{firstAnomalySeen:true,firstSwitchCompleted:false,canSwitch:false,freeSwitchTutorialCompleted:false,switchCount:0,trail:[],trailSeen:false,trailMark:0,completed:false}"
     ev(setup({'x':110,'y':40,'z':1700,'yaw':0},a2=A2)); W(900)

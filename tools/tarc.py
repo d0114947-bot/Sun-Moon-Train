@@ -58,9 +58,11 @@ with sync_playwright() as p:
     ok('X1 same close-up within one conversation', a==c and 'xiyuan-face' in a, [a,c])
     ok('X2 close-up sits on the dialogue box', abs(bt[0]-bt[1])<=3, bt)
     ev("document.querySelector('.dlg .box').click()"); W(400)
-    ev("dialogueScript([['dragon','三']])"); W(500); d=ev("document.querySelector('.dlg .who img').getAttribute('src')")
-    ok('X3 next conversation uses the other close-up', d!=a and 'xiyuan-face' in d, [a,d])
-    ev("document.querySelector('.dlg .box').click()"); W(400)
+    ev("dialogueScript([['dragon','三'],['dragon','四'],['dragon','五'],['dragon','六'],['dragon','七'],['dragon','八'],['dragon','九']])"); W(500); seen=[]
+    for _ in range(7):
+        seen.append(ev("(document.querySelector('.dlg .who img')||{}).getAttribute?.('src')||''")); ev("document.querySelector('.dlg .box')?.click()"); W(120); ev("document.querySelector('.dlg .box')?.click()"); W(250)
+    seen=[x for x in seen if x]; side=[x for x in seen if x.endswith('xiyuan-face.webp')]
+    ok('X3 mostly the side close-up, the other one swaps in once in a while', len(side)>=len(seen)-1 and len(set(seen))==2, seen)
     # 同行者的秘密：影片
     ev("closeAll();xevVid('xev-secret.mp4','xev-secret.jpg');dialogueScript([['aelis','……這件事，我沒有跟別人說過。']])"); W(900)
     ok('V0 secret event is wired to the video', 'xev-secret.mp4' in ev("XRUN.x_secret.toString()"))

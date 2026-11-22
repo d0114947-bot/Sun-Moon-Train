@@ -35,7 +35,9 @@ with sync_playwright() as p:
     pg.goto(URL); W(800); ev("window.rollBoarders=()=>[]")
     # ---------- A. main flow (regression of the duty system) ----------
     pg.click('#ms-work'); W(1500); pg.click('#ms-new'); W(600)
-    for i in range(6): pg.click('.cine'); W(260)
+    for i in range(40):
+        if not ev("!!document.querySelector('.cine')"): break
+        ev("document.querySelector('.cine').click()"); W(200)
     W(1200); drain(); W(300)
     ok('A0 opening ends on the 沉睡之地 platform with a boarding hotspot', scene()=='out:origin' and 'out-board-origin' in ids(), (scene(),ids()))
     hit('out-board-origin'); W(1600); drain(); W(300)

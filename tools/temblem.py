@@ -8,7 +8,7 @@ with sync_playwright() as p:
     pg.on('pageerror',lambda e:errs.append(str(e))); pg.on('response',lambda r: bad.append(r.url) if r.status>=400 else None)
     pg.goto('http://127.0.0.1:8766/'); W(1000)
     ev(BASE+"state.trainEvo={ancient:3,guard:1};save();PANO.active=null;RUNNING=true;")
-    exp={'cab':['em-repair','em-prep'],'memory':['em-ancient','em-growth','em-guard','em-notes'],'nature':['em-nature'],'habitat':['em-sanct','em-pax'],'observatory':['em-sky']}
+    exp={'cab':['em-repair','em-prep'],'memory':['em-ancient','em-guard'],'nature':['em-nature'],'habitat':['em-sanct','em-pax'],'observatory':['em-sky']}
     for c,ids in exp.items():
         ev(f"state.currentCarriage='{c}';render()"); W(900)
         got=ev("[...document.querySelectorAll('.hs.emblem')].map(e=>[e.dataset.hs,e.querySelector('img').naturalWidth])")
@@ -17,14 +17,11 @@ with sync_playwright() as p:
     o=ev("['em-ancient','em-guard'].map(id=>+document.querySelector(`[data-hs=${id}]`).style.getPropertyValue('--eo'))")
     ok('E2 brighter as the line grows', o[0]>o[1], o)
     ry=ev("[document.querySelector('[data-hs=em-ancient]').style.getPropertyValue('--ry'),document.querySelector('[data-hs=em-guard]').style.getPropertyValue('--ry')]")
-    ok('E3 wall emblems follow the wall perspective', ry==['52deg','-52deg'], ry)
+    ok('E3 刻紋拓本 emblem lies on the floor, 渡守 emblem on the wall', ry==['0deg','-52deg'] and ev("document.querySelector('[data-hs=em-ancient]').classList.contains('floor')"), ry)
     pg.mouse.move(100,300); W(300); a=ev("document.querySelector('[data-hs=em-ancient]').style.getPropertyValue('--dry')"); pg.mouse.move(1200,300); W(300); c2=ev("document.querySelector('[data-hs=em-ancient]').style.getPropertyValue('--dry')")
     ok('E4 tilt changes as you look around', a!=c2 and a and c2, [a,c2])
-    ev("document.querySelector('[data-hs=em-growth]').click()"); W(700)
-    ok('E5 growth emblem opens 列車的變化', ev("!!document.querySelector('.ov.evoov')"))
-    ev("closeAll()"); W(400); ev("document.querySelector('[data-hs=em-notes]').click()"); W(800)
-    ok('E6 notebook emblem opens the notebook', ev("!!document.querySelector('#layer .ov:not(.closing)')"))
-    ev("closeAll()"); W(400)
+    ev("document.querySelector('[data-hs=em-guard]').click()"); W(700)
+    ok('E5 emblems are decor only (clicking does nothing)', ev("getComputedStyle(document.querySelector('[data-hs=em-guard]')).pointerEvents")=='none')
     ok('Z no page errors / missing files', not errs and not [u for u in bad if 'assets/' in u], [errs,bad])
     b.close()
 print('TOTAL',sum(R),'/',len(R))

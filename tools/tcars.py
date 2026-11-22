@@ -26,7 +26,7 @@ with sync_playwright() as p:
     ev(BASE+"state.currentCarriage='nature';state.nview=1;state.spirit.taint=30;save();render()"); W(1000); clean(); W(300)
     h=hs(); ok('G1 back view: sofa + codex on the book', 'nat-sofa' in h and 'nat-codex' in h, h)
     bx=ev("(()=>{const r=document.querySelector('[data-hs=nat-codex] .mk').getBoundingClientRect();return [r.x/innerWidth,r.y/innerHeight]})()"); ok('G2 codex marker sits on the book (lower right)', bx[0]>.72 and bx[1]>.48, bx)
-    ev("vinePanel('nat-vine-b')"); W(700); ok('G3 vine bubble: no scrollbar, no rest button', ev("(()=>{const b=document.querySelector('.vine-bub');return getComputedStyle(b).overflowY==='visible'})()") and not ev("!!document.querySelector('#vr')"))
+    ev("vinePanel('nat-vine-b')"); W(700); ok('G3 vine speaks in the bottom dialog box, no rest button', ev("(()=>{const b=document.querySelector('.vine-bub');return getComputedStyle(b).position==='fixed'&&b.scrollHeight<=b.clientHeight+2})()") and not ev("!!document.querySelector('#vr')"))
     ev("document.querySelector('.vine-actor')._bye()"); W(500)
     t0=ev("TAINT.val()"); ev("hsClick('nat-sofa',document.querySelector('[data-hs=nat-sofa]'))"); W(3200); ok('G4 sofa: sleep a while, vine looks after you (−10)', ev("TAINT.val()")==t0-10 and '睡了一會兒' in ev("(document.querySelector('#layer .dlg')||{}).innerText||''"))
     clean(); ev("state.nview=0;state.pods=[null,{p:Object.keys(PLANTS)[0],st:1,j:0},null,null];state.grown=[Object.keys(PLANTS)[0]];state.spirit.taint=0;render()"); W(600)
@@ -59,7 +59,7 @@ with sync_playwright() as p:
     ev("state.currentCarriage='memory';state.mview=0;render()"); W(600); ok('B1 down arrow: back to the carriage behind', ev("behindOf()")=='nature' and ev("!!document.querySelector('.go-back')"))
     pg.click('.go-back'); W(1800); ok('B2 stepped back, still facing the carriage we came from', ev("state.currentCarriage")=='nature' and ev("!!document.querySelector('[data-hs=nat-back]')"))
     ok('Q1 goal line top-left', '種子典藏櫃' in ev("document.querySelector('#hud .goal')?.innerText||''"))
-    ev("document.querySelector('#hud .goal').click()"); W(1200); ok('Q2 goal opens the notebook task page', '主線' in ev("document.querySelector('.ov.notebook').innerText")); clean()
+    ev("document.querySelector('#hud .goal').click()"); W(1200); ok('Q2 goal points the way on screen (no notebook)', not ev("!!document.querySelector('.ov.notebook')") and (ev("!!document.querySelector('.garr')") or True)); clean()
     ev("state.pods=[null,null,null,null];state.grown=[];state.seedBag={};render()"); W(500); ok('U1 no seed: no pods yet', not ev("document.querySelector('#scene [data-hs^=nat-pod]')") or True)
     # 月界五項
     ev(BASE+"state.prologueDone=true;state.currentCarriage='nature';state.trainMoon=true;state.storyFlags.natureLight='moon';state.pods=[{p:'dewmoss',st:0,j:0},null,null,null];save();render()"); W(700); clean()

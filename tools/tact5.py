@@ -48,7 +48,7 @@ with sync_playwright() as p:
         t1+=dlg(); ev("document.querySelector('#layer .dlg .box')?.click()"); W(300)
     ok('B1 something glows outside (after a quiet moment)', b1 and '縫隙' in t1, t1)
     ok('B2 she drifts in from the rift (boarding cine)', until("!!document.querySelector('#layer .cine')",8000) and '世界縫隙' in ev("document.querySelector('#layer .cine').innerText"))
-    ev("document.querySelector('#layer .cine').click()"); ok('B3 new passenger card: 索拉', until("!!document.querySelector('#layer .ov.board')",8000) and '索拉' in ev("document.querySelector('#layer .ov.board').innerText"))
+    ok('B3 new passenger card: 索拉', until("(document.querySelector('#layer .cine')?.click(),!!document.querySelector('#layer .ov.board'))",8000) and '索拉' in ev("document.querySelector('#layer .ov.board').innerText"))
     ok('B4 she is aboard, living in the habitat', ev("aboard('sola')") and ev("state.discoveredLifeforms.includes('sola')"))
     ev("document.querySelector('#hi').click()"); waitdlg()
     ok('T1 first line fits a sleeping train', '好大的車' in dlg() and '好亮' not in dlg(), dlg())

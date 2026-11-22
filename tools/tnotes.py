@@ -82,7 +82,9 @@ with sync_playwright() as p:
         pg.locator('.dlg .box').last.click(); W(160)
     ok('N14 can ask a passenger to tell it again', '再跟我說一次' in pg.inner_text('.dlg .chs'))
     pg.locator('.dlg .chs button').first.click(); W(1100)
-    for _ in range(3): pg.locator('.dlg .box').last.click(); W(200)
+    for _ in range(10):
+        if ev("document.querySelectorAll('.dlg mark.hl').length")>=1: break
+        pg.locator('.dlg .box').last.click(); W(300)
     ok('N15 replayed story has glowing phrases', ev("document.querySelectorAll('.dlg mark.hl').length")>=1, pg.inner_text('.dlg .tx'))
     run_dialog()
     # farewell thanks
