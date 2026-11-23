@@ -316,6 +316,10 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 
 /* ---------- 紀錄本（界域地誌、線索解讀、筆記本、觀星紀錄本）：綠色布面精裝、雕花框的橫線紙；寬螢幕是左右兩頁 ---------- */
 .ov.jr{background:rgba(6,7,18,.72)}
+#errcard{position:fixed;left:12px;top:12px;z-index:9999;max-width:min(460px,92vw);padding:12px 14px;border-radius:12px;background:rgba(40,12,24,.94);border:1px solid #ff9c9c;color:#ffe6e6;font-size:13px;line-height:1.55;box-shadow:0 8px 26px rgba(0,0,0,.5)}
+#errcard b{display:block;color:#ffc2c2;margin-bottom:4px}#errcard p{margin:0 0 4px;word-break:break-all}#errcard small{display:block;opacity:.75;word-break:break-all;font-size:11px}
+#errcard div{display:flex;gap:8px;margin-top:8px}#errcard button{font:inherit;padding:4px 12px;border-radius:999px;border:1px solid #ffb3b3;background:transparent;color:#ffe6e6;cursor:pointer}
+
 .xy-map{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-8px);z-index:31;display:flex;gap:6px;padding:8px 12px;border-radius:14px;background:rgba(10,12,32,.7);border:1px solid rgba(232,201,131,.35);opacity:0;transition:opacity .6s,transform .6s;pointer-events:none}
 .xy-map.on{opacity:1;transform:translate(-50%,0)}
 .xy-car{display:flex;flex-direction:column;align-items:center;gap:4px;width:clamp(44px,9vw,92px)}
@@ -2302,6 +2306,19 @@ img.memimg.vis{object-fit:contain!important;background:none!important;filter:dro
 <div id="doorfx" aria-hidden="true"><i class="l"></i><i class="r"></i><b></b></div>
 
 <script>
+/* ================================================================
+   出錯時：畫面左上角顯示一張小卡（錯誤訊息＋重新整理），玩家可以截圖回報；
+   每種錯誤只報一次，照樣丟給瀏覽器（自動測試也看得到）
+   ================================================================ */
+const ERR_SEEN=new Set();
+function gameErr(e){ const m=String(e&&e.message||e), k=m+'|'+((e&&e.stack||'').split('\n')[1]||''); if(ERR_SEEN.has(k)) return; ERR_SEEN.add(k); try{ console.error(e); }catch(_){}
+ setTimeout(()=>{ throw e; },0); errCard(m,(e&&e.stack||'').split('\n').slice(0,3).join(' / ')); }
+function errCard(m,st){ try{ let c=document.getElementById('errcard'); if(!c){ c=document.createElement('div'); c.id='errcard'; c.innerHTML='<b>遊戲遇到一個錯誤</b><p></p><small></small><div><button type="button" data-r>重新整理</button><button type="button" data-x>關閉</button></div>'; document.body.appendChild(c);
+  c.querySelector('[data-r]').onclick=()=>location.reload(); c.querySelector('[data-x]').onclick=()=>c.remove(); }
+  c.querySelector('p').textContent=m; c.querySelector('small').textContent=(st||'').slice(0,240)+'　'+navigator.userAgent.replace(/^Mozilla\/5\.0 /,'').slice(0,120); }catch(_){} }
+addEventListener('error',e=>{ if(e&&e.error&&ERR_SEEN.has(String(e.error.message)+'|'+((e.error.stack||'').split('\n')[1]||''))) return; if(e&&(e.error||e.message)) errCard(String(e.message||e.error),e.error&&e.error.stack); });
+addEventListener('unhandledrejection',e=>{ const r=e&&e.reason; if(r&&/play\(\)|AbortError|NotAllowedError/.test(String(r))) return; errCard(String(r&&r.message||r),r&&r.stack); });
+
 const HAB_FRONT='assets/habitat-front.jpg', HAB_BACK_IMG='assets/habitat-back.jpg', OBS_FRONT='assets/observation-front.jpg', OBS_BACK_IMG='assets/observation-back.jpg', MEM_FRONT='assets/memory-front.jpg', MEM_BACK_IMG='assets/memory-back.jpg', NAT_FRONT='assets/nature-front.jpg', NAT_BACK_IMG='assets/nature-back.jpg';
 const vKey=c=>c==='observation'?'oview':c==='memory'?'mview':c==='nature'?'nview':'hview';
 /* ================================================================
@@ -9377,10 +9394,12 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   /* 測試用：凍結時間（只有自動測試會設定 window.ACT1_FREEZE），畫面固定在指定時刻，用來做逐像素比對 */
   if(window.ACT1_FREEZE!=null){ T=+window.ACT1_FREEZE; last=now; draw(); return; }
   const rdt=Math.min(.1,Math.max(0,(now-(last||now))/1000)); last=now; const dt=rdt*speed(); T+=dt;
-  tick(dt); const i=physics(dt); const dC=draw(); auUpdate(dC,P.vt+Math.abs(P.vy));
-  logic(dt,i,dC);
-  if(HOOKS.logic.length) runHooks('logic',dt,i,dC);
-  saveT+=rdt; if(saveT>6){ saveT=0; persist(); } }
+  const G=(f,d)=>{ try{ return f(); }catch(e){ gameErr(e); return d; } };
+  G(()=>tick(dt)); const i=G(()=>physics(dt),{f:0,s:0,v:0,b:0}); const dC=G(()=>draw(),0); G(()=>auUpdate(dC,P.vt+Math.abs(P.vy)));
+  G(()=>logic(dt,i,dC));
+  if(HOOKS.logic.length) G(()=>runHooks('logic',dt,i,dC));
+  if(!isFinite(P.x)||!isFinite(P.y)||!isFinite(P.z)||!isFinite(P.yaw)||!isFinite(P.pitch)){ gameErr(new Error('position NaN')); Object.assign(P,{x:isFinite(P.x)?P.x:0,y:isFinite(P.y)?P.y:6,z:isFinite(P.z)?P.z:0,yaw:isFinite(P.yaw)?P.yaw:0,pitch:0,vx:0,vy:0,vz:0,vt:0}); }
+  saveT+=rdt; if(saveT>6){ saveT=0; G(()=>persist()); } }
 
  /* ---------- 教學 ---------- */
  function showTip(done){ const tp=el.querySelector('.a1-tip'); if(!tut){ tp.classList.remove('on'); return; } const d=TIPS[tut.i]; if(!d){ tp.classList.remove('on'); return; }
@@ -9660,7 +9679,7 @@ const ACT2=(()=>{
  const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647)(24680);
  for(let i=0;i<260;i++) cold.push({ox:rnd(),oz:rnd(),ph:rnd()*6.3,k:.5+rnd()*1.2,w:.4+rnd()*1});
  const ended=()=>!!(state.act1&&state.act1.ended);
- const lockedNow=()=>{ const a=A(); return a.lock||a.busy||a.saying(); };   /* 劇情事件：等第一幕的演出和字幕都結束 */
+ const lockedNow=()=>{ const a=A(); return a.lock||a.busy; };   /* 劇情事件：等第一幕的演出結束；自由飛行時精靈的一句話不擋住劇情（之後的台詞排在後面） */
  const cutscene=()=>{ const a=A(); return a.lock||a.busy; };                 /* 切換：只有演出（操作被鎖住）時不反應，內心字幕不影響 */
 
  /* ---------- 存檔補欄位（第二幕事件用） ---------- */
@@ -9725,7 +9744,9 @@ const ACT2=(()=>{
   a.after(3.8,()=>a.say(['……剛才，水的後面……','那是……另一個地方？','好像……伸手就碰得到。'],()=>{
    a.tw(a.cam,'off',0,1.4); a.tw(a.cam,'CD',10,1.4);
    S().firstAnomalySeen=true; gpMode='gone'; pts=[]; a.persist(); prompt(); })); }
- function prompt(){ phase='prompt'; A().setLock(true); syncUI(); tip(A().touch?'輕觸右上角的月牙':'按<kbd>V</kbd>'); }
+ function prompt(){ phase='prompt'; A().setLock(true); syncUI(); tip(A().touch?'輕觸畫面，或右上角的月亮':'按<kbd>V</kbd>，或點一下畫面　切換到另一邊');
+  const el=A().el; if(!el) return; const h=e=>{ if(phase!=='prompt'||!on){ el.removeEventListener('pointerdown',h,true); return; } if(e.button===2||e.target.closest('.a2-moon,.a1-say,.dlg-ctl,button')) return; el.removeEventListener('pointerdown',h,true); press(); };
+  setTimeout(()=>el.addEventListener('pointerdown',h,true),500); }
  function firstSwitch(){ const a=A(); if(phase!=='prompt') return; phase='first'; tip(''); ui&&ui.classList.remove('call');
   if(ui){ ui.classList.remove('spin'); void ui.offsetWidth; ui.classList.add('spin'); } sndSwitch('moon');
   const v=veil(); if(v){ v.style.transition='opacity .9s'; v.style.opacity=.85; setTimeout(()=>{ v.style.transition='opacity 1.6s'; v.style.opacity=0; },900); }
@@ -11707,6 +11728,6 @@ function xyTour(){ const s=state.act3; s.xyMet=1; save();
   ['dragon','（龍靜靜地看著你，看了很久。）……不對。你不是祂。'],['dragon','你身上，有沉睡之地的味道。你是從那裡醒來的。'],['dragon','我是曦淵。一直守著這列車的龍。'],
   ['dragon','沉睡之地，幾乎沒有生命。所以這列車，也跟著在那裡睡著了——睡了很久、很久。'],['dragon','可是你醒了。有生命，出現了。'],['dragon','……那就是徵兆。你看。']],()=>{ xyTrainMap(); setTimeout(()=>cars(0),700); }); }
 setInterval(()=>{ try{ if(!xyPhase()||!RUNNING||state.currentCarriage!=='cab'||act4Busy()) return; xyTour(); }catch(e){ console.error(e); } },700);
-function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} normalizeState(); render(); showMain(); }
+function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} try{ normalizeState(); }catch(e){ gameErr(e); } try{ render(); }catch(e){ gameErr(e); } try{ showMain(); }catch(e){ gameErr(e); } }
 boot();
 </script>

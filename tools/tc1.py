@@ -29,8 +29,8 @@ with sync_playwright() as p:
     pg.screenshot(path=S+'/c1_tut.png')
     # ---- Shift 真的加速
     ev(setup({'x':300,'y':20,'z':300,'yaw':0},a1=A1.replace("stage:'free'","stage:'free'"))); W(1200)
-    pg.keyboard.down('KeyW'); W(1800); z0=ev("ACT1.api.P.z"); W(1000); v1=ev("ACT1.api.P.z")-z0
-    pg.keyboard.down('ShiftLeft'); W(1800); z0=ev("ACT1.api.P.z"); W(1000); v2=ev("ACT1.api.P.z")-z0
+    pg.keyboard.down('KeyW'); W(2500); v1=ev("Math.hypot(ACT1.api.P.vx||0,ACT1.api.P.vz||0)||ACT1.api.P.vt")
+    pg.keyboard.down('ShiftLeft'); W(3000); v2=ev("Math.hypot(ACT1.api.P.vx||0,ACT1.api.P.vz||0)||ACT1.api.P.vt")
     op=ev("+getComputedStyle(document.querySelector('#act1 .a1-rush')).opacity")
     pg.screenshot(path=S+'/c1_boost.png'); pg.keyboard.up('ShiftLeft'); pg.keyboard.up('KeyW')
     ok('S1 Shift makes flying clearly faster (>2x)', v2>v1*2, (round(v1,1),round(v2,1)))
