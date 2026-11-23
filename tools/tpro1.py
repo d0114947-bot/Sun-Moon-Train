@@ -21,7 +21,7 @@ with sync_playwright() as p:
     full=ev("[...document.querySelectorAll('.a1-say .tc')].every(x=>x.classList.contains('on'))")
     ok('S2 click shows the whole line at once', full)
     W(4000); ok('S3 does not disappear by itself', ev("!!document.querySelector('.a1-say.on')"))
-    ok('S4 playback controls on the box', ev("document.querySelectorAll('.a1-say .dlg-ctl button').length")==3)
+    ok('S4 one playback button on the box', ev("document.querySelectorAll('.a1-say .dlg-ctl button').length")==1)
     for _ in range(40):
         if ev("ACT1._dbg().stage")=='tut': break
         if ev("!!document.querySelector('.a1-say.on')"): ev("document.querySelector('.a1-say').click()")

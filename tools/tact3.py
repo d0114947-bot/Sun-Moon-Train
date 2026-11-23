@@ -47,6 +47,7 @@ with sync_playwright() as p:
     tele(FOR,YAW); W(2500)
     ok('L1 inside the rift: train is the one in the forest picture (left side), spots marked on it', until("ACT3.inForest()&&document.querySelectorAll('.a3-tsp.on').length===3",15000))
     ok('L2 the marks sit on the left part of the screen', all(x<400 for x in ev("[...document.querySelectorAll('.a3-tsp.on')].map(b=>parseFloat(b.style.left))")))
+    until("!ACT1.api.lock&&!ACT1.api.saying()",40000)
     ok('E1 door before any observation: marked as not yet', ev("document.querySelector('.a3-tsp[data-k=door]').classList.contains('lock')")); snap('forest')
     pg.click('.a3-tsp[data-k=door]')
     ok('E2 gentle line instead', until("document.querySelector('.a1-say').textContent.includes('看看四周')",20000))
@@ -74,7 +75,7 @@ with sync_playwright() as p:
     ok('I4 line 「這裡……竟然有這麼大的空間。」', until("(document.querySelector('#layer .dlg')||{}).textContent&&document.querySelector('#layer .dlg').textContent.includes('這麼大的空間')",20000)); snap('inside')
     ok('I5 ancient inscription introduces the train', adv("!!document.querySelector('#layer .cine')&&document.querySelector('#layer .cine').textContent.includes('移動庇護所')"))
     snap('cine')
-    ok('I6 introduction finished, then the habitat introduction', adv("state.act3.introduced&&!!document.querySelector('#layer .dlg')&&document.querySelector('#layer .dlg').textContent.includes('棲息車廂')"))
+    ok('I6 inscription finished, then a voice calls from the cab', adv("state.act3.xyCall&&!!document.querySelector('#layer .dlg')&&document.querySelector('#layer .dlg').textContent.includes('駕駛室')"))
     adv("!document.querySelector('#layer .dlg,#layer .cine')",40000)
     ok('I7 observations kept in the journal', sum(1 for e in ev("state.log") if '觀察紀錄' in e['t'])==4)
     ok('I8 opening log rewritten (no "train woke up")', '晨曦森林' in ev("state.log[0].t") and '甦醒' not in ev("state.log[0].t"))
@@ -82,8 +83,8 @@ with sync_playwright() as p:
     ok('D1 control disc stays asleep (cannot depart yet)', '沉睡' in (ev("crBlockDepart()") or ''))
     ok('D2 cannot get off during the prologue', bool(ev("proExitLock()")))
     # ---- 存檔恢復：進了列車、刻文還沒讀完
-    ev("state.act3.introduced=false;save()"); st=ev("JSON.stringify(state)"); ev(f"closeAll();loadGame(JSON.parse({json.dumps(st)}),'t')"); W(1500)
-    ok('R2 resume mid-introduction replays the inscription once', adv("state.act3.introduced",60000) and not ev("ACT1.active()"))
+    ev("state.act3.introduced=false;state.act3.xyCall=0;save()"); st=ev("JSON.stringify(state)"); ev(f"closeAll();loadGame(JSON.parse({json.dumps(st)}),'t')"); W(1500)
+    ok('R2 resume mid-introduction replays the inscription once', adv("state.act3.xyCall",60000) and not ev("ACT1.active()"))
     adv("!document.querySelector('#layer .dlg,#layer .cine')",40000)
     # ---- 舊開場：?legacy 流程不受影響
     ev("closeAll();state=freshState();save()")
