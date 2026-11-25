@@ -9017,6 +9017,8 @@ function intro(){
    不出現列車、乘客、日月切換、界染、危機、淨化等後續系統。
    存檔：state.chapter='act1'、state.act1={stage,tut,flags,got,senseN,againN,passN,ended,pos,cz,exT,lastPass}
    ===================================================================== */
+/* 沉睡之地的水幕：暫時拿掉（使用者 2026-11-25：劇情到水幕一直卡住，之後會換場景）。改成 false 就恢復 */
+const NO_CURTAIN=true;
 const ACT1=(()=>{
  const SPR='assets/spirit-wings.webp', IW=858, IH=640, ICX=429, ICY=320;
  const CURTAIN_Z=1800, TOPY=1300, FALL=38;
@@ -9302,6 +9304,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
    const hg=x.createLinearGradient(0,hy-H*.05,0,hy+H*.05); hg.addColorStop(0,'rgba(255,226,170,0)'); hg.addColorStop(.5,'rgba(255,226,170,.14)'); hg.addColorStop(1,'rgba(255,226,170,0)'); x.fillStyle=hg; x.fillRect(0,hy-H*.05,W,H*.1); }
   /* 水幕（逐欄投射到 z=cz 的平面） */
   const cz=S().cz, L=lg; L.setTransform(DPR,0,0,DPR,0,0); L.clearRect(0,0,W,H); const step=4, bases=[];
+  if(!NO_CURTAIN){
   for(let sx=0;sx<W;sx+=step){ const u=(sx+step/2-W/2)/f, dx=C.cos*u+C.sin, dz=-C.sin*u+C.cos; if(Math.abs(dz)<=.04) continue;   /* 穿過瀑布後，回頭也看得見水幕 */ const t=(cz-C.z)/dz; if(t<=0) continue;
    const wx=C.x+dx*t, q=Math.floor(wx/2.5), h1=hash(q), h2=hash(q*3.1+7);
    const yB=hy+C.y*f/t, yTr=hy-(TOPY-C.y)/t*f, yT=Math.max(-8,yTr); if(yB<yT) continue;
@@ -9318,7 +9321,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   x.drawImage(lay,0,0,W,H);
   x.globalCompositeOperation='lighter';
   for(const [sx,yB,t,al] of bases){ const r=clamp(70*f/t,10,260); x.globalAlpha=al*.13; x.drawImage(mist,sx-r,yB-r*.55,r*2,r*1.1); }
-  x.globalAlpha=1; x.globalCompositeOperation='source-over';
+  x.globalAlpha=1; x.globalCompositeOperation='source-over'; }
   /* 波紋與水面光點 */
   if(hy<H){ const sF=C.x*C.sin+C.z*C.cos, sp=5; x.lineWidth=1;
    for(let n=1;n<70;n++){ const d=sp*n-(((sF%sp)+sp)%sp); if(d<.5) continue; const y=hy+C.y*f/d; if(y>H+4) continue; if(y-hy<1.2) break; const a=.05*clamp(1-d/350,0,1)*clamp((y-hy)/30,0,1); if(a<.004) continue;
@@ -9355,7 +9358,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   drawMotes(true);
   /* 靠近水幕時的水霧 */
   /* 瀑布可以接近、穿越：用「離水幕平面的距離」，並依據鏡頭是否面向水幕決定霧氣（在水幕前方時與原本完全相同） */
-  const dC0=cz-P.z, dC=Math.abs(dC0), mz=clamp((520-dC)/360,0,1)*.32*(Math.cos(C.yaw)*(dC0<0?-1:1)>0?1:.4); if(mz>.01){ gr=x.createLinearGradient(0,0,0,H); gr.addColorStop(0,`rgba(214,222,255,${mz*.5})`); gr.addColorStop(.5,`rgba(200,206,255,${mz})`); gr.addColorStop(1,`rgba(160,170,240,${mz*.4})`); x.fillStyle=gr; x.fillRect(0,0,W,H); }
+  const dC0=NO_CURTAIN?1e5:cz-P.z, dC=Math.abs(dC0), mz=clamp((520-dC)/360,0,1)*.32*(Math.cos(C.yaw)*(dC0<0?-1:1)>0?1:.4); if(mz>.01){ gr=x.createLinearGradient(0,0,0,H); gr.addColorStop(0,`rgba(214,222,255,${mz*.5})`); gr.addColorStop(.5,`rgba(200,206,255,${mz})`); gr.addColorStop(1,`rgba(160,170,240,${mz*.4})`); x.fillStyle=gr; x.fillRect(0,0,W,H); }
   /* 光紋 */
   for(const r of rings.slice()){ const u=(T-r.t0)/r.d; if(u>=1){ rings.splice(rings.indexOf(r),1); continue; } if(u<0) continue; const rad=r.r0+u*r.r1;
    x.lineWidth=r.broken?1.6:2.2; x.strokeStyle=`rgba(${r.c},${(1-u)*(r.broken?(Math.random()<.5?.7:.1):.75)})`;
@@ -9529,7 +9532,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
  function judge(){ const a=S(), still=P.vt+Math.abs(P.vy)<1.2, far=Math.hypot(P.x,P.z)>1200, dC=a.cz-P.z;
   const c=[['water',P.y<5],['high',P.y>90],['far',far]];
   for(const [id,ok] of c) if(ok&&!a.got.includes(id)) return still?{kind:'ok',id}:{kind:'part'};
-  if(dC<380&&!a.got.includes('curtain')) return {kind:'part'};
+  if(!NO_CURTAIN&&dC<380&&!a.got.includes('curtain')) return {kind:'part'};
   return {kind:'none'}; }
  function senseNone(){ busy=true; const sv=isvg(); cls(sv,'faint'); snd.none(); after(1.5,()=>{ cls(sv,'','faint'); });
   after(.6,()=>say(['……沒有任何感覺。'])); after(2.2,()=>{ busy=false; }); }
@@ -9555,7 +9558,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
  function endingScene(){ const a=S(); setStage('ending'); setLock(true); busy=true; idleT=0;
   tw(cam,'off',.5,4); tw(cam,'CD',17,4); tw(cam,'CH',1.2,4); tw(cam,'hy',.12,4); tw(P,'y',Math.max(4,Math.min(P.y,14)),4);
   after(3,()=>say(['這裡究竟是什麼地方？','我又是從哪裡來的呢？','……還有好多事情不知道。'],()=>{
-   a.ended=true; setStage('free'); tw(cam,'off',0,1.6); tw(cam,'CD',10,1.6); tw(cam,'CH',2.2,1.6); tw(cam,'hy',0,1.6,()=>{ busy=false; setLock(false); after(.6,()=>say(['……那道水幕的中間，好像有光在叫我。','跟著星光的點點，飛過去看看吧。'])); }); })); }
+   a.ended=true; setStage('free'); tw(cam,'off',0,1.6); tw(cam,'CD',10,1.6); tw(cam,'CH',2.2,1.6); tw(cam,'hy',0,1.6,()=>{ busy=false; setLock(false); after(.6,()=>say(NO_CURTAIN?['……好安靜。','可是，總覺得這裡不只有我。']:['……那道水幕的中間，好像有光在叫我。','跟著星光的點點，飛過去看看吧。'])); }); })); }
 
  /* ---------- 進入／離開 ---------- */
  function fresh(){ return {stage:'wake',tut:0,flags:{},got:[],senseN:0,againN:0,passN:0,ended:false,pos:null,cz:CURTAIN_Z,exT:0,sinceFirst:0,lastPass:-999}; }
@@ -9741,7 +9744,7 @@ const ACT2=(()=>{
   a.tw(a.cam,'off',.9,1.6); a.tw(a.cam,'CD',8,1.6);
   a.after(.8,()=>{ glimpse=0; a.tw({get v(){return glimpse},set v(x){glimpse=x}},'v',1,.7); });
   a.after(3.0,()=>{ a.tw({get v(){return glimpse},set v(x){glimpse=x}},'v',0,.6); });
-  a.after(3.8,()=>a.say(['……剛才，水的後面……','那是……另一個地方？','好像……伸手就碰得到。'],()=>{
+  a.after(3.8,()=>a.say(NO_CURTAIN?['……剛才，空氣的另一邊……','那是……另一個地方？','好像……伸手就碰得到。']:['……剛才，水的後面……','那是……另一個地方？','好像……伸手就碰得到。'],()=>{
    a.tw(a.cam,'off',0,1.4); a.tw(a.cam,'CD',10,1.4);
    S().firstAnomalySeen=true; gpMode='gone'; pts=[]; a.persist(); prompt(); })); }
  function prompt(){ phase='prompt'; A().setLock(true); syncUI(); tip(A().touch?'輕觸畫面，或右上角的月亮':'按<kbd>V</kbd>，或點一下畫面　切換到另一邊');
@@ -9767,7 +9770,8 @@ const ACT2=(()=>{
   orbit+=dt;
   if(!ended()){ prev={x:P.x,y:P.y,z:P.z}; return; }
   /* 引路的提示：遠的時候「跟著星光點點」，靠近了「從水幕中間發光的地方穿過去」 */
-  if(!st.firstAnomalySeen&&!phase&&!trans){ const want=lockedNow()?gTip:Math.abs(cz-P.z)>480?'跟著星光點點　飛向瀑布':'從水幕中間　發光的地方穿過去'; if(want!==gTip){ gTip=want; tip(want); } }
+  if(NO_CURTAIN&&!st.firstAnomalySeen&&!phase&&!trans&&!pend){ if(lockedNow()) waitA=0; else { waitA+=dt; if(waitA>=(window.ACT2_FAST?0:2.2)) pend=true; } }
+  if(!NO_CURTAIN&&!st.firstAnomalySeen&&!phase&&!trans){ const want=lockedNow()?gTip:Math.abs(cz-P.z)>480?'跟著星光點點　飛向瀑布':'從水幕中間　發光的地方穿過去'; if(want!==gTip){ gTip=want; tip(want); } }
   else if(gTip&&st.firstAnomalySeen){ gTip=''; tip(''); }
   /* 光痕：第一幕結束後，在原本狀態飛過的路 */
   if(Wd().dimension==='unresolved'&&!trans&&!phase){ const L=st.trail, q=L[L.length-1]; if(!q||Math.hypot(P.x-q[0],P.z-q[2],P.y-q[1])>6){ L.push([+P.x.toFixed(1),+P.y.toFixed(1),+P.z.toFixed(1)]); if(L.length>300) L.splice(0,L.length-300), st.trailMark=Math.max(0,st.trailMark-1); } }
@@ -9791,7 +9795,7 @@ const ACT2=(()=>{
    else if(fresh){ if(hintT>10&&hintN<1){ hintN=1; a.say(['……現在，切過去看看？']); ui&&ui.classList.add('call'); }
     else if(hintT>25&&hintN<2){ hintN=2; tip(a.touch?'輕觸月牙切換':'按<kbd>V</kbd>　切換'); } } }
  }
- let hintT=0, hintN=0, gTip='';
+ let hintT=0, hintN=0, gTip='', waitA=0;
  function trailVisible(){ const a=A(), L=S().trail, P=a.P, m=S().trailMark; let old=false, near=0, vis=0;
   for(let i=0;i<L.length;i++){ const q=L[i], d=Math.hypot(q[0]-P.x,q[2]-P.z); if(d>140) continue; const pr=a.proj(q[0],q[1],q[2]), on=!!pr&&pr.x>=0&&pr.x<=a.W&&pr.y>=0&&pr.y<=a.H;
    if(i<m||!S().trailSeen){ if(on) old=true; } else { if(d<60) near++; if(pr&&Math.abs(pr.x-a.W/2)<a.W*.6) vis++; } }
@@ -9814,7 +9818,7 @@ const ACT2=(()=>{
 
  /* 銀河星點路徑：只在精靈附近、稀疏；沿著「朝那一段瀑布」的方向排列流動；越接近越明顯 */
  const PCOL=['200,220,255','255,255,255','255,170,180'];
- function drawPath(x,W,H,C){ const a=A(), P=a.P, cz=a.cz, T=a.T; const tx=clamp(P.x,SEG.x0+30,SEG.x1-30), dz=cz-P.z, dx=tx-P.x, D=Math.hypot(dx,dz)||1, ux=dx/D, uz=dz/D;
+ function drawPath(x,W,H,C){ if(NO_CURTAIN) return; const a=A(), P=a.P, cz=a.cz, T=a.T; const tx=clamp(P.x,SEG.x0+30,SEG.x1-30), dz=cz-P.z, dx=tx-P.x, D=Math.hypot(dx,dz)||1, ux=dx/D, uz=dz/D;
   /* 清楚的銀河點點線：從精靈前方，一路連到瀑布中間 */
   { const ty=clamp(P.y,6,60), st=6, off=(T*12)%st; x.save(); x.globalCompositeOperation='lighter';
    const bA=Math.min(D*.3,300)*(S().bend||1);

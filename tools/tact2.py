@@ -18,29 +18,19 @@ with sync_playwright() as p:
     def snap(n):
         if SNAP: pg.screenshot(path=f'a2s_{n}.png')
     pg.goto('http://127.0.0.1:8766/'); W(900)
-    # ---- 第一幕未結束：沒有光點、穿越也不觸發
-    ev(setup({'x':0,'y':10,'z':1780,'yaw':0},a1=A1.replace("stage:'free'","stage:'again'").replace("ended:true","ended:false"))); W(1500)
-    ok('P1 act1 not ended: no galaxy path', D()['pts']==0)
-    pg.keyboard.down('w'); until("ACT1.api.P.z>1830",20000); pg.keyboard.up('w'); W(1200)
-    ok('P2 act1 not ended: crossing the curtain does nothing', D()['phase']=='' and not ev("state.act2.firstAnomalySeen"))
-    ok('P3 curtain is reachable and passable (not receding)', P()['z']>ev("ACT1.api.cz"), (P()['z'],ev("ACT1.api.cz")))
-    # ---- 第一幕結束後：光點出現、引向瀑布中段
-    ev(setup({'x':300,'y':6,'z':300,'yaw':0})); W(2500)
-    ok('G1 galaxy path appears after act1 ended', D()['pts']>=12)
-    ok('G2 guidance tip points to the waterfall (no quest UI)', '瀑布' in (ev("(document.querySelector('#act1 .a1-tip.on,#act1 .a2-tip.on')||{}).textContent||''") or '') and not ev("!!document.querySelector('#hud .goal')"))
-    ok('G3 switch button hidden before first anomaly', not ev("document.querySelector('.a2-moon').classList.contains('show')"))
+    # ---- 水幕已拿掉（NO_CURTAIN）：第一幕未結束，什麼都不會發生
+    ev(setup({'x':0,'y':10,'z':300,'yaw':0},a1=A1.replace("stage:'free'","stage:'again'").replace("ended:true","ended:false"))); W(1500)
+    ok('P1 no waterfall any more; act1 not ended: no guide path', D()['pts']==0 and ev("NO_CURTAIN"))
+    W(2500); ok('P2 act1 not ended: no anomaly', D()['phase']=='' and not ev("state.act2.firstAnomalySeen"))
     pressV=lambda: pg.keyboard.press('v')
-    pressV(); W(400); ok('G4 V does nothing before the first switch', ev("state.world.dimension")=='unresolved' and D()['phase']=='')
-    # ---- 在其他區段穿越：只有很淡的光影，沒有異常
-    ev(setup({'x':400,'y':8,'z':1785,'yaw':0})); W(1200); pg.keyboard.down('w'); until("ACT1.api.P.z>1830",20000); pg.keyboard.up('w'); W(1500)
-    ok('X1 crossing outside the guided segment: no anomaly', D()['phase']=='' and not ev("state.act2.firstAnomalySeen") and not D()['pend'])
-    ok('X2 behind the curtain it is the same sea (scene still drawn, not locked)', not ev("ACT1.api.lock"))
-    # ---- 在指定區段穿越（高速、稍微偏離）→ 異常
-    ev(setup({'x':110,'y':40,'z':1700,'yaw':0})); W(1500); snap('approach')
-    pg.keyboard.down('w'); ok('A1 crossing guided segment at speed triggers anomaly (tolerant +-120)', until("ACT2._dbg().phase==='anomaly'",30000), D()); pg.keyboard.up('w')
+    # ---- 秘器劇情結束後：不用飛去哪裡，停一下，第一次異常就在原地發生
+    ev(setup({'x':300,'y':6,'z':300,'yaw':0})); W(800)
+    ok('G1 no 瀑布 guidance tip', '瀑布' not in (ev("(document.querySelector('#act1 .a1-tip.on,#act1 .a2-tip.on')||{}).textContent||''") or ''))
+    ok('G3 switch button hidden before first anomaly', not ev("document.querySelector('.a2-moon').classList.contains('show')"))
+    pressV(); W(300); ok('G4 V does nothing before the first switch', ev("state.world.dimension")=='unresolved')
+    ok('A1 the anomaly happens right where the spirit is', until("ACT2._dbg().phase==='anomaly'",40000), D()); snap('glimpse')
     ok('A2 controls locked during anomaly', ev("ACT1.api.lock"))
-    until("ACT2._dbg().phase==='anomaly'&&false",2500); snap('glimpse')
-    ok('A3 spirit lines', until("document.querySelector('.a1-say').textContent.includes('水的後面')",30000))
+    ok('A3 spirit lines', until("document.querySelector('.a1-say').textContent.includes('另一個地方')",30000))
     ok('A4 then prompt: moon button appears with V hint', until("ACT2._dbg().phase==='prompt'",40000) and ev("document.querySelector('.a2-moon').classList.contains('show')") and 'V' in ev("document.querySelector('.a2-tip').textContent"))
     snap('prompt')
     ok('A5 anomaly saved once; artifact untouched', ev("state.act2.firstAnomalySeen") and ev("state.act1.got.length")==4)

@@ -57,14 +57,10 @@ with sync_playwright() as p:
         if s=='free' and not ev("ACT1._dbg().busy"): break
         W(400)
     ok('F1 story runs by itself to the end of act 1', 'notice' in st and 'free' in st, sorted(set(st)))
-    W(3000)
-    tip=ev("(document.querySelector('.a2-tip.on')||{}).textContent||''")
-    ok('F2 guide tip: follow the dots to the waterfall', '星光點點' in tip, tip)
-    ev("ACT1._set({P:{x:0,z:state.act1.cz-300}})")
-    for _ in range(10):
-        if ev("!!document.querySelector('.a1-say.on')"): ev("document.querySelector('.a1-say').click()")
-        W(400)
-    ok('F3 near the waterfall: go through the glowing middle', '發光' in ev("(document.querySelector('.a2-tip.on')||{}).textContent||''"))
+    try: pg.wait_for_function("['anomaly','prompt'].includes(ACT2._dbg().phase)",timeout=60000); got=True
+    except Exception: got=False
+    ok('F2 no waterfall: the anomaly comes by itself after the artifact story', got, ev("ACT2._dbg()"))
+    ok('F3 no 瀑布 tip', '瀑布' not in (ev("(document.querySelector('.a2-tip.on')||{}).textContent||''") or ''))
     ok('Z no page errors', not errs, errs)
     b.close()
 print('TOTAL',sum(R),'/',len(R))
