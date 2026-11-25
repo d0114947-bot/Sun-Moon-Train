@@ -28,7 +28,7 @@ with sync_playwright() as p:
     ok('O4 tutorial starts', until("ACT1._dbg().stage==='tut'",60000))
     pg.screenshot(path=S+'/c1_tut.png')
     # ---- Shift 真的加速
-    ev(setup({'x':300,'y':20,'z':300,'yaw':0},a1=A1.replace("stage:'free'","stage:'free'"))); W(1200)
+    ev(setup({'x':300,'y':20,'z':300,'yaw':0},a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,completed:true,trail:[],trailSeen:true}",a3="{trainSeen:true,obs:[],entered:false,introduced:false,canDepart:false}")); until("!ACT1.api.lock",30000); W(500)
     pg.keyboard.down('KeyW'); W(2500); v1=ev("Math.hypot(ACT1.api.P.vx||0,ACT1.api.P.vz||0)||ACT1.api.P.vt")
     pg.keyboard.down('ShiftLeft'); W(3000); v2=ev("Math.hypot(ACT1.api.P.vx||0,ACT1.api.P.vz||0)||ACT1.api.P.vt")
     op=ev("+getComputedStyle(document.querySelector('#act1 .a1-rush')).opacity")
@@ -36,8 +36,9 @@ with sync_playwright() as p:
     ok('S1 Shift makes flying clearly faster (>2x)', v2>v1*2, (round(v1,1),round(v2,1)))
     ok('S2 boost has a speed effect on screen', op>.3, op)
     # ---- 意識的文字：中間打字、不擋操作、不黑不模糊（水幕附近的被動接收）
-    ev(setup({'x':0,'y':40,'z':1720,'yaw':0},a1=A1.replace("got:['first','water']","got:['first']").replace("stage:'free'","stage:'free'")))
-    W(1500)
+    # （水幕拿掉了：改用低空停住、點秘器，接收「倒影」的念頭）
+    ev(setup({'x':300,'y':3,'z':300,'yaw':0},a1=A1.replace("got:['first','water']","got:['first']"),a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,completed:true,trail:[],trailSeen:true}",a3="{trainSeen:true,obs:[],entered:false,introduced:false,canDepart:false}"))
+    until("!ACT1.api.lock&&!ACT1.api.busy",30000); W(800); pg.click('#act1 .a1-icon')
     seen=until("document.querySelector('#act1 .a1-th.on .tt')&&document.querySelector('#act1 .a1-th.on .tt').textContent.length>4",30000)
     ok('T1 thought text is typed in the middle of the screen', seen, ev("(document.querySelector('#act1 .a1-th')||{}).className"))
     if seen:
@@ -63,10 +64,10 @@ with sync_playwright() as p:
     pg.keyboard.press('v'); W(2500)
     ok('M2 switching turns the wheel to the moon', ev("document.querySelector('.a2-moon').classList.contains('moon')") and ev("getComputedStyle(document.querySelector('.a2-moon .sm-wheel')).transform")!='none')
     pg.screenshot(path=S+'/c1_moon.png')
-    # ---- 水幕：手動點對話也不會卡住
+    # ---- 異常（水幕拿掉後在原地發生）：手動點對話也不會卡住
     ev("window.SAY_MANUAL=true")
-    ev(setup({'x':0,'y':40,'z':1700,'yaw':0},a1=A1.replace("got:['first','water']","got:['first','water','curtain','still']"))); W(1200)
-    pg.keyboard.down('KeyW'); reached=until("ACT2._dbg().phase==='anomaly'",30000); pg.keyboard.up('KeyW')
+    ev(setup({'x':0,'y':40,'z':900,'yaw':0},a1=A1.replace("got:['first','water']","got:['first','water','curtain','still']"))); W(1200)
+    reached=until("['anomaly','prompt'].includes(ACT2._dbg().phase)",60000)
     for _ in range(40):
         if ev("ACT2._dbg().phase")=='prompt': break
         if ev("(document.querySelector('#act1 .a1-say')||{}).innerText||''"): pg.mouse.click(640,250)
@@ -79,7 +80,8 @@ with sync_playwright() as p:
         W(500)
     ok('W2 first switch finishes and control comes back', ev("ACT2._dbg().phase")=='' and not ev("ACT1.api.lock"), (ev("ACT2._dbg()"),ev("ACT1._dbg().lock")))
     ev("window.SAY_MANUAL=false")
-    # ---- 飛進晨曦森林
+    # ---- 飛進晨曦森林（重新載入，避免前面手動模式的台詞留著）
+    ev("ACT1.active()&&ACT1.exit()"); pg.goto(URL); W(900)
     RC=(-230,-230); yaw=math.atan2(-1,-1)
     ev(setup({'x':RC[0]+130,'y':20,'z':RC[1]+130,'yaw':yaw},a2=A2D,a3="{trainSeen:true,obs:[],entered:false,introduced:false,canDepart:false}")); W(1500)
     pg.keyboard.down('KeyW'); ok('F1 getting close flies you through into the forest', until("state.act3.inForest",20000)); pg.keyboard.up('KeyW')

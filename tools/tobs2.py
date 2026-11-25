@@ -14,7 +14,7 @@ with sync_playwright() as p:
     base=ev("TAINT_GAIN[realmKey(nextStop())].cross"); t0=ev("TAINT.val()")
     ev("INTERACT['cab:dragon']?INTERACT['cab:dragon']():0"); W(300)
     txt=''
-    for _ in range(25):
+    for _ in range(90):
         txt+=ev("document.querySelector('.dlg .tx')?.innerText||''")
         if ev("!!document.querySelector('.dlg')"): ev("document.querySelector('.dlg .box')?.click()"); W(200)
         elif ev("!!document.querySelector('.cine')"): ev("document.querySelector('.cine').click()"); W(300)

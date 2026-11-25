@@ -6,6 +6,7 @@ with sync_playwright() as p:
     b=p.chromium.launch(); pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.goto('http://127.0.0.1:8766/'); W(900)
+    ev("Object.keys(DUTY_FROM).forEach(k=>DUTY_FROM[k]=0)")   # 這裡測完整的值勤（不用「幾趟之後才加入」）
     ev("document.querySelector('#mainscreen,#mainscreen-out')?.remove();closeAll();state=freshState();state.introDone=true;state.currentCarriage='cab';state.spirit.equipment.tablet=true;save();RUNNING=true;render();briefPanel()"); W(600)
     ok('B1 first time: how-to line in the panel', '再輕觸一次' in ev("document.querySelector('#layer .ov').innerText"))
     W(4500)

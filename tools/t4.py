@@ -33,6 +33,7 @@ with sync_playwright() as p:
         ev(f"{extra};state.boardQ=[];closeAll();state.currentCarriage='{car}';state.currentPhase=state.currentPhase==='outside'?'docked':state.currentPhase;render()"); W(500)
 
     pg.goto(URL); W(800); ev("window.rollBoarders=()=>[]")
+    ev("Object.keys(DUTY_FROM).forEach(k=>DUTY_FROM[k]=0)")   # 這裡測完整的值勤（不用「幾趟之後才加入」）
     # ---------- A. main flow (regression of the duty system) ----------
     pg.click('#ms-work'); W(1500); pg.click('#ms-new'); W(600)
     for i in range(40):
@@ -227,7 +228,7 @@ with sync_playwright() as p:
         pg.tap('[data-hs="out-board-origin"]'); W(1800)
         for i in range(8):
             if ev("!!document.querySelector('.dlg')"): pg.tap('.dlg'); W(400)
-        ok('P1 touch: labels visible without hover', float(ev("getComputedStyle(document.querySelector('[data-hs=\"cab-equip\"] .lb')).opacity"))>.5)
+        ok('P1 touch: labels visible without hover', float(ev("getComputedStyle(document.querySelector('[data-hs=\"cab-scan\"] .lb')).opacity"))>.5)
         hit_box=ev("(()=>{const r=document.querySelector('[data-hs=\"cab-equip\"]').getBoundingClientRect();return [r.width,r.height]})()")
         ok('P2 touch target ≥ 44px', hit_box[0]>=44 and hit_box[1]>=44, hit_box)
         ev("state.currentCarriage='memory';state.mview=0;render()"); W(800)

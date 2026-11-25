@@ -320,7 +320,9 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 #errcard b{display:block;color:#ffc2c2;margin-bottom:4px}#errcard p{margin:0 0 4px;word-break:break-all}#errcard small{display:block;opacity:.75;word-break:break-all;font-size:11px}
 #errcard div{display:flex;gap:8px;margin-top:8px}#errcard button{font:inherit;padding:4px 12px;border-radius:999px;border:1px solid #ffb3b3;background:transparent;color:#ffe6e6;cursor:pointer}
 
-.xy-map{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-8px);z-index:31;display:flex;gap:6px;padding:8px 12px;border-radius:14px;background:rgba(10,12,32,.7);border:1px solid rgba(232,201,131,.35);opacity:0;transition:opacity .6s,transform .6s;pointer-events:none}
+.xy-map{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));transform:translate(-50%,-8px);z-index:33;padding:8px 12px;border-radius:14px;background:rgba(10,12,32,.82);border:1px solid rgba(232,201,131,.35);opacity:0;transition:opacity .6s,transform .6s;cursor:pointer;max-width:min(640px,94vw)}
+.xy-row{display:flex;gap:6px;justify-content:center}
+.xy-cap{margin:8px 4px 2px;min-height:3.2em;font-size:14px;line-height:1.6;color:#f2ead6;text-align:left}.xy-cap b{color:#ffd98a;margin-right:8px;font-weight:600}
 .xy-map.on{opacity:1;transform:translate(-50%,0)}
 .xy-car{display:flex;flex-direction:column;align-items:center;gap:4px;width:clamp(44px,9vw,92px)}
 .xy-car i{display:block;width:100%;height:16px;border-radius:5px;background:#272a44;border:1px solid #3c3f62;transition:background .6s,box-shadow .6s,border-color .6s}
@@ -422,6 +424,9 @@ body.taint-heavy::after{box-shadow:inset 0 0 220px 60px rgba(82,62,112,.5);anima
 .dlg-ctl button.on{background:#e8c983;color:#1a1530;border-color:#e8c983}
 .dlg-ctl button.dlg-one{width:auto;min-width:58px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-size:12px;letter-spacing:.04em}
 .dlg-ctl button.dlg-one b{font-weight:600}
+.dlg-ctl.tip button.dlg-one{animation:goalNew 1.1s ease-in-out 5}
+.dlg-tipb{position:absolute;right:0;bottom:calc(100% + 8px);width:max-content;max-width:62vw;padding:6px 11px;border-radius:10px;background:#ffe9b0;color:#2a1f0c;font-size:12.5px;box-shadow:0 3px 10px rgba(0,0,0,.4);pointer-events:none}
+.dlg-tipb::after{content:'';position:absolute;right:18px;top:100%;border:6px solid transparent;border-top-color:#ffe9b0}
 .cine .dlg-ctl{top:auto;bottom:22px;right:22px}
 .bl-btn{display:none!important}
 .cine .txt{animation:none}
@@ -7557,6 +7562,19 @@ function discIgnite(ov){ const segs=[...ov.querySelectorAll('.dsc-seg')], say=ov
  setTimeout(()=>{ if(core){ core.style.transition='opacity .6s'; core.setAttribute('opacity','1'); } ov.classList.add('blaze'); SFX.chime(); },900+segs.length*420+200);
  setTimeout(()=>{ closeOv(ov); setTimeout(startDeparture,300); },900+segs.length*420+1500); }
 const dragonAway=()=>state.journeyCount>=2&&state.currentPhase==='docked'&&((state.journeyCount*7+String(state.currentLocation).length)%3===0);
+/* 值勤項目幾趟之後才加入（journeyCount＝已經抵達過幾站）；還沒加入的，由曦淵先幫忙打點好 */
+const DUTY_FROM={'cab-equip':1,'cab-brief':2,'cab-doors':3};   /* 車內廣播一直都要做：廣播之後號誌才會開始轉綠 */
+const DUTY_NEW={'cab-equip':'從這一站開始，出發前也要去裝備台領取三件航程裝備。','cab-brief':'從這一站開始，出發前也要核對星途符牒。','cab-doors':'從這一站開始，出發前也要確認車門聯鎖的安全燈。'};
+const dutyNeed=id=>(state.journeyCount||0)>=(DUTY_FROM[id]||0);
+function dutyGate(){ if(!state||!dutyOn()) return; const d=state.duty, k='j'+(state.journeyCount||0); if(d.autoK===k) return; d.autoK=k;
+ if(!dutyNeed('cab-equip')){ const e=state.spirit.equipment; e.tablet=e.compass=e.talisman=true; }
+ if(!dutyNeed('cab-brief')) d.briefing=true;
+ const nw=Object.keys(DUTY_NEW).filter(id=>dutyNeed(id)&&!state.storyFlags['dutyNew_'+id]); nw.forEach(id=>state.storyFlags['dutyNew_'+id]=1);
+ save(); if(nw.length) setTimeout(()=>noteTop('✦ 新的值勤：'+nw.map(id=>DUTY_NEW[id].replace(/^從這一站開始，出發前也要/,'').replace(/。$/,'')).join('、')),1200); }
+setInterval(()=>{ try{ dutyGate();
+  /* 車門聯鎖還不用自己確認的時候：廣播之後、大家都上車了，曦淵幫你鎖上 */
+  if(state&&dutyOn()&&!dutyNeed('cab-doors')&&state.duty.mic&&!state.duty.doors&&!outsideList().length){ state.duty.doors=true; save(); } }catch(e){ console.error(e); } },800);
+{ const st=DUTY_STEPS.find(x=>x[0]==='cab-doors'); if(st){ const f0=st[2]; st[2]=()=>f0()||(dutyOn()&&!dutyNeed('cab-doors')&&!!state.duty.mic&&!outsideList().length); } }
 const readyToGo=()=>DUTY_STEPS.slice(0,6).every(x=>x[2]())&&!!state.duty.signal&&!outsideList().length;
 
 /* ================================================================
@@ -9102,6 +9120,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
 .a1-tip kbd{display:inline-block;min-width:1.5em;padding:1px 6px;margin:0 2px;border-radius:5px;border:1px solid rgba(255,240,200,.55);background:rgba(255,255,255,.08);font-family:inherit;font-size:.92em}
 .a1-tip .pip{display:inline-block;margin-left:10px;font-size:.85em;opacity:.45;transition:opacity .3s,color .3s}.a1-tip .pip.ok{opacity:1;color:#ffe3a0}
 .a1-tip.done{border-color:rgba(255,226,150,.8);box-shadow:0 0 18px rgba(255,220,140,.3)}
+.a1-auto{font-size:18px}.a1-auto.on{background:rgba(255,217,138,.9)!important;color:#1a1530!important;border-color:#ffe2a0!important}
 .a1-title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:6;opacity:0;transition:opacity .7s}
 .a1-title.on{opacity:1}
 .a1-title .t1{font-family:var(--f-display);font-size:clamp(30px,6.4vmin,58px);letter-spacing:.5em;padding-left:.5em;color:#fff4dc;text-shadow:0 0 24px rgba(255,214,150,.45),0 0 60px rgba(150,120,255,.35)}
@@ -9187,13 +9206,14 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   if(!tex) mkTex();
   el=document.createElement('div'); el.className='a1 locked'; el.id='act1';
   el.innerHTML=`<canvas class="a1-cv"></canvas><div class="a1-big"></div><div class="a1-say"></div><div class="a1-tip"></div>
-   <div class="a1-top"><button class="a1-home" aria-label="回到主畫面" title="回到主畫面">⌂</button><button class="a1-snd ${PREFS.sound===false?'off':''}" aria-label="聲音" title="聲音">♪</button></div>
+   <div class="a1-top"><button class="a1-home" aria-label="回到主畫面" title="回到主畫面">⌂</button><button class="a1-auto" aria-pressed="false" aria-label="自動往前飛" title="自動往前飛（F）">⇡</button><button class="a1-snd ${PREFS.sound===false?'off':''}" aria-label="聲音" title="聲音">♪</button></div>
    <div class="a1-stick" aria-hidden="true"><i></i></div><div class="a1-ud" aria-hidden="true"><button class="a1-u">▲</button><button class="a1-d">▼</button></div>
    <button class="a1-icon" aria-label="幾何秘器"><i class="a1-still"></i>${artSVG()}</button><div class="a1-title"></div><div class="a1-rush"></div><div class="a1-th"></div><div class="a1-fade"></div>`;
   document.body.appendChild(el);
   cv=el.querySelector('.a1-cv'); g=cv.getContext('2d'); lay=document.createElement('canvas'); lg=lay.getContext('2d');
   el.querySelector('.a1-big').innerHTML=artSVG();
   el.querySelector('.a1-home').onclick=()=>{ persist(); exit(); showMain(); };
+  { const ab=el.querySelector('.a1-auto'); const sync=()=>{ ab.classList.toggle('on',!!autoF); ab.setAttribute('aria-pressed',!!autoF); }; ab.onclick=e=>{ e.stopPropagation(); autoF=!autoF; PREFS.autoFly=autoF; savePrefs(); sync(); }; sync(); }
   el.querySelector('.a1-snd').onclick=e=>{ PREFS.sound=PREFS.sound===false; savePrefs(); e.currentTarget.classList.toggle('off',PREFS.sound===false); };
   el.querySelector('.a1-icon').onclick=()=>tapArtifact();
   el.querySelector('.a1-say').addEventListener('click',e=>{ if(e.target.closest('.dlg-ctl')) return; sayClick(); });
@@ -9220,18 +9240,19 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   /* 滑鼠：按住右鍵拖曳轉動方向（左右＋上下）；左鍵點一下讓對話往下。觸控：拖曳轉動方向，輕點讓對話往下 */
   cv.addEventListener('contextmenu',e=>e.preventDefault());
   cv.addEventListener('pointerdown',e=>{ if(e.pointerType==='touch') setTouch();
-   if(e.pointerType==='mouse'&&e.button!==2){ sayClick(); return; }
-   drag={x:e.clientX,y:e.clientY,id:e.pointerId,mv:0}; try{ cv.setPointerCapture(e.pointerId); }catch(_){} });
+   drag={x:e.clientX,y:e.clientY,id:e.pointerId,mv:0,left:e.pointerType==='mouse'&&e.button!==2}; try{ cv.setPointerCapture(e.pointerId); }catch(_){} });
   cv.addEventListener('pointermove',e=>{ if(!drag||drag.id!==e.pointerId) return; const dx=e.clientX-drag.x, dy=e.clientY-drag.y; drag.x=e.clientX; drag.y=e.clientY; drag.mv+=Math.abs(dx)+Math.abs(dy);
    if(lock) return; P.yaw+=dx*.005; P.pitch=clamp(P.pitch-dy*.004,-.75,.9); rot.x+=Math.abs(dx); rot.y+=Math.abs(dy); });
-  const de=e=>{ if(drag&&e&&e.pointerType==='touch'&&drag.mv<8) sayClick(); drag=null; }; cv.addEventListener('pointerup',de); cv.addEventListener('pointercancel',()=>{ drag=null; });
+  const de=e=>{ if(drag&&e&&(e.pointerType==='touch'||drag.left)&&drag.mv<8) sayClick(); drag=null; }; cv.addEventListener('pointerup',de); cv.addEventListener('pointercancel',()=>{ drag=null; });
   el.addEventListener('touchstart',setTouch,{passive:true,once:true});
   try{ if(matchMedia('(pointer:coarse)').matches) setTouch(); }catch(e){}
  }
  function setTouch(){ if(touchUI||!el) return; touchUI=true; el.classList.add('touch'); if(tut) showTip(); }
  function unbind(){ removeEventListener('keydown',KD); removeEventListener('keyup',KU); removeEventListener('blur',BL); removeEventListener('resize',resize); }
- function input(){ const k=keys;
-  let f=(k.KeyW||k.ArrowUp?1:0)-(k.KeyS||k.ArrowDown?1:0)+tch.mz, s=(k.KeyD||k.ArrowRight?1:0)-(k.KeyA||k.ArrowLeft?1:0)+tch.mx,
+ let autoF=!!PREFS.autoFly;
+ addEventListener('keydown',e=>{ if(e.code==='KeyF'&&el&&!e.repeat&&!/INPUT|TEXTAREA/.test(e.target.tagName)){ autoF=!autoF; PREFS.autoFly=autoF; savePrefs(); const ab=el.querySelector('.a1-auto'); if(ab){ ab.classList.toggle('on',autoF); ab.setAttribute('aria-pressed',autoF); } } });
+ function input(){ const k=keys, af=autoF&&!['wake','tut'].includes((S()||{}).stage)&&!(k.KeyS||k.ArrowDown);
+  let f=Math.max(af?1:0,(k.KeyW||k.ArrowUp?1:0))-(k.KeyS||k.ArrowDown?1:0)+tch.mz, s=(k.KeyD||k.ArrowRight?1:0)-(k.KeyA||k.ArrowLeft?1:0)+tch.mx,
    v=tch.up-tch.dn, t=0, b=!!(k.ShiftLeft||k.ShiftRight)||Math.hypot(tch.mx,tch.mz)>.92;   /* Shift＝加速；上下靠「抬頭／低頭再前進」 */
   if(lock) f=s=v=t=0, b=false; return {f:clamp(f,-1,1),s:clamp(s,-1,1),v:clamp(v,-1,1),t,b}; }
 
@@ -9786,7 +9807,8 @@ const ACT2=(()=>{
   if(sh){ sh.t+=dt; if(sh.t>sh.d) sh=null; }
   /* 跨界事件：留下的光痕 */
   if(Wd().dimension==='moon'&&!trans&&!phase&&!lockedNow()&&st.firstSwitchCompleted&&!st.completed){ const vis=trailVisible();
-   if(!st.trailSeen&&vis.old){ st.trailSeen=true; st.trailMark=st.trail.length; a.persist(); a.say(['這是……我剛才飛過的地方？']); }
+   /* 光痕：看見一次就算完成（不用再切回去飛一段、再切過來）；沒看到的話，在月界待 8 秒也自然完成 */
+   if(!st.trailSeen&&(vis.old||(trT+=dt)>8)){ st.trailSeen=true; st.trailMark=st.trail.length; st.completed=true; tip(''); a.persist(); a.say(['這是……我剛才飛過的地方？','在那邊飛過的路……這裡都看得見。']); }
    else if(st.trailSeen&&vis.fresh){ st.completed=true; tip(''); a.persist(); a.say(['在那邊做的事……這裡都看得見。']); } }
   /* 光痕的提示：月界待太久 → 念頭＋月牙發光 → 文字；回到原本那邊飛了一段 → 提醒切過去看 */
   if(st.trailSeen&&!st.completed&&!trans&&!phase&&!lockedNow()){ hintT+=dt; const moon=Wd().dimension==='moon', fresh=(st.trail.length-(st.trailMark||0))>=3;
@@ -9795,7 +9817,7 @@ const ACT2=(()=>{
    else if(fresh){ if(hintT>10&&hintN<1){ hintN=1; a.say(['……現在，切過去看看？']); ui&&ui.classList.add('call'); }
     else if(hintT>25&&hintN<2){ hintN=2; tip(a.touch?'輕觸月牙切換':'按<kbd>V</kbd>　切換'); } } }
  }
- let hintT=0, hintN=0, gTip='', waitA=0;
+ let hintT=0, hintN=0, gTip='', waitA=0, trT=0;
  function trailVisible(){ const a=A(), L=S().trail, P=a.P, m=S().trailMark; let old=false, near=0, vis=0;
   for(let i=0;i<L.length;i++){ const q=L[i], d=Math.hypot(q[0]-P.x,q[2]-P.z); if(d>140) continue; const pr=a.proj(q[0],q[1],q[2]), on=!!pr&&pr.x>=0&&pr.x<=a.W&&pr.y>=0&&pr.y<=a.H;
    if(i<m||!S().trailSeen){ if(on) old=true; } else { if(d<60) near++; if(pr&&Math.abs(pr.x-a.W/2)<a.W*.6) vis++; } }
@@ -10225,11 +10247,11 @@ const ACT4_DEF=()=>({guided:{},done:{},said:{},finished:false});
 const ACT4_ZONE='hab-'+Object.keys(ZONES)[0];
 const ACT4={
  nature:{dev:'nat-crystal',t:'調整光照',guide:[['self','那顆晶石……好像連著整節車廂的光。']],
-  ok:[['self','光一變，葉子也跟著轉向了。'],['self','原來這節車廂，會把光、溫度和濕氣，調成植物需要的樣子。']],doneNow:()=>!!state.storyFlags.gt_light},
+  ok:[['self','光一變，葉子也跟著轉向了。這節車廂，會把光、溫度和濕氣調成植物需要的樣子。']],doneNow:()=>!!state.storyFlags.gt_light},
  observation:{dev:'obs-scope',t:'看看望遠鏡',guide:[['self','這座望遠鏡……可以看得多遠呢？']],
-  ok:[['self','很遠很遠的地方，也有影子在動。'],['self','星星、天象，還有遠方的生命……都可以從這裡看見。'],['self','旁邊的導航裝置還沒有反應。列車睡著的時候，哪裡也去不了。']]},
+  ok:[['self','很遠的地方也有影子在動。星星、天象、遠方的生命……都可以從這裡看見。']]},
  habitat:{dev:ACT4_ZONE,t:'調整結界',guide:[['self','先從這裡開始看看吧。'],['self','那些發光的區域……好像可以調整。']],
-  ok:[['self','溫度、光線、濕度……每一區都可以不一樣。'],['self','以後如果有生命上車，就要讓牠們住得舒服。']]},
+  ok:[['self','溫度、光線、濕度，每一區都可以不一樣。以後有生命上車，要讓牠們住得舒服。']]},
  memory:{dev:'mem-save',t:'存檔',guide:[['self','「旅途紀錄」……可以把現在的旅程，收進水晶裡。']],
   ok:[['self','水晶亮起來了。現在的旅程，收進去了。'],['self','之後想回到這一刻，只要在這裡碰一下那顆水晶，選「讀檔」就好。'],['self','列車也會自己留下最近一次的紀錄。就算關掉了，從一開始的畫面選「接續旅程」，也能喚回來。']]}
 };
@@ -10736,7 +10758,7 @@ const GLOW_MAX=2;
 function glowAllowed(){ const sc=HS_SCENE(), key=sc+':'+(state.currentPhase||''); if(glowAllowed.k===key&&glowAllowed.t>performance.now()-800) return glowAllowed.v;
  const G=goalHsIds(), L=HSDEF.filter(h=>h.scene===sc&&(!h.show||h.show())&&hs0State(h)==='important').map((h,i)=>({id:h.id,w:(/^(cr-|hap-)/.test(h.id)?100:0)+(G.includes(h.id)?50:0)+(h.imp&&h.imp()?10:0)-i*.01})).sort((a,b)=>b.w-a.w);
  const top=L.some(x=>x.w>=50)?L.filter(x=>x.w>=50):L;   /* 有跟目標相關的，就只亮那些 */
- glowAllowed.k=key; glowAllowed.t=performance.now(); glowAllowed.v=top.slice(0,GLOW_MAX).map(x=>x.id); return glowAllowed.v; }
+ glowAllowed.k=key; glowAllowed.t=performance.now(); glowAllowed.v=top.slice(0,state.currentPhase==='docked'&&L.some(x=>x.w>=50)?1:GLOW_MAX).map(x=>x.id); return glowAllowed.v; }
 const hs0State=hsState;
 hsState=function(h){ const st=hs0State(h); if(st!=='important'||!INFO_ON()) return st; return glowAllowed().includes(h.id)?st:'normal'; };
 function zoneNeeded(k){ const here=zoneHere(k); return here.some(id=>!careOk(id))||(k==='spring'&&((state.carPol||{}).habitat||0)>0)||(k==='rest'&&trainStage('sanct')>=2)||(typeof reqOn==='function'&&here.some(id=>reqOn(id)))||!!document.querySelector('#layer .ov.care'); }
@@ -11471,6 +11493,7 @@ const DLG_N=['手動','自動播放','自動播放（2 倍速）','自動播放�
 const dlgBtnHTML=()=>{ const k=dlgMode(); return `<button type="button" class="dlg-one ${k?'on':''}" data-dm="${k}" title="${DLG_N[k]}（點一下切換）" aria-label="對話播放：${DLG_N[k]}，點一下切換">${DLG_ICON[k]}<b>${DLG_S[k]}</b></button>`; };
 function dlgCtlAdd(host){ if(!host||host.querySelector(':scope>.dlg-ctl')) return; const c=document.createElement('div'); c.className='dlg-ctl';
  c.innerHTML=dlgBtnHTML();
+ if(!PREFS.autoTip&&!dlgMode()){ dlgCtlAdd.n=(dlgCtlAdd.n||0)+1; if(dlgCtlAdd.n>=3){ PREFS.autoTip=1; savePrefs(); c.classList.add('tip'); c.insertAdjacentHTML('beforeend','<span class="dlg-tipb">嫌一句一句點太累？點這裡切成自動播放</span>'); setTimeout(()=>{ c.classList.remove('tip'); const t=c.querySelector('.dlg-tipb'); t&&t.remove(); },7000); } }
  c.addEventListener('click',e=>{ e.stopPropagation(); if(!e.target.closest('[data-dm]')) return; PREFS.dlgAuto=(dlgMode()+1)%4; savePrefs(); document.querySelectorAll('.dlg-ctl').forEach(x=>x.innerHTML=dlgBtnHTML()); });
  c.addEventListener('pointerdown',e=>e.stopPropagation()); host.appendChild(c); }
 new MutationObserver(()=>{ document.querySelectorAll('#layer .dlg .box').forEach(dlgCtlAdd); }).observe(document.documentElement,{childList:true,subtree:true});
@@ -11719,19 +11742,26 @@ const xyPhase=()=>!!(state&&state.act3&&state.act3.entered&&state.act3.xyCall&&!
 { const g0=goalNow; goalNow=function(){ if(xyPhase()) return {t:'到最前面的駕駛室去',sub:'車頭的方向，有個聲音在叫你'}; return g0.apply(this,arguments); }; }
 { const gt=goalTargets; goalTargets=function(){ if(xyPhase()){ const h=HSDEF.find(x=>x.id==='cab-disc'); return h?[h]:[]; } return gt.apply(this,arguments); }; }
 function xyTrainMap(){ let m=document.querySelector('.xy-map'); if(m) return m; m=document.createElement('div'); m.className='xy-map'; m.setAttribute('aria-hidden','true');
- m.innerHTML=XY_TOUR.map(([k,n])=>`<div class="xy-car" data-k="${k}"><i></i><span>${n}</span></div>`).join(''); document.body.appendChild(m); requestAnimationFrame(()=>m.classList.add('on')); return m; }
+ m.innerHTML=`<div class="xy-row">${XY_TOUR.map(([k,n])=>`<div class="xy-car" data-k="${k}"><i></i><span>${n}</span></div>`).join('')}</div><p class="xy-cap"></p>`; document.body.appendChild(m); requestAnimationFrame(()=>m.classList.add('on')); return m; }
 function xyTour(){ const s=state.act3; s.xyMet=1; save();
  const done=()=>{ const m=document.querySelector('.xy-map'); if(m){ m.classList.remove('on'); setTimeout(()=>m.remove(),700); }
-  s.introduced=true; state.carSeen=Array.from(new Set((state.carSeen||[]).concat(Object.keys(CAR_INTRO)))); act4Init(); state.act4.said.cab=1;
+  s.introduced=true; state.carSeen=Array.from(new Set((state.carSeen||[]).concat(Object.keys(CAR_INTRO)))); act4Init(); state.act4.said.cab=1; state.act4.said.deck=1;
   logJ('在駕駛室遇見曦淵。列車的車廂，一節一節醒了過來。','find'); save(); render(); };
- const cars=k=>{ if(k>=XY_TOUR.length) return dialogueScript([['self','車廂……一節一節亮起來了。'],['dragon','嗯。列車跟著你，一點一點醒過來了。'],['dragon','只剩下這顆水晶，還在睡。……它在等一個「想去某個地方」的心願。'],
-   ['dragon','在那之前，先去每一節車廂看看吧。每一節，都有一樣東西等著你碰一碰。'],['dragon','我去外面一趟，把日界的界壁補一補。等水晶醒了，我就回來。'],['self','等一下，我還有好多事想問——'],['self','（一陣風。龍已經不見了。）'],['self','……那就，先去看看吧。']],done);
-  const [id]=XY_TOUR[k], el=xyTrainMap().querySelector(`[data-k="${id}"]`); if(el) el.classList.add('lit'); SFX.tone(660+k*110,0,1.2,'sine',.012);
-  setTimeout(()=>dialogueScript([['dragon',XY_TOUR[k][2]]],()=>cars(k+1)),420); };
- dialogueScript([['dragon','（一條蒼藍色的龍，盤在控制晶盤前。牠慢慢睜開眼睛。）'],['dragon','……新的渡守，來了嗎？'],['dragon','列車……終於可以出發了。'],['self','渡守？出發？……你在說什麼？'],
-  ['dragon','（龍靜靜地看著你，看了很久。）……不對。你不是祂。'],['dragon','你身上，有沉睡之地的味道。你是從那裡醒來的。'],['dragon','我是曦淵。一直守著這列車的龍。'],
-  ['dragon','沉睡之地，幾乎沒有生命。所以這列車，也跟著在那裡睡著了——睡了很久、很久。'],['dragon','可是你醒了。有生命，出現了。'],['dragon','……那就是徵兆。你看。']],()=>{ xyTrainMap(); setTimeout(()=>cars(0),700); }); }
+ /* 車廂一節一節亮起來：自動往下（每節約 2.4 秒；點一下可以快轉），介紹寫在小火車下面 */
+ const cars=k=>{ const m=xyTrainMap(), cap=m.querySelector('.xy-cap');
+  if(k>=XY_TOUR.length){ cap.textContent=''; m.onclick=null; return dialogueScript([['dragon','列車跟著你，一節一節醒過來了。只剩下這顆水晶，還在等一個「想去某個地方」的心願。'],
+   ['dragon','先去每一節車廂看看吧，每一節都有一樣東西等你碰一碰。我去外面把界壁補一補，等水晶醒了就回來。'],['self','（一陣風。龍已經不見了。）……那就，先去看看吧。']],done); }
+  const [id,nm,t]=XY_TOUR[k], el=m.querySelector(`[data-k="${id}"]`); if(el) el.classList.add('lit'); SFX.tone(660+k*110,0,1.2,'sine',.012);
+  cap.innerHTML=`<b>${nm}</b>${t.replace(/^[^。]*?。/,'')||t}`; let gone=false; const nx=()=>{ if(gone) return; gone=true; cars(k+1); };
+  m.onclick=nx; setTimeout(nx,(window.XY_FAST?150:2600)); };
+ dialogueScript([['dragon','（一條蒼藍色的龍，盤在控制晶盤前。牠慢慢睜開眼睛。）……新的渡守，來了嗎？列車終於可以出發了。'],['self','渡守？出發？……你在說什麼？'],
+  ['dragon','……不對。你不是祂。你身上有沉睡之地的味道——你是從那裡醒來的。我是曦淵，一直守著這列車的龍。'],
+  ['dragon','沉睡之地幾乎沒有生命，所以列車也跟著在那裡睡著了。可是你醒了——有生命，出現了。'],['dragon','……那就是徵兆。你看。']],()=>{ xyTrainMap(); setTimeout(()=>cars(0),700); }); }
 setInterval(()=>{ try{ if(!xyPhase()||!RUNNING||state.currentCarriage!=='cab'||act4Busy()) return; xyTour(); }catch(e){ console.error(e); } },700);
+
+/* 控制晶盤：值勤熟了以後（抵達過四站），可以「交給曦淵」 */
+{ const dp=discPanel; discPanel=function(){ const r=dp.apply(this,arguments); try{ const ov=[...document.querySelectorAll('#layer .ov.discov')].pop(); if(ov&&dutyAutoOk()&&dutyOn()&&!readyToGo()&&!dragonAway()){ const tw=ov.querySelector('.disc-taint');
+  if(tw&&!ov.querySelector('#dt-hand')){ tw.insertAdjacentHTML('afterbegin','<button class="btn" id="dt-hand" style="width:100%;margin-bottom:10px">交給曦淵：其他確認一次完成</button>'); ov.querySelector('#dt-hand').onclick=e=>{ e.stopPropagation(); closeOv(ov); setTimeout(dutyAuto,280); }; } } }catch(e){ console.error(e); } return r; }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} try{ normalizeState(); }catch(e){ gameErr(e); } try{ render(); }catch(e){ gameErr(e); } try{ showMain(); }catch(e){ gameErr(e); } }
 boot();
 </script>

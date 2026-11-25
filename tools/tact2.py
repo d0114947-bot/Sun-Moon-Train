@@ -44,6 +44,7 @@ with sync_playwright() as p:
     snap('moon')
     # ---- 自由切換：沒有冷卻、沒有次數限制；切回一定是 unresolved
     until("!ACT1.api.saying()",20000); W(300)
+    until("!ACT1.api.lock",20000); until("state.act2.completed",20000); W(500); until("!ACT1.api.lock&&!ACT1.api.saying()",30000); ev("state.act3=Object.assign(state.act3||{},{trainSeen:true,noticed:true})")
     n0=ev("state.act2.switchCount"); pressV(); ok('S1 switch back returns to unresolved (never sun)', until("state.world.dimension==='unresolved'&&!ACT2._dbg().trans",8000) and ev("state.world.dimension")!='sun')
     ok('S2 free-switch tutorial completes on the first own switch', ev("state.act2.freeSwitchTutorialCompleted"))
     ok('S3 button shows original state', not ev("document.querySelector('.a2-moon').classList.contains('moon')"))
@@ -82,12 +83,9 @@ with sync_playwright() as p:
     ev(setup({'x':0,'y':8,'z':1790,'yaw':0},w="{location:'sleeping_land',dimension:'moon'}",a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,switchCount:3,trail:"+tr+"}")); W(1500)
     ev("ACT1.api.P.yaw=3.14")
     ok('T1 in moon side the flown path shows as light trail -> line', until("document.querySelector('.a1-say').textContent.includes('我剛才飛過的地方')",30000)); snap('trail')
-    ok('T2 trail seen stored', ev("state.act2.trailSeen"))
-    until("!ACT1.api.saying()",20000); pressV(); until("state.world.dimension==='unresolved'&&!ACT2._dbg().trans",8000)
-    pg.keyboard.down('w'); W(5000); pg.keyboard.up('w'); W(800)
-    ok('T3 flying in the original state records new trail', ev("state.act2.trail.length")>ev("state.act2.trailMark")+5)
-    pressV(); ok('T4 back in moon side the new segment lit -> act 2 completes', until("state.act2.completed",30000) and until("document.querySelector('.a1-say').textContent.includes('這裡都看得見')",15000))
-    ok('T5 no title card, free exploration continues', not ev("!!document.querySelector('.a1-title.on')") and not ev("ACT1.api.lock"))
+    ok('T2 seeing it once completes act 2 (no need to switch back and fly again)', ev("state.act2.trailSeen") and until("state.act2.completed",15000))
+    ok('T4 the line says what it means', until("document.querySelector('.a1-say').textContent.includes('這裡都看得見')",15000))
+    ok('T5 no title card', not ev("!!document.querySelector('.a1-title.on')"))
     # ---- 存檔恢復
     ev(setup({'x':0,'y':8,'z':1810,'yaw':0},a2="{firstAnomalySeen:true}")); 
     ok('R1 left during the prompt -> prompt again, still waiting for the player', until("ACT2._dbg().phase==='prompt'",15000) and ev("state.world.dimension")=='unresolved')
