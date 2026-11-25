@@ -112,8 +112,8 @@ with sync_playwright() as p:
         if lit==3 and not ev("!!document.querySelector('.xy-shot')"): pg.screenshot(path=S+'/c1_tour.png'); ev("document.body.insertAdjacentHTML('beforeend','<i class=xy-shot></i>')")
     ok('X5 曦淵 meets you: 新的渡守？ → not 祂 → 沉睡之地 had no life', all(k in seen for k in ['新的渡守','不是祂','沉睡之地','沒有生命']), seen[:300])
     ok('X6 the cars light up one by one', lit==6, lit)
-    ok('X7 then the train tutorial starts (act4)', ev("state.act3.introduced&&act4On()"))
-    ok('X8 曦淵 leaves to mend the wall until the crystal wakes', '等水晶醒了' in seen)
+    ok('X7 train tutorial is no longer a gate (devices taught on first use)', ev("state.act3.introduced&&state.act4.finished&&!act4On()"))
+    ok('X8 曦淵 stays: the crystal waits for a wish', '心願' in seen and '我去外面' not in seen)
     # ---- 播放鈕合一
     ev("closeAll();dialogueScript([['self','一'],['self','二']])"); W(500)
     n=ev("document.querySelectorAll('#layer .dlg .dlg-ctl button').length")

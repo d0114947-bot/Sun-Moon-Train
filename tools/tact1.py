@@ -32,16 +32,13 @@ with sync_playwright() as p:
     ok('B1 first tip is forward/back',('前進' in D()['tip']))
     pg.keyboard.down('w'); ok('B2 forward only -> pip but still on step 0',until("ACT1._dbg().tip.includes('前 ✓')",20000) and D()['tut']==0, D()); pg.keyboard.up('w'); z1=D()['P']['z']
     ok('B3 forward moves the spirit',z1>2,z1)
-    pg.keyboard.down('s'); ok('B4 back completes step 0',until("ACT1._dbg().tut===1",20000), D()); pg.keyboard.up('s')
-    ok('B5 step 1 tip left/right','左右' in D()['tip'])
-    pg.keyboard.down('a'); until("ACT1._dbg().tip.includes('左 ✓')",20000); pg.keyboard.up('a'); pg.keyboard.down('d'); ok('B6 left/right completes step 1',until("ACT1._dbg().tut===2",20000),D()); pg.keyboard.up('d')
+    pg.keyboard.down('s'); ok('B4 back completes step 0 -> goes straight to turning (3-step tutorial)',until("ACT1._dbg().tut===2",20000), D()); pg.keyboard.up('s')
+    ok('B5 step 2 tip: right-drag','右鍵' in D()['tip'], D()['tip'])
     # 新的操作：右鍵拖曳轉向、抬頭往上飛、Shift 加速、放開停住（細節在 tpro1）
     pg.mouse.move(600,360); pg.mouse.down(button='right'); pg.mouse.move(900,250,steps=12); pg.mouse.up(button='right'); W(400)
     ok('B7 right-drag turns and completes step 2',until("ACT1._dbg().tut===3",20000),D())
     ev("ACT1.api.P.pitch=.6"); pg.keyboard.down('KeyW'); y=D()['P']['y']; W(2500); pg.keyboard.up('KeyW'); W(300)
-    ok('B8 look up + W climbs (step 3)',until("ACT1._dbg().tut===4",20000) and D()['P']['y']>y,D())
-    ev("ACT1.api.P.pitch=0"); pg.keyboard.down('KeyW'); W(500); pg.keyboard.down('ShiftLeft'); ok('B9 Shift boost completes step 4',until("ACT1._dbg().tut===5",20000),D()); pg.keyboard.up('ShiftLeft'); pg.keyboard.up('KeyW')
-    ok('B11 releasing -> hover completes tutorial, story starts by itself',until("ACT1._dbg().stage!=='tut'",20000),D())
+    ok('B8 look up + W climbs (step 3) -> last step, tutorial ends, story starts by itself',until("ACT1._dbg().stage!=='tut'",20000) and D()['P']['y']>y and ev("state.act1.tut")==6,D())
     ok('C7 no Q/E turning any more', (lambda a: (hold('e',800), D()['P']['yaw']==a)[1])(D()['P']['yaw']))
     ok('D1 notice scene triggers after exploring',until("['notice','held'].includes(ACT1._dbg().stage)",60000),D())
     ok('D2 notice line 這是……什麼？',until("document.querySelector('.a1-say').textContent.includes('這是……什麼')",20000)); snap('notice')
@@ -63,7 +60,7 @@ with sync_playwright() as p:
     ok('F6 no sources revealed (no speaker shown)',ev("!document.querySelector('.a1-th img')"))
     until("!ACT1._dbg().saying&&!ACT1._dbg().busy",30000)
     # （這一段只測秘器的感應；第二幕的異常另外在 tact2 測，先讓它不要插進來）
-    ev("state.act2=Object.assign(state.act2||{},{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,completed:true})")
+    ev("state.act2=Object.assign(state.act2||{},{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,completed:true});state.act3=Object.assign(state.act3||{},{trainSeen:true})")  # 第三幕的星光引導會自己飛，這段先跳過
     until("!ACT1._dbg().lock&&!ACT1._dbg().busy&&!ACT1._dbg().saying",60000); ev("state.act1.stage='free';state.act1.ended=true"); W(800)
     # B: nothing (mid altitude, near origin)
     ev("ACT1._set({P:{x:0,z:0,y:30}})"); W(500)
@@ -71,7 +68,7 @@ with sync_playwright() as p:
     ok('G2 no red/error UI',ev("!document.querySelector('#act1 .err,#act1 .error')") and set(D()['got'])-{'still'}=={'first'})
     until("!ACT1._dbg().busy&&!ACT1._dbg().saying",10000)
     # C: partial (low but moving)
-    until("!ACT1._dbg().lock&&!ACT1._dbg().busy",30000); ev("ACT1._set({P:{y:3}})"); pg.keyboard.down('w'); until("ACT1._dbg().P.vt>3",15000)
+    until("!ACT1._dbg().lock&&!ACT1._dbg().busy",30000); ev("ACT1._set({P:{y:3}});ACT1.api.P.pitch=0"); pg.keyboard.down('w'); until("ACT1._dbg().P.vt>3",15000)
     pg.click('.a1-icon'); W(200); pre_w='water' in D()['got'] or D()['P']['vt']<1; ok('G3 partial -> stutter, no thought (skipped when the timing made it a still sensing)', pre_w or ev("document.querySelector('.a1-icon svg').classList.contains('stut')"), D())
     pg.keyboard.up('w'); snap('partial'); until("!ACT1._dbg().busy",8000); ok('G4 partial gave no thought',pre_w or set(D()['got'])-{'still'}=={'first'},D()['got'])
     # A: success (low and still)

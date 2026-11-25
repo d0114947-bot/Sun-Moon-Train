@@ -9046,7 +9046,7 @@ const ACT1=(()=>{
   {kb:'<kbd>W</kbd><kbd>S</kbd>　前進・後退',tc:'推動左下的光圈　前進・後退',two:['前','後']},
   {kb:'<kbd>A</kbd><kbd>D</kbd>　左右移動',tc:'左右推動光圈　左右移動',two:['左','右']},
   {kb:'按住<kbd>滑鼠右鍵</kbd>拖曳　轉動方向',tc:'在畫面上拖曳　轉動方向',two:['左右','上下']},
-  {kb:'抬頭看向天空，再按<kbd>W</kbd>　往上飛',tc:'往下拖曳畫面看向天空，再推光圈前進'},
+  {kb:'抬頭看向天空，再按<kbd>W</kbd>　往上飛（按住<kbd>Shift</kbd>　加速）',tc:'往下拖曳畫面看向天空，再推光圈前進'},
   {kb:'按住<kbd>Shift</kbd>　加速飛行',tc:'把光圈推到最外圈　加速飛行'},
   {kb:'放開所有按鍵　停在空中',tc:'放開所有按鈕　停在空中'}
  ];
@@ -9424,7 +9424,8 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   tp.innerHTML=(touchUI?d.tc:d.kb)+(d.two?d.two.map((n,j)=>`<span class="pip ${tut.ok[j]?'ok':''}">${n}${tut.ok[j]?' ✓':''}</span>`).join(''):'');
   tp.classList.toggle('done',!!done); tp.classList.add('on'); }
  function tipFlash(html,sec){ const tp=el.querySelector('.a1-tip'); tp.innerHTML=html; tp.classList.remove('done'); tp.classList.add('on'); after(sec,()=>{ if(!tut) tp.classList.remove('on'); }); }
- function startTut(){ S().tut=S().tut||0; tut={i:S().tut,a:[0,0],ok:[false,false],acc:0,moved:false,still:0,wait:false}; setLock(false); showTip(); }
+ const TSEQ=[0,2,3], TLAST=3, tNext=n=>{ const k=TSEQ.indexOf(n); return k<0?TSEQ.find(x=>x>n):TSEQ[k+1]; };
+ function startTut(){ S().tut=S().tut||0; if(!TSEQ.includes(S().tut)&&S().tut<6) S().tut=S().tut>TLAST?6:tNext(S().tut); if(S().tut>=6){ tut=null; setLock(false); setStage('explore'); after(1.4,()=>noticeScene()); return; } tut={i:S().tut,a:[0,0],ok:[false,false],acc:0,moved:false,still:0,wait:false}; setLock(false); showTip(); }
  function tutStep(dt,i){ if(!tut||tut.wait) return; const n=tut.i;
   const two=(a,b,th)=>{ if(a) tut.a[0]+=dt; if(b) tut.a[1]+=dt; [0,1].forEach(j=>{ if(!tut.ok[j]&&tut.a[j]>=th){ tut.ok[j]=true; SFX.tone(j?1175:988,0,.9,'sine',.02); showTip(); } }); return tut.ok[0]&&tut.ok[1]; };
   let ok=false;
@@ -9436,9 +9437,9 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   else if(n===5){ const any=i.f||i.s||i.v; if(any) { tut.moved=true; tut.still=0; } else if(tut.moved||P.vt+Math.abs(P.vy)>.5) { tut.moved=true; tut.still+=dt; } ok=tut.moved&&tut.still>=1.5&&P.vt+Math.abs(P.vy)<.6; }
   if(!ok) return;
   tut.wait=true; showTip(true); SFX.tone(1319,0,1.4,'sine',.024); SFX.tone(1976,.15,1.4,'sine',.012);
-  after(n===5?1.6:1.1,()=>{ if(!tut) return; if(n===5){ tut=null; S().tut=6; showTip(); setStage('explore'); S().exT=0;
+  after(n===TLAST?1.2:1,()=>{ if(!tut) return; if(n===TLAST){ tut=null; S().tut=6; showTip(); setStage('explore'); S().exT=0;
      after(1.4,()=>{ if(S().stage==='explore'&&!busy) noticeScene(); }); return; }   /* 教學完：劇情自動開始 */
-   tut={i:n+1,a:[0,0],ok:[false,false],acc:0,moved:false,still:0,wait:false}; S().tut=n+1; persist(); showTip(); }); }
+   const nx=tNext(n); tut={i:nx,a:[0,0],ok:[false,false],acc:0,moved:false,still:0,wait:false}; S().tut=nx; persist(); showTip(); }); }
 
  /* ---------- 主邏輯 ---------- */
  function logic(dt,i,dC){ const a=S(), F=a.flags, stg=a.stage, moving=P.vt+Math.abs(P.vy)>1.2;
@@ -9981,7 +9982,7 @@ const ACT3=(()=>{
  let nudgeT=0, nudgeN=0;
  /* 星光變密的時候：鏡頭輕輕轉向縫隙，同時出現「跟著星光飛」 */
  function turnTo(dur){ const a=A(), P=a.P; let g=Math.atan2(RC.x-P.x,RC.z-P.z)-P.yaw; g=Math.atan2(Math.sin(g),Math.cos(g)); a.tw(P,'yaw',P.yaw+g,dur); }
- function guideStart(){ if(S3().trainSeen) return; const a=A(); if(Math.hypot(a.P.x-RC.x,a.P.z-RC.z)<200){ followShow(false); return; } if(lockedNow()){ a.after(1,guideStart); return; } a.setLock(true); turnTo(2.2); a.after(2.4,()=>{ a.setLock(false); nudge(false); followShow(true); }); }
+ function guideStart(){ if(S3().trainSeen) return; const a=A(); if(Math.hypot(a.P.x-RC.x,a.P.z-RC.z)<200){ followShow(false); return; } if(lockedNow()){ a.after(1,guideStart); return; } a.setLock(true); turnTo(2.2); a.after(2.4,()=>{ a.setLock(false); followShow(true); let tries=0; const go=()=>{ if(S3().trainSeen) return; if(!lockedNow()) return follow(); if(++tries<12) a.after(1,go); }; a.after(.5,go); }); }
  function followShow(v){ if(!fbtn) return; fbtn.classList.toggle('on',!!v&&!S3().trainSeen); }
  function follow(){ const a=A(), P=a.P; if(S3().trainSeen||lockedNow()) return; followShow(false); a.setLock(true); P.vx=P.vy=P.vz=0; P.vt=0;
   const dx=P.x-RC.x, dz=P.z-RC.z, L=Math.hypot(dx,dz)||1, k=Math.min(1,120/L), tx=RC.x+dx*k, tz=RC.z+dz*k, dur=clamp(Math.hypot(P.x-tx,P.z-tz)/80,1.5,6);
@@ -10024,7 +10025,7 @@ const ACT3=(()=>{
  function observe(k){ const s=S3(); if(s.obs.includes(k)) return; s.obs.push(k); A().persist();
   if(SFX.on()){ SFX.tone(988,0,1.2,'sine',.012); SFX.tone(1480,.18,1.2,'sine',.008); }
   A().say(SPOTS[k].lines); }
- function enterTrain(){ const a=A(), s=S3(); if(!s.obs.length) return; phase='enter'; a.setLock(true);
+ function enterTrain(){ const a=A(), s=S3(); phase='enter'; a.setLock(true);
   if(SFX.on()){ SFX.tone(392,0,2.4,'sine',.01); SFX.tone(587,.3,2.2,'sine',.008); }
   a.tw(a.fadeObj,'v',1,1.8,()=>{ a.after(.4,()=>setTimeout(toTrain,0)); }); }   /* 離開第一幕的畫面要等這一幀結束 */
  function toTrain(){ const s=S3(); s.entered=true; A().persist(); ACT1.exit(); act3BeginTrain(); }
@@ -10060,18 +10061,18 @@ const ACT3=(()=>{
  HOOK_A3.push((dt)=>{ if(!act()) return; const s=S3(); if(!s||!s.trainSeen||phase) { if(!s||!s.trainSeen) a3tip(''); return; }
   if(!s.inForest){ if(ob>.45&&!lockedNow()) return flyIn(); a3tip(lockedNow()?'':'往前飛　穿過那扇發光的窗'); return; }
   if(lockedNow()){ a3tip(''); return; }
-  a3tip(!s.obs.length?'點列車上發亮的 <b>✦</b>　看看這列車':'點「<b>✦ 車門</b>」　上車'); });
+  a3tip(!s.obs.length?'點「<b>✦ 車門</b>」　上車　（發亮的 <b>✦</b> 可以先看看）':'點「<b>✦ 車門</b>」　上車'); });   /* 2026-11-25：不用先觀察也能上車（開玩 10 分鐘做到第一次值勤） */
  /* 畫面裡列車上的觀察點（進到森林之後出現） */
  let tsp={};
  function tspBuild(){ const el=A().el; if(!el) return; tsp={}; ['struct','carving','door'].forEach(k=>{ const b=document.createElement('button'); b.className='a3-tsp'; b.dataset.k=k;
    b.innerHTML=`<i>✦</i><span>${k==='door'?'車門':SPOTS[k].rec.split('：')[0].replace('列車頂上的','車頂的')}</span>`;
    b.addEventListener('pointerdown',e=>e.stopPropagation()); b.onclick=e=>{ e.stopPropagation(); tspPress(k); }; el.appendChild(b); tsp[k]=b; }); }
  function tspPress(k){ const s=S3(); if(phase||lockedNow()) return;
-  if(k==='door'){ if(!s.obs.length){ if(!said.door){ said.door=1; } return A().say(['……門。','先看看四周吧。']); } return enterTrain(); }
+  if(k==='door') return enterTrain();
   observe(k); }
  function tspSync(W,H){ const s=S3(), show=act()&&s&&s.trainSeen&&!phase&&ob>=.92&&FT.ok;
   for(const k in tsp){ const b=tsp[k], f=k==='door'?DOOR_SCR:SPOTS[k].scr, vis=show&&(k==='door'||!s.obs.includes(k));
-   b.classList.toggle('on',!!vis); if(!vis) continue; b.classList.toggle('lock',k==='door'&&!s.obs.length);
+   b.classList.toggle('on',!!vis); if(!vis) continue; b.classList.toggle('lock',false);
    const px=FT.x0+f[0]*FT.iw*FT.sc, py=FT.y0+f[1]*FT.ih*FT.sc; b.style.left=Math.max(14,Math.min(W-14,px))+'px'; b.style.top=Math.max(14,Math.min(H-14,py))+'px'; } }
 
  /* ---------- 繪製 ---------- */
@@ -10210,7 +10211,7 @@ function act3BeginTrain(){ const s=state.act3;
  act3TrainIntro(); }
 const ACT3_REC={texture:'世界縫隙的邊緣：光一層一層疊在一起，像好幾個空間被縫在一起。',shard:'縫隙裡漂著的古老碎片：白色石材嵌著金色紋線，看不出原本屬於什麼。',struct:'列車頂上的圓環構造：以古老的幾何組成，看起來不只是裝飾。',carving:'車身的紋路：圓環、弧線與星形交織在一起，是很古老的樣式。'};
 function act3TrainIntro(){ const s=state.act3; if(!s||!s.entered||s.introduced) return false;
- setTimeout(()=>dialogueScript([['self','這裡……竟然有這麼大的空間。'],['self','（牆上刻著一段古老的文字。）']],()=>{
+ setTimeout(()=>dialogueScript([['self','（牆上刻著一段古老的文字。）']],()=>{
   cine(['這是一列由古老守護者打造、能夠穿梭日界、月界與世界縫隙的移動庇護所。','它承載不同生命的旅程，也提供休憩、觀測、紀錄與生活所需的空間。'],()=>{
    s.xyCall=1; save(); render(); setTimeout(()=>dialogueScript(XY_CALL,()=>render()),600); }); }),1100);
  return true; }
@@ -10373,7 +10374,7 @@ function act6Wake(){ const a=state.act6;
    a.woke=true; state.act3.canDepart=true; state.crCalm=Math.max(state.crCalm||0,state.journeyCount+2);   /* 第一趟只會遇到教學的異常 */
    if(!Object.entries(MATS).some(([m,M])=>M.use==='purify'&&matCount(m)>0)){ state.materials=state.materials||{}; state.materials.mosslight=(state.materials.mosslight||0)+1; a.gave=1; }
    state.storyFlags.metDragon=1; logJ('控制晶盤第一次亮起。列車醒了。','find'); save(); render();
-   setTimeout(()=>dialogueScript((state.act3&&state.act3.xyMet?[['dragon','……晶盤亮了。'],['dragon','我回來了。感覺到列車整個醒過來，就趕回來了。'],['dragon','是索拉的心願，叫醒了它啊。']]:[['dragon','……晶盤亮了。'],['dragon','我是曦淵。停靠的時候，我在外面淨化日界的界壁。感覺到列車醒過來，就回來了。'],['dragon','你就是這一次的值勤精靈吧。']]).concat([
+   setTimeout(()=>dialogueScript((state.act3&&state.act3.xyMet?[['dragon','……晶盤亮了。'],['dragon','是索拉的心願，叫醒了它。列車，整個醒過來了。']]:[['dragon','……晶盤亮了。'],['dragon','我是曦淵。停靠的時候，我在外面淨化日界的界壁。感覺到列車醒過來，就回來了。'],['dragon','你就是這一次的值勤精靈吧。']]).concat([
     ['dragon','要出發的話，先把出發前的確認做一遍。第一件事，量一量你身上的界染度。']]).concat(a.gave?[['dragon','還有，帶著這片光苔。路上用得到。']]:[]),()=>{ if(a.gave) toast('取得：光苔片 ×1'); render(); }),700); }); }); }
 /* 徽章 */
 function act6Badge(h){ if(!act6On()) return ''; const a=state.act6, c=state.currentCarriage, C=A6C(), B=t=>`<span class="step cur"><b>✦</b><i>${t}</i></span>`;
@@ -11723,7 +11724,7 @@ setInterval(()=>{ if(state&&state.duty&&state.duty.reported&&state.storyFlags&&!
    只剩控制晶盤還在睡（等一個心願）→ 曦淵去外面補界壁 → 第四幕的列車教學
    存檔：state.act3.xyCall（被叫了）、xyMet（見過面、介紹完）
    ================================================================ */
-const XY_CALL=[['self','……好安靜。'],['dragon','（車頭的方向，傳來一個低沉的聲音。）'],['dragon','……有誰在那裡嗎？'],['self','誰？'],['dragon','到前面來。最前面的駕駛室。']];
+const XY_CALL=[['dragon','（車頭的方向，傳來一個低沉的聲音。）'],['dragon','……有誰在那裡嗎？'],['self','誰？'],['dragon','到前面來。最前面的駕駛室。']];
 const XY_TOUR=[['cab','駕駛室','這裡是駕駛室。列車的心臟——最前面那顆控制晶盤，就在這裡。'],
  ['memory','記憶典藏車廂','記憶典藏車廂。走過的地方、遇見的生命，都會變成書和水晶收在那裡。旅途紀錄的水晶，可以把現在的旅程存起來。'],
  ['nature','森羅溫室車廂','森羅溫室車廂。種子、培育艙，還有一株會說話的守望藤。累了，就去那裡的沙發躺一下。'],
@@ -11739,12 +11740,11 @@ function xyTrainMap(){ let m=document.querySelector('.xy-map'); if(m) return m; 
  m.innerHTML=`<div class="xy-row">${XY_TOUR.map(([k,n])=>`<div class="xy-car" data-k="${k}"><i></i><span>${n}</span></div>`).join('')}</div><p class="xy-cap"></p>`; document.body.appendChild(m); requestAnimationFrame(()=>m.classList.add('on')); return m; }
 function xyTour(){ const s=state.act3; s.xyMet=1; save();
  const done=()=>{ const m=document.querySelector('.xy-map'); if(m){ m.classList.remove('on'); setTimeout(()=>m.remove(),700); }
-  s.introduced=true; state.carSeen=Array.from(new Set((state.carSeen||[]).concat(Object.keys(CAR_INTRO)))); act4Init(); state.act4.said.cab=1; state.act4.said.deck=1;
+  s.introduced=true; state.carSeen=Array.from(new Set((state.carSeen||[]).concat(Object.keys(CAR_INTRO)))); act4Init(); act4Skip();
   logJ('在駕駛室遇見曦淵。列車的車廂，一節一節醒了過來。','find'); save(); render(); };
  /* 車廂一節一節亮起來：自動往下（每節約 2.4 秒；點一下可以快轉），介紹寫在小火車下面 */
  const cars=k=>{ const m=xyTrainMap(), cap=m.querySelector('.xy-cap');
-  if(k>=XY_TOUR.length){ cap.textContent=''; m.onclick=null; return dialogueScript([['dragon','列車跟著你，一節一節醒過來了。只剩下這顆水晶，還在等一個「想去某個地方」的心願。'],
-   ['dragon','先去每一節車廂看看吧，每一節都有一樣東西等你碰一碰。我去外面把界壁補一補，等水晶醒了就回來。'],['self','（一陣風。龍已經不見了。）……那就，先去看看吧。']],done); }
+  if(k>=XY_TOUR.length){ cap.textContent=''; m.onclick=null; return dialogueScript([['dragon','列車跟著你，一節一節醒過來了。只剩下這顆水晶，還在等一個「想去某個地方」的心願。'],['self','想去某個地方的……心願？']],done); }
   const [id,nm,t]=XY_TOUR[k], el=m.querySelector(`[data-k="${id}"]`); if(el) el.classList.add('lit'); SFX.tone(660+k*110,0,1.2,'sine',.012);
   cap.innerHTML=`<b>${nm}</b>${t.replace(/^[^。]*?。/,'')||t}`; let gone=false; const nx=()=>{ if(gone) return; gone=true; cars(k+1); };
   m.onclick=nx; setTimeout(nx,(window.XY_FAST?150:2600)); };
@@ -11756,6 +11756,30 @@ setInterval(()=>{ try{ if(!xyPhase()||!RUNNING||state.currentCarriage!=='cab'||a
 /* 控制晶盤：值勤熟了以後（抵達過四站），可以「交給曦淵」 */
 { const dp=discPanel; discPanel=function(){ const r=dp.apply(this,arguments); try{ const ov=[...document.querySelectorAll('#layer .ov.discov')].pop(); if(ov&&dutyAutoOk()&&dutyOn()&&!readyToGo()&&!dragonAway()){ const tw=ov.querySelector('.disc-taint');
   if(tw&&!ov.querySelector('#dt-hand')){ tw.insertAdjacentHTML('afterbegin','<button class="btn" id="dt-hand" style="width:100%;margin-bottom:10px">交給曦淵：其他確認一次完成</button>'); ov.querySelector('#dt-hand').onclick=e=>{ e.stopPropagation(); closeOv(ov); setTimeout(dutyAuto,280); }; } } }catch(e){ console.error(e); } return r; }; }
+
+/* ================================================================
+   開玩 10 分鐘內做到第一次值勤（2026-11-25）
+   ・列車教學（四節車廂的裝置）不再是出發前的關卡：曦淵導覽完就算認識了；各裝置第一次用到時，原本的那句說明照樣會出現
+   ・曦淵不離開；索拉在導覽結束後馬上漂進來，自動開始第一次對話，說完就說出想回家的心願
+   ・照顧牠的區域、記筆記、整理生命誌：之後再教（筆記本的任務裡有）
+   ================================================================ */
+function act4Skip(){ const a=state.act4; if(!a||a.finished) return; Object.keys(ACT4).forEach(k=>{ a.done[k]=a.done[k]||false; }); a.finished=true; a.said=Object.assign(a.said||{},{cab:1,deck:1,fin:1}); a.quick=1; save(); }
+/* 舊存檔：見過曦淵、還在第四幕的，也一樣直接往下 */
+setInterval(()=>{ try{ if(state&&state.act3&&state.act3.xyMet&&state.act3.introduced&&state.act4&&!state.act4.finished&&!act4Busy()){ act4Skip(); render(); } }catch(e){ console.error(e); } },1500);
+/* 各裝置第一次用到時：說原本那一句（不再是第四幕的關卡） */
+const A4Q={pend:null};
+{ const hc=hsClick; hsClick=function(id){ const r=hc.apply(this,arguments); try{ const a=state.act4; if(a&&a.quick){ const c=Object.keys(ACT4).find(k=>ACT4[k].dev===id||(k==='habitat'&&/^hab-/.test(id)&&state.currentCarriage==='habitat')); if(c&&!a.done[c]){ a.done[c]=true; A4Q.pend=c; save(); } } }catch(e){ console.error(e); } return r; }; }
+setInterval(()=>{ try{ if(A4Q.pend&&!act4Busy()){ const c=A4Q.pend; A4Q.pend=null; const L=ACT4[c].ok; if(L&&L.length) dialogueScript(L,()=>render()); } }catch(e){ console.error(e); } },700);
+/* 索拉：導覽一結束就漂進來（不用等），自動聊第一次；說完就是心願 */
+const a5Quick=()=>!!(state&&state.act3&&state.act3.xyMet&&state.act3.introduced&&state.act4&&state.act4.quick);
+{ const t5=act5Tick; act5Tick=function(){ if(!a5Quick()) return t5.apply(this,arguments);
+  if(!state||!state.act4||!state.act4.finished) return; if(!state.act5) act5Init(); act5Hud(); if(!act5On()||act4Busy()) return;
+  const a=state.act5;
+  if(!a.boarded){ a.boarded=true; save();
+   return dialogueScript([['self','……？'],['dragon','窗外。縫隙的方向……有什麼在發光。']],()=>boarding(ACT5_ID,'世界縫隙那一頭，輕輕閃了一下。一團會發光的小生命，順著光漂了出來，穿過車門的縫，滑進了車廂。',()=>render())); }
+  if(!A5.talked()){ if(!a.said.auto){ a.said.auto=1; save(); talk(ACT5_ID); } return; }
+  if(!a.done){ a.done=true; logJ('第一位乘客：索拉（星汐水母）。牠想回星河浮島。','find'); save();
+   return dialogueScript([[ACT5_ID,'……欸，值勤精靈。我的島，是在星河浮島那邊漂走的。'],[ACT5_ID,'如果這列車能動的話……我好想回去看看。'],['dragon','……聽見了嗎？那就是心願。'],['dragon','把手放上控制晶盤吧。']],()=>render()); } }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} try{ normalizeState(); }catch(e){ gameErr(e); } try{ render(); }catch(e){ gameErr(e); } try{ showMain(); }catch(e){ gameErr(e); } }
 boot();
 </script>

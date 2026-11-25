@@ -4,6 +4,9 @@ R=[]
 def ok(n,c,x=''): R.append(bool(c)); print(('PASS ' if c else 'FAIL ')+n,'' if c else x,flush=True)
 with sync_playwright() as p:
     b=p.chromium.launch(); pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
+    def until(js,ms=20000):
+        try: pg.wait_for_function(js,timeout=ms); return True
+        except Exception: return False
     pg.on('pageerror',lambda e:errs.append(str(e)))
     pg.add_init_script("window.SAY_MANUAL=1")
     pg.goto('http://127.0.0.1:8766/'); W(1000)
@@ -39,14 +42,16 @@ with sync_playwright() as p:
     ok('C1 right-drag turns the view', abs(ev("ACT1._dbg().P.yaw")-y0)>.5)
     ok('C2 right-drag also tilts up/down', abs(ev("ACT1.api.P.pitch"))>.1)
     W(2500); ok('T4 step done after turning both ways', ev("state.act1.tut")>=3, ev("state.act1.tut"))
+    ev("ACT1.api.P.pitch=0"); pg.keyboard.down('KeyW'); W(600); v1=ev("ACT1._dbg().P.vt"); pg.keyboard.down('ShiftLeft'); W(1500); v2=ev("ACT1._dbg().P.vt"); pg.keyboard.up('ShiftLeft'); pg.keyboard.up('KeyW'); W(1500)
+    ok('C4 Shift = speed boost', v2>v1*1.4, [v1,v2])
     ev("ACT1.api.P.pitch=.6"); pg.keyboard.down('KeyW'); W(2500); pg.keyboard.up('KeyW'); W(300)
     ok('C3 look up + W climbs', ev("ACT1._dbg().P.y")>8, ev("ACT1._dbg().P.y"))
     W(2000)
-    ev("ACT1.api.P.pitch=0"); pg.keyboard.down('KeyW'); W(600); v1=ev("ACT1._dbg().P.vt"); pg.keyboard.down('ShiftLeft'); W(1500); v2=ev("ACT1._dbg().P.vt"); pg.keyboard.up('ShiftLeft'); pg.keyboard.up('KeyW')
-    ok('C4 Shift = speed boost', v2>v1*1.4, [v1,v2])
     # 教學結束 → 劇情自動開始
-    ev("state.act1.tut=5;ACT1.exit();ACT1.enter()"); W(2500)
-    pg.keyboard.down('KeyW'); W(800); pg.keyboard.up('KeyW')
+    ok('T5 old save sitting on a removed step (5) jumps to a valid one', (ev("(ACT1.exit(),state.act1.stage='tut',state.act1.tut=5,ACT1.enter(),0)")==0 and until("state.act1.tut===6&&ACT1._dbg().stage!=='tut'",15000)), ev("state.act1.tut"))
+    ev("ACT1.exit();state.act1.stage='tut';state.act1.tut=3;ACT1.enter()"); W(2500)
+    ok('T6 last step tip mentions Shift', 'Shift' in ev("document.querySelector('.a1-tip').innerHTML"))
+    ev("ACT1.api.P.pitch=.6"); pg.keyboard.down('KeyW'); W(2500); pg.keyboard.up('KeyW')
     for _ in range(30):
         W(400)
         if ev("ACT1._dbg().stage")!='tut': break
