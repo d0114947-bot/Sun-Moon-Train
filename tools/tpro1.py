@@ -61,7 +61,7 @@ with sync_playwright() as p:
         if ev("!!document.querySelector('.a1-say.on')"): ev("document.querySelector('.a1-say').click()")
         if s=='free' and not ev("ACT1._dbg().busy"): break
         W(400)
-    ok('F1 story runs by itself to the end of act 1', 'notice' in st and 'free' in st, sorted(set(st)))
+    ok('F1 story runs by itself to the end of act 1 (no artifact scene)', 'free' in st and 'notice' not in st, sorted(set(st)))
     try: pg.wait_for_function("['anomaly','prompt'].includes(ACT2._dbg().phase)",timeout=60000); got=True
     except Exception: got=False
     ok('F2 no waterfall: the anomaly comes by itself after the artifact story', got, ev("ACT2._dbg()"))

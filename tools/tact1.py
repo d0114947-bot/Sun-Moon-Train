@@ -7,7 +7,7 @@ with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader'])
     pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.add_init_script("window.ACT1_TEST=true; window.ACT1_SPEED=5")
+    pg.add_init_script("window.ACT1_TEST=true; window.ACT1_SPEED=5; window.ARTIFACT_TEST=true")
     D=lambda: ev("ACT1._dbg()")
     def until(js,ms=60000): 
         try: pg.wait_for_function(js,timeout=ms); return True
@@ -115,7 +115,7 @@ with sync_playwright() as p:
     pg.reload(); W(900); pg.click('#ms-work'); W(1500); pg.click('#ms-cont'); W(800); pg.click('[data-load="auto"]'); W(1200)
     ok('K2 old save (no chapter) still loads the train game',ev("!document.querySelector('#act1')&&RUNNING&&!state.chapter"))
     # mobile
-    m=b.new_page(viewport={'width':390,'height':844},is_mobile=True,has_touch=True); m.add_init_script("window.ACT1_TEST=true")
+    m=b.new_page(viewport={'width':390,'height':844},is_mobile=True,has_touch=True); m.add_init_script("window.ACT1_TEST=true; window.ARTIFACT_TEST=true")
     m.goto('http://127.0.0.1:8766/'); m.wait_for_timeout(800)
     m.evaluate("state=freshState();state.chapter='act1';state.act1={stage:'again',tut:5,flags:{},got:['first'],senseN:1,againN:0,passN:0,ended:false,pos:{x:0,y:8,z:0,yaw:0},cz:1800,exT:50,sinceFirst:5,lastPass:-999};save();ACT1.enter()"); m.wait_for_timeout(2500)
     bx=m.evaluate("(()=>{const r=document.querySelector('.a1-icon').getBoundingClientRect();return [r.left,r.top,r.right,r.bottom]})()")

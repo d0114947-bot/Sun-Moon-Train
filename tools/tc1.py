@@ -12,7 +12,7 @@ with sync_playwright() as p:
     b=p.chromium.launch(executable_path='/usr/bin/google-chrome',args=['--use-angle=swiftshader'])
     pg=b.new_page(viewport={'width':1280,'height':720}); ev=pg.evaluate; W=pg.wait_for_timeout; errs=[]
     pg.on('pageerror',lambda e:errs.append(str(e)))
-    pg.add_init_script("window.ACT1_TEST=true; window.ACT1_SPEED=2")
+    pg.add_init_script("window.ACT1_TEST=true; window.ACT1_SPEED=2; window.ARTIFACT_TEST=true")
     def until(js,ms=40000):
         try: pg.wait_for_function(js,timeout=ms); return True
         except Exception: return False

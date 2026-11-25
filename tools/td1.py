@@ -24,7 +24,7 @@ with sync_playwright() as p:
     ok('T2 light-trail event finishes by itself after the first switch (no back-and-forth)', until("state.act2.completed",80000), ev("state.act2"))
     ok('T3 still in the moon side (did not have to switch back)', ev("state.world.dimension")=='moon')
     # ---- 5. 自動往前飛、左鍵拖曳轉向
-    ev(setup({'x':300,'y':20,'z':300,'yaw':0},a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,completed:true,trail:[],trailSeen:true}")); until("!ACT1.api.lock",30000); W(500)
+    ev(setup({'x':300,'y':20,'z':300,'yaw':0},a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,completed:true,trail:[],trailSeen:true}")); ev("ACT1.exit();state.act3={trainSeen:true,obs:[]};save();ACT1.enter()"); until("!ACT1.api.lock",30000); W(500)
     ok('F1 auto-fly button in the corner', ev("!!document.querySelector('#act1 .a1-auto')"))
     z0=ev("ACT1.api.P.z"); pg.keyboard.press('KeyF'); W(3000); z1=ev("ACT1.api.P.z")
     ok('F2 F key: flies forward by itself', z1-z0>5 and ev("PREFS.autoFly"), (z0,z1))

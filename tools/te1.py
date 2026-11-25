@@ -28,6 +28,23 @@ with sync_playwright() as p:
             else: W(250); idle+=250; t+=250
         return out
     pg.goto('http://127.0.0.1:8766/'); W(900)
+    # ---- 秘器劇情拿掉：教學一完成就接結尾的話，接著第一次異常
+    A1S="document.querySelector('#mainscreen')?.remove();ACT1.active()&&ACT1.exit();closeAll();state=freshState();state.chapter='act1';state.world={location:'sleeping_land',dimension:'unresolved'};state.act2={};"
+    ev(A1S+"state.act1={stage:'tut',tut:3,flags:{},got:[],senseN:0,againN:0,passN:0,ended:false,pos:{x:0,y:8,z:0,yaw:0},cz:1800,exT:0,sinceFirst:0,lastPass:-999};save();ACT1.enter()"); W(2500)
+    ok('S1 the artifact icon is not shown', not ev("(()=>{const e=document.querySelector('#act1 .a1-icon');return !!e&&getComputedStyle(e).display!=='none'})()"))
+    ev("ACT1.api.P.pitch=.6"); pg.keyboard.down('KeyW'); until("ACT1._dbg().stage!=='tut'",30000); pg.keyboard.up('KeyW')
+    st=set(); said=''
+    for _ in range(120):
+        st.add(ev("ACT1._dbg().stage")); t=ev("(document.querySelector('.a1-say.on')||{}).textContent||''")
+        if t: said+=t+'|'; ev("document.querySelector('.a1-say').click()")
+        if ev("['anomaly','prompt'].includes(ACT2._dbg().phase)"): break
+        W(400)
+    ok('S2 tutorial -> ending lines straight away (no artifact scene)', '什麼地方' in said and not (st & {'notice','held','first','again'}), [st,said[:200]])
+    ok('S3 then the first anomaly comes', until("['anomaly','prompt'].includes(ACT2._dbg().phase)||state.act2.firstAnomalySeen",30000), [ev("ACT2._dbg().phase"),ev("JSON.stringify(ACT1._dbg()).slice(0,300)")])
+    ok('S4 no artifact thought shown', ev("ACT1._dbg().got").count('first')==0)
+    ev(A1S+"state.act1={stage:'held',tut:6,flags:{},got:[],senseN:0,againN:0,passN:0,ended:false,pos:{x:0,y:8,z:0,yaw:0},cz:1800,exT:0,sinceFirst:0,lastPass:-999};save();ACT1.enter()"); W(1500)
+    ok('S5 old save inside the artifact scene: goes to the ending', until("['ending','free'].includes(ACT1._dbg().stage)",15000), ev("ACT1._dbg().stage"))
+    ev("ACT1.exit()")
     # ---- 曦淵導覽 → 索拉 → 晶盤 → 值勤
     ev("ACT1.active()&&ACT1.exit();closeAll();document.querySelector('#mainscreen')?.remove();state=freshState();normalizeState();state.chapter='act1';state.act1={stage:'free',ended:true,tut:6};state.world={location:'sleeping_land',dimension:'unresolved'};state.act2={completed:true};state.act3={trainSeen:true,obs:['carving'],entered:true,introduced:false,canDepart:false,inForest:true,xyCall:1};state.currentCarriage='cab';state.currentPhase='docked';state.currentLocation='dawnForest';state.visitedLocations=['dawnForest'];state.introDone=true;save();RUNNING=true;render()")
     s=''

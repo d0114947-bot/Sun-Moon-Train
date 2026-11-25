@@ -9031,6 +9031,9 @@ function intro(){
    ===================================================================== */
 /* 沉睡之地的水幕：暫時拿掉（使用者 2026-11-25：劇情到水幕一直卡住，之後會換場景）。改成 false 就恢復 */
 const NO_CURTAIN=true;
+/* 秘器劇情：暫時拿掉（使用者 2026-11-25：玩起來覺得多餘）。教學一完成就接「這裡究竟是什麼地方？」→ 第一次異常。改成 false 就恢復 */
+const NO_ARTIFACT=!window.ARTIFACT_TEST;
+if(NO_ARTIFACT) document.head.insertAdjacentHTML('beforeend','<style>#act1 .a1-icon,#act1 .a1-big,#act1 .a1-still{display:none!important}</style>');
 const ACT1=(()=>{
  const SPR='spirit-wings.webp', IW=858, IH=640, ICX=429, ICY=320;
  const CURTAIN_Z=1800, TOPY=1300, FALL=38;
@@ -9453,7 +9456,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   }
   if(stg==='explore'){ a.exT=(a.exT||0)+dt; const n=['high','near','water'].filter(k=>F[k]).length; if((a.exT>38||(n>=2&&a.exT>20))&&!saying()) noticeScene(); }
   /* 被動接收 */
-  if(['again','free'].includes(stg)){
+  if(!NO_ARTIFACT&&['again','free'].includes(stg)){
    a.sinceFirst=(a.sinceFirst||0)+dt; stillT=moving||i.f||i.s||i.v||saying()?0:stillT+dt;
    const gap=a.sinceFirst-(a.lastPass||-999), stillOk=()=>gap>8;
    if(gap>8&&!saying()&&!a.got.includes('still')&&F.stillHint&&stillOk()&&stillT>STILL_S) return passive('still');
@@ -9486,7 +9489,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   requestAnimationFrame(()=>tc.classList.add('on')); after(hold,()=>{ tc.classList.remove('on'); after(.7,cb||(()=>{})); }); }
 
  /* ---------- 場景 D：注意到身上的秘器 ---------- */
- function noticeScene(){ setStage('notice'); setLock(true); busy=true;
+ function noticeScene(){ if(NO_ARTIFACT) return endingScene(); setStage('notice'); setLock(true); busy=true;
   tw(cam,'off',2.35,2.6); tw(cam,'CD',5.2,2.6); tw(cam,'CH',.5,2.6); tw(cam,'look',.35,2.6);
   after(1.6,()=>{ tw(spr,'tilt',.12,1.2); tw(spr,'art',1,1.6); SFX.tone(1319,0,1.8,'sine',.012); });
   after(3.4,()=>say(['這是……什麼？'],()=>{
@@ -9537,7 +9540,7 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   after(t+1.6,()=>{ th.classList.add('out'); after(1.4,()=>{ th.classList.remove('on'); after(1.6,()=>{ th.innerHTML=''; cb&&cb(); }); }); }); }
 
  /* ---------- 點擊秘器 ---------- */
- function tapArtifact(){ if(!el||busy||lock) return; const a=S(), stg=a.stage;
+ function tapArtifact(){ if(NO_ARTIFACT||!el||busy||lock) return; const a=S(), stg=a.stage;
   if(stg==='held'){ firstSense(); return; }
   if(!['again','free'].includes(stg)) return;
   a.senseN=(a.senseN||0)+1; if(stg==='again') a.againN=(a.againN||0)+1; idleT=0;
@@ -9588,11 +9591,12 @@ body.in-act1>:not(#act1):not(script):not(style){visibility:hidden}
   if(a.pos) Object.assign(P,a.pos,{vx:0,vy:0,vz:0,vt:0,bank:0}); else Object.assign(P,{x:0,y:3,z:0,yaw:0,vx:0,vy:0,vz:0,vt:0,bank:0});
   /* 從中斷處恢復：演出中途離開的，回到演出的起點或之後的穩定狀態，不會卡住、也不重複已完成的教學 */
   if(a.stage==='first') a.stage='held';
+  if(NO_ARTIFACT&&['notice','held','again'].includes(a.stage)&&!a.ended) a.stage='ending';   /* 舊存檔停在秘器劇情裡：直接接結尾 */
   if(a.stage==='wake'){ wakeScene(); return; }
   el.classList.add('ui'); tw(fadeO,'v',0,1.6);
   if(a.stage==='tut'){ setLock(true); after(1,()=>startTut()); return; }
   if(a.stage==='notice'){ setLock(true); after(1.2,()=>noticeScene()); return; }
-  if(['held','again','free','ending'].includes(a.stage)){ icon().classList.add('show'); if(a.stage==='held') after(1.8,()=>{ if(S().stage==='held'&&!busy) firstSense(); }); }
+  if(!NO_ARTIFACT&&['held','again','free','ending'].includes(a.stage)){ icon().classList.add('show'); if(a.stage==='held') after(1.8,()=>{ if(S().stage==='held'&&!busy) firstSense(); }); }
   if(a.stage==='explore') after(1.8,()=>{ if(S().stage==='explore'&&!busy) noticeScene(); });
   if(a.stage==='ending'){ setLock(true); after(1.2,()=>endingScene()); return; }
   after(.8,()=>setLock(false)); }

@@ -95,7 +95,7 @@ with sync_playwright() as p:
     # ---- 手機
     m=b.new_page(viewport={'width':390,'height':844},is_mobile=True,has_touch=True); m.add_init_script("window.ACT1_TEST=true"); m.goto('http://127.0.0.1:8766/'); m.wait_for_timeout(900)
     m.evaluate(setup({'x':0,'y':8,'z':900,'yaw':0},a2="{firstAnomalySeen:true,firstSwitchCompleted:true,canSwitch:true,freeSwitchTutorialCompleted:true,switchCount:2}")); m.wait_for_timeout(2500)
-    r=m.evaluate("(()=>{ const q=s=>document.querySelector(s).getBoundingClientRect(); const a=q('.a2-moon'),b=q('.a1-icon'),c=q('.a1-ud'),d=q('.a1-stick'),e=q('.a1-top'); return {a:[a.left,a.top,a.right,a.bottom],ok1:a.bottom<b.top&&a.bottom<c.top,ok2:a.left>e.right,w:a.width,kv:getComputedStyle(document.querySelector('.a2-moon .kv')).display}; })()")
+    r=m.evaluate("(()=>{ const q=s=>document.querySelector(s).getBoundingClientRect(); const a=q('.a2-moon'),b=q('.a1-icon'),c=q('.a1-ud'),d=q('.a1-stick'),e=q('.a1-top'); return {a:[a.left,a.top,a.right,a.bottom],ok1:(b.height===0||a.bottom<b.top)&&a.bottom<c.top,ok2:a.left>e.right,w:a.width,kv:getComputedStyle(document.querySelector('.a2-moon .kv')).display}; })()")
     ok('M1 mobile: moon button top-right, no overlap, >=52px, no V hint', r['ok1'] and r['ok2'] and r['a'][2]<=390 and r['a'][1]>=0 and r['w']>=52 and r['kv']=='none', r)
     m.wait_for_function("!ACT1.api.lock",timeout=20000); m.tap('.a2-moon'); ok('M2 mobile tap switches', m.evaluate("new Promise(res=>setTimeout(()=>res(state.world.dimension),7000))")=='moon')
     if SNAP: m.screenshot(path='a2s_mobile.png')
