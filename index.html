@@ -7741,7 +7741,7 @@ const HSDEF=[
  {id:'res-light',scene:'observatory',name:'看不見的光點',at:{x:70,y:34},layer:3,track:false,show:()=>resLightOn(),imp:()=>true,act:()=>resLight()},
  {id:'hap-habitat',scene:'habitat',name:()=>{ const h=hapActive('habitat'); return h?VOY_HAPS[h.id].name:''; },at:HAP_AT.habitat,layer:3,act:()=>hapRun('habitat'),track:false,show:()=>!!hapActive('habitat'),imp:()=>true},
  {id:'hap-observatory',scene:'observatory',name:()=>{ const h=hapActive('observatory'); return h?VOY_HAPS[h.id].name:''; },at:HAP_AT.observatory,layer:3,act:()=>hapRun('observatory'),track:false,show:()=>!!hapActive('observatory'),imp:()=>true},
- {id:'cab-exit',scene:'cab',name:()=>'車門：前往'+LOCATIONS[state.currentLocation].name,shape:'exit',at:{x:8,y:68},act:'exit:',track:false,show:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'&&hasOutside(state.currentLocation)},
+ {id:'cab-exit',scene:'cab',name:()=>'車門：前往'+LOCATIONS[state.currentLocation].name,shape:'exit',at:{x:76,y:50},act:'exit:',track:false,show:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'&&hasOutside(state.currentLocation)},   /* 駕駛室後方右側：下車的門 */
  {id:'cab-rail',scene:'cab',name:'斷掉的光軌',at:{x:50,y:72},layer:4,track:false,show:()=>delayOn('rail'),imp:()=>true,act:()=>railGame()},
  {id:'plat-light',get scene(){ return canOut()?'out:'+state.currentLocation:'habitat'; },name:'月台邊的光',at:{x:72,y:62},layer:3,track:false,show:()=>delayOn('dwell'),imp:()=>true,act:()=>platformLook()},
  {id:'cab-disc',scene:'cab',name:'控制晶盤',at:{x:50,y:49},layer:3,act:()=>discPanel(),track:false},
@@ -7854,7 +7854,7 @@ const PANO_ENTRY={};
 const HS_SCENE=()=>state.currentPhase==='outside'?'out:'+state.currentLocation:state.currentCarriage==='memory'&&state.gRoom?'guard':state.currentCarriage;
 const hsName=h=>{ if(typeof h.act==='string'&&h.act.startsWith('go:')){ const c=h.act.slice(3); if(CARRIAGES[c]&&TRAIN.includes(c)) return `前往第${TRAIN.indexOf(c)+1}節${CARRIAGES[c].name}`; } return typeof h.name==='function'?h.name():h.name; };
 const hsVer=h=>h.ver?String(h.ver()):'1';
-const VIEW_BACK=['cab-back','hab-exit','hab-back','obs-front','mem-rear','nat-door','mem-seal'], VIEW_BOTH=[];
+const VIEW_BACK=['cab-back','cab-exit','hab-exit','hab-back','obs-front','mem-rear','nat-door','mem-seal'], VIEW_BOTH=[];
 /* ================================================================
    列車成長與修復：列車是一個會甦醒的古老生命載體
    六個方向的進度都由既有的紀錄推導（不需要重新收集），只記「已經到過的最高階段」，不會退回去
