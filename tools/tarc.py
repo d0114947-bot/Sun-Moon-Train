@@ -24,7 +24,7 @@ with sync_playwright() as p:
         return seen
     J=lambda s:'|'.join(s)
     ev(BASE+pax(['aelis','strider'])+"state.journeyCount=3;state.chap={said:{},arr:{},ended:[],shown:[1],fl:[],heart:{},legacy:0,crys1:1};state.currentCarriage='habitat';save();PANO.active=null;RUNNING=true;render()"); W(600)
-    ok("A1 passengers with story lines (5 early + 5 late)", ev("ARC_IDS.length")==10)
+    ok("A1 passengers with story lines (5 early + 10 late)", ev("ARC_IDS.length")==15)
     ok('A2 first part ready, passenger glows', ev("arcWait('aelis')") and ev("HSDEF.find(h=>h.id==='hab-p-aelis').imp()"))
     ok('A3 not before its chapter', not ev("arcWait('strider')"))
     ev("talk('aelis')"); s=drain()

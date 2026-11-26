@@ -1132,6 +1132,7 @@ canvas.streaks{position:absolute;inset:0;width:100%;height:100%;background:radia
 .plate.big{aspect-ratio:3/4;width:min(100%,280px);margin:4px auto 0}
 .caption{text-align:center;font-size:13px;color:var(--ink-3)!important;letter-spacing:.12em;margin:4px auto!important}
 .studies{display:flex;justify-content:center;gap:22px;margin-top:10px}
+.plate.pose2{display:flex;justify-content:center;margin-top:12px}.plate.pose2 img{max-width:78%;max-height:150px;object-fit:contain;filter:sepia(.25) saturate(.85)}
 .studies .sk{width:70px;height:90px;transform:rotate(var(--rot));filter:grayscale(1) sepia(.7) contrast(1.7) brightness(1.06);mix-blend-mode:multiply;opacity:.55}
 .studies .sk>*{width:100%;height:100%;object-fit:contain}
 .dl{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:4px 12px;font-size:14px;margin:8px 0}
@@ -2706,7 +2707,7 @@ const PASSENGERS = {
  },
  /* 燼風帆獸：去背後的動態立繪。資料來自設定稿。 */
  cinder:{name:'燼風帆獸',type:'other',species:'Cinder-Sail Courser',zone:'crystal',spot:{x:67,y:58},spriteH:34,ar:'1268/697',color:'radial-gradient(circle,#fff1d6,#c79a5e)',
-  image:'cinder.webp',still:'cinder-still.webp',studies:['cinder-s1.webp','cinder-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  image:'cinder.webp',still:'cinder-still.webp',extra:['cinder-pose2.webp'],studies:['cinder-s1.webp','cinder-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
   homeText:'烈日沙漠（The Blazing Sands）',
   intro:'在列車駛向日界時，乘著熾熱光線登車的燼風帆獸。修長纖細的沙褐色身軀，背上兩片半透明的帆在光下透出琥珀色。',
   bio:'在烈日沙漠的邊緣，商隊正頂著熱浪緩慢前行。突然間，領隊的嚮導停下腳步，指向遠處的沙丘。一隻燼風帆獸正以一種不可思議的姿態出現。牠的四肢幾乎懸空，輕盈地在沙脊上滑行。陽光透過牠的背帆，呈現出琥珀色的光澤。牠似乎察覺到了商隊，轉過頭，那雙巨大的眼睛好奇地看著他們，隨即一個華麗的轉身，尾舵一擺，便消失在熱浪之中。<br>年輕的學徒驚訝地問道：「那是龍嗎？」<br>嚮導笑著搖頭：「不，孩子，那是沙漠的靈魂。牠們不需要火焰，因為牠們本身就擁有了太陽的力量。」',
@@ -3211,6 +3212,96 @@ const PASSENGERS = {
    {lines:['（牠把身體直直地立起來，一動也不動，像一朵普通的花。）','……有時候，我會這樣站著。假裝自己，還是一朵花。','游太久了，會有點想家。','花圃裡的大家，現在大概已經縮回種子了吧。','……我不後悔。可是，有時候，我會想知道，當一顆種子，是什麼感覺。'],choices:[{t:'你可以兩個都是。',r:'……兩個都是？（牠的花瓣，慢慢地打開了。）……你這個人，說話好奇怪。可是，我喜歡。'},{t:'種子，也是一個開始。',r:'……開始。不是結束。……嗯。我記住了。'}]}
   ],
   farewell:['（逆綻花鰻在車門邊停下來，花瓣在風裡輕輕顫動。）……我想回去了。回花圃。','我要告訴大家，往外面長，也沒有那麼可怕。','……不過，我還是不要縮回去。我要當，第一朵游回家的花。再見。']
+ },
+ voidroot:{name:'寂絡垂靈',type:'domain',species:'Silent-Root Drifter',home:'silentVoid',zone:'veil',spot:{x:84,y:22},spriteH:30,ar:'777/900',color:'radial-gradient(circle,#dfe8f6,#5a70a0)',
+  image:'voidroot.webp',still:'voidroot-still.webp',studies:['voidroot-s1.webp','voidroot-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'寂滅虛空・什麼都沒有的地方',
+  intro:'列車停靠在寂滅虛空時，車窗外什麼都沒有。只有一團灰藍色的細根，像倒過來的樹，從黑暗裡慢慢垂下來，輕輕碰了碰車窗。',
+  bio:'寂滅虛空什麼都沒有：沒有光，沒有聲音，也沒有地面。寂絡垂靈是一團懸在虛空裡的根——沒有樹，只有根。牠的根往四面八方伸出去，碰到的東西，就會被牠記住形狀。很久以前，牠碰過整整一個世界；大熄滅之後，那個世界消失了，牠的根卻還保持著那個世界的形狀，一直張開著，不肯收回來。',
+  field:{alias:'虛空的根、沒有樹的根',cls:'界域生命・虛空根系',danger:'低（根很冷，碰到會凍一下）',rarity:'極稀有',
+   looks:'<b>根冠：</b>頭頂是一圈短短的根芽，像一頂花冠，末端有小小的白點。<br><b>根臂：</b>左右各伸出一束長根，像張開的手臂，末端分岔。<br><b>垂根：</b>身體下方垂著幾十條細長的灰藍色根，最長的比牠的身體長三倍，一動也不動。',
+   habitat:'寂滅虛空，沒有地面、沒有光的地方。',
+   habits:[['飲食','以虛空裡偶爾漂過的微光為食，可以很久很久不吃東西。'],['舉止','幾乎不動。根一直張開著，保持著某個形狀。'],['說話','說話非常慢，常常說到一半，就去聽什麼了。']],
+   abilities:[['記形','根碰過的東西，形狀會被牠永遠記住。'],['撐界','張開的根，能撐住快要塌下來的空間。']]},
+  stay:3,
+  talks:[
+   {lines:['（靜謐結界的上方，垂著一團灰藍色的細根。你靠近時，最下面的一根，輕輕碰了碰你的肩膀。）','……有形狀。','你，有形狀。……你的形狀，很暖。','在我住的地方，什麼都沒有形狀。沒有光，沒有聲音，沒有地。','我已經，很久沒有碰到東西了。碰到了，就記住了。','……這輛車，到處都是形狀。我的根，有點忙。'],choices:[{t:'你在記我的形狀？',r:'嗯。碰到了，就記住了。……你的形狀，很暖。'},{t:'什麼都沒有的地方？',r:'沒有光，沒有聲音，沒有地。……只有我，和我的根。'}]},
+   {lines:['（牠的根張開成一個奇怪的形狀，像山，像房子，也像很多人站在一起。）','這是一個世界的形狀。','很久以前，我碰過它。整整一個。','大熄滅的時候，它消失了。……可是我的根，還記得。','所以我不收回來。收回來，它就真的，沒有了。','我是最後一個記得它的。'],choices:[{t:'一直張著，不累嗎？',r:'……累。可是，我是最後一個記得它的。'}]},
+   {lines:['（牠最下面的根，慢慢地，彎了一下。）','在這輛車上，我碰到了好多新的形狀。','溫室的花，展望台的欄杆，大家的手。','……根，好像有一點點，不夠用了。','我在想，是不是可以，收回一根。用來記新的形狀。'],choices:[{t:'記新的，不代表忘記舊的。',r:'（根輕輕晃了一下。）……不代表。嗯。我，試試看。'},{t:'慢慢來就好。',r:'嗯。慢慢的。我很會慢。'}]}
+  ],
+  farewell:['（寂絡垂靈的根，收回了一半。剩下的一半，還張著那個世界的形狀。）','……我學會了。一半記舊的，一半記新的。','我要回虛空了。那裡太空了，需要一點形狀。……你們的形狀，我帶走了。']
+ },
+ husk:{name:'殼瞳守夜者',type:'mind',species:'Husk-Eyed Nightwarden',home:'timeriftSea',zone:'rest',spot:{x:18,y:46},spriteH:36,ar:'491/900',color:'radial-gradient(circle,#c8b8c8,#3a2e3e)',
+  image:'husk.webp',still:'husk-still.webp',studies:['husk-s1.webp','husk-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'時隙之海・夜裡的燈塔岩',
+  intro:'列車停靠在時隙之海時，岸邊的燈塔岩上站著一個高高的身影。牠的外殼裂開了一道口子，殼上的兩隻大眼睛，一直盯著海面。看見列車，牠慢慢地，從岩石上走了下來。',
+  bio:'時隙之海的夜裡，浪會把「還沒有發生的事」沖上岸。殼瞳守夜者是海邊的守夜人——牠不睡覺，殼上的兩隻眼睛一隻看過去、一隻看未來，替還在睡的生命，把危險先看一遍。牠的殼頂裂開了，是很久以前替一艘小船擋下一道「未來的浪」時裂的。從那以後，牠看未來的那隻眼睛，就常常看到同一個畫面：一列白色的車，從海上開過。',
+  field:{alias:'燈塔岩的守夜人、不睡的殼',cls:'意念生命・守望者',danger:'中（看起來很可怕，其實只是在看）',rarity:'稀有',
+   looks:'<b>外殼：</b>灰黑色的硬殼像一件長袍，從肩膀一直包到腳邊，殼頂裂開了一道口子。<br><b>殼眼：</b>殼的兩側各有一隻大眼睛，一隻紫色，一隻灰色，很少眨。<br><b>身體：</b>殼裡面是暗紅色、布滿細絲的身體；兩條長腿很結實，腳趾像鳥爪。<br><b>頭飾：</b>頭頂兩側伸出灰白色的薄膜，像破掉的翅膀。',
+   habitat:'時隙之海的海岸，夜裡浪最大的岩石上。',
+   habits:[['飲食','只吃浪花帶上岸的苦苔。吃得很少。'],['舉止','不睡覺。總是站在高的地方，兩隻眼睛輪流看。'],['說話','說話很短，很直。說完會沉默很久。']],
+   abilities:[['雙瞳','一隻眼睛看得見剛剛過去的事，另一隻看得見快要發生的事。'],['擋浪','殼非常硬，連「未來的浪」也擋得住。']]},
+  stay:3,
+  talks:[
+   {lines:['（休息區的角落，站著一個高高的、穿著硬殼的身影。殼上的兩隻眼睛，同時轉過來看你。）','……不要怕。我只是在看。','我在海邊，看了很久的夜。','這裡沒有浪。……可是，還是有夜。所以我在看。','我不睡。我睡了，就沒有人看了。','你們睡覺的時候，我會醒著。'],choices:[{t:'你不睡覺嗎？',r:'不睡。……我睡了，就沒有人看了。'},{t:'謝謝你。',r:'……（兩隻眼睛，同時眨了一下。）'}]},
+   {lines:['（牠指了指自己殼上的眼睛。）','這一隻，看過去。這一隻，看未來。','時隙之海的浪，會把還沒有發生的事，沖上岸。','我替還在睡的大家，先看一遍。看到危險，就擋。','……殼頂的裂口，是擋一道未來的浪，裂的。'],choices:[{t:'很痛吧？',r:'痛過。……可是那艘小船，到岸了。'}]},
+   {lines:['（看未來的那隻眼睛，一直盯著車窗外。）','……我常常看到同一個畫面。','一列白色的車，從海上開過。車窗裡，亮著很多燈。','以前，我不知道那是什麼。','現在知道了。……是這一列。','我看到的，是你們。','……我想，在畫面裡面。不只是看。'],choices:[{t:'畫面裡，我們好嗎？',r:'……很亮。燈很多。比現在，還多。'},{t:'所以你上車了？',r:'嗯。我想，在畫面裡面。不只是看。'}]}
+  ],
+  farewell:['（殼瞳守夜者站在車門邊，兩隻眼睛，一起看著你。）……我看到了，下一個畫面。','燈塔岩上，有一艘小船在等。……我要回去，站在那裡。','你們睡覺的時候，我還是會醒著。……在很遠的地方。']
+ },
+ jadewing:{name:'翠翅逆蜓',type:'other',species:'Jadewing Reverse Sprite',home:'reverseRealm',zone:'rings',spot:{x:62,y:18},spriteH:28,ar:'820/900',color:'radial-gradient(circle,#c8f0e0,#2e7a68)',
+  image:'jadewing.webp',still:'jadewing-still.webp',studies:['jadewing-s1.webp','jadewing-s2.webp'],sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'逆生之境・倒著吹的風裡',
+  intro:'列車停靠在逆生之境時，一陣倒著吹的風，把一隻翠綠色的小生命吹進了車廂。牠有四片透明的翅膀和一張老爺爺一樣的臉，落地以後，打了一個很大的噴嚏。',
+  bio:'在逆生之境，生命是從老開始的。翠翅逆蜓一出生就滿臉皺紋，翅膀破破的，飛不太動；每過一個季節，牠就年輕一點，翅膀就完整一點。等到最年輕、飛得最快的那一天，牠就會變成一顆露珠，消失在早晨。牠是逆生之境裡最愛說故事的生命——因為牠是從「一輩子的最後」開始活的，所以牠記得所有的結局，卻一直在找故事的開頭。',
+  field:{alias:'倒著長的蜻蜓、說結局的人',cls:'異界生命・逆生羽蟲',danger:'無（很吵）',rarity:'少見',
+   looks:'<b>翅膀：</b>四片透明的長翅，翅脈像細細的葉脈，邊緣有一點破損。<br><b>身體：</b>翠綠色的細長身體，覆著鱗片和蓬鬆的絨毛。<br><b>臉：</b>一張皺皺的、像老爺爺一樣的臉，鼻子尖尖的，耳朵像小小的葉子。<br><b>手腳：</b>四肢細長，末端是彎彎的爪子，飛的時候會縮起來。',
+   habitat:'逆生之境，倒著吹的風裡。',
+   habits:[['飲食','喝花苞縮回去之前的最後一滴蜜。'],['舉止','停不下來，在車廂裡飛來飛去。常常打噴嚏。'],['說話','很愛說話。說故事的時候，總是從「最後」開始說。']],
+   abilities:[['逆風','能乘著倒吹的風飛行，連往回吹的風也駕得住。'],['記終','記得每一個故事的結局，就算還沒有發生。']]},
+  stay:3,
+  talks:[
+   {lines:['（懸浮棲息環的上面，有一個翠綠色的小影子飛來飛去。看到你，牠停在你面前，打了一個大噴嚏。）','哈啾！……啊，失禮了。這裡的風，是往前吹的。我還不習慣。','你好你好！我是從最後開始活的。','我出生的時候，就是一個老爺爺了。每過一個季節，我就年輕一點。','你看，我的翅膀，比上個月完整了喔。'],choices:[{t:'從最後開始活？',r:'對呀！逆生之境的大家都是。所以我們最懂結局了。'},{t:'你的臉好像老爺爺。',r:'因為我現在，還是有一點老嘛。再過幾個季節，就會變帥了。'}]},
+   {lines:['（牠停在溫室的葉子上，翅膀一開一合。）','要不要聽故事？我很會說故事。','不過，我說的故事，都是從結局開始的。','「從此，他們再也沒有見面。可是，每年花開的時候，都會想起對方。」……這是一個很好的結局吧？','……可是，我一直不知道，它的開頭是什麼。我記得所有的結局，卻找不到開頭。'],choices:[{t:'也許開頭，在旅行裡。',r:'旅行裡……！（牠的翅膀一下子全張開了。）那我要好好找！'}]},
+   {lines:['（牠飛得很慢，在你的肩膀上停了下來。）','……我跟你說一個秘密。','等我變成最年輕、飛得最快的那一天，我就會變成一顆露珠。','在早晨，消失。','大家都這樣。我不害怕。……只是，我想在那之前，找到一個故事的開頭。','一個，我自己的。'],choices:[{t:'這輛車，可以當你的開頭。',r:'……（牠很安靜地，在你肩膀上坐了好久。）……好。那這個故事，就從今天開始。'},{t:'我陪你找。',r:'哈啾！……啊，不是感冒。是很高興。'}]}
+  ],
+  farewell:['（翠翅逆蜓停在車門邊，翅膀已經完整得一點破損都沒有。）……你看！我變年輕了好多。','我想回去了。回逆生之境，把我的故事，說給大家聽。','這一次，我要從開頭說：「有一天，一陣風，把我吹上了一列白色的車……」']
+ },
+ witherwalk:{name:'枯枝踽行者',type:'other',species:'Witherbough Wanderer',home:'silentVoid',zone:'moss',spot:{x:22,y:64},spriteH:36,ar:'551/900',color:'radial-gradient(circle,#d8dcc0,#6a6248)',
+  image:'witherwalk.webp',still:'witherwalk-still.webp',studies:['witherwalk-s1.webp','witherwalk-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'寂滅虛空・最後一片森林的影子',
+  intro:'列車停靠在寂滅虛空時，月台上有一個彎著腰的身影，正一步一步走過來。牠的背上長著光禿禿的枝枒，身上長滿了圓圓的苔瘤，每走一步，腳邊就會冒出一點小小的根。',
+  bio:'寂滅虛空裡，曾經有一片森林。大熄滅那一年，森林的樹一棵一棵倒下，化成了灰。只有一棵樹沒有倒——它把根從地裡拔出來，站了起來，開始走路。那就是枯枝踽行者。牠背上的枝枒，已經很多很多年沒有長過葉子了。牠一直在虛空裡走，想找一個可以重新種下自己的地方。',
+  field:{alias:'走路的樹、最後一片森林',cls:'異界生命・行走樹人',danger:'低（動作很慢；但抓住的東西不太會放開）',rarity:'極稀有',
+   looks:'<b>枝枒：</b>背上長著好幾根乾枯、光禿禿的樹枝，向上伸得很高。<br><b>苔瘤：</b>肩膀和背上長滿了一顆一顆圓圓的瘤，上面覆著薄薄的綠苔。<br><b>臉：</b>樹皮一樣粗糙的臉，一雙圓圓的眼睛，表情總是有點憂鬱。<br><b>手腳：</b>四肢又細又長，手指和腳趾像樹根，走過的地方會留下細細的根鬚。',
+   habitat:'寂滅虛空，曾經是森林的地方。',
+   habits:[['飲食','把腳趾的根伸進土裡喝水。在車上，牠最喜歡溫室的土。'],['舉止','走得很慢，背總是彎著。停下來的時候，會把根伸進地板的縫裡。'],['說話','說話很慢，聲音像風吹過樹枝。']],
+   abilities:[['紮根','只要把根伸進土裡，就能感覺到附近所有植物的狀況。'],['苔息','背上的苔瘤會吐出很細的孢子，讓枯掉的植物慢慢回過神來。']]},
+  stay:3,
+  talks:[
+   {lines:['（自然棲台的苔蘚上，蹲著一個彎著腰的身影。牠的腳趾，悄悄地伸進了苔蘚裡。）','……這裡的土，是活的。','好久，好久，沒有踩到活的土了。……它會回答我。','我是從一片森林來的。……曾經是森林的地方。','現在，那裡只剩下我。'],choices:[{t:'只剩下你？',r:'嗯。大家都倒下了。只有我，站了起來。'},{t:'你喜歡這裡的土嗎？',r:'……喜歡。它會回答我。'}]},
+   {lines:['（牠背上的枯枝，在風裡輕輕地響。）','大熄滅那一年，森林的樹，一棵一棵倒下了。','我不想倒。所以我把根，從地裡拔了出來。','拔出來，好痛。……可是，我站起來了。','然後我就一直走。走了很多很多年。','找一個地方。一個，可以重新種下自己的地方。'],choices:[{t:'你要走去哪裡？',r:'……找一個地方。一個，可以重新種下自己的地方。'}]},
+   {lines:['（牠低著頭，看著溫室的方向。）','……你們的溫室裡，有很多小小的芽。','我把根伸過去了。它們，在長。很努力地長。','我背上的枝，已經很多年，沒有長葉子了。','……可是昨天晚上，我覺得，有一個地方，癢癢的。'],choices:[{t:'也許是要長新芽了。',r:'……新芽。（牠的眼睛，眨了很久。）……我已經忘了，那是什麼感覺了。'},{t:'溫室的土，隨時歡迎你。',r:'……謝謝。我會小心，不踩到小芽。'}]}
+  ],
+  farewell:['（枯枝踽行者站在車門邊。背上最高的那一根枝，長出了一片小小的綠葉。）','……你看。我的葉子。','我想回去了。回到那片森林的地方。……把自己，種下去。','以後，那裡會再有森林的。……第一棵樹，會記得這輛車。']
+ },
+ silvereye:{name:'銀瞳長肢獸',type:'domain',species:'Silver-Eyed Longlimb',home:'timeriftSea',zone:'crystal',spot:{x:64,y:44},spriteH:22,ar:'900/384',color:'radial-gradient(circle,#c8ccd0,#2a2e30)',
+  image:'silvereye.webp',still:'silvereye-still.webp',studies:['silvereye-s1.webp','silvereye-s2.webp'],land:true,sprite:true,art:()=>ART.portrait.unknown(),
+  homeText:'時隙之海・海底的時間裂縫',
+  intro:'列車停靠在時隙之海時，海面下有一個銀色的光點，一直跟著列車。光點浮出水面，原來是一隻細長的黑色生命，頭上只有一顆銀色的大眼睛。牠用長長的手腳，爬上了車廂的外牆。',
+  bio:'時隙之海的海底，有一道很深的裂縫，裡面的時間是靜止的。銀瞳長肢獸就住在那道裂縫的邊緣，用唯一的一隻銀色眼睛，看著裂縫裡停住的東西：一條停在半空的魚，一顆停在落下途中的雨滴，一個永遠不會結束的笑容。牠的眼睛像一面鏡子，被牠看過的東西，會在牠眼裡留下一個小小的倒影。最近，裂縫開始變大了，停住的東西，一個一個被吸進更深的地方。',
+  field:{alias:'裂縫的看守、海底的鏡子',cls:'界域生命・時隙爬行者',danger:'中（爬得非常快；長尾巴會不小心掃到東西）',rarity:'極稀有',
+   looks:'<b>銀瞳：</b>頭部只有一顆圓圓的銀色眼睛，像一面小鏡子，周圍長著一圈細長的黑色睫毛。<br><b>身體：</b>又細又長的黑色身體，皮膚濕濕亮亮的，帶著一點墨綠色。<br><b>手腳：</b>四肢非常細長，關節很多，腳掌有吸盤，能爬在任何東西上。<br><b>尾巴：</b>一條比身體還長的細尾巴，末端像鞭子一樣細。',
+   habitat:'時隙之海的海底，時間靜止的裂縫邊緣。',
+   habits:[['飲食','以裂縫裡溢出來的「停住的時間」為食，一次只吃一點點。'],['舉止','喜歡倒掛或貼在牆上，用銀瞳盯著一個地方看很久。'],['說話','說話很少，喜歡用倒影給你看。']],
+   abilities:[['鏡瞳','看過的東西會在眼睛裡留下倒影，可以重新放給別人看。'],['靜步','爬行時完全沒有聲音，連時間都不會被驚動。']]},
+  stay:3,
+  talks:[
+   {lines:['（晶石能量平台旁邊的牆上，貼著一個細長的黑色身影。頭上的銀色眼睛，慢慢轉過來看著你。）','……你看。','（你在牠的銀色眼睛裡，看見了一條停在半空中的魚。）','這是，我家的魚。','我家的裂縫裡，時間不會走。牠停在那裡，很久很久了。'],choices:[{t:'牠為什麼停住了？',r:'我家的裂縫裡，時間不會走。……所以，牠一直在游，又一直沒有游。'},{t:'你的眼睛好漂亮。',r:'……（牠的眼睛裡，出現了你的倒影。）你也是。'}]},
+   {lines:['（牠倒掛在天花板上，長尾巴垂下來，輕輕晃著。）','我住在，海底的裂縫邊。','裂縫裡的東西，都停住了。一滴雨。一片葉子。一個笑容。','我每天，看著它們。看過的，會留在我的眼睛裡。','……我是它們的鏡子。如果我不看，就沒有人知道，它們在那裡。'],choices:[{t:'你一直守著它們。',r:'嗯。……一直。'}]},
+   {lines:['（牠的銀瞳裡，閃過好幾個小小的倒影，一個接一個消失。）','……最近，裂縫變大了。','停住的東西，一個一個，被吸進更深的地方。','我抓不住。我的手很長，還是抓不住。','我的眼睛裡，還留著它們的倒影。……可是，倒影，越來越淡了。'],choices:[{t:'把倒影給我看，我幫你記住。',r:'（牠把頭靠過來，銀瞳裡，一個一個倒影亮了起來。）……謝謝。現在，有兩個人記得了。'},{t:'我們會想辦法。',r:'……嗯。這輛車，很會想辦法。我看過。'}]}
+  ],
+  farewell:['（銀瞳長肢獸貼在車門上，銀色的眼睛裡，倒映著整輛列車。）','……裂縫，安靜下來了。我要回去，繼續看。','我的眼睛裡，多了一個倒影。是這輛車。……它不會變淡的。']
  }
 };
 /* 圖鑑中預留的未知生命（輪廓） */
@@ -3361,6 +3452,11 @@ const EVENTS = {
  board_pulsewyrm:{trigger:'arrive',loc:'boundlessCorridor',need:()=>!state.discoveredLifeforms.includes('pulsewyrm')&&state.journeyCount>=16,run:n=>boarding('pulsewyrm','列車停靠的時候，車廂裡的燈一盞一盞閃了一下。一條發著藍光的細長身影，從牆和牆之間的縫裡鑽出來，沿著燈，游進了棲息車廂。',n)},
  board_rivertrunk:{trigger:'arrive',loc:'reverseRealm',need:()=>!state.discoveredLifeforms.includes('rivertrunk')&&state.journeyCount>=16,run:n=>boarding('rivertrunk','列車停靠的時候，月台邊的河水正往上流。一隻圓滾滾的深藍色生命，把發光的長鼻子從河裡抽出來，慢吞吞地，走進了棲息車廂。',n)},
  board_bloomeel:{trigger:'arrive',loc:'reverseRealm',need:()=>!state.discoveredLifeforms.includes('bloomeel')&&state.journeyCount>=16,run:n=>boarding('bloomeel','列車停靠的時候，月台邊的花一朵一朵縮回了花苞。只有一朵沒有——它從花圃裡游出來，拖著一條閃著星光的身體，游進了棲息車廂。',n)},
+ board_voidroot:{trigger:'arrive',loc:'silentVoid',need:()=>!state.discoveredLifeforms.includes('voidroot')&&state.journeyCount>=16,run:n=>boarding('voidroot','列車停靠的時候，車窗外什麼都沒有。一團灰藍色的細根，從黑暗裡慢慢垂下來，碰了碰車窗——然後，順著窗縫，滑進了棲息車廂。',n)},
+ board_husk:{trigger:'arrive',loc:'timeriftSea',need:()=>!state.discoveredLifeforms.includes('husk')&&state.journeyCount>=16,run:n=>boarding('husk','列車停靠的時候，岸邊的燈塔岩上，有兩點光一紫一灰。一個高高的、穿著硬殼的身影，從岩石上走下來，走進了棲息車廂。',n)},
+ board_jadewing:{trigger:'arrive',loc:'reverseRealm',need:()=>!state.discoveredLifeforms.includes('jadewing')&&state.journeyCount>=16,run:n=>boarding('jadewing','列車停靠的時候，一陣倒著吹的風，把一隻翠綠色的小生命吹進了車廂。牠在棲息車廂裡轉了三圈，打了一個大噴嚏。',n)},
+ board_witherwalk:{trigger:'arrive',loc:'silentVoid',need:()=>!state.discoveredLifeforms.includes('witherwalk')&&state.journeyCount>=16,run:n=>boarding('witherwalk','列車停靠的時候，月台上有一個彎著腰的身影，一步一步走了過來。牠背上的枯枝輕輕地響，走進了棲息車廂。',n)},
+ board_silvereye:{trigger:'arrive',loc:'timeriftSea',need:()=>!state.discoveredLifeforms.includes('silvereye')&&state.journeyCount>=16,run:n=>boarding('silvereye','列車停靠的時候，海面下有一個銀色的光點，一直跟著列車。光點浮出水面，一個細長的黑色身影，沿著車廂外牆，爬進了棲息車廂。',n)},
  board_sola:{trigger:'arrive',loc:'starIslands',auto:true,run:n=>boarding('sola','列車停靠的時候，一陣潮水般的星光拍上車窗。一團會發光的生命順著光，輕輕滑進了車廂。',n)},
  voyage_symbol:{trigger:'voyage',auto:true,run:done=>{addClue('clue_voyage');cine(['列車穿越界壁的那一刻，','車廂連接處浮現一列從未見過的符號。','它亮了七次心跳的時間，然後熄滅。'],done,'voyage-symbol.jpg');}},
  
@@ -3534,6 +3630,11 @@ const KEEPS={
  pulsewyrm:['一節光點','#9cc4ff','從脈光遊脊身上落下的一顆小光點。握在手心，會一下一下地跳，像心跳。'],
  rivertrunk:['倒流的水滴','#6fe0c0','一顆封在玻璃珠裡的水滴。把珠子倒過來，水滴會往上爬。'],
  bloomeel:['不謝的花瓣','#a8e8c8','一片綠色的花瓣，邊緣有一點紫。放了很久，也不會乾掉。'],
+ voidroot:['一截寂根','#b8c8e0','一小段灰藍色的細根，冰冰涼涼的。握在手裡，它會慢慢彎成你手心的形狀。'],
+ husk:['殼眼的碎片','#8a7a8a','一小片灰黑色的硬殼，上面有一道淡紫色的弧線。對著夜空看，會看到一點點明天。'],
+ jadewing:['一片翠翅','#a8e0c8','一片透明的翅膀，翅脈是翠綠色的。對著光，能看到上面寫滿了很小很小的字。'],
+ witherwalk:['第一片葉子','#a8c880','枯枝踽行者背上長出的第一片葉子，壓在書頁裡。過了很久，還是綠的。'],
+ silvereye:['銀色的倒影','#c8ccd4','一顆小小的銀色玻璃珠。看進去，裡面有一條停在半空的魚，在慢慢地游。'],
  dawnsail:['霞帆骨','#f4c4cf','一根撐起鰭帆的細骨。對著日出舉起來，會映出一片小小的粉色霞光。'],
  grinfox:['星形墜飾的仿品','#c9a978','牠用影子捏出來的一枚小星星，送給你。很黑的時候，它會微微發亮。'],
  skyfox:['藍羽','#7ccbff','一根末端發著藍光的羽毛。放在枕頭下面，就不會做惡夢。'],
@@ -3715,6 +3816,11 @@ const HOME_C={
  pulsewyrm:{name:'脈絡座',S:[[60,210],[120,180],[170,140],[220,110],[280,90],[340,60],[170,60],[300,170]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,6],[3,7]],point:'那一條彎彎的、帶著分岔的線，像一條會發光的神經。迴廊裡的生命，叫它「脈絡座」。',story:['脈絡座。……連起來了。','我小時候，以為它是另一條我。','……原來是星星。星星，也在傳光。']},
  rivertrunk:{name:'溯河座',S:[[80,220],[130,180],[170,150],[200,110],[240,80],[300,60],[230,170],[300,190]],E:[[0,1],[1,2],[2,3],[3,4],[4,5],[2,6],[6,7]],point:'那條一直往上爬的線，是一條往天上流的河。逆生之境的人，叫它「溯河座」。',story:['溯河座……你連好了。','在家的時候，河就是往那個方向流的。流到天上，變成星星。','……原來，河流到最後，會變成星星。那我也不怕了。']},
  bloomeel:{name:'逆綻座',S:[[200,50],[150,100],[250,100],[200,130],[200,180],[180,230],[220,230]],E:[[0,1],[0,2],[1,3],[2,3],[3,4],[4,5],[4,6]],point:'那幾顆星，像一朵花，下面拖著一條長長的尾巴。逆生之境的人，叫它「逆綻座」。看見它的那一年，花會開得特別久。',story:['逆綻座……你、你找到了。','我在花圃的時候，每天晚上都看著它。……我就是照著它，長出身體的。','原來它還在。……那我，也可以一直在。']},
+ voidroot:{name:'垂根座',S:[[200,50],[140,90],[260,90],[200,110],[170,170],[200,210],[230,170]],E:[[0,3],[1,3],[2,3],[3,4],[3,5],[3,6]],point:'那幾顆星，像一團往下垂的根。寂滅虛空還有光的時候，大家叫它「垂根座」。',story:['垂根座……你連起來了。','虛空還有光的時候，我每天都看著它。','……原來它還在。我的根，記得它的形狀。']},
+ husk:{name:'燈塔座',S:[[200,40],[200,90],[180,140],[220,140],[180,200],[220,200],[140,60],[260,60]],E:[[0,1],[1,2],[1,3],[2,4],[3,5],[4,5],[0,6],[0,7]],point:'那幾顆星，像一座燈塔，頂上還在發光。時隙之海的漁人，叫它「燈塔座」。',story:['燈塔座。……你找到了。','我在岩石上守夜的時候，它也在守。','……原來，天上也有一個不睡的。']},
+ jadewing:{name:'逆蜓座',S:[[120,140],[180,130],[240,130],[300,120],[200,70],[260,70],[200,190],[260,190]],E:[[0,1],[1,2],[2,3],[1,4],[2,5],[1,6],[2,7]],point:'那一條線加上四片翅膀，像一隻蜻蜓。逆生之境的人說，它是倒著飛的，叫它「逆蜓座」。',story:['逆蜓座！你找到了！','我出生的時候，第一眼看到的，就是它。','……它是從結局飛回來的。跟我一樣。']},
+ witherwalk:{name:'古林座',S:[[100,200],[140,140],[120,90],[200,200],[220,130],[200,70],[300,200],[280,120]],E:[[0,1],[1,2],[3,4],[4,5],[6,7],[1,4],[4,7]],point:'那三排往上長的星，像三棵樹。寂滅虛空還是森林的時候，大家叫它「古林座」。',story:['……古林座。','森林還在的時候，每一棵樹，都看得到它。','它還在。……那森林，也還可以再長出來。']},
+ silvereye:{name:'銀瞳座',S:[[200,120],[160,100],[240,100],[160,140],[240,140],[300,80],[340,60]],E:[[0,1],[0,2],[0,3],[0,4],[2,5],[5,6]],point:'中間那顆特別亮的星，像一隻眼睛，後面拖著一條長尾巴。時隙之海的人叫它「銀瞳座」。',story:['銀瞳座。……你找到了。','它也在看。看所有停住的東西。','……原來，我不是唯一一個鏡子。']},
  dawnsail:{name:'領航座',S:[[60, 180], [130, 150], [200, 130], [270, 150], [340, 180], [200, 80], [200, 40]],E:[[0, 1], [1, 2], [2, 3], [3, 4], [2, 5], [5, 6]],
   point:'那兩邊張開的，是翅膀。中間往上的，是帆。……渡守叫它「領航座」。列車出發前，都會先找它。',
   story:['領航座。你連好了。','……渡守找它，我們飛在它下面。','原來，列車一直都知道怎麼找到我們。']},
@@ -3790,6 +3896,11 @@ const REQ={
  pulsewyrm:{kind:'sky',sky:'aurora',goal:'極光出現的時候，邀牠到展望台一起看',ask:['……聽說，天上有一種光，會像觸鬚一樣，在空中擺動。','叫做極光。','如果極光出來了，可以帶我去看嗎？我想知道，它有沒有在傳什麼話。'],done:[['pulsewyrm','（脈光遊脊把所有的觸鬚都伸向天空。極光擺動的時候，牠背上的光點，一節一節地跟著亮。）'],['pulsewyrm','……它在說話。說，「還亮著」。'],['pulsewyrm','我也回答了。……我也，還亮著。']]},
  rivertrunk:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……我聽說，天上有一種雨，會往下掉。','叫做流星雨。','我從來沒有看過往下掉的雨。如果有流星雨，可以帶我去看嗎？'],done:[['rivertrunk','（溯泉長吻獸把長鼻子和四根觸角，全部舉向天空。流星一顆一顆往下掉。）'],['rivertrunk','……往下掉。真的往下掉了。'],['rivertrunk','我嚐到了。……是很遠很遠的地方的味道。好甜。']]},
  bloomeel:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界），看看往外開的花',ask:['……我聽說，日界的花，是往外開的。','開了以後，就一直開著。不會縮回去。','帶我去晨曦森林。我想看看，大家都往外開的樣子。'],done:[['bloomeel','（逆綻花鰻趴在車窗上，看著月台邊一整片開著的花。）'],['bloomeel','……都開著。全部，都往外開。'],['bloomeel','原來，我不是奇怪的那一朵。……我只是，生錯了地方。']]},
+ voidroot:{kind:'sky',sky:'eclipse',goal:'日月交會的時候，邀牠到展望台一起看',ask:['……我的根，記得很多形狀。','可是有一個形狀，我從來沒有碰過：日和月，疊在一起的形狀。','如果遇到日月交會，可以帶我去看嗎？'],done:[['voidroot','（寂絡垂靈把所有的根，都伸向天空。日月疊在一起的那一刻，牠的根，慢慢圍成了一個圓。）'],['voidroot','……碰到了。我碰到了，光的形狀。'],['voidroot','是圓的。……很暖。']]},
+ husk:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……我在燈塔岩上，看過很多夜。','可是我從來沒有，只是為了好看，而看天空。','如果有流星雨……可以，陪我看嗎？不是守夜。只是看。'],done:[['husk','（殼瞳守夜者站在展望台上，兩隻眼睛，第一次一起看著同一個方向。）'],['husk','……不用擋。不用看危險。只是看。'],['husk','（牠在欄杆邊，坐了下來。）……原來，夜可以是這樣的。']]},
+ jadewing:{kind:'sky',sky:'aurora',goal:'極光出現的時候，邀牠到展望台一起看',ask:['我聽說！天上有一種光，會像翅膀一樣飄！','叫做極光！','如果極光出來了，一定要叫我！我要跟它比賽誰飛得比較好看！'],done:[['jadewing','（翠翅逆蜓在展望台上飛來飛去，跟著極光一起擺動翅膀。）'],['jadewing','哈啾！……我、我輸了。它好漂亮。'],['jadewing','可是我記住了！這是一個開頭。極光比賽的開頭！']]},
+ witherwalk:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界），看看活著的森林',ask:['……我聽說，日界有一片森林。','樹都站著。都有葉子。','帶我去，好嗎？我想再看一次，森林的樣子。'],done:[['witherwalk','（枯枝踽行者站在車窗前，看著晨曦森林。牠的根，在地板上輕輕地抖。）'],['witherwalk','……都站著。都有葉子。'],['witherwalk','我的森林，以前，也是這個樣子。……我想起來了。我要回去，讓它再變成這樣。']]},
+ silvereye:{kind:'sky',sky:'tide',goal:'星潮的時候，邀牠到展望台一起看',ask:['……我家的海，不會漲潮。裂縫裡的時間，不會動。','聽說星河，會漲潮。光會，一波一波湧過來。','如果遇到星潮，可以帶我去看嗎？我想看，會動的光。'],done:[['silvereye','（銀瞳長肢獸貼在展望台的欄杆上，銀色的眼睛裡，映著一波一波湧過來的星光。）'],['silvereye','……在動。一直在動。'],['silvereye','我要把它，存在眼睛裡。……一個會動的倒影。']]},
  dawnsail:{kind:'sky',sky:'meteor',goal:'流星雨的時候，邀牠到展望台一起看',ask:['……流星雨的時候，天空會一直亮。','亮的時候，也許，我看得見另一端的伴侶。','如果遇到流星雨，帶我去展望台。我想試試看。'],
   done:[['dawnsail','（霞帆翼龍站在展望台上，看著流星一道一道劃過天空的另一端。）'],['dawnsail','……看見了。那道粉色的光。是牠。'],['dawnsail','（牠背後的光環亮得像日出一樣。）……謝謝你。']]},
  grinfox:{kind:'loc',loc:'dawnForest',goal:'帶牠到晨曦森林（日界）',ask:['……我只在晚上出來。我從來沒有看過，天亮。','聽說，晨曦森林的天亮，是最溫柔的。','……如果是溫柔的天亮，我應該，不會怕吧。帶我去看看，好嗎？'],
@@ -4248,7 +4359,12 @@ const LEAVE_AT={sola:['starIslands'],felinia:['dawnForest'],leviathaurora:['star
  tidemane:['timeriftSea','starIslands'],
  pulsewyrm:['boundlessCorridor','starIslands'],
  rivertrunk:['reverseRealm','dawnForest'],
- bloomeel:['reverseRealm','dawnForest']};
+ bloomeel:['reverseRealm','dawnForest'],
+ voidroot:['silentVoid','starIslands'],
+ husk:['timeriftSea','starIslands'],
+ jadewing:['reverseRealm','dawnForest'],
+ witherwalk:['silentVoid','dawnForest'],
+ silvereye:['timeriftSea','starIslands']};
 const BYE_LATE=3;   /* 準備好之後又坐了這麼多趟還沒經過適合的地方，就在下一個能停的地方下車，不讓牠一直卡在車上 */
 const rideN=(id,jc)=>(jc==null?state.journeyCount:jc)-((state.passengers[id]||{}).boardedJourney||0);
 const leaveOKAt=(id,loc,jc)=>{ const L=LEAVE_AT[id]; return !L||L.includes(loc)||rideN(id,jc)>=(PASSENGERS[id].stay||0)+BYE_LATE; };
@@ -4285,7 +4401,12 @@ const OMEN={
  tidemane:{h:'時隙之海',m:'……海那邊的浪，好像又亂了。我聽得見。',q:'你覺得，一個時刻結束了，會去哪裡？'},
  pulsewyrm:{h:'無界迴廊',m:'……迴廊有一層，在痛。我的觸鬚，麻麻的。',q:'你覺得，光可以存起來嗎？'},
  rivertrunk:{h:'逆生之境',m:'……我嚐到了。家裡的河，今天流得很急。',q:'你覺得，變回小時候，好嗎？'},
- bloomeel:{h:'逆生之境',m:'……花圃那邊，今年的花，好像縮得特別快。',q:'你覺得，一朵花要開多久，才算開夠了？'}
+ bloomeel:{h:'逆生之境',m:'……花圃那邊，今年的花，好像縮得特別快。',q:'你覺得，一朵花要開多久，才算開夠了？'},
+ voidroot:{h:'寂滅虛空',m:'……虛空裡，有一個地方，好像塌下去了一點。我的根，在抖。',q:'你覺得，一個消失的東西，記住它，還有用嗎？'},
+ husk:{h:'時隙之海',m:'……看未來的那隻眼睛，看到浪了。很大的浪。',q:'你覺得，先知道會發生什麼，比較好嗎？'},
+ jadewing:{h:'逆生之境',m:'哈啾！……家那邊的風，今天吹得好急。',q:'你覺得，一個故事，最重要的是開頭，還是結局？'},
+ witherwalk:{h:'寂滅虛空',m:'……我的根，碰到了一點點灰。是森林的灰。',q:'你覺得，倒下的森林，還會再長出來嗎？'},
+ silvereye:{h:'時隙之海',m:'……裂縫，又變大了一點。我的眼睛裡，少了一個倒影。',q:'你覺得，停住的時間，算是活著嗎？'}
 };
 /* 徵兆：一趟最多一次，同一位乘客總共三次。依序是：問下一站、想起家、問精靈 */
 function omenScript(id){ const s=state.passengers[id], O=OMEN[id], nm=PASSENGERS[id].name, n=s.omen||0, nx=state.currentPhase==='voyage'&&state.voyage?state.voyage.to:nextStop();
@@ -4369,7 +4490,12 @@ const TRACE={sola:'靈泉的水面上，偶爾還會浮起一小圈光，像有�
  tidemane:'靜謐結界裡，還留著一點涼涼的霧。偶爾，會傳出一兩個很低的音。',
  pulsewyrm:'懸浮棲息環的上方，偶爾還會閃過一道很細的藍光，從這頭跑到那頭。',
  rivertrunk:'自然棲台的地板上，留著一圈一圈的水印。仔細看，水印是往中間縮的。',
- bloomeel:'靈泉的水面上，還漂著一片綠色的花瓣。放了好多天，都沒有乾。'};
+ bloomeel:'靈泉的水面上，還漂著一片綠色的花瓣。放了好多天，都沒有乾。',
+ voidroot:'靜謐結界的上方，還垂著一根很細的灰藍色細根，摸起來冰冰的。',
+ husk:'休息區的角落，地板上有兩個深深的爪印。像有誰，在那裡站了很多個晚上。',
+ jadewing:'懸浮棲息環上，偶爾會飄下一小片透明的翅膀碎片。……還有一聲很小的「哈啾」。',
+ witherwalk:'自然棲台的苔蘚縫裡，留著幾根細細的根鬚。旁邊，冒出了一棵小小的芽。',
+ silvereye:'晶石平台旁邊的牆上，留著一排小小的吸盤印，一直延伸到天花板。'};
 function zoneTraces(k){ const L=Object.keys(TRACE).filter(id=>{ const s=state.passengers[id]; return s&&s.left&&!s.aboard&&PASSENGERS[id].zone===k; }); return L.length?`<div class="rm-trace">${L.map(id=>`<p>${TRACE[id]}<span>——${PASSENGERS[id].name}待過的地方</span></p>`).join('')}</div>`:''; }
 /* 來自遠方的回音：牠在離開時說過的那個約定，在牠下車的地方實現一次 */
 const SIGN={sola:'星河上，有一團光在打轉。仔細聽，好像在講一個很冷的笑話。',felinia:'雲裡，有一道影子飛過去。……今天，會是好天氣。',leviathaurora:'很深很深的地方，有一片星光在移動。',cinder:'熱浪裡，一道琥珀色的帆影跑過地平線。牠沒有停，可是帆，揚了一下。',
@@ -4382,7 +4508,12 @@ const SIGN={sola:'星河上，有一團光在打轉。仔細聽，好像在講�
  tidemane:'海面上起了一層霧。霧裡，有誰在很小聲地唱歌。……浪，安靜了。',
  pulsewyrm:'車廂裡所有的燈，一盞接一盞閃了一下，像有誰從車頭跑到了車尾。……是牠在打招呼。',
  rivertrunk:'月台邊的河水，往上流了一段，又落了回來。……像有誰在揮手。',
- bloomeel:'月台邊的花圃裡，有一朵花沒有縮回去。……它朝著列車的方向，開得好大。'};
+ bloomeel:'月台邊的花圃裡，有一朵花沒有縮回去。……它朝著列車的方向，開得好大。',
+ voidroot:'車窗外的黑暗裡，有一根灰藍色的細根，輕輕碰了一下玻璃。……然後收了回去。',
+ husk:'海邊的燈塔岩上，有兩點光，一紫一灰，對著列車閃了一下。',
+ jadewing:'一陣倒著吹的風，把一片透明的翅膀碎片，吹到了車窗上。……還聽見一聲「哈啾」。',
+ witherwalk:'月台邊的灰燼裡，冒出了一小片綠色。……是一棵很小很小的樹。',
+ silvereye:'海面下，有一個銀色的光點，跟著列車游了一段，然後沉了下去。'};
 const echoDone=(t,id)=>!!state.storyFlags['echo_'+t+'_'+id];
 const echoMark=(t,id)=>{ state.storyFlags['echo_'+t+'_'+id]=1; state.echoJ=state.journeyCount; save(); };
 const echoFree=()=>state.echoJ!==state.journeyCount;   /* 一趟最多一個回音，不要太頻繁 */
@@ -5039,7 +5170,12 @@ const PERS={sola:'playful',felinia:'curious',leviathaurora:'quiet',cinder:'proud
  tidemane:'quiet',
  pulsewyrm:'curious',
  rivertrunk:'gentle',
- bloomeel:'proud'};
+ bloomeel:'proud',
+ voidroot:'quiet',
+ husk:'quiet',
+ jadewing:'curious',
+ witherwalk:'gentle',
+ silvereye:'quiet'};
 const REL_LV=['陌生','認識','熟悉','信任','特殊羈絆'], REL_PTS=[0,2,5,10];
 const TONE_N={friendly:'友善',curious:'好奇',rely:'依賴',care:'互相照顧',rival:'競爭',clash:'不合',wary:'警戒',understand:'互相理解'};
 /* 天生就容易摩擦的組合（依設定：冰與火、兩位驕傲的奔跑者……） */
@@ -5842,6 +5978,11 @@ const NOTES={
  pulsewyrm:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。全部。在這一層。（光點一節一節地亮過去。）',list:[{k:'habitat',p:'我住在空間和空間的縫裡',n:'住在空間與空間之間的縫隙'},{k:'habitat',p:'這裡的空間，只有一層',n:'喜歡只有一層的安靜空間'},{k:'habits',p:'我吃的，是空間摩擦時候的光',n:'以空間摩擦時的微光為食'},{k:'habits',p:'我聽見了三個你',n:'同時聽見好幾個空間的聲音'},{k:'abilities',p:'觸鬚，會碰到好多地方',n:'觸鬚能同時碰到不同的空間（脈感）'},{k:'abilities',p:'像有什麼東西從頭跑到尾',n:'背上的光點能把光傳得很遠（導光）'},{k:'bio',p:'我是迴廊的神經',n:'被稱為「迴廊的神經」'},{k:'bio',p:'唯一沒有熄的東西',n:'大熄滅時，牠的光沒有熄'},{k:null,p:'我想待在亮的地方，一下下',n:'想在亮的地方待一下'}]},
  rivertrunk:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（長鼻子輕輕碰了碰你的手。）我要記住這一頁。不能變回空白的。',list:[{k:'habitat',p:'河水會往上流，流回天上',n:'來自河水往上流的逆生之境'},{k:'habits',p:'我一直都是喝往上流的水',n:'只喝往上流的水'},{k:'habits',p:'這裡的水，是往下流的',n:'在車上還不習慣喝往下流的水'},{k:'habits',p:'我在嚐空氣',n:'喜歡舉起觸角嚐空氣'},{k:'abilities',p:'又一顆一顆飛回了盆子裡',n:'長鼻子能讓水倒著流回來（溯流）'},{k:'abilities',p:'嚐一下就知道',n:'觸角能嚐出雨的來處與去處（嚐雨）'},{k:'bio',p:'每過一年，我就會年輕一點',n:'在逆生之境，每年都會年輕一點'},{k:'bio',p:'我想知道，「長大」是什麼感覺',n:'想知道長大是什麼感覺'},{k:null,p:'水珠濺了你一臉',n:'不小心把水濺到你身上'}]},
  bloomeel:{secs:['habitat','habits','abilities','bio'],thanks:'……你、你都記下來了？（花瓣抖了一下。）……寫得還不錯。我允許你留著。',list:[{k:'habitat',p:'花會縮回花苞，花苞會縮回種子',n:'來自花會縮回種子的逆生之境'},{k:'habitat',p:'立著一朵綠色的大花',n:'喜歡待在水面上'},{k:'habits',p:'假裝自己，還是一朵花',n:'累了就立起來，假裝是一朵普通的花'},{k:'habits',p:'我才不要',n:'常常說「我才不要」'},{k:'abilities',p:'我的花瓣不會謝',n:'花瓣永不凋謝，周圍的花也開得久（不謝）'},{k:'abilities',p:'每一顆，都是一天',n:'身體裡的光點存著每一天（星脈）'},{k:'bio',p:'往另一個方向長',n:'不肯縮回種子，往反方向長出了身體'},{k:'bio',p:'游太久了，會有點想家',n:'偶爾會想家'},{k:null,p:'所以溫室的花，你要謝謝我喔',n:'覺得溫室的花開得久是自己的功勞'}]},
+ voidroot:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（根輕輕地，碰了碰紙。）這一頁的形狀，我也記住了。',list:[{k:'habitat',p:'在我住的地方，什麼都沒有形狀',n:'來自什麼都沒有形狀的寂滅虛空'},{k:'habitat',p:'沒有光，沒有聲音，沒有地',n:'那裡沒有光、沒有聲音、沒有地面'},{k:'habits',p:'我已經，很久沒有碰到東西了',n:'很久沒有碰到東西'},{k:'habits',p:'我的根，有點忙',n:'在車上忙著記新的形狀'},{k:'abilities',p:'碰到了，就記住了',n:'碰到的形狀會永遠記住（記形）'},{k:'bio',p:'這是一個世界的形狀',n:'根保持著一個消失世界的形狀'},{k:'bio',p:'我是最後一個記得它的',n:'是最後一個記得那個世界的生命'},{k:'abilities',p:'是不是可以，收回一根',n:'想收回一根根，記新的形狀'},{k:null,p:'你的形狀，很暖',n:'覺得你的形狀很暖'}]},
+ husk:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（兩隻眼睛，同時眨了一下。）我看過了。沒有寫錯。',list:[{k:'habitat',p:'我在海邊，看了很久的夜',n:'在時隙之海的海邊守夜'},{k:'habits',p:'我睡了，就沒有人看了',n:'不睡覺'},{k:'habits',p:'你們睡覺的時候，我會醒著',n:'大家睡覺時醒著守望'},{k:'abilities',p:'這一隻，看過去。這一隻，看未來',n:'兩隻眼睛分別看過去和未來（雙瞳）'},{k:'abilities',p:'看到危險，就擋',n:'殼硬到能擋住未來的浪（擋浪）'},{k:'bio',p:'是擋一道未來的浪，裂的',n:'殼頂的裂口是替小船擋浪留下的'},{k:'bio',p:'一列白色的車，從海上開過',n:'未來之眼一直看到白色列車的畫面'},{k:null,p:'我想，在畫面裡面。不只是看',n:'想進入畫面裡，而不只是看'}]},
+ jadewing:{secs:['habitat','habits','abilities','bio'],thanks:'哇！你都記下來了！（翅膀嗡嗡地響。）這一頁，是一個很好的開頭！',list:[{k:'habitat',p:'這裡的風，是往前吹的',n:'來自風往後吹的逆生之境'},{k:'habits',p:'我還不習慣',n:'還不習慣往前吹的風，常打噴嚏'},{k:'habits',p:'我很會說故事',n:'很愛說故事'},{k:'bio',p:'我出生的時候，就是一個老爺爺了',n:'一出生就是老的'},{k:'bio',p:'每過一個季節，我就年輕一點',n:'每個季節都變年輕一點'},{k:'abilities',p:'我說的故事，都是從結局開始的',n:'記得所有故事的結局（記終）'},{k:'bio',p:'我就會變成一顆露珠',n:'最年輕的那天會變成露珠消失'},{k:null,p:'一個，我自己的',n:'想找到自己的故事的開頭'}]},
+ witherwalk:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（背上的枝，輕輕響了一下。）這一頁，像一片葉子。',list:[{k:'habitat',p:'曾經是森林的地方',n:'來自寂滅虛空裡曾經是森林的地方'},{k:'habits',p:'這裡的土，是活的',n:'喜歡活的土'},{k:'habits',p:'它會回答我',n:'把根伸進土裡和植物說話'},{k:'abilities',p:'我把根伸過去了',n:'根能感覺到附近植物的狀況（紮根）'},{k:'bio',p:'我把根，從地裡拔了出來',n:'大熄滅時把根拔出來，開始走路'},{k:'bio',p:'一個，可以重新種下自己的地方',n:'在找可以重新種下自己的地方'},{k:'bio',p:'已經很多年，沒有長葉子了',n:'背上的枝很多年沒長葉子'},{k:null,p:'有一個地方，癢癢的',n:'在車上，背上有地方癢癢的'}]},
+ silvereye:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（銀瞳裡，映出了這一頁。）我存起來了。',list:[{k:'habitat',p:'我住在，海底的裂縫邊',n:'住在時隙之海海底的裂縫邊'},{k:'habitat',p:'我家的裂縫裡，時間不會走',n:'裂縫裡的時間是靜止的'},{k:'habits',p:'我每天，看著它們',n:'每天看著裂縫裡停住的東西'},{k:'abilities',p:'看過的，會留在我的眼睛裡',n:'看過的東西會在眼裡留下倒影（鏡瞳）'},{k:'abilities',p:'我是它們的鏡子',n:'是停住的東西的鏡子'},{k:'bio',p:'最近，裂縫變大了',n:'裂縫最近越來越大'},{k:'bio',p:'倒影，越來越淡了',n:'眼裡的倒影越來越淡'},{k:null,p:'這是，我家的魚',n:'給你看了家裡停住的魚'}]},
  dawnsail:{secs:['habitat','habits','abilities','bio'],thanks:'……你都記下來了。（背後的光環輕輕亮了一下。）……我會告訴我的伴侶。',list:[
   {k:'habitat',p:'日落了。我一到這個時候，就會變淡',n:'住在日界與月界交界的霞光帶'},
   {k:'habits',p:'我吃的，是霞光',n:'以霞光為食'},
@@ -6013,6 +6154,11 @@ const CARE={
  pulsewyrm:{t:1,l:1,h:1,ok:'（觸鬚慢慢地擺動，光點很穩定地亮著。）……一層。只有一層。好安靜。我可以，慢慢地亮。'},
  rivertrunk:{t:2,l:1,h:2,ok:'（牠把長鼻子泡進水裡，觸角的小手慢慢放鬆。）……暖暖的，濕濕的。像河邊的苔。我可以，在這裡睡一下。'},
  bloomeel:{l:2,h:2,ok:'（花瓣慢慢地張開，身體裡的光點一閃一閃。）……有水，有光，暖暖的。哼，還、還可以啦。'},
+ voidroot:{t:0,l:0,h:3,ok:'（垂根慢慢地放鬆下來。）……冷冷的，暗暗的。像家。可是，有形狀。……很好。'},
+ husk:{t:1,l:0,h:1,ok:'（殼上的兩隻眼睛，慢慢地，同時閉了一下。）……暗的，安靜的。適合守夜。'},
+ jadewing:{t:2,l:2,h:1,ok:'（翅膀嗡嗡地響了一陣，然後停了下來。）暖暖的，亮亮的！跟家裡倒著吹的風一樣舒服！哈啾！'},
+ witherwalk:{t:1,l:1,h:2,ok:'（牠把腳趾的根，慢慢伸進土裡。）……土，是濕的，是活的。我可以，在這裡站一下。'},
+ silvereye:{t:0,l:1,h:2,ok:'（牠貼在牆上，一動也不動。銀瞳裡，倒映著晶石的光。）……涼涼的。安靜的。可以看很久。'},
  dawnsail:{t:1,h:1,ok:'（牠在溫暖柔和的光裡展開翅膀，翼膜透出淡淡的粉色。）……像日出前的那幾分鐘。這裡，很舒服。'},
  grinfox:{t:0,h:0,ok:'（牠鑽進最暗的角落，長尾巴把自己整個裹起來，只露出那排白牙。）……暗暗的、安靜的。這樣，就不會嚇到別人了。'},
  skyfox:{t:1,h:0,ok:'（牠在明亮的光裡打了個滾，翅膀和尾巴都張得開開的。）亮亮的、乾乾的！像晴天的雲上面！'},
@@ -6118,6 +6264,11 @@ const DECK_LINE={
  pulsewyrm:['外面的空間，很大，很空。……只有一層。','我把觸鬚伸出去了。……碰到星星了。'],
  rivertrunk:['外面的星星，是往下掉的嗎？……還是往上？','我把鼻子伸出去了。……風，嚐起來是藍色的。'],
  bloomeel:['外面的星星，都開著。……一直開著。','我也要一直開著。哼。'],
+ voidroot:['外面的星星，有形狀。……一顆一顆，都有。','我把根，伸出去了一點點。'],
+ husk:['展望台很高。適合看。','……今晚，沒有危險。我看過了。'],
+ jadewing:['風！外面有風！哈啾！','我可以飛出去嗎？……開玩笑的啦。'],
+ witherwalk:['外面的風，吹過我的枝。……沙沙的。','以前，森林裡也是這個聲音。'],
+ silvereye:['外面的光，一直在動。','我在存。……一個一個，存起來。'],
  dawnsail:['……從這裡，看得見界壁。我可以告訴你，哪裡最薄。','風的方向很好。……我想飛一下。'],
  grinfox:['……好多星星。天上的人，應該都不會迷路吧。','（牠躲在你的影子裡，只露出一點點尾巴。）……這裡好亮。'],
  skyfox:['好高好高！這裡的風，跟雲上面一樣！','我可以飛出去一下嗎？……一下下就好！'],
@@ -6421,6 +6572,11 @@ const COMP_LINE={
  pulsewyrm:{dawnForest:'日界的光，好多。……我的光點，好像變小了。',starIslands:'星河的光，在流。……我去摸一下，馬上回來。'},
  rivertrunk:{dawnForest:'日界的露水，是往下掉的。……我還在練習接。',starIslands:'星河的水，是往旁邊流的。……我去嚐一下，馬上回來。'},
  bloomeel:{dawnForest:'日界的花……全部都往外開。（花瓣抖了一下。）……好、好漂亮。',starIslands:'星河上有花嗎？……我去看一下，馬上回來。'},
+ voidroot:{dawnForest:'日界……到處都是形狀。我的根，忙不過來。',starIslands:'浮島的形狀，會漂。……我去記一下，馬上回來。'},
+ husk:{dawnForest:'日界很亮。……沒有需要守的夜。',starIslands:'星河那邊，有一點暗。我去看一下，馬上回來。'},
+ jadewing:{dawnForest:'日界的風是往前吹的！……我還在練習！哈啾！',starIslands:'浮島！我要去浮島上飛一圈！馬上回來！'},
+ witherwalk:{dawnForest:'……都是樹。都站著。（牠的枝輕輕地響。）',starIslands:'浮島上有土嗎？……我去踩一下，馬上回來。'},
+ silvereye:{dawnForest:'日界的光，太亮了。……我的眼睛，在瞇。',starIslands:'星河的水，在動。我去看一下，馬上回來。'},
  dawnsail:{dawnForest:'日界的早晨。……天邊的粉色，是我的家。',starIslands:'這裡沒有日出，也沒有日落。……我有一點，睡不著。'},
  grinfox:{dawnForest:'……早上的森林，好亮。我、我在你影子裡就好。',starIslands:'星星好多……可是這裡，好像有人迷路了。我去看一下。'},
  skyfox:{dawnForest:'是早上的森林！露水好多！我去喝一口！',starIslands:'星星好近！……我可以去追那顆最亮的嗎？'},
@@ -6456,11 +6612,11 @@ function forageTake(i){ const f=forageNow(), sp=f&&f.spots[i]; if(!sp||sp.taken)
    ================================================================ */
 /* 乘客的探索專長：依每位乘客的實際設定分配，每位只有一種 */
 const FORAGE_SKILL={
- fly:{name:'飛行',tip:'會飛到高處找材料和植物',ids:['felinia','windkoi','skywhale','skyfox','dawnsail','moonwyrm']},
+ fly:{name:'飛行',tip:'會飛到高處找材料和植物',ids:['felinia','windkoi','skywhale','skyfox','dawnsail','moonwyrm','jadewing']},
  night:{name:'夜行',tip:'看得見暗處的種子',ids:['vandora','lynx','frost','grinfox']},
- water:{name:'水生',tip:'找得到藏起來的水域',ids:['sola','leviathaurora','sirenora','tidemane','rivertrunk']},
- sense:{name:'感知',tip:'感應得到藏著的生命和光',ids:['aelis','strider','mnemo','cinder','pulsewyrm']},
- plant:{name:'植物',tip:'認得出特別的花和芽',ids:['cabbfrog','treeling','bloomeel']},
+ water:{name:'水生',tip:'找得到藏起來的水域',ids:['sola','leviathaurora','sirenora','tidemane','rivertrunk','silvereye']},
+ sense:{name:'感知',tip:'感應得到藏著的生命和光',ids:['aelis','strider','mnemo','cinder','pulsewyrm','voidroot','husk']},
+ plant:{name:'植物',tip:'認得出特別的花和芽',ids:['cabbfrog','treeling','bloomeel','witherwalk']},
  ancient:{name:'古老',tip:'讀得懂遺跡和地面的刻紋',ids:['titan','scythe','yixi','pyro','sandwyrm','porcel']}
 };
 const skillOf=id=>Object.keys(FORAGE_SKILL).find(k=>FORAGE_SKILL[k].ids.includes(id))||null;
@@ -6582,7 +6738,7 @@ function unlockInfo(id){ const c=UNLOCK[id]; if(!c) return '這個光點還無�
 const VOICE={T:[],
  P:{ self:[620,'sine',.075,.16], dragon:[150,'triangle',.11,.06], sola:[520,'triangle',.08,.2], felinia:[880,'sine',.06,.25], leviathaurora:[200,'sine',.13,.08],
   cinder:[400,'sawtooth',.075,.12], aelis:[760,'triangle',.065,.22], pyro:[180,'sawtooth',.1,.1], vandora:[330,'square',.085,.14], frost:[260,'triangle',.1,.1],
-  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], cabbfrog:[230,'square',.1,.12], skywhale:[120,'sine',.17,.05], scythe:[640,'square',0.09,0.05], porcel:[240,'triangle',.09,.06], tidemane:[300,'sine',.12,.07], pulsewyrm:[940,'square',.06,.18], rivertrunk:[210,'triangle',.11,.1], bloomeel:[700,'sine',.07,.2], dawnsail:[540,'sine',0.1,0.14], grinfox:[300,'triangle',0.08,0.3], skyfox:[820,'sine',0.07,0.24], moonwyrm:[160,'triangle',0.16,0.06], sandwyrm:[90,'sawtooth',0.18,0.05], treeling:[200,'triangle',0.15,0.06], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
+  sirenora:[680,'sine',.09,.3], titan:[120,'triangle',.13,.05], lynx:[560,'square',.07,.18], strider:[440,'triangle',.07,.16], windkoi:[700,'sine',.065,.22], mnemo:[1180,'sine',.11,.06], cabbfrog:[230,'square',.1,.12], skywhale:[120,'sine',.17,.05], scythe:[640,'square',0.09,0.05], porcel:[240,'triangle',.09,.06], tidemane:[300,'sine',.12,.07], pulsewyrm:[940,'square',.06,.18], rivertrunk:[210,'triangle',.11,.1], bloomeel:[700,'sine',.07,.2], voidroot:[170,'sine',.13,.05], husk:[130,'triangle',.12,.05], jadewing:[1050,'square',.05,.28], witherwalk:[190,'sawtooth',.09,.06], silvereye:[560,'sine',.09,.1], dawnsail:[540,'sine',0.1,0.14], grinfox:[300,'triangle',0.08,0.3], skyfox:[820,'sine',0.07,0.24], moonwyrm:[160,'triangle',0.16,0.06], sandwyrm:[90,'sawtooth',0.18,0.05], treeling:[200,'triangle',0.15,0.06], yixi:[330,'sine',.16,.04], lumi:[980,'sine',.06,.28] },
  prof(who){ if(this.P[who]) return this.P[who]; let h=0; for(const c of String(who||'x')) h=(h*31+c.charCodeAt(0))%9973; return [220+(h%600),['sine','triangle','square'][h%3],.07+(h%5)*.01,.1+(h%10)/50]; },
  stop(){ this.T.forEach(clearTimeout); this.T=[]; },
  say(who,text){ this.stop(); if(!who||who==='self'||!SFX.on()) return;   /* 玩家自己說的話沒有聲音 */ const t=String(text||'').replace(/<[^>]+>/g,'').replace(/[（(][^）)]*[）)]/g,'').replace(/[\s，。、！？…—「」『』：；,.!?~～]/g,''); if(!t) return;
@@ -7009,7 +7165,12 @@ const PREF={
  tidemane:{love:['tidebloom'],like:['shellbloom','veilseed']},
  pulsewyrm:{love:['glowcap'],like:['lantern','starbean']},
  rivertrunk:{love:['dewmoss'],like:['mossgrass','tidebloom']},
- bloomeel:{love:['trilight'],like:['tidebloom','sunfern']}, dawnsail:{love:['tidelotus'],like:['shellbloom','starbell']}, grinfox:{love:['glowcap'],like:['glowmoss','tidelotus']}, skyfox:{love:['starbell'],like:['bell','dustdaisy']}, moonwyrm:{love:['stardaisy'],like:['starspore','dustdaisy']}, sandwyrm:{love:['goldreed'],like:['sunfern','goldfern']}, treeling:{love:['dewmoss'],like:['mossgrass','glowmoss']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
+ bloomeel:{love:['trilight'],like:['tidebloom','sunfern']},
+ voidroot:{love:['veilseed'],like:['glowcap','stardaisy']},
+ husk:{love:['nightcap'],like:['owlbur','lantern']},
+ jadewing:{love:['mothwing'],like:['bell','fuzzhusk']},
+ witherwalk:{love:['deeproot'],like:['mossgrass','dewmoss']},
+ silvereye:{love:['pearlgrain'],like:['shellbloom','tidebloom']}, dawnsail:{love:['tidelotus'],like:['shellbloom','starbell']}, grinfox:{love:['glowcap'],like:['glowmoss','tidelotus']}, skyfox:{love:['starbell'],like:['bell','dustdaisy']}, moonwyrm:{love:['stardaisy'],like:['starspore','dustdaisy']}, sandwyrm:{love:['goldreed'],like:['sunfern','goldfern']}, treeling:{love:['dewmoss'],like:['mossgrass','glowmoss']}, sola:{love:['tidebloom'],like:['shellbloom','stardaisy']}
 };
 const LOVE_LINE={
  felinia:['（羽貓獸把臉埋進金穗裡，翅膀輕輕抖了一下。）','……是山谷的味道。風吹過草原的時候，就是這個味道。','謝謝你。我會把它放在我的圓環上。'],
@@ -7033,6 +7194,11 @@ const LOVE_LINE={
  pulsewyrm:['（脈光遊脊的一根觸鬚，輕輕碰了碰那株植物。）','……它在發光。跟我一樣。','我把它的光，存一點。在中間那一節。'],
  rivertrunk:['（溯泉長吻獸用長鼻子，輕輕碰了碰葉子上的露水。）','……這顆露水，往下流了。','我把它接住了。……我學會了。'],
  bloomeel:['（逆綻花鰻把花冠湊過去，跟那株植物並排站著。）','……你也開得很好。','我們一起，不要謝。說好了。'],
+ voidroot:['（寂絡垂靈的一根細根，輕輕地，碰了碰那株植物。）','……這個形狀，很柔軟。','我記住了。……放在，最靠近中間的地方。'],
+ husk:['（殼瞳守夜者在那株植物旁邊，站了很久。）','……它會守著夢。跟我一樣。','今晚，我們一起守。'],
+ jadewing:['（翠翅逆蜓停在那株植物上，翅膀一開一合。）','哇……它的葉子，跟我的翅膀好像！','我們是兄弟！哈啾！'],
+ witherwalk:['（枯枝踽行者把根，輕輕地伸到那株植物旁邊。）','……它的根，扎得很深。','我以前，也是這樣的。……我會再變回這樣。'],
+ silvereye:['（銀瞳長肢獸的眼睛裡，倒映著那株植物。）','……一顆一顆，像珍珠。','我存起來了。一個，會發光的倒影。'],
  dawnsail:['（霞帆翼龍低頭看著那朵花，花瓣在牠透光的翼膜下，染上了一層淡淡的粉。）','……很漂亮。像日出。','我會把它，帶給我的伴侶看。'],
  grinfox:['（夜笑影狐用尾巴把那株植物小心地圍起來。）','……會發光的。這樣，晚上就不怕了。','……謝謝。我會放在最暗的地方。'],
  skyfox:['（藍羽雲狐把鼻子湊近花朵，打了一個小小的噴嚏。花瓣上沾了一點藍光。）','……嘻嘻，它變成藍色的了！','謝謝你！我會把它藏在最好的地方！'],
@@ -7063,6 +7229,11 @@ const HOME_NAME={
  pulsewyrm:{glowcap:'暗處的光',lantern:'小小的燈',starbean:'星星的種子'},
  rivertrunk:{dewmoss:'往下掉的露水',mossgrass:'河邊的地毯',tidebloom:'等水的花'},
  bloomeel:{trilight:'三個願望',tidebloom:'等待的花',sunfern:'往外開的葉子'},
+ voidroot:{veilseed:'夜裡的形狀',glowcap:'暗處的燈',stardaisy:'小小的光'},
+ husk:{nightcap:'守夢的果',owlbur:'夜的耳朵',lantern:'夜路的燈'},
+ jadewing:{mothwing:'風的翅膀',bell:'會唱歌的花',fuzzhusk:'慢慢長的草'},
+ witherwalk:{deeproot:'站著的根',mossgrass:'森林的地毯',dewmoss:'早晨的苔'},
+ silvereye:{pearlgrain:'一顆一顆的光',shellbloom:'海的耳朵',tidebloom:'等潮的花'},
  dawnsail:{tidelotus:'霞光的蓮',shellbloom:'日出的貝',starbell:'黃昏的鈴'},
  grinfox:{glowcap:'口袋裡的燈',glowmoss:'回家的路標',tidelotus:'夜裡的月亮'},
  skyfox:{starbell:'會唱歌的星星',bell:'晴天的鈴鐺',dustdaisy:'雲上的花'},
@@ -7101,7 +7272,7 @@ function zonePots(){ return Object.entries(state.zonePlant||{}).filter(([k])=>ZO
 function zonePlantArrive(){ Object.entries(state.zonePlant||{}).forEach(([k,p])=>{ const ids=zoneHere(k).filter(id=>PREF[id]&&(PREF[id].love.includes(p)||PREF[id].like.includes(p))); if(!ids.length) return;
  TAINT.add(-1); ids.forEach(id=>state.passengers[id].records.push({j:state.journeyCount,t:`在${ZONES[k].name}的${PLANTS[p].name}旁邊，睡得很安穩。`})); }); }
 /* 完成請求時，乘客送的種子 */
-const REQ_SEED={porcel:['stardaisy',2],tidemane:['shellbloom',2],pulsewyrm:['glowcap',2],rivertrunk:['dewmoss',2],bloomeel:['bell',2],titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],cabbfrog:['dewmoss',2],skywhale:['stardaisy',2],treeling:['sunfern',2],sola:['stardaisy',2]};
+const REQ_SEED={voidroot:['veilseed',2],husk:['owlbur',2],jadewing:['mothwing',2],witherwalk:['deeproot',1],silvereye:['pearlgrain',2],porcel:['stardaisy',2],tidemane:['shellbloom',2],pulsewyrm:['glowcap',2],rivertrunk:['dewmoss',2],bloomeel:['bell',2],titan:['dewmoss',1],felinia:['goldreed',2],leviathaurora:['shellbloom',2],cinder:['bell',2],aelis:['bell',2],pyro:['goldreed',2],vandora:['glowcap',2],frost:['stardaisy',2],sirenora:['shellbloom',2],lynx:['stardaisy',2],strider:['mossgrass',2],windkoi:['bell',2],mnemo:['stardaisy',2],cabbfrog:['dewmoss',2],skywhale:['stardaisy',2],treeling:['sunfern',2],sola:['stardaisy',2]};
 function reqSeed(id){ const r=REQ_SEED[id]; if(!r) return; const [p,n]=r, P=PLANTS[p];
  if(P.rare){ addItem('seed_'+p,true); state.seedKnown=state.seedKnown||[]; if(!state.seedKnown.includes(p)) state.seedKnown.push(p); gardenSync(); } else seedAdd(p,n); seedIntro();
  setTimeout(()=>toast(`${PASSENGERS[id].name}送你：${P.seed}${P.rare?'':' ×'+n}・收進溫室的種子典藏櫃`),1800); }
@@ -7373,6 +7544,11 @@ const MEMORIES=[
  {id:'pulsewyrm',title:'脈光遊脊登車',who:'pulsewyrm',have:()=>state.discoveredLifeforms.includes('pulsewyrm'),text:PASSENGERS.pulsewyrm.intro},
  {id:'rivertrunk',title:'溯泉長吻獸登車',who:'rivertrunk',have:()=>state.discoveredLifeforms.includes('rivertrunk'),text:PASSENGERS.rivertrunk.intro},
  {id:'bloomeel',title:'逆綻花鰻登車',who:'bloomeel',have:()=>state.discoveredLifeforms.includes('bloomeel'),text:PASSENGERS.bloomeel.intro},
+ {id:'voidroot',title:'寂絡垂靈登車',who:'voidroot',have:()=>state.discoveredLifeforms.includes('voidroot'),text:PASSENGERS.voidroot.intro},
+ {id:'husk',title:'殼瞳守夜者登車',who:'husk',have:()=>state.discoveredLifeforms.includes('husk'),text:PASSENGERS.husk.intro},
+ {id:'jadewing',title:'翠翅逆蜓登車',who:'jadewing',have:()=>state.discoveredLifeforms.includes('jadewing'),text:PASSENGERS.jadewing.intro},
+ {id:'witherwalk',title:'枯枝踽行者登車',who:'witherwalk',have:()=>state.discoveredLifeforms.includes('witherwalk'),text:PASSENGERS.witherwalk.intro},
+ {id:'silvereye',title:'銀瞳長肢獸登車',who:'silvereye',have:()=>state.discoveredLifeforms.includes('silvereye'),text:PASSENGERS.silvereye.intro},
  /* 告別・索拉：改由 byeMems() 統一產生（同一個 id，可重新觀看） */
 ];
 MEMORIES.push(...hiddenMems(),...byeMems());
@@ -7777,6 +7953,11 @@ const CODEX_LIFE=[
  {id:'pulsewyrm',passenger:'pulsewyrm'},
  {id:'rivertrunk',passenger:'rivertrunk'},
  {id:'bloomeel',passenger:'bloomeel'},
+ {id:'voidroot',passenger:'voidroot'},
+ {id:'husk',passenger:'husk'},
+ {id:'jadewing',passenger:'jadewing'},
+ {id:'witherwalk',passenger:'witherwalk'},
+ {id:'silvereye',passenger:'silvereye'},
  {id:'dawnsail',passenger:'dawnsail'},
  {id:'grinfox',passenger:'grinfox'},
  {id:'skyfox',passenger:'skyfox'},
@@ -7852,7 +8033,7 @@ function bookLifeIndex(){
 function bookLifeDetail(id){ const all=CODEX_LIFE.map(codexEntry), e=all.find(x=>x.id===id); if(!e||!e.known) return bookLifeIndex();
  const i=all.indexOf(e), s=e.rec||{}, stage=s.stage||0;
  return `<section class="page l"><p class="no">No. ${specNo(i)}・${e.species}</p><div class="plate big"><div class="wash" style="background:${e.wash}"></div>${portraitOf(e)}</div><p class="caption">${e.name}・田野速寫</p>
-  <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>NOTES[e.id]&&!sketchesOf(e.id).includes(k)?`<div class="sk blank" style="--rot:${r}deg"><span>✍️<br>尚未速寫</span></div>`:`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div>${NOTES[e.id]&&!sketchDone(e.id)?'<p class="caption">在棲息車廂用 ✍️ 觀察牠，就能畫下速寫。</p>':''}</section>
+  <div class="studies" aria-hidden="true">${[-8,6].map((r,k)=>NOTES[e.id]&&!sketchesOf(e.id).includes(k)?`<div class="sk blank" style="--rot:${r}deg"><span>✍️<br>尚未速寫</span></div>`:`<div class="sk" style="--rot:${r}deg">${e.studies?`<img src="${e.studies[k]}" alt="">`:portraitOf(e)}</div>`).join('')}</div>${NOTES[e.id]&&!sketchDone(e.id)?'<p class="caption">在棲息車廂用 ✍️ 觀察牠，就能畫下速寫。</p>':''}${(PASSENGERS[e.id]||{}).extra&&stage>=1?`<div class="plate pose2">${PASSENGERS[e.id].extra.map(x=>`<img src="${x}" alt="">`).join('')}</div><p class="caption">${e.name}・另一個姿態</p>`:''}</section>
  <section class="page r"><h3>${e.name}</h3>${RULE}<dl class="dl"><dt>物種</dt><dd>${e.species}</dd><dt>生命類別</dt><dd>${LIFE_TYPES[e.type]}</dd>${e.field?`<dt>別稱</dt><dd>${e.field.alias}</dd><dt>生物分類</dt><dd>${e.field.cls}</dd>`:''}<dt>來源界域</dt><dd>${e.home?`${LOCATIONS[e.home].name}（${LOCATIONS[e.home].realm}・${LOCATIONS[e.home].domain}）`:'尚未確認'}</dd>${e.homeText?`<dt>棲息環境</dt><dd>${secShown(e.id,'habitat')?e.homeText:'？（尚待整理）'}</dd>`:''}${e.field?`<dt>危險程度</dt><dd>${e.field.danger}${e.field.dangerNote?`<br><small>${e.field.dangerNote}</small>`:''}</dd><dt>稀有程度</dt><dd>${e.field.rarity}${e.field.rarityNote?`<br><small>${e.field.rarityNote}</small>`:''}</dd>`:''}
   <dt>偏好棲息</dt><dd>${ZONES[e.zone].name}</dd><dt>目前狀態</dt><dd>${s.aboard?'乘車中':s.left?'已下車・紀錄保留':'—'}</dd>
   <dt>相遇程度</dt><dd><span class="bond">${STAGE_NAMES.map((n,k)=>`<i class="${k<=stage?'on':''}" title="${n}"></i>`).join('')}<span>${STAGE_NAMES[stage]}</span></span></dd></dl>
@@ -7959,7 +8140,7 @@ const HSDEF=[
  {id:'nat-back',scene:'nature',name:'返回記憶典藏車廂',shape:'door',at:{x:50,y:54},act:'go:memory'},
  /* 棲息車廂：棲息區＋實際在車上的乘客 */
  ...Object.entries(ZONES).map(([k,z])=>({id:'hab-'+k,scene:'habitat',name:z.name,at:{x:z.x,y:z.y},layer:2,act:()=>zoneInfo(k),track:false})),
- ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'||id==='treeling'||id==='sandwyrm'||id==='grinfox'||id==='moonwyrm'||id==='rivertrunk'||id==='porcel'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
+ ...Object.keys(PASSENGERS).map(id=>({id:'hab-p-'+id,scene:'habitat',name:PASSENGERS[id].name,shape:'npc',cls:id==='lumi'?'idle-hop':id==='leviathaurora'?'idle-swim':id==='cinder'||id==='aelis'||id==='pyro'||id==='vandora'||id==='frost'||id==='titan'||id==='lynx'||id==='strider'||id==='cabbfrog'||id==='treeling'||id==='sandwyrm'||id==='grinfox'||id==='moonwyrm'||id==='rivertrunk'||id==='porcel'||id==='husk'||id==='witherwalk'||id==='silvereye'?'idle-stand':PASSENGERS[id].sprite?'idle-glide':'idle-drift',color:()=>PASSENGERS[id].color,sprite:PASSENGERS[id].sprite?PASSENGERS[id].image:null,get sx(){ return PASSENGERS[id].sprite?`;--sh:${spriteHFor(id)}%;--ar:${PASSENGERS[id].ar||'590/420'}`:''; },
   get at(){ return spotFor(id); },layer:4,track:false,show:()=>aboard(id)&&!state.passengers[id].place,imp:()=>state.passengers[id].talks<PASSENGERS[id].talks.length,act:()=>talk(id)})),
  {id:'hab-exit',scene:'habitat',name:()=>state.currentPhase==='docked'&&state.currentLocation!=='origin'?'車門：前往'+LOCATIONS[state.currentLocation].name:'車門',shape:'exit',at:{x:8,y:50},act:'exit:',
   lock:()=>proExitLock()||(state.currentPhase==='voyage'?'航行中，車門保持聯鎖。':state.currentLocation==='origin'?`列車停泊在${LOCATIONS.origin.name}，這裡無法下車。`:null)},
@@ -8257,7 +8438,12 @@ const MSG_SIG={sola:'今天的冷笑話：星星為什麼不會迷路？因為�
  tidemane:'今晚的海，在很遠的地方。可是我還是唱了。……你睡得好嗎？',
  pulsewyrm:'今晚，車廂的燈一共閃了三次。……不是故障。是我在想事情。',
  rivertrunk:'今天在溫室喝水，只嗆到兩次。……比昨天少一次。我長大了。',
- bloomeel:'溫室的花，今天又多開了一天。……不用謝。'};
+ bloomeel:'溫室的花，今天又多開了一天。……不用謝。',
+ voidroot:'今天，記住了七個新的形狀。……最喜歡的，是一個笑。',
+ husk:'今晚，沒有危險。我看過了。……你可以安心睡。',
+ jadewing:'今天，找到了一個新的開頭！……明天告訴你！哈啾！',
+ witherwalk:'今天在溫室，把根伸進土裡。……小芽們，長得很好。',
+ silvereye:'今天，存了一個新的倒影。……是你在笑。'};
 function msgCompose(id,kind){ const P=PASSENGERS[id], O=OMEN[id]||{}, T=MSG_T[persOf(id)]||MSG_T.gentle, k=skyNow(), f=bestFriend(id);
  let pool=(T[kind]||T.daily); if(kind==='daily'&&MSG_SIG[id]) pool=pool.concat([MSG_SIG[id],MSG_SIG[id]]); if(kind==='memory'&&O.m&&(state.passengers[id].stage||0)>=2) pool=pool.concat([O.m]);
  const t=pool[(state.journeyCount+id.length+(state.starMsgs||[]).length)%pool.length];
@@ -8301,7 +8487,12 @@ const GIFT2={sola:['冷笑話貝殼','一枚貝殼，裡面刻著一個冷笑話
  tidemane:['剛結束的時刻','一顆很小的泡沫，封在玻璃珠裡。裡面，是你剛剛笑的那一下。'],
  pulsewyrm:['一段光','脈光遊脊存在脊椎裡的一小段光，裝在細長的玻璃管裡。暗的時候，會自己亮。'],
  rivertrunk:['往上的雨','溯泉長吻獸從家裡帶來的一滴雨，裝在小瓶子裡。瓶子放著，雨滴會一直貼在瓶蓋上。'],
- bloomeel:['一天的光','逆綻花鰻從身體裡分出來的一顆光點。裡面，是牠上車那一天的陽光。']};
+ bloomeel:['一天的光','逆綻花鰻從身體裡分出來的一顆光點。裡面，是牠上車那一天的陽光。'],
+ voidroot:['記住的形狀','一小團細根纏成的小東西。仔細看，是你的手的形狀。'],
+ husk:['守夜的燈','殼瞳守夜者用殼的碎片做的小燈。點亮的時候，會照出一點點明天。'],
+ jadewing:['故事的結局','翠翅逆蜓寫在翅膀碎片上的一個故事結局。牠說：開頭，要你自己寫。'],
+ witherwalk:['一截活的根','枯枝踽行者分給你的一小段根。種在土裡，會長出很小很小的苔。'],
+ silvereye:['停住的雨滴','一顆停在半空中、不會落下來的雨滴，被封在小玻璃瓶裡。']};
 /* 關係深入：特殊的紀念 */
 const GIFT3={sola:['漂流的地圖','索拉畫的地圖：每一個牠漂流過的地方，都畫了一顆星星。最後一顆畫在這輛車上。'],felinia:['第一次滑翔的羽毛','羽貓獸第一次滑翔那天掉下的羽毛，牠一直留著，直到現在送給你。'],leviathaurora:['浮上水面的那一天','一片鱗上刻著水面的波紋。淵光巨說，牠一生只浮上水面幾次，其中一次，是為了來見你。'],
  cinder:['帆上的第一道紋','燼風帆獸帆上第一道風紋的拓印。牠說：這是我變成自己的那一天。'],aelis:['兩個人的故事','艾莉絲寫下的一頁故事，裡面有牠、綠洲的老朋友，還有你。'],pyro:['不會冷的一塊','燼角巨獸的一小塊角。牠沒說什麼，只是把它放在你常站的位置，然後轉頭走開。'],
@@ -8315,7 +8506,12 @@ const GIFT3={sola:['漂流的地圖','索拉畫的地圖：每一個牠漂流過
  tidemane:['新的歌','霧鬃潮靈在車上學會的歌，寫在一片霧做的紙上。只有很安靜的時候，才看得見字。'],
  pulsewyrm:['還亮著的光','一顆特別亮的光點。脈光遊脊說：這是大熄滅那年，牠找到的第一個「還亮著」的光。現在，給你。'],
  rivertrunk:['長大的刻痕','一根短短的木棍，上面有好幾道刻痕。每一道，是牠在車上長大的一點點。最後一道旁邊，刻著你的樣子。'],
- bloomeel:['第一朵花的種子','一顆很小的種子。逆綻花鰻說：這是牠變成花以前的樣子。「給你。我、我不需要了。」']};
+ bloomeel:['第一朵花的種子','一顆很小的種子。逆綻花鰻說：這是牠變成花以前的樣子。「給你。我、我不需要了。」'],
+ voidroot:['一個世界的形狀','寂絡垂靈用根編成的小小模型。是那個消失的世界。牠說：現在，有兩個人記得了。'],
+ husk:['看未來的眼睛','殼瞳守夜者畫給你的一張圖：一列白色的車，車窗裡亮著很多燈。牠說：這是你們的明天。'],
+ jadewing:['我的開頭','翠翅逆蜓寫的一張紙條：「有一天，一陣風，把我吹上了一列白色的車。」這是牠的故事的開頭。'],
+ witherwalk:['森林的種子','一顆很大的種子，是枯枝踽行者從自己身上取下來的。牠說：如果我沒有種成，就換你。'],
+ silvereye:['銀瞳的倒影','一面小小的銀色鏡子。照進去，會看到整列列車，和每一節車廂的燈。']};
 const GIFT_MODE={playful:'hand',gentle:'hand',curious:'click',proud:'place',shy:'place',quiet:'place',guard:'click'};
 const BYE_GIFT={playful:'hand',gentle:'hand',curious:'hand',shy:'secret',quiet:'secret',proud:'none',guard:'none'};
 const GIFT_CD=3;
@@ -8655,7 +8851,12 @@ const CR_ABIL={sola:['care','realm'],felinia:['sense','realm'],leviathaurora:['d
  tidemane:['care','realm'],
  pulsewyrm:['sense','realm'],
  rivertrunk:['nature','care'],
- bloomeel:['nature','realm']};
+ bloomeel:['nature','realm'],
+ voidroot:['defend','realm'],
+ husk:['know','defend'],
+ jadewing:['sense','care'],
+ witherwalk:['nature','defend'],
+ silvereye:['know','sense']};
 const ABIL_N={combat:'戰鬥',defend:'防禦',sense:'感知',realm:'界域',nature:'自然',know:'知識',repair:'修復',care:'照護'};
 const paxSt=id=>(state.passengers[id]||{}).crSt||'ok';
 const PAX_ST_N={ok:'正常',scared:'驚嚇',hurt:'受傷',care:'需要照護',polluted:'受到污染',recover:'已恢復'};
@@ -11322,7 +11523,12 @@ const CR_SOL={
  tidemane:{care:['唱一首鎮潮歌','……大家不要怕。聽我唱。'],realm:['讓亂掉的時間平靜','浪亂了……我來唱，讓它慢一點。']},
  pulsewyrm:{sense:['用觸鬚找出裂縫','……那裡。那裡在痛。快裂開了。'],realm:['把光傳到車尾','我把光，傳過去。整輛車，都會亮。']},
  rivertrunk:{nature:['用長鼻子讓水倒流回去','……水，回來。（漏出來的水，一顆一顆飛了回去。）'],care:['用觸角拍拍大家','……不怕。（觸角的小手，輕輕拍了拍每一個人的頭。）']},
- bloomeel:{nature:['讓花開得久一點','……都給我開著。不准謝。'],realm:['用星脈照亮車廂','我身體裡的光，借你們。……只借一下下。']}};
+ bloomeel:{nature:['讓花開得久一點','……都給我開著。不准謝。'],realm:['用星脈照亮車廂','我身體裡的光，借你們。……只借一下下。']},
+ voidroot:{defend:['用根撐住塌陷的地方','……我撐著。根，很多。'],realm:['記住快要消失的形狀','不要怕。……它的形狀，我記住了。']},
+ husk:{know:['先看一遍會發生什麼','……三秒以後，左邊。小心。'],defend:['用硬殼擋在前面','我的殼，擋得住。……擋過更大的。']},
+ jadewing:{sense:['乘著風找出亂流的方向','哈啾！……風是從那邊來的！'],care:['說一個好結局給大家聽','聽我說！這個故事的結局，是大家都平安喔！']},
+ witherwalk:{nature:['把根伸進土裡安撫植物','……不要怕。土還在。根還在。'],defend:['用枝枒圍住大家','……躲到我的枝下面。']},
+ silvereye:{know:['用倒影放出剛剛發生的事','（銀瞳裡，倒放出剛才的畫面。）……是那裡。從那裡開始的。'],sense:['爬到看不到的地方確認','……我去看。我爬得很快。']}};
 /* 大家已經各自提出辦法的時候，就不再另外列「詢問乘客」 */
 { const al0=crActList; crActList=function(){ const L=al0.apply(this,arguments), C=state.crisis; if(!C||!(C.intel>=2||C.stage==='W4')) return L; const E=CRISES[C.id]; if(Object.keys(PASSENGERS).some(id=>aboard(id)&&crSolOf(id,E))) return L.filter(a=>(a.k||a)!=='ask'); return L; }; }
 /* 這位乘客，這一次能提出的解法（只取第一個對得上的能力） */
@@ -11567,6 +11773,31 @@ const ARC={
   {t:'沒說出口的再見',s:'我把一個很久以前的時刻說給祂聽：一列白色的車開走了，月台上有誰，沒有說出再見。',L:[['tidemane','……我想起一個時刻。很久以前吃下去的。'],['tidemane','一列白色的車，開走了。'],['tidemane','月台上，有誰站著。想說再見，可是，沒有說出口。'],['self','……那列車，是這一列嗎？'],['tidemane','不知道。……可是，車窗的形狀，很像。'],['tidemane','我一直記得那個時刻。因為，它很重。']]},
   {t:'新的歌',s:'我在車上學了一首新的歌。不是讓海安靜的歌，是讓海想笑的歌。',L:[['tidemane','……我學了一首新的歌。'],['tidemane','是聽車上的大家說話學會的。笑的聲音，叫名字的聲音，說「明天見」的聲音。'],['tidemane','這首歌，不是讓海安靜的歌。'],['tidemane','是……讓海，想笑的歌。'],['self','唱給我聽聽？'],['self','（霧裡傳來一段很輕、很亮的旋律，像浪花在跳。）']]},
   {t:'回海上',s:'我要回時隙之海，把新的歌唱給浪聽。這一次的再見，說得出口。',L:[['tidemane','……海在叫我。'],['tidemane','浪還是很亂。可是，我現在有兩首歌了。'],['tidemane','一首讓它安靜，一首讓它笑。'],['tidemane','我要回去了。……這一次，我會好好地說。'],['tidemane','再見。謝謝你。'],['self','再見。']]}]},
+ jadewing:{req:[3,4,5,6],board:{loc:'reverseRealm',ended:3},B:[
+  {t:'往前的風',s:'我練習在往前吹的風裡飛。只撞到窗戶兩次！',L:[['jadewing','你看你看！我在練習！'],['self','（翠翅逆蜓在車廂裡飛了一圈，咚地撞上了窗戶。）'],['jadewing','……只撞到兩次。比昨天少三次。'],['jadewing','往前吹的風，好奇怪喔。可是，有一點好玩。']]},
+  {t:'結局收集',s:'我把我記得的結局說給祂聽。好多好多個。祂聽到最後一個，笑了。',L:[['jadewing','我記得好多結局喔。要聽嗎？'],['jadewing','「最後，小鳥飛回了窩。」「最後，雨停了。」「最後，他們一起吃了早餐。」'],['self','都是很好的結局。'],['jadewing','對吧！……可是，沒有一個，有開頭。'],['jadewing','大家都只給我結局。……所以我才想，自己找一個開頭。']]},
+  {t:'翅膀完整了',s:'我的翅膀，完全完整了。祂說，我現在很帥。',L:[['jadewing','（牠在你面前轉了一圈，四片翅膀都閃閃發亮。）'],['jadewing','你看！完全完整了！一點破洞都沒有！'],['self','很帥喔。'],['jadewing','嘿嘿。……可是，這也表示，我離變成露珠，更近了。'],['jadewing','沒關係！我不怕。我已經，找到開頭了。']]},
+  {t:'我的開頭',s:'我找到了我自己的故事的開頭：有一天，一陣風，把我吹上了一列白色的車。',L:[['jadewing','我想好了！'],['jadewing','我的故事的開頭是：「有一天，一陣風，把我吹上了一列白色的車。」'],['jadewing','怎麼樣？很棒吧？'],['self','很棒。'],['jadewing','那我要回去了。回逆生之境，把它說給大家聽。'],['jadewing','……從開頭，說到結局。第一次。']]}]},
+ voidroot:{req:[5,5,6,6],board:{loc:'silentVoid',ended:5},B:[
+  {t:'新的形狀',s:'我在車上記了很多新的形狀。最喜歡的，是溫室裡一朵剛開的花。',L:[['voidroot','……我記了很多，新的形狀。'],['voidroot','溫室裡，一朵剛開的花。展望台的欄杆。……大家坐在一起的樣子。'],['self','最喜歡哪一個？'],['voidroot','……剛開的花。它的形狀，每天都在變。'],['voidroot','我第一次，記住一個，會變的形狀。']]},
+  {t:'消失的世界',s:'我把那個消失的世界的形狀，給祂看了。祂說，那裡一定很熱鬧。',L:[['voidroot','（牠的根，慢慢張開，圍成了一座城市的形狀。有高高的塔，有彎彎的河。）'],['voidroot','……這是，那個世界。'],['voidroot','這裡，是市場。這裡，是小孩子玩的廣場。'],['self','一定很熱鬧。'],['voidroot','……嗯。很熱鬧。我碰到它的時候，到處都在動。'],['voidroot','現在，只有我的根，還記得它在動的樣子。']]},
+  {t:'收回一根',s:'我收回了一根根。用它，記住了這輛車。',L:[['voidroot','……我做了一件事。'],['voidroot','我收回了一根。那個世界的，一小角。'],['self','……難過嗎？'],['voidroot','有一點。……可是，那一小角，我記得很清楚了。不用根，也記得。'],['voidroot','空出來的那一根，我用來記這輛車。……從車頭到車尾。']]},
+  {t:'回虛空',s:'我要回虛空了。那裡太空了，我想把記住的形狀，放一點回去。',L:[['voidroot','……我想回去了。'],['voidroot','虛空，太空了。什麼形狀都沒有。'],['voidroot','我想把記住的形狀，放一點回去。……那個世界的，和這輛車的。'],['voidroot','也許有一天，虛空裡，會長出新的東西。'],['voidroot','……謝謝你。你的形狀，我放在最中間。']]}]},
+ witherwalk:{req:[5,5,6,6],board:{loc:'silentVoid',ended:5},B:[
+  {t:'活的土',s:'我在溫室的土裡站了一整晚。小芽們跟我說了很多話。',L:[['witherwalk','……我在溫室，站了一整晚。'],['witherwalk','把根，伸進土裡。小芽們，跟我說了好多話。'],['self','說了什麼？'],['witherwalk','……說，天花板上的燈很暖。說，早上的水很好喝。'],['witherwalk','（牠的嘴角，好像動了一下。）……都是很小的事。可是，很好。']]},
+  {t:'倒下的那一天',s:'我跟祂說了森林倒下的那一天。我拔起自己的根，一個人站了起來。',L:[['witherwalk','……森林倒下的那一天，風很大。'],['witherwalk','旁邊的樹，一棵一棵倒下。我聽見它們的根，斷掉的聲音。'],['witherwalk','我不想倒。……所以，我把自己的根，拔了出來。'],['witherwalk','拔出來的時候，我也聽見了，斷掉的聲音。'],['self','……一定很痛。'],['witherwalk','……很痛。可是，總要有一棵，記得森林的樣子。']]},
+  {t:'新芽',s:'背上最高的那一根枝，冒出了一個小小的芽。',L:[['witherwalk','……你看。'],['self','（牠背上最高的那一根枯枝上，冒出了一個很小很小的綠色的芽。）'],['witherwalk','它，長出來了。'],['witherwalk','很多很多年，我都以為，這些枝，已經死了。'],['witherwalk','……原來，只是在等。等一片，活的土。']]},
+  {t:'種下自己',s:'我要回去，把自己種在森林原本的地方。第一棵樹，會記得這輛車。',L:[['witherwalk','我決定了。'],['witherwalk','我要回去。回到森林原本的地方。'],['witherwalk','把根，種下去。這一次，不拔出來了。'],['witherwalk','……以後，那裡會再有森林的。'],['witherwalk','第一棵樹，會記得這輛車。……會記得，你。']]}]},
+ husk:{req:[5,5,6,6],board:{loc:'timeriftSea',ended:5},B:[
+  {t:'守夜',s:'我在車上守了第一個夜。沒有危險。大家都睡得很好。',L:[['husk','……昨晚，我守了一整夜。'],['husk','沒有危險。大家，都睡得很好。'],['self','你呢？'],['husk','……我不睡。'],['husk','（牠沉默了很久。）……可是，看大家睡覺，很安心。']]},
+  {t:'那艘小船',s:'我跟祂說了那艘小船。我替它擋了一道未來的浪，殼就是那時候裂的。',L:[['husk','很久以前，有一艘小船，在夜裡出海。'],['husk','我看未來的那隻眼睛，看到了一道很大的浪。會把船打翻。'],['husk','我跳進海裡，擋在前面。'],['husk','……浪過去了。船到岸了。我的殼，裂了。'],['self','船上的人，知道是你救了他們嗎？'],['husk','……不知道。不用知道。']]},
+  {t:'畫面裡面',s:'我發現，我已經在那個畫面裡面了。不只是看。',L:[['husk','……今天，我看到一個新的畫面。'],['husk','一列白色的車。車窗裡，亮著很多燈。'],['husk','可是這一次，車窗裡面，有我。'],['husk','站在你旁邊。……在笑。'],['self','那就是現在吧。'],['husk','……嗯。我在畫面裡面了。']]},
+  {t:'回燈塔岩',s:'我要回燈塔岩了。那裡有一艘小船在等。我還是會醒著，在很遠的地方。',L:[['husk','……我要回去了。'],['husk','燈塔岩上，需要有人醒著。'],['husk','以前，我覺得守夜，是一個人的事。'],['husk','現在知道了。……我守夜的時候，你們在這裡。'],['husk','（兩隻眼睛，一起，慢慢地眨了一下。）……晚安。我會醒著。']]}]},
+ silvereye:{req:[5,5,6,6],board:{loc:'timeriftSea',ended:5},B:[
+  {t:'會動的東西',s:'車上的東西都會動。我的眼睛，一直在存新的倒影。',L:[['silvereye','……這裡的東西，都會動。'],['silvereye','燈會閃。花會開。大家會笑。'],['silvereye','我的眼睛，一直在存。存不完。'],['self','累嗎？'],['silvereye','……不累。我第一次，覺得眼睛不夠用。']]},
+  {t:'停住的笑容',s:'我給祂看了裂縫裡那個永遠不會結束的笑容。祂說，那個人一定很快樂。',L:[['silvereye','……給你看一個。'],['self','（牠的銀瞳裡，出現了一張臉。在笑。一直在笑。）'],['silvereye','這是，裂縫裡的一個笑容。'],['silvereye','它停住了。永遠不會結束。'],['self','那個人，一定很快樂。'],['silvereye','……嗯。可是，他永遠不知道，他在笑。']]},
+  {t:'倒影變淡',s:'裂縫裡被吸走的東西越來越多。我把倒影一個一個放給祂看，讓祂也記住。',L:[['silvereye','……裂縫，又吸走了三個。'],['silvereye','一片葉子。一滴雨。一隻小蝸牛。'],['silvereye','我把倒影，放給你看。（銀瞳裡，一個一個亮過。）'],['silvereye','你記住了嗎？'],['self','記住了。'],['silvereye','……那它們，就沒有真的消失。']]},
+  {t:'回裂縫',s:'裂縫安靜下來了。我要回去繼續看。眼睛裡多了一個不會變淡的倒影：這輛車。',L:[['silvereye','……裂縫，安靜下來了。我感覺得到。'],['silvereye','我要回去了。繼續看。'],['silvereye','以前，我只看停住的東西。'],['silvereye','現在，我的眼睛裡，有一個會動的倒影。……是這輛車。'],['silvereye','它不會變淡。因為，它一直在動。']]}]},
 };
 const ARC_IDS=Object.keys(ARC);
 const arcAt=id=>((state.chap||{}).arc||{})[id]?state.chap.arc[id].b:0;
@@ -12049,7 +12280,7 @@ const a5Quick=()=>!!(state&&state.act3&&state.act3.xyMet&&state.act3.introduced&
    ・只在月界後期的地點上車（逆生之境、無界迴廊、時隙之海），不會在前面的旅程隨機出現
    ・章節模式：第 3 章結束後到逆生之境／無界迴廊；第 4、5 章都結束後到時隙之海
    ================================================================ */
-const LATE_PAX=['porcel','tidemane','pulsewyrm','rivertrunk','bloomeel'];
+const LATE_PAX=['porcel','tidemane','pulsewyrm','rivertrunk','bloomeel','voidroot','husk','jadewing','witherwalk','silvereye'];   /* 第二批（2026-11-27 早上）也算在內 */
 { const rb3=rollBoarders; rollBoarders=function(){ const out=rb3.apply(this,arguments); const ch=typeof chapOn==='function'&&chapOn()&&state.chap;
   return out.filter(e=>{ const id=String(e).replace(/^board_/,''); if(!LATE_PAX.includes(id)) return true;
    if(ch){ const A=ARC[id]; return !!(A&&A.board&&state.currentLocation===A.board.loc&&(state.chap.ended||[]).length>=A.board.ended); }
