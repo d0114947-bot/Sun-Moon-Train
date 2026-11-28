@@ -6278,7 +6278,9 @@ const DECK_LINE={
 };
 const atDeck=id=>aboard(id)&&state.passengers[id]&&state.passengers[id].place==='deck';
 const deckList=()=>Object.keys(PASSENGERS).filter(atDeck);
-function deckSlot(id){ const i=deckList().indexOf(id); return DECK_SLOT[Math.max(0,i)]; }
+function deckSlot(id){ const i=deckList().indexOf(id); return DECK_SLOT[Math.min(DECK_SLOT.length-1,Math.max(0,i))]; }   /* 2026-11-28：展望台超過四位時不再出錯 */
+/* 展望台最多站四位：多出來的（舊存檔、或同時被邀請）回棲息車廂 */
+function deckTrim(){ try{ const L=deckList(); if(L.length>DECK_SLOT.length){ L.slice(DECK_SLOT.length).forEach(id=>{ state.passengers[id].place=undefined; }); save(); } }catch(e){ console.error(e); } }
 /* 邀請乘客來展望台：日界可以看月亮、雲海、太陽；月界（和航行中）可以看流星體、銀河、彗星、黑洞、行星、星雲 */
 const DECK_SEE={sun:[['moon','月亮','……從這裡看月亮，好近好近。'],['cloud','雲海','雲在下面慢慢流動，像另一片海。'],['sun','太陽','好亮……可是很暖。']],
  moon:[['meteoroid','流星體','那顆石頭在發光……它從好遠的地方飛來的吧。'],['galaxy','銀河','一整條河，全部都是星星。'],['comet','彗星','它的尾巴好長……要去哪裡呢？'],['blackhole','黑洞','……那裡好黑。光都被吸進去了嗎？'],['planet','行星','那顆星球上，也有誰住在那裡嗎？'],['nebula','星雲','顏色好溫柔，像在慢慢地呼吸。']]};
@@ -12285,6 +12287,7 @@ const LATE_PAX=['porcel','tidemane','pulsewyrm','rivertrunk','bloomeel','voidroo
   return out.filter(e=>{ const id=String(e).replace(/^board_/,''); if(!LATE_PAX.includes(id)) return true;
    if(ch){ const A=ARC[id]; return !!(A&&A.board&&state.currentLocation===A.board.loc&&(state.chap.ended||[]).length>=A.board.ended); }
    return (state.journeyCount||0)>=16&&PASSENGERS[id].home===state.currentLocation; }); }; }
+{ const r0=render; render=function(){ deckTrim(); return r0.apply(this,arguments); }; }
 function boot(){ try{ new Image().src=INTRO_BG; }catch(e){} try{ normalizeState(); }catch(e){ gameErr(e); } try{ render(); }catch(e){ gameErr(e); } try{ showMain(); }catch(e){ gameErr(e); } }
 boot();
 </script>
